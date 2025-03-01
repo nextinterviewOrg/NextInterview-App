@@ -90,6 +90,9 @@ const LearningModulesListView = () => {
             />
           </SearchBarWrapper>
           <NewUploadButton>
+            <Link to={"/admin/moduleFileUpload"}>File Upload</Link>
+          </NewUploadButton>
+          <NewUploadButton>
             <Link to={"/admin/uploadmodule"}>New Upload</Link>
           </NewUploadButton>
         </div>

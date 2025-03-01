@@ -434,7 +434,7 @@ const AddNewModule = () => {
       },
     ]);
     setModalVisible(true); // show success modal
-    navigate("/admin/moduleFileUpload");
+    navigate("/admin/learning");
   };
 
   // ----------------------------- DELETE HANDLING -----------------------------

@@ -103,5 +103,24 @@ export const ModuleUploadWrapper = styled.div`
     font-family: "DM Sans";
     line-height: 20px;
     }
+
+    .upload-file-name{
+    font-size: 14px;
+    font-weight: 500;
+    font-family: "DM Sans";
+    line-height: 20px;
+    margin-left: 10px;
+    color: ${({ theme }) => theme.colors.info};
+    }
+    .clear-button{
+     font-size: 14px;
+    font-weight: 500;
+    font-family: "DM Sans";
+    line-height: 20px;
+    margin-left: 10px;
+    color: red;
+    background-color: transparent;
+    border: none;
+    }
     
 `;

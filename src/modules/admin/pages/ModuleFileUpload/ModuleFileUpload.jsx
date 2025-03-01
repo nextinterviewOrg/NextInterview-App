@@ -21,6 +21,7 @@ const ModuleFileUpload = () => {
   const [selectedTopicId, setSelectedTopicId] = useState(null);
   const [selectedSubtopicId, setSelectedSubtopicId] = useState(null);
   const [selectedOption, setSelectedOption] = useState(null);
+  const[fileName,setFileName]=useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,7 +53,9 @@ const ModuleFileUpload = () => {
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
     const csvFiles = files.filter(file => file.type === 'text/csv');
+    // console.log("sbshsbh",csvFiles);
     setFileList(csvFiles);
+    setFileName(csvFiles[0].name);
 
   };
 
@@ -177,8 +180,14 @@ const ModuleFileUpload = () => {
           <Form.Item name="upload" className='dropdown-box2' >
             <input type="file" accept=".csv" multiple onChange={handleFileChange} style={{ display: 'none' }} />
             <div className="upload-btn-container">
-              <div className='upload-button-text'>Upload File</div>
-              <Button className='upload-button' onClick={() => document.querySelector('input[type="file"]').click()} ><MdOutlineFileUpload /> Upload </Button>
+              <div className='upload-button-text'>
+                Upload File
+                <br></br>
+               <span className='upload-file-name'> {fileName}</span>  
+               {fileList.length > 0 &&
+               <button type='button' className='clear-button' onClick={()=>{setFileName(''),setFileList([])}}>Clear</button>}
+              </div>
+              <Button className='upload-button' onClick={() => document.querySelector('input[type="file"]').click()} ><MdOutlineFileUpload /> {fileList.length > 0 ? "Replace" : "Upload"} </Button>
             </div>
 
           </Form.Item>
