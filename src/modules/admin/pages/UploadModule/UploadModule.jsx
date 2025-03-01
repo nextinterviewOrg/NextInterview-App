@@ -234,7 +234,7 @@ const UploadModule = () => {
     };
 
     console.log("submissionData", submissionData);
-    navigate("/admin/addnewmodule", { state: { data: submissionData } });
+    navigate("/admin/learning", { state: { data: submissionData } });
   };
 
   return (
