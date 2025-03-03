@@ -10,7 +10,7 @@ const Card = styled.div`
   //   border: 1px solid ${(props) => props.theme.colors.borderblue};
   border-radius: 12px;
   padding: ${(props) => props.theme.spacing(2)};
-  box-shadow: 0 8px 12px #7090B018
+  box-shadow: 0 8px 12px #7090b018;
   font-family: ${(props) => props.theme.fonts.body};
   // margin-left: 60px;
 `;
@@ -52,7 +52,7 @@ const Buttons = styled.div`
 const Button = styled.button`
   background-color: ${(props) =>
     props.primary ? props.theme.colors.secondary : props.theme.colors.light};
-  //   color: ${(props) =>
+  color: ${(props) =>
     props.secondary ? props.theme.colors.secondary : props.theme.colors.white};
   border: ${(props) =>
     props.secondary ? "none" : `1px solid ${props.theme.colors.secondary}`};
@@ -112,6 +112,9 @@ const TakeChallenge = () => {
     { src: flipkart, alt: "" },
     { src: google, alt: "" },
   ];
+  const handleClick = () => {
+    navigate("/user/TakeChallengeQuestionType");
+  };
   return (
     <Card>
       <small
@@ -145,6 +148,7 @@ const TakeChallenge = () => {
       <MarginButton>
         <Buttons>
           <Button
+            onClick={handleClick}
             primary
             style={{
               color: "#fff",

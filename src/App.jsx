@@ -74,6 +74,8 @@ import VerifyTOTP from "./pages/VerifyTOTP/VerifyTOTP";
 import PublicRoutes from "./utils/PublicRoutes";
 import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryItYourself";
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
+import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
+import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
 
 function App() {
   return (
@@ -81,10 +83,9 @@ function App() {
       <Router>
         <GlobalStyle />
         <Routes>
-         
-          <Route path="/" element={ <PublicRoutes Component={SignUp }/>} />
+          <Route path="/" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/loginPhone" element={<Login />} />
-          <Route path="/login" element={ <PublicRoutes Component={SignUp }/>} />
+          <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/personalinfo" element={<PersonalInfo />} />
           <Route path="/question1" element={<QuestionPage1 />} />
@@ -99,9 +100,12 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
-          <Route path="/testing" element={<JDoodleEditor/>} />
+          <Route path="/testing" element={<JDoodleEditor />} />
           <Route path="/learning" element={<LearningModules />} />
-          <Route path="/verifytotp" element={<VerifyTOTP/>} />
+          <Route path="/verifytotp" element={<VerifyTOTP />} />
+          <Route path="/chatmode" element={<MockInterviewChat />} />
+          <Route path="/voicemode" element={<MockInterviewVoice />} />
+          <Route path="/tryityourself" element={<TryItYourself />} />
 
           {/* <Route path="/Diagnosing-and-Investigating-Metrics" element={<Userdetails />} /> */}
 
@@ -119,8 +123,13 @@ function App() {
           {/* <Route path="/question-bank" element={<QuestionBank />} /> */}
           {/* <Route path="/challenges" element={<Challenges />} /> */}
 
-          <Route path="/admin" element={<ProtectedRoute component={BaseLayout} roles={["admin"]} />}>
-          {/* <Route path="/admin" element={<BaseLayout />}> */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute component={BaseLayout} roles={["admin"]} />
+            }
+          >
+            {/* <Route path="/admin" element={<BaseLayout />}> */}
             <Route index element={<AdminDashboard />} />
             <Route path="/admin/learning" element={<LearningModules />} />
             <Route
@@ -140,7 +149,10 @@ function App() {
             />
 
             <Route path="/admin/addnewmodule" element={<AddNewModule />} />
-            <Route path="/admin/moduleFileUpload" element={<ModuleFileUpload />} />
+            <Route
+              path="/admin/moduleFileUpload"
+              element={<ModuleFileUpload />}
+            />
             <Route path="/admin/challenges" element={<Challenges />} />
             <Route path="/admin/viewanalytics" element={<Analytics />} />
             <Route path="/admin/SupportQuery" element={<SupportQuery />} />
@@ -168,11 +180,13 @@ function App() {
             <Route path="/admin/profile" element={<ProfileInfo />} />
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
             <Route path="/admin/manage-mfa/add" element={<AddTOTP />} />
-
           </Route>
 
-          <Route path="/user" element={<ProtectedRoute component={BaseLayout} roles={["user"]} />}>
-          {/* <Route path="/user" element={<BaseLayout />}> */}
+          <Route
+            path="/user"
+            element={<ProtectedRoute component={BaseLayout} roles={["user"]} />}
+          >
+            {/* <Route path="/user" element={<BaseLayout />}> */}
             <Route index element={<UserDashboard />} />
             <Route path="/user/revise" element={<QuicklyRevise />} />
             <Route path="/user/revise/:id" element={<QuicklyByModule />} />
@@ -202,7 +216,10 @@ function App() {
               path="/user/learning/:id/topic/sampleInterview"
               element={<UserSampleInterview />}
             />
-            <Route path="/user/learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
+            <Route
+              path="/user/learning/:module_name/topic/tryityourself"
+              element={<TryItYourself />}
+            />
             <Route path="/user/userfaq" element={<UserFAQ />} />
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />

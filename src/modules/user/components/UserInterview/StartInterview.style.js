@@ -11,20 +11,24 @@ export const Container = styled.div`
   background: rgba(0, 0, 0, 0.5);
   justify-content: center;
   align-items: center;
-  
 `;
 
 export const Modal = styled.div`
   background: ${(props) => props.theme.colors.background};
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-background-color: ${(props) => props.theme.colors.light};
+  background-color: ${(props) => props.theme.colors.light};
   width: 600px;
-//   height: 70%;
+  //   height: 70%;
   border-radius: 10px;
   margin-left: 60px;
   position: relative;
-  
+`;
+export const Heading = styled.h2`
+  font-family: ${theme.fonts.heading};
+  color: ${theme.colors.text};
+  margin-bottom: ${theme.spacing(1)};
+  text-align: left;
 `;
 
 export const ModalContent = styled.div`
@@ -38,7 +42,7 @@ export const ModalContent = styled.div`
 export const Dropdown = styled.select`
   padding: 10px;
   border: 1px solid ${(props) => props.theme.colors.border};
- border-radius:4px;
+  border-radius: 4px;
   background: ${(props) => props.theme.colors.light};
   color: ${(props) => props.theme.colors.text};
 `;
@@ -53,47 +57,47 @@ export const RadioOption = styled.label`
   display: flex;
   align-items: center;
   gap: 5px;
+  accent-color: ${theme.colors.bluetext};
 `;
 
 export const Button = styled.button`
   padding: 8px;
-  background:${theme.colors.secondary};
-  color:${theme.colors.light};
+  background: ${theme.colors.secondary};
+  color: ${theme.colors.light};
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 16px;
   font-family: ${theme.fonts.body};
   margin-top: 15px;
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-justify-content: flex-end;
-margin-left: auto;
-  
+  justify-content: flex-end;
+  margin-left: auto;
 `;
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 15px;
+  right: 15px;
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 28px;
   cursor: pointer;
   color: ${theme.colors.textgray};
 `;
 
 export const Title = styled.h2`
-font-size: 17px;
-font-style: normal;
-font-weight: 600;
-line-height: 29px;
-letter-spacing: 0em;
-text-align: left;
-padding: 0px;
-margin: 0px;
-color:${theme.colors.text};
-font-family: ${theme.fonts.body};
+  font-size: 17px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 29px;
+  letter-spacing: 0em;
+  text-align: left;
+  padding: 0px;
+  margin: 0px;
+  color: ${theme.colors.text};
+  font-family: ${theme.fonts.body};
 `;

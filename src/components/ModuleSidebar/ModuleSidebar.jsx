@@ -121,7 +121,7 @@ export default function ModuleSidebar({
         {courseData.topicsList?.map((topic, index) => (
           <div key={index} className="topic">
             <div className="topic-title" onClick={() => toggleExpand(index)}>
-              <span>{topic.title}</span>
+              <span className="topic-name">{topic.title}</span>
               <span>
                 {expandedTopic === index ? <MdExpandLess /> : <MdExpandMore />}
               </span>{" "}
@@ -148,18 +148,26 @@ export default function ModuleSidebar({
                               subtopicIndex: subIndex,
                             }}
                           >
-                            {" "}
-                            <span>
-                              {subtopic.completed ? (
-                                <FaCheckCircle />
-                              ) : (
-                                <MdExpandCircleDown />
-                              )}
-                            </span>{" "}
-                            <span className="subtopic-title">
+                            <div
+                              style={{
+                                display: "flex",
+                                alignItems: "flex-start",
+                                gap: "5px",
+                              }}
+                            >
                               {" "}
-                              {subtopic.title}
-                            </span>
+                              <span>
+                                {subtopic.completed ? (
+                                  <FaCheckCircle />
+                                ) : (
+                                  <MdExpandCircleDown />
+                                )}
+                              </span>{" "}
+                              <span className="subtopic-title">
+                                {" "}
+                                {subtopic.title}
+                              </span>
+                            </div>
                           </Link>
                         </span>
                         {/* <span className="time">{subtopic.time}</span> */}

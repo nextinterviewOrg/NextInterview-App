@@ -105,8 +105,7 @@ const SignUp = () => {
         // } catch (error) {
         //   console.log("error otp", error);
         // }
-      }else if(data.status === "needs_second_factor"){
-        
+      } else if (data.status === "needs_second_factor") {
         navigate("/verifytotp");
       }
     } catch (error) {
@@ -147,7 +146,7 @@ const SignUp = () => {
       alert("LinkedIn sign-up failed. Check console for details.");
     }
   };
- 
+
   return (
     <Container>
       <HeaderWithLogo />
@@ -229,7 +228,9 @@ const SignUp = () => {
                 Forgot Password ?
               </Link>
             </div>
-
+            <p style={{ margin: "0", textAlign: "center" }}>
+              Invalid email or password
+            </p>
             <Button type="submit">Log In</Button>
 
             <AlternativeLogin>

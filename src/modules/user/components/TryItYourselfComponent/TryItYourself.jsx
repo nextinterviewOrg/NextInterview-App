@@ -17,109 +17,141 @@ import {
   ExploreButton,
   ExploreSubtitle,
   ExploreTitle,
-  ExploreQuestionsContainer
+  ExploreQuestionsContainer,
 } from "./TryItYourself.styles";
 import MainWindow from "../CodeEditorWindow/MainWindow"; // Importing the code editor component
 import { FcOk } from "react-icons/fc";
 import { GoThumbsup, GoThumbsdown, GoX } from "react-icons/go";
- 
+
 // import { getQuestionBank, getQuestionBankById } from "../../../../api/questionBankApi";
-import { gettiy } from "../../../../api/tiyApi"; 
+import { gettiy } from "../../../../api/tiyApi";
 import { getModuleCode } from "../../../../api/addNewModuleApi";
 const TryItYourself = () => {
- 
-    const { module_name } = useParams();
+  const { module_name } = useParams();
   const navigate = useNavigate();
- 
+
   const [allQuestions, setAllQuestions] = useState([]); // Store all questions for the sidebar
   const [selectedQuestion, setSelectedQuestion] = useState(null); // For storing the selected question
   const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [userAnswer, setUserAnswer] = useState("");  // To store answer for single-line, multi-line, approach questions
+  const [userAnswer, setUserAnswer] = useState(""); // To store answer for single-line, multi-line, approach questions
   const [showSolution, setShowSolution] = useState(false);
   const [moduleCodes, setModuleCodes] = useState([]);
-//   import { useParams } from "react-router-dom";
+  //   import { useParams } from "react-router-dom";
 
-useEffect(() => {
+  useEffect(() => {
     const fetchAllQuestions = async () => {
-        try {
-            const response = await gettiy();  // Fetch all questions
-            console.log("Question data:", response.data);
-            if (response && response.success && response.data) {
-                setAllQuestions(response.data);
-            } else {
-                console.error("No questions found");
-            }
-        } catch (error) {
-            console.error("Error fetching all questions:", error);
+      try {
+        const response = await gettiy(); // Fetch all questions
+        console.log("Question data:", response.data);
+        if (response && response.success && response.data) {
+          setAllQuestions(response.data);
+        } else {
+          console.error("No questions found");
         }
+      } catch (error) {
+        console.error("Error fetching all questions:", error);
+      }
     };
 
     const fetchModuleCodes = async () => {
-        try {
-            const response = await getModuleCode(); // Fetch module codes
-            console.log("Module Codes:", response.data);
-            if (response && response.success && response.data) {
-                setModuleCodes(response.data);
-            } else {
-                console.error("No module codes found");
-            }
-        } catch (error) {
-            console.error("Error fetching module codes:", error);
+      try {
+        const response = await getModuleCode(); // Fetch module codes
+        console.log("Module Codes:", response.data);
+        if (response && response.success && response.data) {
+          setModuleCodes(response.data);
+        } else {
+          console.error("No module codes found");
         }
+      } catch (error) {
+        console.error("Error fetching module codes:", error);
+      }
     };
 
     fetchAllQuestions();
     fetchModuleCodes();
-}, []);
- 
-useEffect(() => {
+  }, []);
+
+  useEffect(() => {
     if (allQuestions.length > 0 && moduleCodes.length > 0) {
-        // Find the module code for the selected module
-        const currentModuleCode = moduleCodes.find(m => m.module_name === module_name)?.module_code;
+      // Find the module code for the selected module
+      const currentModuleCode = moduleCodes.find(
+        (m) => m.module_name === module_name
+      )?.module_code;
 
-        if (!currentModuleCode) {
-            console.warn("No module code found for this module ID");
-            return;
-        }
+      if (!currentModuleCode) {
+        console.warn("No module code found for this module ID");
+        return;
+      }
 
-        // Filter questions based on the module code
-        const filteredQuestions = allQuestions.filter(q => q.module_code === currentModuleCode);
-        console.log("Filtered Questions:", filteredQuestions);
+      // Filter questions based on the module code
+      const filteredQuestions = allQuestions.filter(
+        (q) => q.module_code === currentModuleCode
+      );
+      console.log("Filtered Questions:", filteredQuestions);
 
-        // Set the first question as the selected question
-        if (filteredQuestions.length > 0) {
-            setSelectedQuestion(filteredQuestions[0]);
-        } else {
-            setSelectedQuestion(null);
-        }
+      // Set the first question as the selected question
+      if (filteredQuestions.length > 0) {
+        setSelectedQuestion(filteredQuestions[0]);
+      } else {
+        setSelectedQuestion(null);
+      }
     }
-}, [allQuestions, moduleCodes, module_name]); // Keep the dependencies minimal to avoid infinite loop
+  }, [allQuestions, moduleCodes, module_name]); // Keep the dependencies minimal to avoid infinite loop
 
-
-
-
-  
   const handleNextQuestion = () => {
-    const currentIndex = allQuestions.findIndex(
+    if (!selectedQuestion) return;
+
+    const currentModuleCode = moduleCodes.find(
+      (m) => m.module_name === module_name
+    )?.module_code;
+
+    if (!currentModuleCode) {
+      console.warn("No module code found for this module");
+      return;
+    }
+
+    const filteredQuestions = allQuestions.filter(
+      (q) => q.module_code === currentModuleCode
+    );
+    const currentIndex = filteredQuestions.findIndex(
       (q) => q._id === selectedQuestion._id
     );
- 
-    const nextIndex = currentIndex + 1;
-    if (nextIndex < allQuestions.length) {
-      const nextQuestion = allQuestions[nextIndex];
-      navigate(`/user/learning/${nextQuestion._id}/topic/tryityourself`);
+
+    if (currentIndex + 1 < filteredQuestions.length) {
+      console.log("Condition is true: Moving to the next question.");
+      setSelectedQuestion(filteredQuestions[currentIndex + 1]);
+      setSelectedAnswer(null);
+      setUserAnswer("");
+      setShowSolution(false);
     } else {
-      console.log("No more questions available.");
+      console.log("Condition is false: Navigating to the learning module.");
+      navigate(`/user/learning`);
     }
   };
 
+  const isLastQuestion = (() => {
+    if (!selectedQuestion) return true;
+    const currentModuleCode = moduleCodes.find(
+      (m) => m.module_name === module_name
+    )?.module_code;
+    if (!currentModuleCode) return true;
+
+    const filteredQuestions = allQuestions.filter(
+      (q) => q.module_code === currentModuleCode
+    );
+    return (
+      filteredQuestions.length > 0 &&
+      selectedQuestion._id ===
+        filteredQuestions[filteredQuestions.length - 1]._id
+    );
+  })();
+
   const handleExploreButtonClick = () => {
-    navigate(`/user/questionBank`)
-  }
- 
+    navigate(`/user/questionBank`);
+  };
+
   return (
-    <div style={{display: "flex",}}>
-     
+    <div style={{ display: "flex" }}>
       <Content>
         {selectedQuestion ? (
           <>
@@ -128,10 +160,10 @@ useEffect(() => {
               <Difficulty1>Difficulty: {selectedQuestion.level}</Difficulty1>
               <Type1>Type: {selectedQuestion.question_type}</Type1>
             </MetaInfo1>
- 
+
             <QuestionContainer>
               <QuestionHeader>{selectedQuestion.question}</QuestionHeader>
- 
+
               {selectedQuestion.question_type === "mcq" ? (
                 <>
                   <form>
@@ -197,10 +229,16 @@ useEffect(() => {
                     )}
                   </form>
                   {selectedAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>Show Solution</Button>
+                    <Button onClick={() => setShowSolution(true)}>
+                      Show Solution
+                    </Button>
                   )}
                   {showSolution && (
-                    <FeedbackBox correct={selectedAnswer === selectedQuestion.correct_option}>
+                    <FeedbackBox
+                      correct={
+                        selectedAnswer === selectedQuestion.correct_option
+                      }
+                    >
                       <Icon>
                         {selectedAnswer === selectedQuestion.correct_option ? (
                           <FcOk />
@@ -215,9 +253,13 @@ useEffect(() => {
                   )}
                   {showSolution && (
                     <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
+                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
+                        Solution
+                      </p>
                       <div className="correction">
-                        <p style={{margin: "2px"}}>{selectedQuestion.answer}</p>
+                        <p style={{ margin: "2px" }}>
+                          {selectedQuestion.answer}
+                        </p>
                         <div className="thumbsup">
                           <span>
                             <GoThumbsup />
@@ -252,15 +294,22 @@ useEffect(() => {
                     />
                   </SolutionBox>
                   {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>Show Solution</Button>
+                    <Button onClick={() => setShowSolution(true)}>
+                      Show Solution
+                    </Button>
                   )}
                   {showSolution && (
-                    <FeedbackBox correct={userAnswer.trim() === selectedQuestion.answer.trim()}>
+                    <FeedbackBox
+                      correct={
+                        userAnswer.trim() === selectedQuestion.answer.trim()
+                      }
+                    >
                       <Icon>
-                        {userAnswer.trim() === selectedQuestion.answer.trim() ? (
+                        {userAnswer.trim() ===
+                        selectedQuestion.answer.trim() ? (
                           <FcOk />
                         ) : (
-                          <GoX style={{ color: "red", fontSize: "24px",  }} />
+                          <GoX style={{ color: "red", fontSize: "24px" }} />
                         )}
                       </Icon>
                       {userAnswer.trim() === selectedQuestion.answer.trim()
@@ -270,9 +319,13 @@ useEffect(() => {
                   )}
                   {showSolution && (
                     <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
+                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
+                        Solution
+                      </p>
                       <div className="correction">
-                        <p style={{margin: "2px"}}>{selectedQuestion.answer}</p>
+                        <p style={{ margin: "2px" }}>
+                          {selectedQuestion.answer}
+                        </p>
                         <div className="thumbsup">
                           <span>
                             <GoThumbsup />
@@ -301,7 +354,7 @@ useEffect(() => {
                         borderRadius: "5px",
                         // border: "1px solid #ddd",
                         backgroundColor: "white",
-                        border:"none",
+                        border: "none",
                         fontSize: "16px",
                         lineHeight: "1.5",
                         fontFamily: "Arial, sans-serif",
@@ -311,12 +364,19 @@ useEffect(() => {
                     />
                   </SolutionBox>
                   {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>Show Solution</Button>
+                    <Button onClick={() => setShowSolution(true)}>
+                      Show Solution
+                    </Button>
                   )}
                   {showSolution && (
-                    <FeedbackBox correct={userAnswer.trim() === selectedQuestion.answer.trim()}>
+                    <FeedbackBox
+                      correct={
+                        userAnswer.trim() === selectedQuestion.answer.trim()
+                      }
+                    >
                       <Icon>
-                        {userAnswer.trim() === selectedQuestion.answer.trim() ? (
+                        {userAnswer.trim() ===
+                        selectedQuestion.answer.trim() ? (
                           <FcOk />
                         ) : (
                           <GoX style={{ color: "red", fontSize: "24px" }} />
@@ -329,9 +389,13 @@ useEffect(() => {
                   )}
                   {showSolution && (
                     <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
+                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
+                        Solution
+                      </p>
                       <div className="correction">
-                        <p style={{margin: "2px"}}>{selectedQuestion.answer}</p>
+                        <p style={{ margin: "2px" }}>
+                          {selectedQuestion.answer}
+                        </p>
                         <div className="thumbsup">
                           <span>
                             <GoThumbsup />
@@ -349,9 +413,9 @@ useEffect(() => {
               ) : selectedQuestion.question_type === "approach" ? (
                 <>
                   <SolutionBox
-                  style={{
-                    marginTop: "10px",
-                  }}
+                    style={{
+                      marginTop: "10px",
+                    }}
                   >
                     <textarea
                       value={userAnswer}
@@ -371,12 +435,19 @@ useEffect(() => {
                     />
                   </SolutionBox>
                   {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>Show Solution</Button>
+                    <Button onClick={() => setShowSolution(true)}>
+                      Show Solution
+                    </Button>
                   )}
                   {showSolution && (
-                    <FeedbackBox correct={userAnswer.trim() === selectedQuestion.answer.trim()}>
+                    <FeedbackBox
+                      correct={
+                        userAnswer.trim() === selectedQuestion.answer.trim()
+                      }
+                    >
                       <Icon>
-                        {userAnswer.trim() === selectedQuestion.answer.trim() ? (
+                        {userAnswer.trim() ===
+                        selectedQuestion.answer.trim() ? (
                           <FcOk />
                         ) : (
                           <GoX style={{ color: "red", fontSize: "24px" }} />
@@ -389,9 +460,13 @@ useEffect(() => {
                   )}
                   {showSolution && (
                     <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
+                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
+                        Solution
+                      </p>
                       <div className="correction">
-                        <p style={{margin: "2px"}}>{selectedQuestion.answer}</p>
+                        <p style={{ margin: "2px" }}>
+                          {selectedQuestion.answer}
+                        </p>
                         <div className="thumbsup">
                           <span>
                             <GoThumbsup />
@@ -409,10 +484,10 @@ useEffect(() => {
               ) : (
                 <MainWindow />
               )}
- 
-             {showSolution && (
+
+              {showSolution && (
                 <NextButton onClick={handleNextQuestion}>
-                  Next Question
+                  {isLastQuestion ? "Submit" : "Next Question"}
                 </NextButton>
               )}
             </QuestionContainer>
@@ -421,15 +496,20 @@ useEffect(() => {
           <p>Question not found</p>
         )}
       </Content>
-        <div style={{width: "25%"}}>
-      <ExploreQuestionsContainer>
-        <ExploreTitle>Explore Questions</ExploreTitle>
-        <ExploreSubtitle>Dive into the question bank to find and solve more exercises like this, expanding your skills even further.</ExploreSubtitle>
-        <ExploreButton onClick={handleExploreButtonClick}>Question Back</ExploreButton>
-      </ExploreQuestionsContainer>
+      <div style={{ width: "25%" }}>
+        <ExploreQuestionsContainer>
+          <ExploreTitle>Explore Questions</ExploreTitle>
+          <ExploreSubtitle>
+            Dive into the question bank to find and solve more exercises like
+            this, expanding your skills even further.
+          </ExploreSubtitle>
+          <ExploreButton onClick={handleExploreButtonClick}>
+            Question Back
+          </ExploreButton>
+        </ExploreQuestionsContainer>
       </div>
     </div>
-  )
-}
- 
-export default TryItYourself
+  );
+};
+
+export default TryItYourself;
