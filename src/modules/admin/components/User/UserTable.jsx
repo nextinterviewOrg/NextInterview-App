@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FaBell, FaBan } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -42,7 +42,7 @@ const Td = styled.td`
 const Checkbox = styled.input.attrs({ type: "checkbox" })`
   width: 16px;
   height: 16px;
-  border: 2px solid ${({ theme }) => theme.colors.bluetext}; /* Default border color */
+  border: 2px solid ${({ theme }) => theme.colors.bluetext};
   border-radius: 4px;
   appearance: none;
   outline: none;
@@ -51,13 +51,13 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   &:checked {
     background-color: ${({ theme }) => theme.colors.secondary};
     border-color: ${({ theme }) => theme.colors.secondary};
-    color: ${({ theme }) => theme.colors.light}; /* Color of the tick */
+    color: ${({ theme }) => theme.colors.light};
     position: relative;
 
     &::after {
       content: "✔";
       font-size: 12px;
-      color: ${({ theme }) => theme.colors.light}; /* Tick color */
+      color: ${({ theme }) => theme.colors.light};
       display: block;
       text-align: center;
       position: absolute;
@@ -68,8 +68,7 @@ const Checkbox = styled.input.attrs({ type: "checkbox" })`
   }
 
   &:hover {
-    border-color: ${({ theme }) =>
-      theme.colors.primary}; /* Hover border color */
+    border-color: ${({ theme }) => theme.colors.primary};
   }
 `;
 
@@ -109,16 +108,21 @@ const ActiveHours = styled.div`
   color: ${({ theme, color }) => theme.colors[color]};
 `;
 
-const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
-  //   const [selectedRows, setSelectedRows] = useState([]);
+const NoUsersMessage = styled.div`
+  text-align: center;
+  font-size: 1.2rem;
+  color: ${({ theme }) => theme.colors.textgray};
+  padding: 20px;
+`;
 
-  //   const toggleRowSelection = (index) => {
-  //     setSelectedRows((prevSelectedRows) =>
-  //       prevSelectedRows.includes(index)
-  //         ? prevSelectedRows.filter((row) => row !== index)
-  //         : [...prevSelectedRows, index]
-  //     );
-  //   };
+const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
+  if (users.length === 0) {
+    return (
+      <TableContainer>
+        <NoUsersMessage>No users found</NoUsersMessage>
+      </TableContainer>
+    );
+  }
 
   return (
     <TableContainer>
@@ -144,7 +148,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
               <Td>
                 <Checkbox
                   checked={selectedRows.includes(user.clerkId)}
-                  onChange={(e) => e.stopPropagation()} // Prevent click conflict
+                  onChange={(e) => e.stopPropagation()}
                 />
               </Td>
               <Td>
@@ -170,9 +174,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
               <Td>{user.topicsCompleted}</Td>
               <Td>
                 <ActiveHours
-                  color={
-                    user.activeHours.includes("18h") ? "success" : "warning"
-                  }
+                  color={user.activeHours.includes("18h") ? "success" : "warning"}
                 >
                   {user.activeHours}
                 </ActiveHours>

@@ -35,6 +35,7 @@ const SupportQueryListView = () => {
       Content: false,
       Billing: false,
       General: false,
+      Support: false,
     },
     dateRange: { Today: false, "Last 7 days": false, "Last 30 days": false },
   });
@@ -104,16 +105,45 @@ const SupportQueryListView = () => {
       const matchesCategory =
         Object.keys(categories).every((key) => !categories[key]) ||
         categories[query.category];
-      const matchesDate = Object.keys(dateRange).every(
-        (key) => !dateRange[key]
-      );
+
+        const matchesDate = Object.keys(dateRange).some(
+          (key) => dateRange[key] && isDateInRange(query.submitted_on, key)
+        );
 
       return matchesStatus && matchesCategory && matchesDate;
     });
 
+
+
+
     setFilteredQueries(filtered);
     setStoredFilters(filters);
   };
+
+  const isDateInRange = (date, range) => {
+    const submittedDate = new Date(date);
+    const currentDate = new Date();
+  
+    switch (range) {
+      case "Today":
+        return (
+          submittedDate.getDate() === currentDate.getDate() &&
+          submittedDate.getMonth() === currentDate.getMonth() &&
+          submittedDate.getFullYear() === currentDate.getFullYear()
+        );
+      case "Last 7 days":
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(currentDate.getDate() - 7);
+        return submittedDate >= sevenDaysAgo;
+      case "Last 30 days":
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+        return submittedDate >= thirtyDaysAgo;
+      default:
+        return true;
+    }
+  };
+  
 
   return (
     <Container>

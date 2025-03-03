@@ -49,6 +49,7 @@ const UserSearchBar = ({ placeholder, onChange, userCount }) => {
     if (onChange) {
       onChange(value); // Notify the parent about the change
     }
+   
   };
   return (
     <>

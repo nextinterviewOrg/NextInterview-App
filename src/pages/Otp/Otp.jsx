@@ -185,7 +185,7 @@ const Otp = () => {
       }
     } catch (error) {
       console.log("OTP verification error:", error);
-      alert("Failed to verify OTP. Please try again.");
+      alert("Failed to verify OTP. Please check and try again.");
     }
   };
 

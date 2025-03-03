@@ -207,7 +207,7 @@ const QuestionCollapsible = () => {
                       <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
                       <div className="correction">
                         <p>{selectedQuestion.answer}</p>
-                        <div className="thumbsup">
+                        {/* <div className="thumbsup">
                           <span>
                             <GoThumbsup />
                             Helpful
@@ -216,7 +216,7 @@ const QuestionCollapsible = () => {
                             <GoThumbsdown />
                             Not Helpful
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </SolutionBox>
                   )}
@@ -262,7 +262,7 @@ const QuestionCollapsible = () => {
                       <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
                       <div className="correction">
                         <p>{selectedQuestion.answer}</p>
-                        <div className="thumbsup">
+                        {/* <div className="thumbsup">
                           <span>
                             <GoThumbsup />
                             Helpful
@@ -271,7 +271,7 @@ const QuestionCollapsible = () => {
                             <GoThumbsdown />
                             Not Helpful
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </SolutionBox>
                   )}
@@ -320,7 +320,7 @@ const QuestionCollapsible = () => {
                       <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
                       <div className="correction">
                         <p>{selectedQuestion.answer}</p>
-                        <div className="thumbsup">
+                        {/* <div className="thumbsup">
                           <span>
                             <GoThumbsup />
                             Helpful
@@ -329,7 +329,7 @@ const QuestionCollapsible = () => {
                             <GoThumbsdown />
                             Not Helpful
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </SolutionBox>
                   )}
@@ -381,7 +381,7 @@ const QuestionCollapsible = () => {
                       <p style={{ fontWeight: "700", color: "#4CAF50" }}>Solution</p>
                       <div className="correction">
                         <p>{selectedQuestion.answer}</p>
-                        <div className="thumbsup">
+                        {/* <div className="thumbsup">
                           <span>
                             <GoThumbsup />
                             Helpful
@@ -390,7 +390,7 @@ const QuestionCollapsible = () => {
                             <GoThumbsdown />
                             Not Helpful
                           </span>
-                        </div>
+                        </div> */}
                       </div>
                     </SolutionBox>
                   )}
