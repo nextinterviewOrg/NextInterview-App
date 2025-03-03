@@ -27,7 +27,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
       user_id: userData.data.user._id,
       priority,
       category,
-      status: "CREATED",
+      status: "Created",
       query_description: query,
     });
     alert(`Priority: ${priority}\nCategory: ${category}\nQuery: ${query}`);
@@ -54,7 +54,8 @@ const SupportQuery = ({ isOpen, onClose }) => {
               <option value="Content">Content</option>
               <option value="Billing">Billing</option>
               <option value="Support">Support</option>
-            </Dropdown>
+              <option value="General">General</option>
+              <option value="Technical">Technical</option>            </Dropdown>
           </div>
 
           <div
