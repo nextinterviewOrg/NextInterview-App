@@ -87,6 +87,7 @@ const SupportQueryListViewFilter = ({ defaultFilters, storedFilters, onApplyFilt
       <FilterSection>
         <FilterTitle>Category</FilterTitle>
         <FilterOptions>
+          
           {Object.keys(filters.categories).map((category) => (
             <FilterOption key={category}>
               <Checkbox
