@@ -45,8 +45,8 @@ const SupportQueryListViewFilter = ({ defaultFilters, storedFilters, onApplyFilt
   };
 
   const handleClearFilters = () => {
+    // Reset filters to default
     setFilters(defaultFilters);
-    // onClose(); // Uncomment this if you want to close modal after clearing
   };
 
   // Close modal if clicked outside
