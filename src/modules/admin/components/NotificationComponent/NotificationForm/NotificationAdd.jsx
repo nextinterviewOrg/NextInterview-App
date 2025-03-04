@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ModalOverlay,
   ModalContent,
@@ -16,19 +16,29 @@ import {
   CloseButton,
 } from "./NotificationAdd.styles";
 import { sendNotification } from "../../../../../api/notificationApi"; // API function
-
+ 
 const NotificationAdd = ({ isOpen, onClose, onSave }) => {
   const [timeVisibility, setTimeVisibility] = useState(true);
-  const [formData, setFormData] = useState({
+  const [isLoading, setIsLoading] = useState(false);
+  const initialFormData = {
     heading: "",
     subText: "",
     trigger: "Schedule",
     timeZone: "",
-    time: "00:00", // Default to "00:00" (updated to match time picker format)
+    time: "00:00",
     frequency: "",
     notificationType: "Only notification",
-  });
-
+  };
+ 
+  const [formData, setFormData] = useState(initialFormData);
+ 
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(initialFormData); // Reset form fields when modal opens
+      setTimeVisibility(initialFormData.trigger === "Schedule");
+    }
+  }, [isOpen]);
+ 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "trigger") {
@@ -43,11 +53,11 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
       [name]: value,
     }));
   };
-
+ 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validate the form data before submitting
+ 
+ 
     if (
       formData.trigger === "Schedule" &&
       (!formData.timeZone || !formData.frequency)
@@ -57,7 +67,8 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
       );
       return;
     }
-
+ 
+    setIsLoading(true);
     try {
       const response = await sendNotification({
         headingText: formData.heading,
@@ -68,19 +79,26 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
         frequency: formData.frequency,
         notificationType: formData.notificationType,
       });
-
-      console.log(response); // Log the response for debugging
-
-      onSave(response); // Optionally call onSave to handle response
-      window.location.reload();
-      onClose(); // Close the modal after successful submission
+ 
+      console.log(response);
+ 
+      onSave(response); // Save and update parent state
+ 
+      alert("Notification sent successfully!");
+ 
+      setTimeout(() => {
+        onClose(); // Close modal after ensuring state updates
+      }, 0);
+ 
     } catch (error) {
       console.error("Error sending notification:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
-
+ 
   if (!isOpen) return null;
-
+ 
   return (
     <ModalOverlay>
       <ModalContent>
@@ -97,7 +115,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               onChange={handleInputChange}
             />
           </FormGroup>
-
+ 
           <FormGroup>
             <Label>Sub text</Label>
             <TextArea
@@ -108,7 +126,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               onChange={handleInputChange}
             />
           </FormGroup>
-
+ 
           <FormGroup>
             <Label>Trigger</Label>
             <Select
@@ -135,7 +153,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
                   <option value="PST">PST</option>
                 </Select>
               </FormGroup>
-
+ 
               <FormGroup>
                 <Label>Select time</Label>
                 <input
@@ -146,7 +164,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
                   required
                 />
               </FormGroup>
-
+ 
               <FormGroup>
                 <Label>Frequency</Label>
                 <Select
@@ -163,7 +181,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               </FormGroup>
             </>
           ) : null}
-
+ 
           <RadioGroup>
             <RadioOption>
               <input
@@ -198,14 +216,19 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               <RadioLabel>Both notification and e-mail</RadioLabel>
             </RadioOption>
           </RadioGroup>
-
+ 
           <ButtonGroup>
-            <Button type="submit">Create</Button>
+            {/* <Button type="submit">{isLoading ? "creating..." : "Create"}</Button> */}
+            <Button type="submit" disabled={isLoading} style={{ cursor: isLoading ? "not-allowed" : "pointer" }}>
+  {isLoading ? "Creating..." : "Create"}
+</Button>
           </ButtonGroup>
         </form>
       </ModalContent>
     </ModalOverlay>
   );
 };
-
+ 
 export default NotificationAdd;
+ 
+ 
