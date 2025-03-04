@@ -133,8 +133,18 @@ const UploadModule = () => {
   // ------------------ TEXT INPUTS ------------------
   const [approxTime, setApproxTime] = useState("");
   const handleApproxTimeChange = (e) => {
-    setApproxTime(e.target.value);
-    setApproxTimeError("");
+    const value = e.target.value;
+
+    // This pattern will allow numbers (including decimal) followed by optional " hours", " hr" etc.
+    const timePattern = /^\d*\.?\d*\s*(hours?|hr)?$/i;
+
+    // Allow input that matches the timePattern (or partial inputs before "hours" or "hr" is typed)
+    if (value === '' || timePattern.test(value)) {
+      setApproxTime(value);
+      setApproxTimeError('');
+    } else {
+      setApproxTimeError('Please enter a valid time (e.g., 2 hours)');
+    }
   };
 
   const [description, setDescription] = useState("");

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   FilterContainer,
   FilterSection,
@@ -12,10 +12,10 @@ import {
   ApplyButton,
   Title,
 } from "./SupportQueryListViewFilter.styles";
-// import Title from "antd/es/skeleton/Title";
 
 const SupportQueryListViewFilter = ({ defaultFilters, storedFilters, onApplyFilters, onClose }) => {
   const [filters, setFilters] = useState(storedFilters || defaultFilters);
+  const modalRef = useRef(null); // Create a reference for the modal container
 
   useEffect(() => {
     setFilters(storedFilters || defaultFilters);
@@ -45,16 +45,32 @@ const SupportQueryListViewFilter = ({ defaultFilters, storedFilters, onApplyFilt
   };
 
   const handleClearFilters = () => {
+    // Reset filters to default
     setFilters(defaultFilters);
   };
 
+  // Close modal if clicked outside
+  const handleOutsideClick = (e) => {
+    if (modalRef.current && !modalRef.current.contains(e.target)) {
+      onClose();
+    }
+  };
+
+  useEffect(() => {
+    // Add event listener to detect outside clicks
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
+
   return (
-    <FilterContainer>
+    <FilterContainer ref={modalRef}> {/* Apply the modalRef to the modal container */}
       <FilterSection>
         <Title>Filters</Title>
         <FilterTitle>Status</FilterTitle>
         <FilterOptions>
-          {["All", "Open", "Pending", "Resolved"].map((status) => (
+          {["All", "Created", "solved"].map((status) => (
             <FilterOption key={status}>
               <Radio
                 type="radio"
@@ -71,6 +87,7 @@ const SupportQueryListViewFilter = ({ defaultFilters, storedFilters, onApplyFilt
       <FilterSection>
         <FilterTitle>Category</FilterTitle>
         <FilterOptions>
+          
           {Object.keys(filters.categories).map((category) => (
             <FilterOption key={category}>
               <Checkbox

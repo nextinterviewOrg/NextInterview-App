@@ -22,7 +22,7 @@ import {
   updateFaq,
 } from "../../../../api/faqApi";
 import theme from "../../../../theme/Theme";
-
+ 
 const FAQ = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [faqs, setFaqs] = useState([]);
@@ -30,7 +30,8 @@ const FAQ = () => {
   const [currentDeleteIndex, setCurrentDeleteIndex] = useState(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentEditIndex, setCurrentEditIndex] = useState(null);
-
+  const [reload, setReload] = useState(false);
+ 
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
@@ -40,10 +41,10 @@ const FAQ = () => {
         console.error("Error fetching faqs:", error);
       }
     };
-
+ 
     fetchFaqs();
-  }, []);
-
+  }, [reload]);
+ 
   const toggleAnswerVisibility = (index) => {
     setFaqs((prevFaqs) =>
       prevFaqs.map((faq, i) =>
@@ -51,56 +52,50 @@ const FAQ = () => {
       )
     );
   };
-
+ 
   const handleEditSave = async (question, answer) => {
     try {
-      const updatedFaq = await updateFaq(faqs[currentEditIndex]._id, {
+      await updateFaq(faqs[currentEditIndex]._id, {
         question,
         answer,
       });
-      setFaqs((prevFaqs) =>
-        prevFaqs.map((faq, i) =>
-          i === currentEditIndex ? { ...faq, question, answer } : faq
-        )
-      );
+      setReload((prev) => !prev);
       setIsEditModalOpen(false);
     } catch (error) {
       console.error("Error updating FAQ:", error);
     }
   };
-
+ 
   const openEditModal = (index) => {
     setCurrentEditIndex(index);
     setIsEditModalOpen(true);
   };
-
+ 
   const handleDelete = async () => {
     try {
       await deleteFaq(faqs[currentDeleteIndex]._id);
-      setFaqs((prevFaqs) =>
-        prevFaqs.filter((_, i) => i !== currentDeleteIndex)
-      );
+      setReload((prev) => !prev);
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error deleting FAQ:", error);
     }
   };
-
+ 
   const openDeleteModal = (index) => {
     setCurrentDeleteIndex(index);
     setIsDeleteModalOpen(true);
   };
-
+ 
   const addQuestion = async (newFaq) => {
     try {
-      const createdFaq = await createFaq(newFaq);
-      setFaqs((prevFaqs) => [...prevFaqs, createdFaq]);
+      await createFaq(newFaq);
+      setReload((prev) => !prev);
       setIsAddModalOpen(false);
     } catch (error) {
       console.error("Error adding FAQ:", error);
     }
   };
-
+ 
   return (
     <>
       <FAQContainer>
@@ -133,12 +128,12 @@ const FAQ = () => {
             </Answer>
           </div>
         ))}
-
+ 
         <AddQuestionButton onClick={() => setIsAddModalOpen(true)}>
           + Add Question
         </AddQuestionButton>
       </FAQContainer>
-
+ 
       {isEditModalOpen && (
         <EditModal
           faq={faqs[currentEditIndex]}
@@ -146,14 +141,14 @@ const FAQ = () => {
           onCancel={() => setIsEditModalOpen(false)}
         />
       )}
-
+ 
       {isDeleteModalOpen && (
         <DeleteModule
           onDelete={handleDelete}
           onCancel={() => setIsDeleteModalOpen(false)}
         />
       )}
-
+ 
       {isAddModalOpen && (
         <AddFaqModal
           onClose={() => setIsAddModalOpen(false)}
@@ -163,5 +158,5 @@ const FAQ = () => {
     </>
   );
 };
-
+ 
 export default FAQ;

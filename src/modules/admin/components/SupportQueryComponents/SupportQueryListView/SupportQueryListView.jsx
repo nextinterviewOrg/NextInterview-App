@@ -35,6 +35,7 @@ const SupportQueryListView = () => {
       Content: false,
       Billing: false,
       General: false,
+      Support: false,
     },
     dateRange: { Today: false, "Last 7 days": false, "Last 30 days": false },
   });
@@ -104,16 +105,54 @@ const SupportQueryListView = () => {
       const matchesCategory =
         Object.keys(categories).every((key) => !categories[key]) ||
         categories[query.category];
-      const matchesDate = Object.keys(dateRange).every(
-        (key) => !dateRange[key]
-      );
+
+        // const matchesDate = Object.keys(dateRange).some(
+        //   (key) => dateRange[key] && isDateInRange(query.submitted_on, key)
+        // );
+
+        // const matchesDate = Object.keys(dateRange).every(
+        //   (key) => !dateRange[key]
+        // );
+
+        const matchesDate = Object.keys(dateRange).every(
+          (key) => !dateRange[key] || isDateInRange(query.submitted_on, key)
+            );
+
 
       return matchesStatus && matchesCategory && matchesDate;
     });
 
+
+
+
     setFilteredQueries(filtered);
     setStoredFilters(filters);
   };
+
+  const isDateInRange = (date, range) => {
+    const submittedDate = new Date(date);
+    const currentDate = new Date();
+  
+    switch (range) {
+      case "Today":
+        return (
+          submittedDate.getDate() === currentDate.getDate() &&
+          submittedDate.getMonth() === currentDate.getMonth() &&
+          submittedDate.getFullYear() === currentDate.getFullYear()
+        );
+      case "Last 7 days":
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(currentDate.getDate() - 7);
+        return submittedDate >= sevenDaysAgo;
+      case "Last 30 days":
+        const thirtyDaysAgo = new Date();
+        thirtyDaysAgo.setDate(currentDate.getDate() - 30);
+        return submittedDate >= thirtyDaysAgo;
+      default:
+        return true;
+    }
+  };
+  
 
   return (
     <Container>
@@ -144,66 +183,72 @@ const SupportQueryListView = () => {
           </TableRow>
         </thead>
         <tbody>
-          {filteredQueries
-            .filter(
-              (query) =>
-                query.user_id?.user_name
-                  ?.toLowerCase()
-                  .includes(searchTerm.toLowerCase()) ||
-                query.user_id?.user_email
-                  ?.toLowerCase()
-                  .includes(searchTerm.toLowerCase())
-            )
-            .map((query, index) => (
-              <TableRow key={index}>
-                <TableCell>
-                  <QueryLink to={`/admin/SupportQuery/${query._id}`}>
-                    {query._id}
-                  </QueryLink>
-                </TableCell>
-                <TableCell>
-                  <NameContainer>
-                    <ProfileImage
-                      src={query.profileImage}
-                      alt={`${query.user_id?.user_name || "User"}'s profile`}
-                    />
+  {filteredQueries.length === 0 ? (
+    <TableRow>
+      <TableCell colSpan="6" style={{ textAlign: "center" }}>
+        No Queries Found
+      </TableCell>
+    </TableRow>
+  ) : (
+    filteredQueries
+      .filter(
+        (query) =>
+          query.user_id?.user_name
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          query.user_id?.user_email
+            ?.toLowerCase()
+            .includes(searchTerm.toLowerCase())
+      )
+      .map((query, index) => (
+        <TableRow key={index}>
+          <TableCell>
+            <QueryLink to={`/admin/SupportQuery/${query._id}`}>
+              {query._id}
+            </QueryLink>
+          </TableCell>
+          <TableCell>
+            <NameContainer>
+              <ProfileImage
+                src={query.profileImage}
+                alt={`${query.user_id?.user_name || "User"}'s profile`}
+              />
+              <NameEmail>
+                <strong>{query.user_id?.user_name || "N/A"}</strong>
+                <br />
+                <span>{query.user_id?.user_email || "N/A"}</span>
+              </NameEmail>
+            </NameContainer>
+          </TableCell>
+          <TableCell>{query.category}</TableCell>
+          <TableCell>
+            <StatusBadge status={query.status}>{query.status}</StatusBadge>
+          </TableCell>
+          <TableCell>
+            {new Date(query.submitted_on).toLocaleDateString()}
+          </TableCell>
+          <TableCell>
+            {query.submitted_on && query.closed_on
+              ? (() => {
+                  const submitted = new Date(query.submitted_on);
+                  const closed = new Date(query.closed_on);
+                  const diffInMs = closed - submitted;
+                  const diffInHours = diffInMs / (1000 * 60 * 60);
+                  const days = Math.floor(diffInHours / 24);
+                  const hours = Math.round(diffInHours % 24);
+                  return days > 0
+                    ? `${days} day${days > 1 ? "s" : ""} ${hours} hr${
+                        hours !== 1 ? "s" : ""
+                      }`
+                    : `${hours} hr${hours !== 1 ? "s" : ""}`;
+                })()
+              : "N/A"}
+          </TableCell>
+        </TableRow>
+      ))
+  )}
+</tbody>
 
-                    <NameEmail>
-                      <strong>{query.user_id?.user_name || "N/A"}</strong>
-                      <br />
-                      <span>{query.user_id?.user_email || "N/A"}</span>
-                    </NameEmail>
-                  </NameContainer>
-                </TableCell>
-                <TableCell>{query.category}</TableCell>
-                <TableCell>
-                  <StatusBadge status={query.status}>
-                    {query.status}
-                  </StatusBadge>
-                </TableCell>
-                <TableCell>
-                  {new Date(query.submitted_on).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {query.submitted_on && query.closed_on
-                    ? (() => {
-                        const submitted = new Date(query.submitted_on);
-                        const closed = new Date(query.closed_on);
-                        const diffInMs = closed - submitted;
-                        const diffInHours = diffInMs / (1000 * 60 * 60);
-                        const days = Math.floor(diffInHours / 24);
-                        const hours = Math.round(diffInHours % 24);
-                        return days > 0
-                          ? `${days} day${days > 1 ? "s" : ""} ${hours} hr${
-                              hours !== 1 ? "s" : ""
-                            }`
-                          : `${hours} hr${hours !== 1 ? "s" : ""}`;
-                      })()
-                    : "N/A"}
-                </TableCell>
-              </TableRow>
-            ))}
-        </tbody>
       </Table>
       {isFilterOpen && (
         <>
