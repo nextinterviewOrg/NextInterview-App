@@ -53,7 +53,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
             >
               <option value="Content">Content</option>
               <option value="Billing">Billing</option>
-              <option value="Support">Support</option>
+              {/* <option value="Support">Support</option> */}
               <option value="General">General</option>
               <option value="Technical">Technical</option>            </Dropdown>
           </div>
