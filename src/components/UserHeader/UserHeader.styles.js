@@ -235,7 +235,7 @@ export const UserEmail = styled.span`
       @media (max-width: ${theme.breakpoints.desktop}) {
         font-size: 10px;
       }
-  }
+
 `;
 
 export const Avatar = styled.img`

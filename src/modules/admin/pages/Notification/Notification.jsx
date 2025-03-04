@@ -18,7 +18,7 @@ import {
   deleteNotification,
   getAllNotifications,
 } from "../../../../api/notificationApi"; // Import the API functions
-
+ 
 const Notifications = () => {
   const [selectedNotificationId, setSelectedNotificationId] = useState(null);
   const [notifications, setNotifications] = useState([]); // Already initialized to an empty array
@@ -27,47 +27,59 @@ const Notifications = () => {
   const [selectedNotificationIndex, setSelectedNotificationIndex] =
     useState(null);
   const [editData, setEditData] = useState(null);
-
+ 
   // Fetch notifications when the component mounts
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await getAllNotifications();
-        setNotifications(response); // Update state with the fetched notifications
+        setNotifications(response.reverse()); // Ensure latest are at the top
       } catch (error) {
         console.error("Failed to fetch notifications", error);
       }
     };
-
+ 
     fetchNotifications();
   }, []);
-
-  const handleSaveNotification = (formData) => {
-    if (editData) {
-      // Update existing notification
-      setNotifications((prev) =>
-        prev.map((notification, index) =>
-          index === selectedNotificationIndex
-            ? { ...formData, createdOn: notification.createdOn }
-            : notification
-        )
-      );
-    } else {
-      // Add new notification
-      setNotifications((prev) => [
-        ...prev,
-        { ...formData, createdOn: new Date(), isActive: false }, // Add isActive property
-      ]);
+ 
+  const handleSaveNotification = async (formData) => {
+    try {
+      if (editData) {
+        // Update existing notification
+        setNotifications((prev) =>
+          prev.map((notification, index) =>
+            index === selectedNotificationIndex
+              ? { ...formData, createdOn: notification.createdOn }
+              : notification
+          )
+        );
+      } else {
+        // Add new notification at the beginning of the array
+        setNotifications((prev) => [
+          { ...formData, createdOn: new Date(), isActive: false },
+          ...prev, // Ensure latest is at the top
+        ]);
+      }
+ 
+      setEditData(null); // Reset edit data
+      setIsModalOpen(false); // Close modal
+ 
+      // Re-fetch notifications to update the UI
+      const updatedNotifications = await getAllNotifications();
+      setNotifications(updatedNotifications.reverse()); // Ensure latest are at the top
+ 
+    } catch (error) {
+      console.error("Error saving notification:", error);
     }
-    setEditData(null); // Reset edit data
   };
-
+ 
+ 
   const handleEditNotification = (index) => {
     setSelectedNotificationIndex(index);
     setEditData(notifications[index]);
     setIsModalOpen(true);
   };
-
+ 
   const handleDeleteNotification = async () => {
     if (selectedNotificationId !== null) {
       try {
@@ -83,17 +95,17 @@ const Notifications = () => {
       }
     }
   };
-
-  const handleToggleSwitch = (index) => {
-    setNotifications((prevNotifications) =>
-      prevNotifications.map((notification, i) =>
-        i === index
-          ? { ...notification, isActive: !notification.isActive }
-          : notification
-      )
-    );
-  };
-
+ 
+const handleToggleSwitch = async (index) => {
+  setNotifications((prevNotifications) =>
+    prevNotifications.map((notification, i) =>
+      i === index
+        ? { ...notification, isActive: !notification.isActive }
+        : notification
+    )
+  );
+};
+ 
   return (
     <Container>
       <>
@@ -105,12 +117,12 @@ const Notifications = () => {
         >
           Create new notification
         </AddButton>
-
+ 
         {notifications && notifications.length > 0 ? (
           <div
             style={{
-              display: "flex",
-              flexDirection: "row",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr 1fr",
               gap: "40px",
             }}
           >
@@ -118,21 +130,25 @@ const Notifications = () => {
               <NotificationCard key={index}>
                 <NotificationHeader>
                   <p>
-                    <strong>Created On</strong> –   
+                    <strong>Created On</strong> –   
                     {new Date(notification.created_on).toLocaleDateString()}
                   </p>
-                  <ToggleSwitch
-                    checked={notification.isActive} // controlled state
-                    onChange={() => handleToggleSwitch(index)} // toggle on/off
-                  />
+                  {notification.Trigger === "Schedule" && (
+                    <ToggleSwitch
+  isActive={notification.isActive} // Pass the isActive state
+  onClick={() => handleToggleSwitch(index)} // Toggle on click
+/>
+ 
+ 
+                  )}
                 </NotificationHeader>
                 <NotificationBody>
-                  <h3>{notification.heading}</h3>
+                  <h3>{notification.headingText}</h3>
                   <p style={{ color: "black" }}>{notification.subText}</p>
                   <p className="highlight">
-                    <strong>Trigger</strong> – {notification.trigger}
+                    <strong>Trigger</strong> – {notification.Trigger}
                   </p>
-                  {notification.trigger === "Schedule" && (
+                  {notification.Trigger === "Schedule" && (
                     <>
                       <p>
                         <strong>Time Zone</strong> – {notification.timeZone}
@@ -147,10 +163,13 @@ const Notifications = () => {
                   )}
                   <p className="small-text">{notification.notificationType}</p>
                 </NotificationBody>
+ 
                 <Actions>
+                  {notification.Trigger === "Schedule" &&   (
                   <ActionButton onClick={() => handleEditNotification(index)}>
                     <MdEdit />
                   </ActionButton>
+                  )}
                   <ActionButton
                     onClick={() => {
                       setSelectedNotificationId(notification._id); // Set the notification ID for deletion
@@ -180,7 +199,7 @@ const Notifications = () => {
             </NotificationContainer>
           </>
         )}
-
+ 
         {isDeleteModalOpen && (
           <DeleteModule
             onDelete={handleDeleteNotification}
@@ -188,7 +207,7 @@ const Notifications = () => {
           />
         )}
       </>
-
+ 
       <NotificationAdd
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -201,5 +220,7 @@ const Notifications = () => {
     </Container>
   );
 };
-
+ 
 export default Notifications;
+ 
+ 

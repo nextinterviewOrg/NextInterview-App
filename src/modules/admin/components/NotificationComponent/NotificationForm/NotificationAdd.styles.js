@@ -13,7 +13,7 @@ export const ModalOverlay = styled.div`
   z-index: 1000;
   padding: 40px 0; /* Add gap from top and bottom */
 `;
-
+ 
 export const ModalContent = styled.div`
   background: #fff;
   border-radius: 10px;
@@ -28,15 +28,15 @@ export const ModalContent = styled.div`
   align-items: stretch; /* Stretch elements to fill width */
   overflow: hidden; /* Prevent content overflow */
 `;
-
-
+ 
+ 
 export const ModalHeader = styled.h2`
   font-size: 1.2rem;
   font-family: ${({ theme }) => theme.fonts.body};
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 20px;
 `;
-
+ 
 export const CloseButton = styled.button`
   position: absolute;
   top: 15px;
@@ -47,23 +47,23 @@ export const CloseButton = styled.button`
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text};
   cursor: pointer;
-
+ 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
   }
 `;
-
+ 
 export const FormGroup = styled.div`
   display: flex;
   align-items: center;
   margin-bottom: 20px;
-
+ 
   label {
     flex: 0.3;
     font-size: 0.8rem;
     color: ${({ theme }) => theme.colors.text};
   }
-
+ 
   input,
   textarea,
   select {
@@ -72,22 +72,22 @@ export const FormGroup = styled.div`
     border: 1px solid ${({ theme }) => theme.colors.textgray};
     border-radius: 5px;
     font-size: 0.8rem;
-
+ 
     &:focus {
       border-color: ${({ theme }) => theme.colors.primary};
       outline: none;
     }
   }
 `;
-
-
-
+ 
+ 
+ 
 export const Label = styled.label`
   font-size: 0.8rem;
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.body};
 `;
-
+ 
 export const RadioGroup = styled.div`
   display: flex;
   flex-direction: column;
@@ -95,16 +95,16 @@ export const RadioGroup = styled.div`
   margin-top: 20px;
   color: ${({ theme }) => theme.colors.success};
 `;
-
+ 
 export const RadioOption = styled.div`
   display: flex;
   align-items: center;
-
-  
+ 
+ 
   color: ${({ theme }) => theme.colors.success};
-  
+ 
 `;
-
+ 
 export const RadioLabel = styled.label`
   margin-left: 8px;
   font-size: 0.8rem;
@@ -116,27 +116,27 @@ export const Input = styled.input`
   font-family: ${({ theme }) => theme.fonts.body};
   height: 20px; /* Add a fixed height */
 `;
-
+ 
 export const TextArea = styled.textarea`
   width: 100%;
   resize: none;
   font-family: ${({ theme }) => theme.fonts.body};
   height: 40px; /* Add a fixed height */
 `;
-
+ 
 export const Select = styled.select`
   width: 100%;
   font-family: ${({ theme }) => theme.fonts.body};
   height: 40px; /* Add a fixed height */
 `;
-
+ 
 export const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
 `;
-
-
+ 
+ 
 export const Button = styled.button`
   padding: 10px 20px;
   font-size: 1rem;
@@ -144,15 +144,15 @@ export const Button = styled.button`
   background-color: ${({ theme }) => theme.colors.secondary};
   border: none;
   border-radius: 5px;
-  cursor: pointer;
-  
+  // cursor: pointer;
+ 
   font-family: ${({ theme }) => theme.fonts.body};
-
+ 
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};
   }
 `;
-
+ 
 export const TimePickerStyled = styled(TimePicker)`
   width: 100%;
   padding: 10px;
@@ -160,9 +160,10 @@ export const TimePickerStyled = styled(TimePicker)`
   border-radius: 5px;
   font-size: 0.8rem;
   margin-top: 8px;
-
+ 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary};
     outline: none;
   }
 `;
+ 

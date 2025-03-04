@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+ 
 export const Container = styled.div`
   padding: 20px;
   font-family: ${({ theme }) => theme.fonts.body};
@@ -9,7 +9,7 @@ export const Container = styled.div`
   gap: 20px;
   background-color: ${({ theme }) => theme.colors.light};
 `;
-
+ 
 export const NotificationCard = styled.div`
   background: ${({ theme }) => theme.colors.light};
   border-radius: 12px;
@@ -19,15 +19,15 @@ export const NotificationCard = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  position: relative;
-  width: 40%;
+  // position: relative;
+  width: 90%;
   margin-left: 2px;
   gap: 10px;
-
+ 
   &:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
-
+ 
   @media (max-width: 768px) {
     width: 90%;
   }
@@ -35,27 +35,30 @@ export const NotificationCard = styled.div`
     width: 90%;
   }
 `;
-
+ 
 export const NotificationHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+ 
   p {
     margin: 0;
     font-size: 14px;
     color: ${({ theme }) => theme.colors.textgray};
   }
 `;
-
+ 
 export const ToggleSwitch = styled.div`
   width: 40px;
   height: 20px;
-  background: ${({ theme }) => theme.colors.secondary};
+  background: ${({ theme, isActive }) =>
+    isActive ? theme.colors.bluetext : theme.colors.sidebarHoverBgColor};
   border-radius: 20px;
   position: relative;
-
-  &:after {
+  cursor: pointer;
+  transition: background 0.2s;
+ 
+  &:before {
     content: "";
     position: absolute;
     width: 16px;
@@ -63,11 +66,12 @@ export const ToggleSwitch = styled.div`
     background: #fff;
     border-radius: 50%;
     top: 2px;
-    left: 23px;
-    transition: 0.2s;
+    left: ${({ isActive }) => (isActive ? "22px" : "2px")};
+    transition: left 0.2s;
   }
 `;
-
+ 
+ 
 export const NotificationBody = styled.div`
   padding: 15px 0;
   border-top: 1px solid ${({ theme }) => theme.colors.textgray};
@@ -75,31 +79,32 @@ export const NotificationBody = styled.div`
   flex-direction: column;
   gap: 10px;
   width: 60%;
-
+  height: 170px;
+ 
   h3 {
     margin: 0;
     font-size: 18px;
     font-weight: bold;
     color: ${({ theme }) => theme.colors.text};
   }
-
+ 
   p {
     margin: 0;
     font-size: 14px;
     color: ${({ theme }) => theme.colors.textgray};
-
+ 
     &.highlight {
       font-weight: bold;
       color: ${({ theme }) => theme.colors.textgray};
     }
-
+ 
     &.small-text {
       font-size: 12px;
       color: ${({ theme }) => theme.colors.textgray};
     }
   }
 `;
-
+ 
 export const ActionButton = styled.button`
   background: ${({ theme }) => theme.colors.light};
   border: 1px solid ${({ theme }) => theme.colors.textgray};
@@ -109,17 +114,17 @@ export const ActionButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-
+ 
   &:hover {
     background: ${({ theme }) => theme.colors.primaryLight};
   }
-
+ 
   svg {
     font-size: 16px;
     color: ${({ theme }) => theme.colors.text};
   }
 `;
-
+ 
 export const AddButton = styled.button`
   padding: 10px 20px;
   font-size: 14px;
@@ -134,17 +139,17 @@ export const AddButton = styled.button`
   display: flex;
   margin-left: auto; /* Ensures it aligns to the right */
   //   justify-content: flex-end;
-
+ 
   &:hover {
     background: ${({ theme }) => theme.colors.secondary};
   }
 `;
-
+ 
 export const Actions = styled.div`
   display: flex;
   gap: 10px;
 `;
-
+ 
 export const NotificationContainer = styled.div`
   font-family: ${({ theme }) => theme.fonts.body};
   display: flex;
@@ -154,24 +159,26 @@ export const NotificationContainer = styled.div`
   height: 60vh;
   gap: 20px;
   background-color: ${({ theme }) => theme.colors.light};
-
+ 
   .bellicon {
     height: 200px;
     width: 200px;
   }
-
+ 
   .nonotifications {
     font-size: 20px;
     color: ${({ theme }) => theme.colors.textgray};
     margin: 0;
   }
 `;
-
+ 
 export const CreatedNotification = styled.div`
   margin-left: 40px;
-
+ 
   .createButton {
     display: flex;
     justify-content: flex-end;
   }
 `;
+ 
+ 

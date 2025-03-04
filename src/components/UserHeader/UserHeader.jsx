@@ -156,7 +156,7 @@ const UserHeader = ({ title }) => {
   const [loading, setLoading] = useState(false);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notify = [];
-  // const {userId} = useParams();
+  const { userId } = useParams();
   const handleNotifyClick = async () => {
     setLoading(true);
     const cleanedUserId = user.id.replace(/^user_/, ""); // Remove 'user_' prefix
@@ -172,6 +172,26 @@ const UserHeader = ({ title }) => {
   const handleNotifyClickk = () => {
     setIssopen(true);
   };
+
+  const [notificationPosition, setNotificationPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+
+  // const handleNotifyClick = async (event) => {
+  //   setLoading(true);
+  //   const cleanedUserId = user.id.replace(/^user_/, "");
+  //   const userData = await getUserByClerkId(user.id);
+  //   const notifications = await getNotificationByUser(userData.data?.user?._id);
+  //   setNotificationCount(notifications.data);
+  //   setLoading(false);
+
+  //   // Get the position of the bell icon
+  //   const rect = event.target.getBoundingClientRect();
+  //   setNotificationPosition({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX });
+
+  //   setIsNotificationOpen(!isNotificationOpen);
+  // };
 
   const handleClose = () => {
     setIssopen(false);
@@ -206,109 +226,106 @@ const UserHeader = ({ title }) => {
     apiCaller();
   }, [navigate, isSignedIn, isLoaded, user]);
 
-  const NotificationDropdown = ({ notifications }) => {
-    const [localNotifications, setLocalNotifications] = useState(notifications);
+const NotificationDropdown = ({ notifications, onClose }) => {
+  const [localNotifications, setLocalNotifications] = useState([]);
+  const dropdownRef = useRef(null);
 
-    const handleCloseNotification = (index) => {
-      setLocalNotifications(
-        (prevNotifications) => prevNotifications.filter((_, i) => i !== index) // Remove the clicked notification
-      );
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        onClose();
+      }
     };
-    return (
-      <>
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
+    setLocalNotifications([...notifications].reverse()); // Latest notifications on top
+  }, [notifications]);
+
+  const handleCloseNotification = (index) => {
+    setLocalNotifications((prevNotifications) => {
+      const newNotifications = prevNotifications.filter((_, i) => i !== index);
+      return newNotifications;
+    });
+  
+    // setNotificationCount((prevCount) => prevCount.slice(0, index).concat(prevCount.slice(index + 1)));
+  };
+  
+
+  return (
+    <div
+      ref={dropdownRef}
+      style={{
+        position: "absolute",
+        top: "70px",
+        right: "14%",
+        background: "white",
+        border: "1px solid #ddd",
+        borderRadius: "8px",
+        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+        zIndex: 1000,
+        width: "400px",
+        cursor: "pointer",
+        maxHeight: "400px",
+        overflowY: "auto",
+        scrollbarWidth: "none",
+      }}
+    >
+      {localNotifications.length === 0 ? (
         <div
           style={{
-            position: "absolute",
-            right: "14.6%",
-            top: "6.4%",
-            zIndex: "20",
-            border: "2px solid #ddd",
-            width: "15px",
-            height: "15px",
-            transform: "translate(-50%) rotate(45deg)",
-            background: "white",
-          }}
-        ></div>
-        <div
-          style={{
-            position: "absolute",
-            top: "70px", // Adjust the position below the bell icon
-            right: "14%",
-            background: "white",
-            border: "1px solid #ddd ",
-            borderTop: "none",
-            borderRadius: "8px",
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-            zIndex: 1000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
             width: "400px",
-            cursor: "pointer",
             height: "400px",
-            overflowY: "auto",
-            scrollbarWidth: "none",
           }}
         >
-          {localNotifications.length === 0 ? (
-            <div
+          <img src={notification} alt="notification" />
+          <p style={{ fontSize: "16px" }}>No New Notifications</p>
+        </div>
+      ) : (
+        localNotifications.map((notification, index) => (
+          <div
+            key={index}
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              padding: "8px 16px",
+              border: "1px solid #ddd",
+              position: "relative",
+              margin: "10px",
+              borderRadius: "20px",
+            }}
+          >
+            <p style={{ margin: "0", fontSize: "14px", width: "90%" }}>
+              {notification.message}
+            </p>
+            <span
+              onClick={() => handleCloseNotification(index)}
               style={{
+                cursor: "pointer",
+                fontSize: "20px",
+                color: "red",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                width: "100%",
-                height: "100%",
               }}
             >
-              <img src={notification} alt="notification" />
-              <p style={{ fontSize: "16px" }}>No New Notifications </p>
-            </div>
-          ) : (
-            localNotifications.map((notification, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "8px 16px",
-                  border: "1px solid #ddd",
-                  position: "relative",
-                  margin: "10px",
-                  borderRadius: "20px",
-                  // boxShadow: "2px 2px 2px rgba(0, 0, 0, 0.5)",
-                }}
-              >
-                <p
-                  style={{
-                    margin: "0",
-                    fontSize: "14px",
-                    display: "-webKit-box",
-                    // WebkitLineClamp: "1",
-                    // WebkitBoxOrient: "vertical",
-                    // overflow: "hidden",
-                    width: "90%",
-                  }}
-                >
-                  {notification.message}
-                </p>
-                <span
-                  onClick={() => handleCloseNotification(index)}
-                  style={{
-                    cursor: "pointer",
-                    fontSize: "20px",
-                    color: "red",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  &times;
-                </span>
-              </div>
-            ))
-          )}
-        </div>
-      </>
-    );
-  };
+              &times;
+            </span>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
 
   return (
     <>
@@ -319,8 +336,33 @@ const UserHeader = ({ title }) => {
           </div>
           <HeaderRight>
             <IconWrapper>
-              <Icon>
-                <BsBell onClick={handleNotifyClick} title="Notifications" />
+              <Icon style={{ position: "relative" }}>
+                <BsBell
+                  onClick={handleNotifyClick}
+                  title="Notifications"
+                  style={{ fontSize: "24px", cursor: "pointer" }}
+                />
+
+                {notificationCount.length > 0 && (
+                  <span
+                    style={{
+                      position: "absolute",
+                      top: "-3px",
+                      right: "-3px",
+                      background: "red",
+                      color: "white",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      borderRadius: "50%",
+                      width: "14px",
+                      height: "14px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                  </span>
+                )}
               </Icon>
 
               {issopen &&
@@ -411,9 +453,14 @@ const UserHeader = ({ title }) => {
             </div>
           </div>
         )}
+
         {isNotificationOpen && (
-          <NotificationDropdown notifications={notificationCount} />
+          <NotificationDropdown
+            notifications={notificationCount}
+            onClose={() => setIsNotificationOpen(false)}
+          />
         )}
+
         <SupportQuery
           isOpen={isRaiseQueryOpen}
           onClose={() => setIsRaiseQueryOpen(false)}
