@@ -158,6 +158,7 @@ const Users = () => {
       <SendReminder
         isOpen={isReminderModalOpen}
         onClose={handleCloseReminderModal}
+        selectedRows={selectedRows}
       />
     </div>
   );
