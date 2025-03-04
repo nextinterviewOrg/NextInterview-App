@@ -122,21 +122,42 @@ const Button = styled.button`
   }
 `;
 
-const SendReminder = ({ isOpen, onClose }) => {
+import { sendReminder } from "../../../../api/reminderApi";
+import { getUserByClerkId } from "../../../../api/userApi";
+const SendReminder = ({ isOpen, onClose ,selectedRows}) => {
   const [heading, setHeading] = useState("");
   const [subText, setSubText] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("Only notification");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     console.log({
       heading,
       subText,
       deliveryMode,
     });
-    onClose();
+    let userIds=[]
+    try {
+    
+      selectedRows.map(async (row) => {
+        console.log('row',row);
+       const user= await getUserByClerkId(row);
+       console.log('user',user);
+      userIds.push(user.data.user._id)
+    })
+    await sendReminder({
+      heading: heading,
+      subText: subText,
+      notificationType: deliveryMode,
+      user_id: userIds
+    });
+    console.log('Reminder sent successfully');
+      onClose();  // Close modal after sending
+    } catch (error) {
+      console.error("Error sending reminder:", error);
+    }
   };
-
+  
   if (!isOpen) return null;
 
   return (
