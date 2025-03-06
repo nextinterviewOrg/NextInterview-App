@@ -11,17 +11,48 @@ import {
   CloseButton,
 } from "../../components/UserInterview/StartInterview.style";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import { useEffect } from "react";
+import api from "../../../../config/axiosconfig";
+import { getUserByClerkId } from "../../../../api/userApi";
+import { createMockInterviewThread, getAiAssistantbyModuleId, runmockinterviewThread } from "../../../../api/aiMockInterviewApi";
 
-const StartInterview = ({ isOpen, onClose, title }) => {
+const StartInterview = ({ isOpen, onClose, title,course }) => {
   const [module, setModule] = useState("Deep Learning");
   const [mode, setMode] = useState("chat");
   const navigate = useNavigate();
+  const { user, isLoaded, isSignedIn } = useUser();
+  const [threadId, setThreadId] = useState(null);
+  const[assistantId,setAssistantId]=useState(null);
+  const[runId,setRunId]=useState(null);
+  
+  useEffect(() => {
+   const apiCaller = async () => {
+     const userResponse= await getUserByClerkId(user.id);
+     console.log("response user", userResponse);
+     const aiAssistantResponse= await getAiAssistantbyModuleId(course.id);
+     setAssistantId(aiAssistantResponse[0].id);''
+     console.log("response ai", aiAssistantResponse);
+    const threadResponse= await createMockInterviewThread({userId:userResponse.data.user._id});
+    setThreadId(threadResponse.data.id); 
+    console.log("response thread", threadResponse);
+    const runThreadResponse= await runmockinterviewThread({thread_id:threadResponse.data.id,assistantId:aiAssistantResponse[0].id});
+    setRunId(runThreadResponse.data.id);
+    console.log("response run", runThreadResponse);
+
+   }
+   apiCaller();
+  }, [user, navigate]);
+
 
   const handleStartInterview = () => {
+    if(!assistantId||!threadId||!runId){
+      return
+    }
     if (mode === "voice") {
-      navigate("/voicemode");
+      navigate("/voicemode",{state:{threadId:threadId,assistantId:assistantId,runId:runId}});
     } else {
-      navigate("/chatmode");
+      navigate("/chatmode",{state:{threadId:threadId,assistantId:assistantId,runId:runId}});
     }
   };
 
