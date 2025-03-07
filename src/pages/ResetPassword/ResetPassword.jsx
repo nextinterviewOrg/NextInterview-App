@@ -20,6 +20,8 @@ import {
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
 import { useSignIn, SignedOut } from "@clerk/clerk-react";
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from "react-icons/ai";
+import MessageStatus from "../MessageStatus/MessageStatus";
+import { Message } from "../passwordresetsuccessful/ResetSuccessful.styles";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -31,6 +33,9 @@ const ResetPassword = () => {
   const [verificationCode, setVerificationCode] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
   const { isLoaded, signIn, user, setActive } = useSignIn();
+  const [message, setMessage] = useState(null); // Message to show
+  const [messageType, setMessageType] = useState(null);
+  const [isCodeEntered, setIsCodeEntered] = useState(false);
 
   const handleGoBack = () => {
     navigate("/forgotpassword");
@@ -46,29 +51,30 @@ const ResetPassword = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
-    if (!password || !confirmPassword) {
-      setFeedbackMessage("Password fields cannot be empty.");
-      setIsSuccess(false);
+  
+    if (!password || !confirmPassword || !verificationCode) {
+      setMessage("Please fill in all fields.");
+      setMessageType("warning");
       return;
     }
-
+  
     if (password !== confirmPassword) {
-      setFeedbackMessage("Passwords do not match.");
-      setIsSuccess(false);
+      setMessage("Passwords do not match.");
+      setMessageType("error");
       return;
     }
-
+  
     if (
       password.length < 8 ||
       !/^(?=.*[a-zA-Z])(?=.*[0-9]).+$/.test(password)
     ) {
-      setFeedbackMessage(
-        "Password must be alphanumeric and at least 8 characters long."
+      setMessage(
+        "Password must be at least 8 characters long and include at least one letter and one number."
       );
-      setIsSuccess(false);
+      setMessageType("error");
       return;
     }
+  
     try {
       await signIn
         ?.attemptFirstFactor({
@@ -77,38 +83,38 @@ const ResetPassword = () => {
           password: password,
         })
         .then((result) => {
-          // Check if 2FA is required
-          console.log("result", result);
           if (result.status === "needs_second_factor") {
-            setSecondFactor(true);
-            setError("");
+            setMessage("Additional verification required.");
+            setMessageType("warning");
           } else if (result.status === "complete") {
-            // Set the active session to
-            // the newly created session (user is now signed in)
             setActive({ session: result.createdSessionId });
-            console.log("user", user);
-            setFeedbackMessage("Password reset successfully.");
-            setIsSuccess(true);
-            navigate("/resetsuccessful");
-
-            // setError('')
+             navigate("/resetsuccessful");
           } else {
             console.log(result);
           }
         })
         .catch((err) => {
           console.error("error", err.errors[0].longMessage);
-          setError(err.errors[0].longMessage);
+          if (err.errors[0].code === "verification_code_invalid") {
+            alert("Incorrect verification code. Please try again.");
+          }
+          setMessage(err.errors[0].longMessage);
+          setMessageType("error");
         });
     } catch (error) {
-      setFeedbackMessage("An error occurred during password reset.");
-      setIsSuccess(false);
-      return;
+      setMessage("An error occurred during password reset.");
+      setMessageType("error");
     }
-
-    // Log or handle the successful reset
-    console.log("Password reset successfully:", password);
   };
+
+  const handleVerificationCodeChange = (e) => {
+    const value = e.target.value;
+    setVerificationCode(value);
+    setIsCodeEntered(value.trim().length > 0); // Enable password fields when a code is entered
+    const onlyNumber = value.replace(/\D/g, ""); // Remove non-numeric characters
+    setVerificationCode(onlyNumber);
+  };
+  
 
   const passwordsMatch =
     password && confirmPassword && password === confirmPassword;
@@ -134,7 +140,8 @@ const ResetPassword = () => {
                   type={"text"}
                   placeholder="Enter your new verification code"
                   value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
+                  onChange={handleVerificationCodeChange}
+                  maxLength={6}
                 />
               </div>
             </InputContainer>
@@ -146,6 +153,7 @@ const ResetPassword = () => {
                   placeholder="Enter your new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  disabled={!isCodeEntered} // Disable input until code is entered
                 />
                 <button
                   type="button"
@@ -185,6 +193,7 @@ const ResetPassword = () => {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={!isCodeEntered} // Disable input until code is entered
                 />
                 <button
                   type="button"
@@ -223,12 +232,7 @@ const ResetPassword = () => {
               )}
             </InputContainer>
 
-            {feedbackMessage &&
-              (isSuccess ? (
-                <Success>{feedbackMessage}</Success>
-              ) : (
-                <Error>{feedbackMessage}</Error>
-              ))}
+            <MessageStatus message={message} messageType={messageType} />
 
             <Button type="submit" onClick={handleFormSubmit}>
               Reset Password

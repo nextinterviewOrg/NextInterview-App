@@ -14,14 +14,11 @@ import {
 import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
 import { Link, useNavigate } from "react-router";
-import { FaEye, FaEyeSlash, FaLinkedin, FaMobileAlt } from "react-icons/fa";
+import { FaLinkedin,  } from "react-icons/fa";
 import {
   useSignIn,
   useSignUp,
   useUser,
-  useAuth,
-  UserProfile,
-  UserButton,
 } from "@clerk/clerk-react";
 
 import { PiEyeLight } from "react-icons/pi";
@@ -29,12 +26,14 @@ import { IoEyeOffOutline } from "react-icons/io5";
 import { CiMobile1 } from "react-icons/ci";
 // Import the new header component
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
-import { getUserByClerkId, getUserBySessionId } from "../../api/userApi";
+import MessageStatus from "../MessageStatus/MessageStatus";
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState(null); // Message to show
+  const [messageType, setMessageType] = useState(null);
   const { isSignedIn, user, isLoaded } = useUser();
   const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
   const {
@@ -54,14 +53,18 @@ const SignUp = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    if (email.trim() && email.includes("@")) {
+    }
 
     if (!email || !password) {
-      alert("Please fill in all fields.");
+      setMessage("Please fill in all fields.");
+      setMessageType("warning");
       return;
     }
 
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      alert("Please enter a valid email address.");
+      setMessage("Please enter a valid email address.");
+      setMessageType("error");
       return;
     }
     try {
@@ -72,44 +75,16 @@ const SignUp = () => {
       });
       console.log("data", data);
       if (data.status === "complete") {
-        // setActive({ sessionId: data.createdSessionId });
-        // setSignInActive(data.createdSessionId);
-        // await setSignInActive({ session: data.createdSessionId });
-        console.log("user", user);
-        // console.log("data.createdSessionId", data.createdSessionId);
-        //   const clerId= await getUserBySessionId({ sessionId: data.createdSessionId });
-        //           console.log("session",clerId);
-        setTimeout(() => {
-          navigate("/validation", {
-            state: {
-              sessionId: data.createdSessionId,
-            },
-          });
-        }, 0);
-
-        //   const data = await getUserByClerkId(user.id);
-        //   console.log("data", data);
-        // try {
-        //   const response = await data.prepareFirstFactor({
-        //     strategy: "email_code",
-        //   })
-        //   console.log("response", response);
-
-        //   navigate("/otpEmail", {
-        //     state: {
-        //       flow: "SIGN_IN",
-        //       // phoneNumber: fullPhoneNumber,
-        //       emailAddress: email
-        //     },
-        //   });
-        // } catch (error) {
-        //   console.log("error otp", error);
-        // }
+        setMessage("Login successful! Redirecting...");
+        setMessageType("success");
+        setTimeout(() => navigate("/validation", { state: { sessionId: data.createdSessionId } }), 5000);
       } else if (data.status === "needs_second_factor") {
         navigate("/verifytotp");
       }
     } catch (error) {
       console.log("Sign-in error:", error);
+      setMessage("Invalid email or password.");
+      setMessageType("error");
     }
 
     console.log("Email:", email);
@@ -125,16 +100,16 @@ const SignUp = () => {
       });
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
+      setMessage("Google sign-up failed. " + (err.errors?.[0]?.message || "Please try again."));
+      setMessageType("error");
     }
+    
   };
+ 
   const handleLinkedInSignIn = async (e) => {
     e.preventDefault();
     console.log("handleLinkedInSignIn");
     try {
-      //  openSignUp( {
-      //    strategy: 'oauth_linkedin_oidc',
-      //  })
-      // const popup = window.open('', 'linkedinPopup', 'width=600,height=600');
       const data = await signIn.authenticateWithRedirect({
         strategy: "oauth_linkedin_oidc",
         redirectUrl: window.location.origin + "/login",
@@ -143,7 +118,8 @@ const SignUp = () => {
       console.log("data", data);
     } catch (err) {
       console.error("LinkedIn Sign-Up Error:", err);
-      alert("LinkedIn sign-up failed. Check console for details.");
+      setMessage("LinkedIn sign-up failed. Check console for details.");
+      setMessageType("error");
     }
   };
 
@@ -228,10 +204,8 @@ const SignUp = () => {
                 Forgot Password ?
               </Link>
             </div>
-            <p style={{ margin: "0", textAlign: "center" }}>
-              Invalid email or password
-            </p>
-            <Button type="submit">Log In</Button>
+            <MessageStatus message={message} messageType={messageType} />
+            <Button message={!!message} type="submit">Log In</Button>
 
             <AlternativeLogin>
               <Link
@@ -276,3 +250,4 @@ const SignUp = () => {
 };
 
 export default SignUp;
+  
