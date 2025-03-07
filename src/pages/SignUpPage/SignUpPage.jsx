@@ -10,13 +10,15 @@ import {
   LinkedInButton,
   Footer,
   Signupage,
+  MessageCard
 } from "../SignUp/SignUp.styles";
 import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
 import { Link, useNavigate } from "react-router";
 import { FaLinkedin } from "react-icons/fa";
 import { PiEyeLight } from "react-icons/pi";
-import { IoEyeOffOutline } from "react-icons/io5";
+import { TiWarningOutline } from "react-icons/ti";
+import { IoEyeOffOutline, IoCloseCircleOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
 
 // Import the new header component
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
@@ -28,6 +30,7 @@ import {
   UserProfile,
   UserButton,
 } from "@clerk/clerk-react";
+import MessageStatus from "../MessageStatus/MessageStatus";
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -35,6 +38,8 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+    const [message, setMessage] = useState(null); // Message to show
+    const [messageType, setMessageType] = useState(null);
   const navigate = useNavigate();
   const { openSignUp } = useClerk();
 
@@ -58,15 +63,35 @@ const SignUpPage = () => {
     e.preventDefault();
     const fullPhoneNumber = `+91${phoneNumber.trim()}`;
 
-    if (!email || !password) {
-      alert("Please fill in all fields.");
-      return;
-    }
 
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      alert("Please enter a valid email address.");
+    if (!email || !password || !phoneNumber) {
+      setMessage("Please fill in all fields.");
+      setMessageType("warning");
       return;
     }
+  
+    if (phoneNumber.trim().length !== 10) {
+      setMessage("Please enter a valid 10-digit phone number.");
+      setMessageType("error");
+      return;
+    }
+  
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setMessage("Please enter a valid email address.");
+      setMessageType("error");
+      return;
+    }
+  
+    // Password strength validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setMessage(
+        "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character."
+      );
+      setMessageType("error");
+      return;
+    }
+  
     console.log("Email:", email);
     console.log("Password:", password);
     console.log("Phone Number:", fullPhoneNumber);
@@ -88,7 +113,9 @@ const SignUpPage = () => {
       strategy: "email_code",
     });
     console.log("data2", data2);
-    alert("Sign-up OTP has been sent to your phone number.");
+    setMessage("Registered successfully!, Please verify your phone number.");
+    setMessageType("success");  
+    setTimeout(() => navigate("/verifytotp", { state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email } }), 5000);
     // Navigate to /otp with state
     navigate("/otp", {
       state: {
@@ -97,13 +124,10 @@ const SignUpPage = () => {
         email: email,
       },
     });
-    // console.log('Email:', email);
-    // console.log('Password:', password);
   };
   const handleGoogleSignUp = async (e) => {
     e.preventDefault();
     try {
-      // console.log("handleGoogleSignUp");
       const data = await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: window.location.origin + "/signup", // Optional
@@ -112,15 +136,13 @@ const SignUpPage = () => {
       console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
+      setMessage("Google sign-up failed. Check console for details.");
+      setMessageType("error");
     }
   };
 
   const handleLinkedInSignUp = async () => {
     try {
-      //  openSignUp( {
-      //    strategy: 'oauth_linkedin_oidc',
-      //  })
-      // const popup = window.open('', 'linkedinPopup', 'width=600,height=600');
       const data = await signUp.authenticateWithRedirect({
         strategy: "oauth_linkedin_oidc",
         redirectUrl: window.location.origin + "/signup",
@@ -129,9 +151,11 @@ const SignUpPage = () => {
       console.log("data", data);
     } catch (err) {
       console.error("LinkedIn Sign-Up Error:", err);
-      alert("LinkedIn sign-up failed. Check console for details.");
+      setMessage("LinkedIn sign-up failed. Check console for details.");
+      setMessageType("error");
     }
   };
+
   return (
     <Container>
       <HeaderWithLogo />
@@ -216,10 +240,8 @@ const SignUpPage = () => {
               </div>
             </Input>
 
-            <p style={{ margin: "0", textAlign: "center" }}>
-              Invalid email or password
-            </p>
-            <Button type="submit">Sign Up</Button>
+            <MessageStatus message={message} messageType={messageType}/>
+            <Button message={!!message} type="submit">Sign Up</Button>
 
             <AlternativeLogin></AlternativeLogin>
             <AlternativeLogin>

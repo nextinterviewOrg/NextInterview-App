@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useUser } from '@clerk/clerk-react';
 import { getUserByClerkId, getUserBySessionId } from '../../api/userApi';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Validation from "../../assets/Validating.gif"
 
 export default function ValidationPage() {
   const { isSignedIn, user, isLoaded, sessionId } = useUser();
@@ -51,10 +52,12 @@ export default function ValidationPage() {
 
   // Optional: Show a loading indicator while the user data is being loaded
   if (!isLoaded || !isSignedIn) {
-    return <div>Loading...</div>;
+    return   <div style={{ display: "flex",flexDirection: "column", justifyContent: "center", alignItems: "center" , width:"100%",height:"100vh" }}>Validating...
+    <img src={Validation} alt='loading' style={{width:"200px",height:"200px" }} />
+    </div>;
   }
 
   return (
-    <div>Validating...</div>
+  <></>
   );
 }
