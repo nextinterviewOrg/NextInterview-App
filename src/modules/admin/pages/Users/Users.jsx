@@ -6,6 +6,7 @@ import RestrictUser from "../../components/User/RestrictUser";
 import SendReminder from "../../components/User/SendReminder";
 
 import { getUsers } from "../../../../api/userApi";
+import NotificationModal from "../../../../pages/NotificationModal/NotificationModal";
 
 const Users = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -13,6 +14,8 @@ const Users = () => {
   const [isRestrictModalOpen, setRestrictModalOpen] = useState(false);
   const [isReminderModalOpen, setReminderModalOpen] = useState(false);
   const [userList, setUserList] = useState([]);
+    const [notification, setNotification] = useState({type: "", message: "", isOpen: false});
+  
   useEffect(() => {
     const apiCaller = async () => {
       const response = await getUsers();
@@ -41,6 +44,10 @@ const Users = () => {
     };
     apiCaller();
   }, []);
+
+  const showNotification = (type, message) => {
+    setNotification({ type, message, isOpen: true });
+  };
 
   const users = [
     {
@@ -106,7 +113,7 @@ const Users = () => {
 
   const handleRestrictUserClick = () => {
     if (selectedRows.length === 0) {
-      alert("Please select at least one user to restrict.");
+      showNotification("warning", "Please select at least one user to restrict.");
       return;
     }
     console.log(selectedRows);
@@ -115,7 +122,7 @@ const Users = () => {
 
   const handleSendReminderClick = () => {
     if (selectedRows.length === 0) {
-      alert("Please select at least one user to send a reminder.");
+      showNotification("warning", "Please select at least one user to send a reminder.");
       return;
     }
     setReminderModalOpen(true);
@@ -160,6 +167,13 @@ const Users = () => {
         onClose={handleCloseReminderModal}
         selectedRows={selectedRows}
       />
+
+<NotificationModal
+  type={notification.type}
+  message={notification.message}
+  isOpen={notification.isOpen}
+  onClose={() => setNotification({ type: "", message: "", isOpen: false })}
+/>
     </div>
   );
 };
