@@ -80,7 +80,7 @@ const SignUp = () => {
           5000
         );
       } else if (data.status === "needs_second_factor") {
-        navigate("/verifytotp");
+        // navigate("/verifytotp");
       }
     } catch (error) {
       console.log("Sign-in error:", error);
