@@ -92,8 +92,6 @@ const Editupload = () => {
         whatUsersLearn: data.data.userLearntData
           ? data.data.userLearntData.map((item) => item.learntData)
           : [],
-        imageURL: data.data.imageURL,
-        interviewSampleURL: data.data.interviewSampleURL,
       });
       console.log("data", data.data.imageURL);
       setImageUrl(data.data.imageURL);
