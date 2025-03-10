@@ -56,9 +56,7 @@ const PersonalInfo = () => {
 
     // Validate LinkedIn
     const linkedInRegex = /^https:\/\/(www\.)?linkedin\.com\/.*$/;
-    if (!formValues.linkedIn) {
-      newErrors.linkedIn = "LinkedIn profile link is required.";
-    } else if (!linkedInRegex.test(formValues.linkedIn)) {
+    if (formValues.linkedIn && !linkedInRegex.test(formValues.linkedIn)) {
       newErrors.linkedIn = "Please enter a valid LinkedIn profile link.";
     }
 
@@ -82,7 +80,7 @@ const PersonalInfo = () => {
       const submissionData = {
         user_id: data.data.user._id,
         user_name: formValues.userName,
-        user_linkedin_profile_link: formValues.linkedIn,
+        user_linkedin_profile_link: formValues.linkedIn || null, //stores null if empty
       };
       await createUserProfile(submissionData);
       navigate("/question1");
@@ -132,7 +130,7 @@ const PersonalInfo = () => {
               )}
             </InputGroup>
             <InputGroup>
-              <InputLabel>LinkedIn profile link</InputLabel>
+              <InputLabel>LinkedIn profile link (Optional)</InputLabel>
               <InputField
                 type="text"
                 name="linkedIn"
