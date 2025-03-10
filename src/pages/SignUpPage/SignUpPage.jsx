@@ -95,6 +95,7 @@ const SignUpPage = () => {
       return;
     }
 
+    try{
     console.log("Email:", email);
     console.log("Password:", password);
     console.log("Phone Number:", fullPhoneNumber);
@@ -108,6 +109,18 @@ const SignUpPage = () => {
       email_address: email,
     });
     console.log("datas", datas);
+    if (datas.errors) {
+      const breachedPasswordError = datas.errors.find(
+        (error) => error.code === "form_password_pwned"
+      );
+      if (breachedPasswordError) {
+        setMessage(
+          "This password has been found in a data breach. Please choose a stronger password."
+        );
+        setMessageType("error");
+        return;
+      }
+    }
     const data = await signUp.preparePhoneNumberVerification({
       strategy: "phone_code",
     });
@@ -118,15 +131,60 @@ const SignUpPage = () => {
     console.log("data2", data2);
     setMessage("Registered successfully!, Please verify your phone number.");
     setMessageType("success");
-    // setTimeout(() => navigate("/verifytotp", { state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email } }), 5000);
-    // Navigate to /otp with state
+    setTimeout(
+      () =>
+        navigate("/verifytotp", {
+          state: {
+            flow: "SIGN_UP",
+            phoneNumber: fullPhoneNumber,
+            email: email,
+          },
+        }),
+      5000
+    );
     navigate("/otp", {
-      state: {
-        flow: "SIGN_UP",
-        phoneNumber: fullPhoneNumber,
-        email: email,
-      },
+      state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email },
     });
+  } 
+  catch (err) {
+    console.error("Sign-up Error:", err);
+  
+    if (err.errors) {
+      const breachedPasswordError = err.errors.find(
+        (error) => error.code === "form_password_pwned"
+      );
+      if (breachedPasswordError) {
+        setMessage(
+          "This password has been found in a data breach. Please choose a stronger password."
+        );
+        setMessageType("error");
+        return;
+      }
+  
+      const emailExistsError = err.errors.find(
+        (error) => error.message.includes("email address is taken")
+      );
+      if (emailExistsError) {
+        setMessage("Email already exists. Please try again.");
+        setMessageType("warning");
+        return;
+      }
+  
+      const phoneExistsError = err.errors.find(
+        (error) => error.message.includes("phone number is taken")
+      );
+      if (phoneExistsError) {
+        setMessage("Phone number already exists. Please try again.");
+        setMessageType("warning");
+        return;
+      }
+    }
+  
+    setMessage("Sign-up failed. Please try again.");
+    setMessageType("error");
+  }
+  
+
   };
   const handleGoogleSignUp = async (e) => {
     e.preventDefault();
