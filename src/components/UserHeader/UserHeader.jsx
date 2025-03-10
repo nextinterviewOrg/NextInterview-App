@@ -209,7 +209,6 @@ const UserHeader = ({ title }) => {
 
   const handleLogout = () => {
     // Perform logout actions here (e.g., clearing session, redirecting)
-    alert("Logged out successfully!");
     setIsLogoutModalOpen(false);
   };
   useEffect(() => {
@@ -443,7 +442,6 @@ const UserHeader = ({ title }) => {
                   onClick={() => {
                     signOut();
                     navigate("/login");
-                    alert("Logged out successfully!");
                     handleLogout();
                   }}
                 >

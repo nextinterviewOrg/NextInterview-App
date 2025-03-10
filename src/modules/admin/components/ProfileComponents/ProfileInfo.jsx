@@ -79,7 +79,6 @@ const ProfileInfo = () => {
 
   const handleLogout = () => {
     // Perform logout actions here (e.g., clearing session, redirecting)
-    alert("Logged out successfully!");
   };
 
   return (

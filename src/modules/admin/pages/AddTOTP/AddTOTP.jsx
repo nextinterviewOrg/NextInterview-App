@@ -69,7 +69,7 @@ const AddTOTP = () => {
 
   return (
     <div style={{ marginLeft: "60px" }}>
-      <h1>Setup TOTP (Authenticator App)</h1>
+      <h1>Setup TOTP</h1>
       {error && <p style={{ color: "red" }}>{error}</p>}
       {qrCodeUrl && <QRCodeSVG value={qrCodeUrl} />}
 
@@ -86,13 +86,10 @@ const AddTOTP = () => {
         </>
       ) : (
         <>
-          <p>
-            Scan this QR code with your authenticator app (e.g., Google
-            Authenticator, Authy).
-          </p>
+          <p>Scan this QR code with your authenticator app.</p>
           <input
             type="text"
-            placeholder="Enter code from app"
+            placeholder="Enter Code"
             onChange={(e) => setOtpCode(e.target.value)}
           />
           <button onClick={() => handleVerifyTOTP(otpCode)}>Verify</button>
