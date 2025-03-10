@@ -18,7 +18,6 @@ const SupportQueryStats = () => {
       try {
         const response = await getSupportQueryStats();
         setStats(response);
-        console.log("Response", response);
         setLoading(false);
       } catch (error) {
         setError(error);

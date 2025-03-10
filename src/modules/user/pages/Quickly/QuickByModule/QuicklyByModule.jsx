@@ -21,7 +21,6 @@ const QuicklyByModule = () => {
   useEffect(() => {
     const fetchModuleData = async () => {
       try {
-        console.log("ModuleId", moduleId);
         const response = await getModuleById(moduleId);
         setModuleData(response.data);
         setLoading(false);
@@ -84,21 +83,19 @@ const QuicklyByModule = () => {
                         style={{ margin: "0" }}
                       ></p>
                     </div>
-                   <Link
-                   to={`/user/learning/${moduleId}/topic`}
-                   >
-                   <Button
-                      style={{
-                        position: "absolute",
-                        right: "10px",
-                        bottom: "10px",
-                        width: "auto", // Keep the button width fixed
-                        border: "none",
-                      }}
-                    >
-                      Revisit Subtopic
-                    </Button>
-                   </Link>
+                    <Link to={`/user/learning/${moduleId}/topic`}>
+                      <Button
+                        style={{
+                          position: "absolute",
+                          right: "10px",
+                          bottom: "10px",
+                          width: "auto", // Keep the button width fixed
+                          border: "none",
+                        }}
+                      >
+                        Revisit Subtopic
+                      </Button>
+                    </Link>
                   </div>
                 ))}
               </div>

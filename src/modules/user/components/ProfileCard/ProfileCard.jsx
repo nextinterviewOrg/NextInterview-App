@@ -20,7 +20,6 @@ const ProfileCard = () => {
     await clerk.load();
   };
   loaderFunction();
-  console.log("user", user);
   const [formData, setFormData] = useState({});
   const [imageUrl, setImageUrl] = useState(
     "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
@@ -31,11 +30,9 @@ const ProfileCard = () => {
     const apiCaller = async () => {
       const response = await getUserByClerkId(user.id);
       setUserId(response.data.user._id);
-      console.log("response", response);
       const questionariesResponse = await getUserQuestionariesByUserId(
         response.data.user._id
       );
-      console.log("questionariesResponse", questionariesResponse);
       setFormData({
         username: response.data.user.user_name,
         email: response.data.user.user_email,
@@ -55,9 +52,7 @@ const ProfileCard = () => {
     imageInputRef.current.click();
   };
   const handleImageChange = async (e) => {
-    console.log("function Called", e);
     const file = e.target.files[0];
-    console.log("file", file);
     setProfileFile(file);
     if (file && file.type.startsWith("image/")) {
       //   setButtonDisabled(true);
@@ -67,14 +62,10 @@ const ProfileCard = () => {
         setFormData({ ...formData, profilePhoto: reader.result });
       };
       reader.readAsDataURL(file);
-    } else {
     }
   };
   const handleSave = async () => {
-    console.log("formData", formData);
-    console.log("profileFile", profileFile);
     const formDataSub = new FormData();
-    console.log("profileFile", profileFile);
     formDataSub.append("clerk_id", user.id);
     formDataSub.append("user_name", formData.username);
     if (profileFile) {

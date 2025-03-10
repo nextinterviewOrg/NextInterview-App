@@ -16,7 +16,7 @@ import {
   CloseButton,
 } from "./NotificationAdd.styles";
 import { sendNotification } from "../../../../../api/notificationApi"; // API function
- 
+
 const NotificationAdd = ({ isOpen, onClose, onSave }) => {
   const [timeVisibility, setTimeVisibility] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -29,16 +29,16 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
     frequency: "",
     notificationType: "Only notification",
   };
- 
+
   const [formData, setFormData] = useState(initialFormData);
- 
+
   useEffect(() => {
     if (isOpen) {
       setFormData(initialFormData); // Reset form fields when modal opens
       setTimeVisibility(initialFormData.trigger === "Schedule");
     }
   }, [isOpen]);
- 
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "trigger") {
@@ -53,11 +53,10 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
       [name]: value,
     }));
   };
- 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
- 
- 
+
     if (
       formData.trigger === "Schedule" &&
       (!formData.timeZone || !formData.frequency)
@@ -67,7 +66,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
       );
       return;
     }
- 
+
     setIsLoading(true);
     try {
       const response = await sendNotification({
@@ -79,26 +78,23 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
         frequency: formData.frequency,
         notificationType: formData.notificationType,
       });
- 
-      console.log(response);
- 
+
       onSave(response); // Save and update parent state
- 
+
       alert("Notification sent successfully!");
- 
+
       setTimeout(() => {
         onClose(); // Close modal after ensuring state updates
       }, 0);
- 
     } catch (error) {
       console.error("Error sending notification:", error);
     } finally {
       setIsLoading(false);
     }
   };
- 
+
   if (!isOpen) return null;
- 
+
   return (
     <ModalOverlay>
       <ModalContent>
@@ -115,7 +111,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               onChange={handleInputChange}
             />
           </FormGroup>
- 
+
           <FormGroup>
             <Label>Sub text</Label>
             <TextArea
@@ -126,7 +122,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               onChange={handleInputChange}
             />
           </FormGroup>
- 
+
           <FormGroup>
             <Label>Trigger</Label>
             <Select
@@ -153,7 +149,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
                   <option value="PST">PST</option>
                 </Select>
               </FormGroup>
- 
+
               <FormGroup>
                 <Label>Select time</Label>
                 <input
@@ -164,7 +160,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
                   required
                 />
               </FormGroup>
- 
+
               <FormGroup>
                 <Label>Frequency</Label>
                 <Select
@@ -181,7 +177,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               </FormGroup>
             </>
           ) : null}
- 
+
           <RadioGroup>
             <RadioOption>
               <input
@@ -216,19 +212,21 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               <RadioLabel>Both notification and e-mail</RadioLabel>
             </RadioOption>
           </RadioGroup>
- 
+
           <ButtonGroup>
             {/* <Button type="submit">{isLoading ? "creating..." : "Create"}</Button> */}
-            <Button type="submit" disabled={isLoading} style={{ cursor: isLoading ? "not-allowed" : "pointer" }}>
-  {isLoading ? "Creating..." : "Create"}
-</Button>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+            >
+              {isLoading ? "Creating..." : "Create"}
+            </Button>
           </ButtonGroup>
         </form>
       </ModalContent>
     </ModalOverlay>
   );
 };
- 
+
 export default NotificationAdd;
- 
- 

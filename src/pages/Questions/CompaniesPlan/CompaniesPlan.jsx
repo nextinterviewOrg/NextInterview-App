@@ -60,10 +60,6 @@ const CompaniesPlan = () => {
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Selected Company:", selectedCompany);
-    console.log("Selected Designation:", selectedDesignation);
-    console.log("Selected Interview:", selectedInterview);
-    console.log("Interview Date:", interviewDate);
     const data = await getUserByClerkId(user.id);
 
     const subisstionData = {
@@ -72,7 +68,6 @@ const CompaniesPlan = () => {
       interviewRound: selectedInterview,
       interviewDate: interviewDate,
     };
-    console.log("data", data);
     const submissionData = {
       user_id: data.data.user._id,
       data_interview_scheduled_response: subisstionData,

@@ -13,26 +13,33 @@ import {
   InputBox,
   Profile,
   Sendicon,
-  SendButton
+  SendButton,
 } from "./MockInterviewVoice.style";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
-import processing from "../../../../assets/processing.gif"
+import processing from "../../../../assets/processing.gif";
 import { IoHourglassOutline } from "react-icons/io5";
 import UserHeader from "../../../../components/UserHeader/UserHeader";
 import HeaderWithLogo from "../../../../components/HeaderWithLogo/HeaderWithLogo";
-import { MediaRecorder, register } from 'extendable-media-recorder';
-import { connect } from 'extendable-media-recorder-wav-encoder';
-import RecordRTC from 'recordrtc';
-import * as lamejs from '@breezystack/lamejs';
-import { endInterview, getMockInterviewResponse, runmockinterviewThread, sendUserMessage, speechToText, textToSpeech } from "../../../../api/aiMockInterviewApi";
-import { useUser } from "@clerk/clerk-react"
+import { MediaRecorder, register } from "extendable-media-recorder";
+import { connect } from "extendable-media-recorder-wav-encoder";
+import RecordRTC from "recordrtc";
+import * as lamejs from "@breezystack/lamejs";
+import {
+  endInterview,
+  getMockInterviewResponse,
+  runmockinterviewThread,
+  sendUserMessage,
+  speechToText,
+  textToSpeech,
+} from "../../../../api/aiMockInterviewApi";
+import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 
 const MockInterview = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [audioData, setAudioData] = useState(null);
-  const [audioUrl, setAudioUrl] = useState('');
+  const [audioUrl, setAudioUrl] = useState("");
   const [mediaRecorderRef, setMediaRecorderRef] = useState(null);
   const [audioBlobsRef, setAudioBlobsRef] = useState([]);
   const [capturedStreamRef, setCapturedStreamRef] = useState(null);
@@ -41,9 +48,7 @@ const MockInterview = () => {
   let mediaRecorder = null;
   let audioBlobs = [];
   let capturedStream = null;
-  const [messages, setMessages] = useState([
-  ]);
-
+  const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
   const MAX_WORDS = 50;
@@ -55,61 +60,72 @@ const MockInterview = () => {
   useEffect(() => {
     const apiCaller = async () => {
       setProcessingData(true);
-      console.log("calling 1");
-      console.log("location", location);
-      const response = await getMockInterviewResponse({ thread_id: location.state.threadId, run_id: location.state.runId });
-      console.log("response run", response);
+      const response = await getMockInterviewResponse({
+        thread_id: location.state.threadId,
+        run_id: location.state.runId,
+      });
       let message = response.data.data.map((response) => {
-        return { sender: response.role === "user" ? "M" : "AI", text: response.content[0].text.value, time: new Date(response.created_at).getHours() + ":" + new Date(response.created_at).getMinutes() }
+        return {
+          sender: response.role === "user" ? "M" : "AI",
+          text: response.content[0].text.value,
+          time:
+            new Date(response.created_at).getHours() +
+            ":" +
+            new Date(response.created_at).getMinutes(),
+        };
       });
       message = message.reverse();
-      console.log("messages", message);
       setMessages(message);
       if (message.length == 1) {
         playAudioFromData(message[message.length - 1]);
         setProcessingData(false);
       }
 
-
       // const data = await textToSpeech({
       //   inputText: "I am the terminator Help me out with the mock interview"
       // })
-      // console.log("data", data);
       // const audio = new Audio(data.audio);
       // audio.play();
-      // console.log("data", data," audio", audio);
-    }
+    };
     apiCaller();
   }, [location]);
 
   useEffect(() => {
     const apiCaller = async () => {
       setProcessingData(true);
-      console.log("calling 2");
-      console.log("location", location);
-      const response = await getMockInterviewResponse({ thread_id: location.state.threadId, run_id: runId });
-      console.log("response run", response);
+      const response = await getMockInterviewResponse({
+        thread_id: location.state.threadId,
+        run_id: runId,
+      });
       let message = response.data.data.map((response) => {
-        return { sender: response.role === "user" ? "M" : "AI", text: response.content[0].text.value, time: new Date(response.created_at).getHours() + ":" + new Date(response.created_at).getMinutes() }
+        return {
+          sender: response.role === "user" ? "M" : "AI",
+          text: response.content[0].text.value,
+          time:
+            new Date(response.created_at).getHours() +
+            ":" +
+            new Date(response.created_at).getMinutes(),
+        };
       });
       message = message.reverse();
-      console.log("messages", message);
       setMessages(message);
       playAudioFromData(message[message.length - 1]);
       setProcessingData(false);
-    }
+    };
     apiCaller();
   }, [runId]);
 
   const handleSend = async (message) => {
-    console.log("calling 3");
     setProcessingData(true);
     if (message.trim()) {
-
-      const response = await sendUserMessage({ thread_id: location.state.threadId, message: message });
-      console.log("response run", response);
-      const runThreadResponse = await runmockinterviewThread({ thread_id: location.state.threadId, assistantId: location.state.assistantId });
-      console.log("response run", runThreadResponse);
+      const response = await sendUserMessage({
+        thread_id: location.state.threadId,
+        message: message,
+      });
+      const runThreadResponse = await runmockinterviewThread({
+        thread_id: location.state.threadId,
+        assistantId: location.state.assistantId,
+      });
       setRunId(runThreadResponse.data.id);
       // const newMessage = {
       //   sender: "M",
@@ -126,7 +142,7 @@ const MockInterview = () => {
       const reader = new FileReader();
 
       reader.onloadend = function () {
-        const base64String = reader.result.split(',')[1]; // Get the base64 part of the data URI
+        const base64String = reader.result.split(",")[1]; // Get the base64 part of the data URI
         resolve(base64String);
       };
 
@@ -138,31 +154,27 @@ const MockInterview = () => {
     });
   };
 
-
-
   // Start recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       audioBlobs = [];
       // capturedStream = stream;
-      // console.log("capturedStream", capturedStream);
       // setCapturedStreamRef(capturedStream);
 
       mediaRecorder = new RecordRTC(stream, {
-        type: 'audio',
-        mimeType: 'audio/webm',
+        type: "audio",
+        mimeType: "audio/webm",
         recorderType: RecordRTC.StereoAudioRecorder,
         numberOfAudioChannels: 1,
         desiredSampRate: 16000,
       });
-      console.log("mediaRecorder", mediaRecorder);
 
       mediaRecorder.startRecording();
       setMediaRecorderRef(mediaRecorder);
       setIsRecording(true);
     } catch (error) {
-      console.error('Error accessing the microphone:', error);
+      console.error("Error accessing the microphone:", error);
     }
   };
 
@@ -173,26 +185,21 @@ const MockInterview = () => {
       let audioBlob = mediaRecorderRef.getBlob();
       const mp3Blob = await convertWavToMp3(audioBlob);
       const formData = new FormData();
-      formData.append('speechFile', mp3Blob, 'file.mp3');
+      formData.append("speechFile", mp3Blob, "file.mp3");
       const data = await speechToText(formData);
       returnData = data.data;
       handleSend(data.data.text);
-      console.log("data", data);
     });
 
     await mediaRecorderRef.getDataURL(async (audioUrl) => {
-      console.log("audioUrl", audioUrl);
       setAudioUrl(audioUrl);
       // const audio = new Audio(audioUrl);
 
       // audio.play();
-    })
-    console.log("returnData", returnData);
+    });
     setIsRecording(false);
     return returnData;
   };
-
-
 
   // Convert WAV to MP3
   function convertWavToMp3(wavBlob) {
@@ -201,16 +208,28 @@ const MockInterview = () => {
 
       reader.onload = function () {
         const arrayBuffer = this.result;
-        const wavDecoder = lamejs.WavHeader.readHeader(new DataView(arrayBuffer));
-        const wavSamples = new Int16Array(arrayBuffer, wavDecoder.dataOffset, wavDecoder.dataLen / 2);
-        const mp3Encoder = new lamejs.Mp3Encoder(wavDecoder.channels, wavDecoder.sampleRate, 128);
+        const wavDecoder = lamejs.WavHeader.readHeader(
+          new DataView(arrayBuffer)
+        );
+        const wavSamples = new Int16Array(
+          arrayBuffer,
+          wavDecoder.dataOffset,
+          wavDecoder.dataLen / 2
+        );
+        const mp3Encoder = new lamejs.Mp3Encoder(
+          wavDecoder.channels,
+          wavDecoder.sampleRate,
+          128
+        );
         const mp3Buffer = mp3Encoder.encodeBuffer(wavSamples);
         const mp3Data = mp3Encoder.flush();
-        const mp3BufferWithHeader = new Uint8Array(mp3Buffer.length + mp3Data.length);
+        const mp3BufferWithHeader = new Uint8Array(
+          mp3Buffer.length + mp3Data.length
+        );
         mp3BufferWithHeader.set(mp3Buffer, 0);
         mp3BufferWithHeader.set(mp3Data, mp3Buffer.length);
 
-        const mp3Blob = new Blob([mp3BufferWithHeader], { type: 'audio/mp3' });
+        const mp3Blob = new Blob([mp3BufferWithHeader], { type: "audio/mp3" });
         resolve(mp3Blob);
       };
 
@@ -223,13 +242,9 @@ const MockInterview = () => {
     });
   }
 
-
   // Handle stop and upload flow
   const handleStopRecording = async () => {
     const webmAudioBlob = await stopRecording();
-
-
-
   };
 
   // const sendToBackend = async () => {
@@ -242,7 +257,6 @@ const MockInterview = () => {
   //     //         'Content-Type': 'multipart/form-data',
   //     //       },
   //     //     });
-  //     //     console.log('Audio uploaded successfully:', response.data);
   //     //   } catch (error) {
   //     //     console.error('Error uploading audio:', error);
   //     //   }
@@ -261,8 +275,6 @@ const MockInterview = () => {
       setInput(newText);
     }
   };
-
-
 
   const [timeLeft, setTimeLeft] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
@@ -299,8 +311,8 @@ const MockInterview = () => {
     setAudioPlaying(true);
     if (message.sender === "AI") {
       const data = await textToSpeech({
-        inputText: message.text
-      })
+        inputText: message.text,
+      });
       const audio = new Audio(data.audio);
       audio.play();
       setAudioPlaying(false);
@@ -308,8 +320,11 @@ const MockInterview = () => {
   };
   const handleEndInterview = async () => {
     const userdata = await getUserByClerkId(user.id);
-    const endInterviewData = await endInterview({ user_id: userdata.data.user._id, thread_id: location.state.threadId, assistantId: location.state.assistantId });
-    console.log("Interview Result ", endInterviewData.aiMockInterviewResult);
+    const endInterviewData = await endInterview({
+      user_id: userdata.data.user._id,
+      thread_id: location.state.threadId,
+      assistantId: location.state.assistantId,
+    });
   };
 
   return (
@@ -322,7 +337,10 @@ const MockInterview = () => {
       <Container>
         <Header>
           <TimerBtn isRunning={isRunning}>
-            <IoHourglassOutline /> {timeLeft !== null ? `${Math.floor(timeLeft / 60)}:${timeLeft % 60} mins` : "2:00 mins"}
+            <IoHourglassOutline />{" "}
+            {timeLeft !== null
+              ? `${Math.floor(timeLeft / 60)}:${timeLeft % 60} mins`
+              : "2:00 mins"}
           </TimerBtn>
           <hr style={{ margin: "0" }} />
           <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
@@ -332,48 +350,68 @@ const MockInterview = () => {
 
         <ChatBox>
           {messages.map((msg, index) => {
-
             // if (index === messages.length - 1) {
-            //   console.log("msg", msg);
             //    playAudioFromData(msg);
             // }
             return (
-
               <Message key={index} sender={msg.sender}>
                 <Profile>
                   <Sender sender={msg.sender}>{msg.sender}</Sender>
-                  <span className="realtime" style={{ fontSize: "12px", color: "#888", width: "55px", paddingTop: "5px" }}>
+                  <span
+                    className="realtime"
+                    style={{
+                      fontSize: "12px",
+                      color: "#888",
+                      width: "55px",
+                      paddingTop: "5px",
+                    }}
+                  >
                     {msg.time}
                   </span>
                 </Profile>
                 <Text>{msg.text}</Text>
               </Message>
-            )
+            );
           })}
-          {
-            processingData &&
+          {processingData && (
             <>
-              <Img src={processing} alt="pr" />Processing
+              <Img src={processing} alt="pr" />
+              Processing
             </>
-
-          }
+          )}
         </ChatBox>
-        <InputBox >
-          {audioPlaying ?
-            (<>
-              <Sendicon onClick={() => { startRecording(); console.log("clicked") }} disabled={isRecording} style={{ display: isRecording ? "none" : "block" }}>
-                <BiSolidMicrophone style={{ fontSize: "32px" }} className="inputmic" />
+        <InputBox>
+          {audioPlaying ? (
+            <>
+              <Sendicon
+                onClick={() => {
+                  startRecording();
+                }}
+                disabled={isRecording}
+                style={{ display: isRecording ? "none" : "block" }}
+              >
+                <BiSolidMicrophone
+                  style={{ fontSize: "32px" }}
+                  className="inputmic"
+                />
               </Sendicon>
-              <Sendicon onClick={() => { handleStopRecording(); console.log("clickedm 2") }} disabled={!isRecording} style={{ display: !isRecording ? "none" : "block" }}>
+              <Sendicon
+                onClick={() => {
+                  handleStopRecording();
+                }}
+                disabled={!isRecording}
+                style={{ display: !isRecording ? "none" : "block" }}
+              >
                 Listening
-                <BiSolidMicrophone style={{ fontSize: "32px" }} className="inputmic" />
+                <BiSolidMicrophone
+                  style={{ fontSize: "32px" }}
+                  className="inputmic"
+                />
               </Sendicon>
               <SendButton>Ready to code</SendButton>
-            </>) : (
-              null
-            )}
+            </>
+          ) : null}
         </InputBox>
-
       </Container>
     </>
   );

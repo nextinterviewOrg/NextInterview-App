@@ -25,9 +25,7 @@ const QuestionPage2 = () => {
     setSelectedOption(option);
   };
   const handleClick = async () => {
-    console.log("selectedOption", selectedOption);
     const data = await getUserByClerkId(user.id);
-    console.log("data", data);
     const submissionData = {
       user_id: data.data.user._id,
       data_ai_job_response: selectedOption,

@@ -114,7 +114,6 @@ const EditAddModule = () => {
     if (moduleId) {
       const fetchModuleData = async () => {
         const data = await getModuleById(moduleId);
-        console.log("data", data);
         // setModuleData(data);
         // setTopics(data.data.topicData);
         const moduleTopicData = data.data.topicData.map((topic) => {
@@ -155,7 +154,6 @@ const EditAddModule = () => {
             }),
           };
         });
-        console.log("moduleTopicData", moduleTopicData);
         setTopics(moduleTopicData);
       };
       fetchModuleData();
@@ -316,7 +314,6 @@ const EditAddModule = () => {
     if (file) {
       const previewURL = URL.createObjectURL(file);
       const dataUrl = await uploadFileToFirebase(file, "cheatSheet");
-      console.log(dataUrl);
       setTopics((prevTopics) => {
         const updated = [...prevTopics];
         updated[topicIndex].subtopics[subIndex].cheatSheet = {
@@ -405,7 +402,6 @@ const EditAddModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-    console.log("All topics data:", topics);
 
     const topicData = topics.map((topic) => {
       return {
@@ -445,8 +441,6 @@ const EditAddModule = () => {
       topicData: topicData,
     };
 
-    console.log("sub", submissionData);
-    console.log("id", moduleId);
     const response = await updateModuleById(moduleId, submissionData);
     // const response = await addNewModule(submissionData);
 

@@ -194,7 +194,6 @@ const SignUpPage = () => {
         redirectUrl: window.location.origin + "/signup", // Optional
         redirectUrlComplete: window.location.origin + "/verification", // Where to go after successful sign-up
       });
-      console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
       setMessage("Google sign-up failed. Check console for details.");

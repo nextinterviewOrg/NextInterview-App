@@ -34,7 +34,7 @@ const ModalHeader = styled.div`
 `;
 
 const Title = styled.h3`
-font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.body};
   font-size: 20px;
   margin: 0;
   color: ${({ theme }) => theme.colors.text};
@@ -55,7 +55,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
-font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.body};
   font-size: 14px;
   color: ${({ theme }) => theme.colors.text};
   margin-right: 16px;
@@ -64,7 +64,7 @@ font-family: ${theme.fonts.body};
 `;
 
 const Input = styled.input`
-font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.body};
   padding: 8px;
   border: 1px solid ${({ theme }) => theme.colors.borderblue};
   border-radius: 4px;
@@ -73,7 +73,7 @@ font-family: ${theme.fonts.body};
 `;
 
 const TextArea = styled.textarea`
-font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.body};
   padding: 8px;
   border: 1px solid ${({ theme }) => theme.colors.borderblue};
   border-radius: 4px;
@@ -124,40 +124,31 @@ const Button = styled.button`
 
 import { sendReminder } from "../../../../api/reminderApi";
 import { getUserByClerkId } from "../../../../api/userApi";
-const SendReminder = ({ isOpen, onClose ,selectedRows}) => {
+const SendReminder = ({ isOpen, onClose, selectedRows }) => {
   const [heading, setHeading] = useState("");
   const [subText, setSubText] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("Only notification");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
-      heading,
-      subText,
-      deliveryMode,
-    });
-    let userIds=[]
+    let userIds = [];
     try {
-    
       selectedRows.map(async (row) => {
-        console.log('row',row);
-       const user= await getUserByClerkId(row);
-       console.log('user',user);
-      userIds.push(user.data.user._id)
-    })
-    await sendReminder({
-      heading: heading,
-      subText: subText,
-      notificationType: deliveryMode,
-      user_id: userIds
-    });
-    console.log('Reminder sent successfully');
-      onClose();  // Close modal after sending
+        const user = await getUserByClerkId(row);
+        userIds.push(user.data.user._id);
+      });
+      await sendReminder({
+        heading: heading,
+        subText: subText,
+        notificationType: deliveryMode,
+        user_id: userIds,
+      });
+      onClose(); // Close modal after sending
     } catch (error) {
       console.error("Error sending reminder:", error);
     }
   };
-  
+
   if (!isOpen) return null;
 
   return (

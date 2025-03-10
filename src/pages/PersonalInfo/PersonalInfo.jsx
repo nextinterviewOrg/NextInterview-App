@@ -74,19 +74,15 @@ const PersonalInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("user", user);
 
     if (validateForm()) {
       const data = await getUserByClerkId(user.id);
-      console.log("data", data);
       const submissionData = {
         user_id: data.data.user._id,
         user_name: formValues.userName,
         user_linkedin_profile_link: formValues.linkedIn || null, //stores null if empty
       };
-      // console.log("submissionData", submissionData);
       await createUserProfile(submissionData);
-      console.log("Form submitted successfully:", formValues);
       navigate("/question1");
     }
   };
