@@ -18,6 +18,7 @@ import { FaLinkedin } from "react-icons/fa";
 import { PiEyeLight } from "react-icons/pi";
 import { IoEyeOffOutline } from "react-icons/io5";
 
+
 // Import the new header component
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
 import {
@@ -27,6 +28,7 @@ import {
   useClerk,
   UserProfile,
   UserButton,
+  SignIn,
 } from "@clerk/clerk-react";
 
 const SignUpPage = () => {
@@ -107,7 +109,7 @@ const SignUpPage = () => {
       const data = await signUp.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: window.location.origin + "/signup", // Optional
-        redirectUrlComplete: window.location.origin + "/verification", // Where to go after successful sign-up
+        redirectUrlComplete: window.location.origin + "/validation", // Where to go after successful sign-up
       });
       console.log("data", data);
     } catch (err) {
@@ -124,7 +126,7 @@ const SignUpPage = () => {
       const data = await signUp.authenticateWithRedirect({
         strategy: "oauth_linkedin_oidc",
         redirectUrl: window.location.origin + "/signup",
-        redirectUrlComplete: window.location.origin + "/verification",
+        redirectUrlComplete: window.location.origin + "/validation",
       });
       console.log("data", data);
     } catch (err) {
@@ -136,6 +138,7 @@ const SignUpPage = () => {
     <Container>
       <HeaderWithLogo />
       <UserButton />
+      {/* <SignIn/> */}
       <div
         style={{
           display: "flex",

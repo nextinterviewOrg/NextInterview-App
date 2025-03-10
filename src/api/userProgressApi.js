@@ -7,7 +7,7 @@ export const startModule = async (userId, moduleCode, moduleID) => {
         moduleID: moduleID
     };
     try {
-        const response = await api.get(`/userProgress/startModule`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/startModule`, data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -15,15 +15,16 @@ export const startModule = async (userId, moduleCode, moduleID) => {
     }
 };
 
-export const startTopic = async (userId, moduleCode, topicCode, topicID) => {
+export const startTopic = async (userId,topicCode,topicId, moduleCode, moduleID) => {
     const data = {
         userId: userId,
         moduleCode: moduleCode,
         topicCode: topicCode,
-        topicID: topicID
+        topicId: topicId,
+        // moduleID: moduleID,
     };
     try {
-        const response = await api.get(`/userProgress/startTopic`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/startTopic`, data); 
         return response.data;
     } catch (error) {
         console.log(error);
@@ -31,16 +32,18 @@ export const startTopic = async (userId, moduleCode, topicCode, topicID) => {
     }
 };
 
-export const startSubTopic = async (userId, moduleCode, topicCode, subtopicCode, subtopicId) => {
+export const startSubTopic = async (userId, moduleCode, topicCode,topicId,moduleID, subtopicCode, subtopicId) => {
     const data = {
         userId: userId,
         moduleCode: moduleCode,
         topicCode: topicCode,
+        topicId: topicId,
+        moduleID: moduleID,
         subtopicCode: subtopicCode,
         subtopicId: subtopicId
     };
     try {
-        const response = await api.get(`/userProgress/startSubTopic`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/startSubTopic`, data); 
         return response.data;
     } catch (error) {
         console.log(error);
@@ -54,7 +57,7 @@ export const completeModule = async (userId, moduleCode) => {
         moduleCode
     };
     try {
-        const response = await api.get(`/userProgress/completeModule`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/completeModule`, data); 
         return response.data;
     } catch (error) {
         console.log(error);
@@ -69,7 +72,7 @@ export const completeTopic = async (userId, moduleCode, topicCode) => {
         topicCode
     };
     try {
-        const response = await api.get(`/userProgress/completeTopic`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/completeTopic`, data); 
         return response.data;
     } catch (error) {
         console.log(error);
@@ -85,7 +88,7 @@ export const completeSubTopic = async (userId, moduleCode, topicCode, subtopicCo
         subtopicCode
     };
     try {
-        const response = await api.get(`/userProgress/completeSubTopic`, data); // Replace with your API endpoint
+        const response = await api.post(`/userProgress/completeSubTopic`, data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -95,7 +98,7 @@ export const completeSubTopic = async (userId, moduleCode, topicCode, subtopicCo
 
 export const getUserProgress = async (userId) => {
     try {
-        const response = await api.get(`/userProgress/getProgress/${userId}`); // Replace with your API endpoint
+        const response = await api.get(`/userProgress/getProgress/${userId}`); 
         return response.data;
     } catch (error) {
         console.log(error);
@@ -105,7 +108,34 @@ export const getUserProgress = async (userId) => {
 
 export const getUserProgressStats = async (userId) => {
     try {
-        const response = await api.get(`/userProgress/getProgressStat/${userId}`); // Replace with your API endpoint
+        const response = await api.get(`/userProgress/getProgressStats/${userId}`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getUserProgressByModule = async (data) => {
+    try {
+        const response = await api.post(`/userProgress/getprogressByUserModule/`,data); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getUserProgressByTopic = async (data) => {
+    try {
+        const response = await api.post(`/userProgress/getprogressByUserTopic/`,data); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getUserProgressBySubTopic = async (data) => {
+    try {
+        const response = await api.post(`/userProgress/getprogressByUserSubtopic/`,data); 
         return response.data;
     } catch (error) {
         console.log(error);

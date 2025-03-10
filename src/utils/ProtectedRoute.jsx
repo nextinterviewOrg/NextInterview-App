@@ -18,15 +18,16 @@ const ProtectedRoute = ({ component: Component, roles }) => {
         const dd=await user?.getSessions();
         let sessionVar;
         if ( !isLoaded || !sessionId) {
-         
+         console.log(" v ",sessionVar,sessionVar==null );
           sessionVar = JSON.parse(localStorage.getItem("sessionId"))||(dd && dd.length > 0 ? dd[0].id : null);
-          console.log(" v ",sessionVar,sessionVar==null );
+         
           
         } else {
 
           console.log(sessionId, "ho ho ho");
           sessionVar = sessionId||(dd && dd.length > 0 ? dd[0].id : null);
         }
+        console.log("ruuning");
         // Get session ID from local storage
        
         if (!sessionVar) {
@@ -54,6 +55,7 @@ const ProtectedRoute = ({ component: Component, roles }) => {
         const userResponse = await getUserByClerkId(userId.userId);
         console.log(userResponse);
         setUserData(userResponse.data.user);
+        console.log("ruunig 1")
         if(roles){
           if (!roles.includes(userResponse.data.user.user_role)) {
             localStorage.clear(); 
@@ -67,7 +69,7 @@ const ProtectedRoute = ({ component: Component, roles }) => {
           }
   
         }
-        
+        console.log("ruunig 2")
           localStorage.clear(); 
           if (userResponse.data.user.user_role == "admin") {
             setLoading(false);

@@ -244,7 +244,7 @@ const UploadModule = () => {
     };
 
     console.log("submissionData", submissionData);
-    navigate("/admin/learning", { state: { data: submissionData } });
+    navigate("/admin/addnewmodule", { state: { data: submissionData } });
   };
 
   return (
@@ -310,7 +310,7 @@ const UploadModule = () => {
               <Input
                 id="moduleName"
                 type="text"
-                maxLength={20}
+                maxLength={100}
                 placeholder="Enter module name..."
                 value={moduleName}
                 onChange={handleModuleNameChange}
