@@ -10,7 +10,7 @@ import {
   LinkedInButton,
   Footer,
   Signupage,
-  MessageCard
+  MessageCard,
 } from "../SignUp/SignUp.styles";
 import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
@@ -18,7 +18,11 @@ import { Link, useNavigate } from "react-router";
 import { FaLinkedin } from "react-icons/fa";
 import { PiEyeLight } from "react-icons/pi";
 import { TiWarningOutline } from "react-icons/ti";
-import { IoEyeOffOutline, IoCloseCircleOutline, IoCheckmarkCircleOutline } from "react-icons/io5";
+import {
+  IoEyeOffOutline,
+  IoCloseCircleOutline,
+  IoCheckmarkCircleOutline,
+} from "react-icons/io5";
 
 // Import the new header component
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
@@ -38,8 +42,8 @@ const SignUpPage = () => {
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-    const [message, setMessage] = useState(null); // Message to show
-    const [messageType, setMessageType] = useState(null);
+  const [message, setMessage] = useState(null); // Message to show
+  const [messageType, setMessageType] = useState(null);
   const navigate = useNavigate();
   const { openSignUp } = useClerk();
 
@@ -63,25 +67,24 @@ const SignUpPage = () => {
     e.preventDefault();
     const fullPhoneNumber = `+91${phoneNumber.trim()}`;
 
-
     if (!email || !password || !phoneNumber) {
       setMessage("Please fill in all fields.");
       setMessageType("warning");
       return;
     }
-  
+
     if (phoneNumber.trim().length !== 10) {
       setMessage("Please enter a valid 10-digit phone number.");
       setMessageType("error");
       return;
     }
-  
+
     if (!/^\S+@\S+\.\S+$/.test(email)) {
       setMessage("Please enter a valid email address.");
       setMessageType("error");
       return;
     }
-  
+
     // Password strength validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(password)) {
@@ -91,7 +94,7 @@ const SignUpPage = () => {
       setMessageType("error");
       return;
     }
-  
+
     console.log("Email:", email);
     console.log("Password:", password);
     console.log("Phone Number:", fullPhoneNumber);
@@ -114,8 +117,8 @@ const SignUpPage = () => {
     });
     console.log("data2", data2);
     setMessage("Registered successfully!, Please verify your phone number.");
-    setMessageType("success");  
-    setTimeout(() => navigate("/verifytotp", { state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email } }), 5000);
+    setMessageType("success");
+    // setTimeout(() => navigate("/verifytotp", { state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email } }), 5000);
     // Navigate to /otp with state
     navigate("/otp", {
       state: {
@@ -240,8 +243,10 @@ const SignUpPage = () => {
               </div>
             </Input>
 
-            <MessageStatus message={message} messageType={messageType}/>
-            <Button message={!!message} type="submit">Sign Up</Button>
+            <MessageStatus message={message} messageType={messageType} />
+            <Button message={!!message} type="submit">
+              Sign Up
+            </Button>
 
             <AlternativeLogin></AlternativeLogin>
             <AlternativeLogin>
