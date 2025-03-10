@@ -15,20 +15,24 @@ import {
   Profile,
   Sendicon,
   CharCount,
-  SendButton
+  SendButton,
 } from "./MockInterviewChat.style";
 import { LuSend } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
-import processing from "../../../../assets/processing.gif"
+import processing from "../../../../assets/processing.gif";
 import { IoHourglassOutline } from "react-icons/io5";
 import UserHeader from "../../../../components/UserHeader/UserHeader";
 import HeaderWithLogo from "../../../../components/HeaderWithLogo/HeaderWithLogo";
-import { endInterview, getMockInterviewResponse, runmockinterviewThread, sendUserMessage } from "../../../../api/aiMockInterviewApi";
+import {
+  endInterview,
+  getMockInterviewResponse,
+  runmockinterviewThread,
+  sendUserMessage,
+} from "../../../../api/aiMockInterviewApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 const MockInterview = () => {
-  const [messages, setMessages] = useState([
-  ]);
+  const [messages, setMessages] = useState([]);
 
   const [input, setInput] = useState("");
   const MAX_WORDS = 50;
@@ -40,43 +44,52 @@ const MockInterview = () => {
   const { isLoaded, user, isSignedIn } = useUser();
   useEffect(() => {
     const apiCaller = async () => {
-      console.log("calling 1");
-      console.log("location", location);
-      const response = await getMockInterviewResponse({ thread_id: location.state.threadId, run_id: location.state.runId });
-      console.log("response run", response);
-      const message = response.data.data.map((response) => {
-        return { sender: response.role === "user" ? "M" : "AI", text: response.content[0].text.value, time: new Date(response.created_at).getHours() + ":" + new Date(response.created_at).getMinutes() }
+      const response = await getMockInterviewResponse({
+        thread_id: location.state.threadId,
+        run_id: location.state.runId,
       });
-      console.log("messages", message);
+      const message = response.data.data.map((response) => {
+        return {
+          sender: response.role === "user" ? "M" : "AI",
+          text: response.content[0].text.value,
+          time:
+            new Date(response.created_at).getHours() +
+            ":" +
+            new Date(response.created_at).getMinutes(),
+        };
+      });
       setMessages(message.reverse());
       setProcessingData(false);
-    }
+    };
     apiCaller();
   }, [location]);
   useEffect(() => {
     const apiCaller = async () => {
-      console.log("calling 2");
-      console.log("location", location);
-      const response = await getMockInterviewResponse({ thread_id: location.state.threadId, run_id: runId });
-      console.log("response run", response);
-      const message = response.data.data.map((response) => {
-        return { sender: response.role === "user" ? "M" : "AI", text: response.content[0].text.value, time: new Date(response.created_at).getHours() + ":" + new Date(response.created_at).getMinutes() }
+      const response = await getMockInterviewResponse({
+        thread_id: location.state.threadId,
+        run_id: runId,
       });
-      console.log("messages", message);
+      const message = response.data.data.map((response) => {
+        return {
+          sender: response.role === "user" ? "M" : "AI",
+          text: response.content[0].text.value,
+          time:
+            new Date(response.created_at).getHours() +
+            ":" +
+            new Date(response.created_at).getMinutes(),
+        };
+      });
       setMessages(message.reverse());
       setProcessingData(false);
-    }
+    };
     apiCaller();
   }, [runId]);
-
-
 
   const countWords = (text) => {
     return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
   };
 
   const handleInputChange = (e) => {
-    console.log("calling 4");
     const newText = e.target.value;
     if (countWords(newText) <= MAX_WORDS) {
       setInput(newText);
@@ -84,14 +97,16 @@ const MockInterview = () => {
   };
 
   const handleSend = async () => {
-    console.log("calling 3");
     setProcessingData(true);
     if (input.trim()) {
-
-      const response = await sendUserMessage({ thread_id: location.state.threadId, message: input });
-      console.log("response run", response);
-      const runThreadResponse = await runmockinterviewThread({ thread_id: location.state.threadId, assistantId: location.state.assistantId });
-      console.log("response run", runThreadResponse);
+      const response = await sendUserMessage({
+        thread_id: location.state.threadId,
+        message: input,
+      });
+      const runThreadResponse = await runmockinterviewThread({
+        thread_id: location.state.threadId,
+        assistantId: location.state.assistantId,
+      });
       setRunId(runThreadResponse.data.id);
       // const newMessage = {
       //   sender: "M",
@@ -106,8 +121,11 @@ const MockInterview = () => {
 
   const handleEndInterview = async () => {
     const userdata = await getUserByClerkId(user.id);
-    const endInterviewData = await endInterview({ user_id: userdata.data.user._id, thread_id: location.state.threadId, assistantId: location.state.assistantId });
-    console.log("Interview Result ", endInterviewData.aiMockInterviewResult);
+    const endInterviewData = await endInterview({
+      user_id: userdata.data.user._id,
+      thread_id: location.state.threadId,
+      assistantId: location.state.assistantId,
+    });
   };
 
   const [timeLeft, setTimeLeft] = useState(null);
@@ -152,7 +170,10 @@ const MockInterview = () => {
       <Container>
         <Header>
           <TimerBtn isRunning={isRunning}>
-            <IoHourglassOutline /> {timeLeft !== null ? `${Math.floor(timeLeft / 60)}:${timeLeft % 60} mins` : "2:00 mins"}
+            <IoHourglassOutline />{" "}
+            {timeLeft !== null
+              ? `${Math.floor(timeLeft / 60)}:${timeLeft % 60} mins`
+              : "2:00 mins"}
           </TimerBtn>
           <hr style={{ margin: "0" }} />
           <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
@@ -165,21 +186,17 @@ const MockInterview = () => {
             <Message key={index} sender={msg.sender}>
               <Profile>
                 <Sender sender={msg.sender}>{msg.sender}</Sender>
-                <span className="realtime">
-                  {msg.time}
-                </span>
+                <span className="realtime">{msg.time}</span>
               </Profile>
               <Text>{msg.text}</Text>
             </Message>
           ))}
-          {
-            processingData &&
+          {processingData && (
             <>
-              <Img src={processing} alt="pr" />Processing
+              <Img src={processing} alt="pr" />
+              Processing
             </>
-
-          }
-
+          )}
         </ChatBox>
         <InputBox>
           <Input
@@ -187,18 +204,21 @@ const MockInterview = () => {
             placeholder="Enter your response here..."
             value={input}
             onChange={handleInputChange}
-          // onKeyDown={(e) => {
-          //   if (e.key === "Enter") {
-          //     e.preventDefault();
-          //     // handleSend();
-          //   }
-          // }}
+            // onKeyDown={(e) => {
+            //   if (e.key === "Enter") {
+            //     e.preventDefault();
+            //     // handleSend();
+            //   }
+            // }}
           />
-          {(setProcessingData) &&
+          {setProcessingData && (
             <Sendicon onClick={handleSend}>
               <LuSend />
-            </Sendicon>}
-          <CharCount>{countWords(input)} / {MAX_WORDS}</CharCount>
+            </Sendicon>
+          )}
+          <CharCount>
+            {countWords(input)} / {MAX_WORDS}
+          </CharCount>
           <SendButton>Ready to code</SendButton>
         </InputBox>
       </Container>

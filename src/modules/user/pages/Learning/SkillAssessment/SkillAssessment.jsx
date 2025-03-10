@@ -42,8 +42,6 @@ const SkillAssessment = ({
           level
         );
 
-        console.log("Fetched Questions:", response);
-
         if (response && response.success && Array.isArray(response.data)) {
           setFilteredQuestions(response.data);
         } else {
@@ -108,7 +106,6 @@ const SkillAssessment = ({
     const newFeedback = {};
     filteredQuestions.forEach((question) => {
       const isCorrect = checkAnswer(question);
-      console.log("Is Correct:", isCorrect);
       newFeedback[question._id] = isCorrect ? "Correct" : "Incorrect";
     });
     setFeedback(newFeedback);

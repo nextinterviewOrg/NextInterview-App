@@ -23,13 +23,10 @@ function Question6() {
   useEffect(() => {
     const apiCaller = async () => {
       const data = await getCompanies();
-      console.log("data", data);
       setCompanyData(data.data);
       const desgnation = await getDesignations();
-      console.log("desgnation", desgnation);
       setDesignationData(desgnation.data);
       const interviewRound = await getInterviewRounds();
-      console.log("interviewRound", interviewRound);
       setInterviewData(interviewRound);
     };
     apiCaller();
@@ -48,7 +45,6 @@ function Question6() {
       });
     });
     setCompanyImageList(datad);
-    console.log("datad", datad);
   };
   const handleDesignationSelect = (designation) => {
     setSelectedDesignation(designation.value);
@@ -103,7 +99,6 @@ function Question6() {
       },
     };
     const responseData = await createUserProfile(submissionData);
-    console.log("data", responseData);
     navigate("/question7");
   };
 

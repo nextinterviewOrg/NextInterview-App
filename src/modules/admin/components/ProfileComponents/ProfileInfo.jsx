@@ -32,7 +32,6 @@ const ProfileInfo = () => {
   useEffect(() => {
     const apiCaller = async () => {
       const response = await getUserByClerkId(user.id);
-      console.log("response", response);
       setProfilePhoto(response.data.clerkUserData.imageUrl);
       setUserName(response.data.user.user_name);
       setEmail(response.data.user.user_email);

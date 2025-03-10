@@ -110,14 +110,12 @@ function Question7() {
         topics: companyDetail.selectedTopics,
       };
     });
-    console.log("pastData", pastData);
     const submissionData = {
       user_id: data.data.user._id,
       data_past_interview_response: pastData,
     };
 
     const responseData = await createUserProfile(submissionData);
-    console.log("data", responseData);
     navigate("/question8", { state: { backLink: "/question7" } });
   };
 

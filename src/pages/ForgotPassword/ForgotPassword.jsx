@@ -47,7 +47,6 @@ const ForgotPassword = () => {
         strategy: "reset_password_email_code",
         identifier: email,
       });
-      console.log("data", data);
       // setMessage("Password reset email sent. Please
       //
       setMessage("Password reset email sent. Please check your inbox.");

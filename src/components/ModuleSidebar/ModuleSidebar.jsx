@@ -47,11 +47,9 @@ export default function ModuleSidebar({
 
   useEffect(() => {
     setIsExpanded(true);
-    console.log("location Data=>", location.state);
     const apiCaller = async () => {
       try {
         const response = await getModuleById(moduleId);
-        console.log(response.data);
         const data = {
           title: response.data.moduleName,
           topicsList: response.data.topicData.map((item) => {

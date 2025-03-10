@@ -48,8 +48,6 @@ const UploadModule = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const intializeData = () => {
-      console.log("location.state", location.state);
-      // console.log(location.state.data?.userLearntData?.map((item) =>`${item.learntData}`) );
       setImageUrl(location.state.data?.imageURL);
       setModuleImage(location.state.data?.imageURL);
       setModuleName(location.state.data?.moduleName);
@@ -139,11 +137,11 @@ const UploadModule = () => {
     const timePattern = /^\d*\.?\d*\s*(hours?|hr)?$/i;
 
     // Allow input that matches the timePattern (or partial inputs before "hours" or "hr" is typed)
-    if (value === '' || timePattern.test(value)) {
+    if (value === "" || timePattern.test(value)) {
       setApproxTime(value);
-      setApproxTimeError('');
+      setApproxTimeError("");
     } else {
-      setApproxTimeError('Please enter a valid time (e.g., 2 hours)');
+      setApproxTimeError("Please enter a valid time (e.g., 2 hours)");
     }
   };
 
@@ -242,8 +240,6 @@ const UploadModule = () => {
       courseOverview: courseOverview,
       userLearntData: whatUsersLearn.map((item) => ({ learntData: item })),
     };
-
-    console.log("submissionData", submissionData);
     navigate("/admin/learning", { state: { data: submissionData } });
   };
 

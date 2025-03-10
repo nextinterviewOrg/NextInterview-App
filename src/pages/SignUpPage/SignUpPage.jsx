@@ -95,10 +95,6 @@ const SignUpPage = () => {
       return;
     }
 
-    console.log("Email:", email);
-    console.log("Password:", password);
-    console.log("Phone Number:", fullPhoneNumber);
-
     const datas = await signUp.create({
       phoneNumber: fullPhoneNumber,
       password: password,
@@ -107,7 +103,6 @@ const SignUpPage = () => {
       // username: username,
       email_address: email,
     });
-    console.log("datas", datas);
     const data = await signUp.preparePhoneNumberVerification({
       strategy: "phone_code",
     });
@@ -136,7 +131,6 @@ const SignUpPage = () => {
         redirectUrl: window.location.origin + "/signup", // Optional
         redirectUrlComplete: window.location.origin + "/verification", // Where to go after successful sign-up
       });
-      console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
       setMessage("Google sign-up failed. Check console for details.");

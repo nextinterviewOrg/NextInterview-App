@@ -154,20 +154,6 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
     } else if (durationUnit === "Day") {
       endDate.setFullYear(startDate.getDate() + duration);
     }
-    console.log({
-      clerk_ids: selectedRows,
-      startDate: startDate,
-      endDate: endDate,
-      reason: reason,
-      remarks: remarks,
-    });
-    console.log({
-      selectedRows,
-      reason,
-      remarks,
-      duration,
-      durationUnit,
-    });
     await restrictUser({
       clerk_ids: selectedRows,
       startDate: startDate,

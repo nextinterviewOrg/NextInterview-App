@@ -10,30 +10,12 @@ export default function ValidationPage() {
   const location = useLocation();
 
   useEffect(() => {
-    // Only run the effect if the user is signed in and the user data has been loaded
     const apiCaller = async () => {
-      console.log("location", location);
-      console.log(
-        "isSignedIn",
-        isSignedIn,
-        "user",
-        user,
-        "isLoaded",
-        isLoaded,
-        "sessionId",
-        sessionId
-      );
-      // if (isSignedIn && isLoaded && user) {
-      //   console.log("User:", user, "Session ID:", sessionId);
-
       try {
-        console.log("location", location.state);
         const clerId = await getUserBySessionId({
           sessionId: location.state.sessionId,
         });
-        console.log(clerId);
         const data = await getUserByClerkId(clerId.userId);
-        console.log("hehe", data.data);
         localStorage.setItem(
           "sessionId",
           JSON.stringify(location.state.sessionId)
@@ -47,7 +29,6 @@ export default function ValidationPage() {
         } else if (data.data.user.user_role === "admin") {
           navigate("/admin");
         }
-        // console.log(data.data.user.user_role ,"mslksk");
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

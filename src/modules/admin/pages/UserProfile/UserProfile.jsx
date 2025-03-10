@@ -35,11 +35,14 @@ export default function UserProfile() {
   const location = useLocation();
   const clerkID = location.state.clerkId;
   const [clekId, setClerkId] = useState(clerkID);
-  const [notification, setNotification] = useState({type: "", message: "", isOpen: false});
+  const [notification, setNotification] = useState({
+    type: "",
+    message: "",
+    isOpen: false,
+  });
   useEffect(() => {
     const apiCaller = async () => {
       const response = await getUserByClerkId(clerkID);
-      console.log("response", response);
 
       const userInfoData = {
         name: response.data.clerkUserData.firstName || "Anonymous",
@@ -67,7 +70,11 @@ export default function UserProfile() {
 
   const handleUnrestrictUser = async () => {
     await unrestrictUser({ clerk_ids: [clerkID] });
-    setNotification({ isOpen: true, message: "Restriction removed successfully!", type: "success" });
+    setNotification({
+      isOpen: true,
+      message: "Restriction removed successfully!",
+      type: "success",
+    });
     setShowModal(false);
     setUserInfo((prev) => ({ ...prev, locked: false }));
   };
@@ -80,7 +87,9 @@ export default function UserProfile() {
           type={notification.type}
           message={notification.message}
           isOpen={notification.isOpen}
-          onClose={() => setNotification({ isOpen: false, message: "", type: "" })}
+          onClose={() =>
+            setNotification({ isOpen: false, message: "", type: "" })
+          }
         />
       )}
       {userInfo?.locked && (
@@ -104,10 +113,7 @@ export default function UserProfile() {
               <button style={styles.cancelBtn} onClick={handleCloseModal}>
                 Cancel
               </button>
-              <button
-                style={styles.yesBtn}
-                onClick={handleUnrestrictUser}
-              >
+              <button style={styles.yesBtn} onClick={handleUnrestrictUser}>
                 Yes
               </button>
             </div>

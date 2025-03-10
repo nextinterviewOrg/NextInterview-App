@@ -160,11 +160,8 @@ const UserHeader = ({ title }) => {
   const handleNotifyClick = async () => {
     setLoading(true);
     const cleanedUserId = user.id.replace(/^user_/, ""); // Remove 'user_' prefix
-    console.log("Cleaned User Id:", cleanedUserId);
     const userData = await getUserByClerkId(user.id);
-    console.log("User data", userData);
     const notifications = await getNotificationByUser(userData.data?.user?._id);
-    console.log("Notification Data", notifications.data);
     setNotificationCount(notifications.data);
     setLoading(false);
     setIsNotificationOpen(!isNotificationOpen);
@@ -226,106 +223,110 @@ const UserHeader = ({ title }) => {
     apiCaller();
   }, [navigate, isSignedIn, isLoaded, user]);
 
-const NotificationDropdown = ({ notifications, onClose }) => {
-  const [localNotifications, setLocalNotifications] = useState([]);
-  const dropdownRef = useRef(null);
+  const NotificationDropdown = ({ notifications, onClose }) => {
+    const [localNotifications, setLocalNotifications] = useState([]);
+    const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose();
-      }
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (
+          dropdownRef.current &&
+          !dropdownRef.current.contains(event.target)
+        ) {
+          onClose();
+        }
+      };
+
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }, [onClose]);
+
+    useEffect(() => {
+      setLocalNotifications([...notifications].reverse()); // Latest notifications on top
+    }, [notifications]);
+
+    const handleCloseNotification = (index) => {
+      setLocalNotifications((prevNotifications) => {
+        const newNotifications = prevNotifications.filter(
+          (_, i) => i !== index
+        );
+        return newNotifications;
+      });
+
+      // setNotificationCount((prevCount) => prevCount.slice(0, index).concat(prevCount.slice(index + 1)));
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [onClose]);
-
-  useEffect(() => {
-    setLocalNotifications([...notifications].reverse()); // Latest notifications on top
-  }, [notifications]);
-
-  const handleCloseNotification = (index) => {
-    setLocalNotifications((prevNotifications) => {
-      const newNotifications = prevNotifications.filter((_, i) => i !== index);
-      return newNotifications;
-    });
-  
-    // setNotificationCount((prevCount) => prevCount.slice(0, index).concat(prevCount.slice(index + 1)));
-  };
-  
-
-  return (
-    <div
-      ref={dropdownRef}
-      style={{
-        position: "absolute",
-        top: "70px",
-        right: "14%",
-        background: "white",
-        border: "1px solid #ddd",
-        borderRadius: "8px",
-        boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-        zIndex: 1000,
-        width: "400px",
-        cursor: "pointer",
-        maxHeight: "400px",
-        overflowY: "auto",
-        scrollbarWidth: "none",
-      }}
-    >
-      {localNotifications.length === 0 ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexDirection: "column",
-            width: "400px",
-            height: "400px",
-          }}
-        >
-          <img src={notification} alt="notification" />
-          <p style={{ fontSize: "16px" }}>No New Notifications</p>
-        </div>
-      ) : (
-        localNotifications.map((notification, index) => (
+    return (
+      <div
+        ref={dropdownRef}
+        style={{
+          position: "absolute",
+          top: "70px",
+          right: "14%",
+          background: "white",
+          border: "1px solid #ddd",
+          borderRadius: "8px",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
+          zIndex: 1000,
+          width: "400px",
+          cursor: "pointer",
+          maxHeight: "400px",
+          overflowY: "auto",
+          scrollbarWidth: "none",
+        }}
+      >
+        {localNotifications.length === 0 ? (
           <div
-            key={index}
             style={{
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
-              padding: "8px 16px",
-              border: "1px solid #ddd",
-              position: "relative",
-              margin: "10px",
-              borderRadius: "20px",
+              justifyContent: "center",
+              flexDirection: "column",
+              width: "400px",
+              height: "400px",
             }}
           >
-            <p style={{ margin: "0", fontSize: "14px", width: "90%" }}>
-              {notification.message}
-            </p>
-            <span
-              onClick={() => handleCloseNotification(index)}
+            <img src={notification} alt="notification" />
+            <p style={{ fontSize: "16px" }}>No New Notifications</p>
+          </div>
+        ) : (
+          localNotifications.map((notification, index) => (
+            <div
+              key={index}
               style={{
-                cursor: "pointer",
-                fontSize: "20px",
-                color: "red",
                 display: "flex",
+                justifyContent: "space-between",
                 alignItems: "center",
+                padding: "8px 16px",
+                border: "1px solid #ddd",
+                position: "relative",
+                margin: "10px",
+                borderRadius: "20px",
               }}
             >
-              &times;
-            </span>
-          </div>
-        ))
-      )}
-    </div>
-  );
-};
+              <p style={{ margin: "0", fontSize: "14px", width: "90%" }}>
+                {notification.message}
+              </p>
+              <span
+                onClick={() => handleCloseNotification(index)}
+                style={{
+                  cursor: "pointer",
+                  fontSize: "20px",
+                  color: "red",
+                  display: "flex",
+                  alignItems: "center",
+                }}
+              >
+                &times;
+              </span>
+            </div>
+          ))
+        )}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -360,8 +361,7 @@ const NotificationDropdown = ({ notifications, onClose }) => {
                       alignItems: "center",
                       justifyContent: "center",
                     }}
-                  >
-                  </span>
+                  ></span>
                 )}
               </Icon>
 

@@ -21,9 +21,7 @@ const UserLearningModule = () => {
   useEffect(() => {
     const apiCaller = async () => {
       try {
-        console.log("ModuleId", moduleId);
         const response = await getModuleById(moduleId);
-        console.log(response);
         const data = {
           title: response.data.moduleName,
           topics: response.data.topicData.length,
@@ -44,7 +42,6 @@ const UserLearningModule = () => {
           }),
           imageUrl: response.data?.imageURL, // Course Image URL
         };
-        console.log("data", data);
         setCourseData(data);
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -14,12 +14,8 @@ import {
 import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
 import { Link, useNavigate } from "react-router";
-import { FaLinkedin,  } from "react-icons/fa";
-import {
-  useSignIn,
-  useSignUp,
-  useUser,
-} from "@clerk/clerk-react";
+import { FaLinkedin } from "react-icons/fa";
+import { useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 
 import { PiEyeLight } from "react-icons/pi";
 import { IoEyeOffOutline } from "react-icons/io5";
@@ -73,11 +69,16 @@ const SignUp = () => {
         strategy: "password",
         password: password,
       });
-      console.log("data", data);
       if (data.status === "complete") {
         setMessage("Login successful! Redirecting...");
         setMessageType("success");
-        setTimeout(() => navigate("/validation", { state: { sessionId: data.createdSessionId } }), 5000);
+        setTimeout(
+          () =>
+            navigate("/validation", {
+              state: { sessionId: data.createdSessionId },
+            }),
+          5000
+        );
       } else if (data.status === "needs_second_factor") {
         navigate("/verifytotp");
       }
@@ -86,9 +87,6 @@ const SignUp = () => {
       setMessage("Invalid email or password.");
       setMessageType("error");
     }
-
-    console.log("Email:", email);
-    console.log("Password:", password);
   };
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
@@ -100,22 +98,22 @@ const SignUp = () => {
       });
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
-      setMessage("Google sign-up failed. " + (err.errors?.[0]?.message || "Please try again."));
+      setMessage(
+        "Google sign-up failed. " +
+          (err.errors?.[0]?.message || "Please try again.")
+      );
       setMessageType("error");
     }
-    
   };
- 
+
   const handleLinkedInSignIn = async (e) => {
     e.preventDefault();
-    console.log("handleLinkedInSignIn");
     try {
       const data = await signIn.authenticateWithRedirect({
         strategy: "oauth_linkedin_oidc",
         redirectUrl: window.location.origin + "/login",
         redirectUrlComplete: window.location.origin + "/verification",
       });
-      console.log("data", data);
     } catch (err) {
       console.error("LinkedIn Sign-Up Error:", err);
       setMessage("LinkedIn sign-up failed. Check console for details.");
@@ -205,7 +203,9 @@ const SignUp = () => {
               </Link>
             </div>
             <MessageStatus message={message} messageType={messageType} />
-            <Button message={!!message} type="submit">Log In</Button>
+            <Button message={!!message} type="submit">
+              Log In
+            </Button>
 
             <AlternativeLogin>
               <Link
@@ -250,4 +250,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-  

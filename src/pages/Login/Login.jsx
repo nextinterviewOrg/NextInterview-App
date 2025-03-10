@@ -50,7 +50,6 @@ const Login = () => {
     // Format with +91 for India
     const fullPhoneNumber = `+91${phoneNumber.trim()}`;
     if (location.state.flow === "SIGN_UP") {
-      console.log("flow", location.state.flow);
       try {
         await signUp.create({
           phoneNumber: fullPhoneNumber,
@@ -71,11 +70,9 @@ const Login = () => {
           },
         });
       } catch (signUpError) {
-        console.log("Sign-up error:", signUpError);
         alert("Something went wrong while sending OTP. Please try again.");
       }
     } else if (location.state.flow === "SIGN_IN") {
-      console.log("flow", location.state.flow);
       try {
         // 1) Try Sign In first
         await signIn.create({

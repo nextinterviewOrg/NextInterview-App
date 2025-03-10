@@ -13,7 +13,7 @@ import {
   ModalContent,
   // CloseButton,
   TryItYourself,
-  TryButton
+  TryButton,
 } from "./UserModuleTopic.style";
 import { SlLike } from "react-icons/sl";
 import { SlDislike } from "react-icons/sl";
@@ -107,12 +107,10 @@ const UserModuleTopic = () => {
     setShowModal(false);
   };
   useEffect(() => {
-    console.log("location Data=>", location.state);
     const apiCaller = async () => {
       try {
         const response = await getModuleById(moduleId);
         setModuleName(response.data.moduleName);
-        console.log("RR", response.data);
         const data = {
           title: response.data.moduleName,
           topicsList: await Promise.all(
@@ -124,8 +122,6 @@ const UserModuleTopic = () => {
                     const gptSumm = await summariseTopic({
                       message: subitem.subtopicContent,
                     });
-                    console.log(gptSumm.data);
-                    console.log("gpt ", subitem.subtopicName);
                     return {
                       title: subitem.subtopicName,
                       completed: subitem.completed,
@@ -141,7 +137,6 @@ const UserModuleTopic = () => {
           ),
         };
         setCourseData(data);
-        
       } catch (error) {
         console.log(error);
       }
@@ -152,14 +147,12 @@ const UserModuleTopic = () => {
   useEffect(() => {
     setDelayedText([]);
     setShowSummary(false);
-    console.log("location Data=>", location.state);
     if (!location.state) return; // Ensure location.state is defined
 
     const apiCaller = async () => {
       try {
         // Make sure you're calling the API correctly and checking the response
         const response = await getModuleById(moduleId);
-        console.log("", response.data);
 
         // Ensure the response is valid before setting the state
         const data = {
@@ -173,7 +166,6 @@ const UserModuleTopic = () => {
                     const gptSumm = await summariseTopic({
                       message: subitem.subtopicContent,
                     });
-                    console.log(subitem.subtopicName, " ", gptSumm.data, " ");
                     return {
                       title: subitem.subtopicName,
                       // completed: subitem.completed,
@@ -194,18 +186,8 @@ const UserModuleTopic = () => {
           data.topicsList?.[location.state.topicIndex]?.subtopics?.[
             location.state.subtopicIndex
           ];
-        console.log("subtoipi ", topic);
         if (topic) {
           setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          console.log("title", topic.title);
-
-          console.log("dfghj sjhbsjbh", {
-            title: topic.title,
-            description: topic.subtopicContent,
-            summary: topic.subtopicSummary,
-            gptSummary: topic.gptSummary,
-            cheatSheetURL: topic.cheatSheetURL || "#",
-          });
           setTopicData([
             {
               title: topic.title,
@@ -236,53 +218,56 @@ const UserModuleTopic = () => {
   const [assessmentParams, setAssessmentParams] = useState({});
   const handleMarkAsCompleted = async () => {
     try {
-      console.log("Fetching module_code...");
-      
       const moduleResponse = await getModuleById(moduleId);
-      console.log("🛠 moduleResponse Full Data:", moduleResponse);
-  
-      if (!moduleResponse || !moduleResponse.data || !moduleResponse.data.module_code) {
+
+      if (
+        !moduleResponse ||
+        !moduleResponse.data ||
+        !moduleResponse.data.module_code
+      ) {
         console.error(" Module data missing!", moduleResponse);
         return;
       }
       const module_code = moduleResponse.data.module_code;
-      console.log("module_code fetched:", module_code);
-  
-    
-      if (!moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
+
+      if (
+        !moduleResponse.data.topicData ||
+        moduleResponse.data.topicData.length === 0
+      ) {
         console.error("No topics found for module_code:", module_code);
         return;
       }
-      console.log(" Available Topics:", moduleResponse.data.topicData);
-  
+
       const topicIndex = location.state?.topicIndex ?? 0;
       const topicData = moduleResponse.data.topicData[topicIndex];
-  
+
       if (!topicData || !topicData.topic_code) {
-        console.error(" topic_code not found. Available Topics:", moduleResponse.data.topicData);
+        console.error(
+          " topic_code not found. Available Topics:",
+          moduleResponse.data.topicData
+        );
         return;
       }
       const topic_code = topicData.topic_code;
-      console.log("topic_code fetched:", topic_code);
-  
+
       // 3️⃣ Ensure subtopicData exists
       if (!topicData.subtopicData || topicData.subtopicData.length === 0) {
         console.error(" No subtopics found for topic_code:", topic_code);
         return;
       }
-      
-      console.log(" Available Subtopics:", topicData.subtopicData);
-  
+
       const subtopicIndex = location.state?.subtopicIndex ?? 0;
       const subtopicData = topicData.subtopicData[subtopicIndex];
-  
+
       if (!subtopicData || !subtopicData.subtopic_code) {
-        console.error(" subtopic_code not found. Available Subtopics:", topicData.subtopicData);
+        console.error(
+          " subtopic_code not found. Available Subtopics:",
+          topicData.subtopicData
+        );
         return;
       }
       const subtopic_code = subtopicData.subtopic_code;
-      console.log("subtopic_code fetched:", subtopic_code);
-  
+
       const params = {
         module_code,
         topic_code,
@@ -290,8 +275,7 @@ const UserModuleTopic = () => {
         question_type: subtopicData.question_type,
         level: subtopicData.level,
       };
-  
-      console.log("Final Skill Assessment Params:", params);
+
       setAssessmentParams(params);
       setShowModal(true);
     } catch (error) {
@@ -300,11 +284,9 @@ const UserModuleTopic = () => {
   };
 
   const handleTryButton = () => {
-        
     navigate(`/user/learning/${moduleName}/topic/tryityourself`);
-    };
-  
-  
+  };
+
   return (
     <Container>
       {/* Render topics and buttons */}
@@ -312,7 +294,6 @@ const UserModuleTopic = () => {
         <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
       </TryItYourself>
       <div>
-        {console.log("topicData inner", topicData)}
         {topicData && (
           <>
             {topicData?.map((topic, index) => (
@@ -477,10 +458,12 @@ const UserModuleTopic = () => {
       {showModal && (
         <ModalOverlay>
           <ModalContent>
-          <SkillAssessment {...assessmentParams} onCloseModal={handleCloseModal} />
+            <SkillAssessment
+              {...assessmentParams}
+              onCloseModal={handleCloseModal}
+            />
             {/* <CloseButton onClick={handleCloseModal}>X</CloseButton> */}
           </ModalContent>
-          
         </ModalOverlay>
       )}
     </Container>

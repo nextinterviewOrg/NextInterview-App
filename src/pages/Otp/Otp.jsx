@@ -136,32 +136,30 @@ const Otp = () => {
     }
 
     try {
-      console.log("flow", flow);
       if (flow === "SIGN_IN") {
         // Attempt signIn
         const result = await signIn.attemptFirstFactor({
           strategy: "phone_code",
           code: otpCode,
         });
-        console.log("result", result);
         localStorage.setItem("session", result.createdSessionId);
         if (result.status === "complete") {
           // Successfully signed in
           await setSignInActive({ session: result.createdSessionId });
           alert("You have successfully signed in!");
-          navigate("/validation", {state: {
-            sessionId: result.createdSessionId,
-          },});
+          navigate("/validation", {
+            state: {
+              sessionId: result.createdSessionId,
+            },
+          });
         } else {
           alert("Incorrect OTP. Please try again.");
         }
       } else if (flow === "SIGN_UP") {
         // Attempt signUp phone verification
-        console.log("otpCode", otpCode);
         const attempt = await signUp.attemptPhoneNumberVerification({
           code: otpCode,
         });
-        console.log("attempt", attempt);
 
         const { verifications, status, createdSessionId } = attempt;
 
@@ -184,7 +182,6 @@ const Otp = () => {
         alert("Unknown flow. Please try again.");
       }
     } catch (error) {
-      console.log("OTP verification error:", error);
       alert("Failed to verify OTP. Please check and try again.");
     }
   };
