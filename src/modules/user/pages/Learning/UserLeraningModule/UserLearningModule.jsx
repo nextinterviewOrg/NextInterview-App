@@ -12,16 +12,31 @@ import { FaCircleChevronRight } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import { getModuleById } from "../../../../../api/addNewModuleApi";
 import { Link } from "react-router-dom";
+import { getUserProgress, startModule } from "../../../../../api/userProgressApi";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../../api/userApi";
 
 const UserLearningModule = () => {
   const [expandedTopic, setExpandedTopic] = useState(null);
   const moduleId = useParams().id;
   const [courseData, setCourseData] = useState({});
+  const [moduleStatus, setModuleStatus] = useState(false);
+  const { isLoaded, user, sessionId } = useUser();
+  const [startModuleData, setStartModuleData] = useState({});
+  const [buttonText, setButtonText] = useState("Resume Learning");
   const navigate = useNavigate();
   useEffect(() => {
     const apiCaller = async () => {
       try {
+        console.log("ModuleId", moduleId);
+        const userData = await getUserByClerkId(user.id);
         const response = await getModuleById(moduleId);
+        console.log(response);
+        setStartModuleData({
+          userId: userData.data.user._id,
+          moduleCode: response.data.module_code,
+          moduleID: response.data._id,
+        });
         const data = {
           title: response.data.moduleName,
           topics: response.data.topicData.length,
@@ -43,6 +58,26 @@ const UserLearningModule = () => {
           imageUrl: response.data?.imageURL, // Course Image URL
         };
         setCourseData(data);
+        const moduleStatusData = await getUserProgress(userData.data.user._id);
+        console.log("moduleStatusData", moduleStatusData);
+        if (moduleStatusData.success === false) {
+          setModuleStatus(false);
+        } else {
+          setModuleStatus(true);
+          const moduleProgressData = moduleStatusData.data.progress.find(
+            (item) => item.moduleCode === response.data.module_code,
+          );
+          console.log("moduleProgressData", moduleProgressData);
+          if (!moduleProgressData) {
+            setModuleStatus(false);
+          } else {
+            if (moduleProgressData.completed === true) {
+              setButtonText("Revise Topics");
+            } else {
+              setButtonText("Resume Learning");
+            }
+          }
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -52,6 +87,74 @@ const UserLearningModule = () => {
 
   const toggleExpand = (index) => {
     setExpandedTopic(expandedTopic === index ? null : index);
+  };
+
+  const handleStartLearning = async () => {
+    const startData = await startModule(startModuleData.userId, startModuleData.moduleCode, startModuleData.moduleID);
+    console.log("startData", startData);
+    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: 0, subtopicIndex: 0 } });
+  };
+  const handleResumeLearning = async () => {
+    const userProgressData = await getUserProgress(startModuleData.userId);
+    console.log("userProgressData", userProgressData);
+    let currentTopicCode = null;
+    let currentSubtopicCode = null;
+    let cuuretTopicIndex = 0;
+    let currentSubtopicIndex = 0;
+    userProgressData.data.progress.map((itemModule) => {
+      if (itemModule.moduleCode === startModuleData.moduleCode) {
+        if (itemModule.progressTopics.length > 0) {
+          currentTopicCode = itemModule.progressTopics[itemModule.progressTopics.length - 1].topicCode;
+          if (itemModule.progressTopics[itemModule.progressTopics.length - 1].progressSubtopics.length > 0) {
+            currentSubtopicCode = itemModule.progressTopics[itemModule.progressTopics.length - 1].progressSubtopics[itemModule.progressTopics[itemModule.progressTopics.length - 1].progressSubtopics.length - 1].subtopicCode;
+          }
+        }
+
+      }
+    })
+    if (currentTopicCode || currentSubtopicCode) {
+
+      const response = await getModuleById(moduleId);
+
+
+      const data = {
+        title: response.data.moduleName,
+        topicsList: await Promise.all(
+          response.data.topicData.map(async (item, indexItem) => {
+            if (item.topic_code === currentTopicCode) {
+              console.log("indexItem", indexItem);
+              cuuretTopicIndex = indexItem;
+            }
+
+            return {
+              title: item.topicName,
+              subtopics: await Promise.all(
+                item.subtopicData.map(async (subitem, indexSub) => {
+                  if (subitem.subtopic_code === currentSubtopicCode) {
+                    console.log("indexSub", indexSub);
+                    currentSubtopicIndex = indexSub;
+                  }
+
+                  return {
+                    title: subitem.subtopicName,
+                    completed: subitem.completed,
+                    subtopicContent: subitem.subtopicContent,
+                    subtopicSummary: subitem.subtopicSummary,
+                    cheatSheetURL: subitem.cheatSheetURL || "#",
+                  };
+                })
+              ),
+            };
+          })
+        ),
+      };
+      console.log("currentTopicCode", currentTopicCode, "currentIndex", cuuretTopicIndex, "currentSubtopicCode", currentSubtopicCode, "currentSubtopicIndex", currentSubtopicIndex);
+      navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: cuuretTopicIndex, subtopicIndex: currentSubtopicIndex } });
+    } else {
+      navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: 0, subtopicIndex: 0 } });
+    }
+
+    // navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: 0, subtopicIndex: 0 } });
   };
 
   return (
@@ -103,13 +206,39 @@ const UserLearningModule = () => {
             >
               <RiGeminiLine /> View Sample Interview
             </button>
-            <Link
-              to={`/user/learning/${moduleId}/topic`}
-              state={{ topicIndex: 0, subtopicIndex: 0 }}
-            >
-              {" "}
-              <button className="start-learning-btn">Start Learning</button>
-            </Link>
+            {
+              moduleStatus === false ? (<>
+                {/* // <Link
+                  //   to={`/user/learning/${moduleId}/topic`}
+                  //   state={{ topicIndex: 0, subtopicIndex: 0 }}
+                  // > */}
+                {" "}
+                <button className="start-learning-btn" onClick={handleStartLearning}>{
+                  <span>Start Learning</span>}
+                </button>
+                {/* // </Link> */}
+              </>) : (
+                buttonText === "Revise Topics" ? (
+                  <>
+                    <Link
+                      to={`/user/learning/${moduleId}/topic`}
+                      state={{ topicIndex: 0, subtopicIndex: 0 }}
+                    >
+                      <button className="start-learning-btn" onClick={handleStartLearning}>{
+                        <span>Revise Topics</span>}
+                      </button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <button className="start-learning-btn" onClick={handleResumeLearning}>{
+                      <span>Resume Learning</span>}
+                    </button>
+                  </>
+                )
+              )
+            }
+
           </div>
         </div>
       </div>
@@ -165,7 +294,7 @@ const UserLearningModule = () => {
           </div>
         ))}
       </div>
-    </UserLearningModuleWrapper>
+    </UserLearningModuleWrapper >
   );
 };
 

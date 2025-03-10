@@ -12,6 +12,12 @@ import {
   CloseButton
 } from "../SkillAssessment/SkillAssessment.styles";
 import { getSkillAssessment } from "../../../../../api/skillAssessmentApi";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../../api/userApi";
+import { completeModule, completeSubTopic, completeTopic } from "../../../../../api/userProgressApi";
+import { getLastSubTopicByTopicCode, getLastTopicByModuleCode } from "../../../../../api/addNewModuleApi";
+import { useNavigate } from "react-router-dom";
+import { on } from "codemirror";
 
 const SkillAssessment = ({
   module_code,
@@ -20,6 +26,9 @@ const SkillAssessment = ({
   question_type,
   level,
   onCloseModal,
+  currentTopicIndex,
+  currentSubTopicIndex,
+  moduleId
 }) => {
   const [answers, setAnswers] = useState({}); // User answers
   const [filteredQuestions, setFilteredQuestions] = useState([]); // List of questions
@@ -27,7 +36,8 @@ const SkillAssessment = ({
   const [error, setError] = useState(null); // Error state
   const [submitted, setSubmitted] = useState(false); // Flag to track if the form has been submitted
   const [feedback, setFeedback] = useState({}); // Store feedback for each question
-
+  const { isLoaded, user, isSignedIn } = useUser();
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -78,7 +88,7 @@ const SkillAssessment = ({
         UserOption = "option_b";
         break;
       case "3":
-        UserOption ="option_c";
+        UserOption = "option_c";
         break;
       case "4":
         UserOption = "option_d";
@@ -97,12 +107,14 @@ const SkillAssessment = ({
         return userAnswer.trim() === "";
       }
     }
-  
+
     return false;
   };
-  
 
-  const handleSubmit = () => {
+
+  const handleSubmit = async () => {
+   let finalTopicIndex = currentTopicIndex;
+   let finalSubTopicIndex = currentSubTopicIndex;
     const newFeedback = {};
     filteredQuestions.forEach((question) => {
       const isCorrect = checkAnswer(question);
@@ -110,6 +122,27 @@ const SkillAssessment = ({
     });
     setFeedback(newFeedback);
     setSubmitted(true); // Mark the form as submitted
+    // // mark sub topic as completed
+    // const userData = await getUserByClerkId(user.id);
+    // const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
+    // finalSubTopicIndex = finalSubTopicIndex + 1;
+    // //checking is this last topic
+    // const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
+
+    // const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
+    // if (lastSubTopic.data.subtopic_code === subtopic_code) {
+    //   const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
+    //   finalTopicIndex = finalTopicIndex + 1;
+    //   finalSubTopicIndex = 0;
+    // }
+    // if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
+    //   const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
+    //   onCloseModal();
+    //    navigate(`/user/learning`);
+    //   return
+    // }
+    // navigate(`/user/learning/${moduleId}/topic` ,{ state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
+   
   };
 
   if (loading) return <div>Loading questions...</div>;
@@ -128,11 +161,11 @@ const SkillAssessment = ({
             <>
               {[q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean).map((option, idx) => (
                 <Option key={idx}>
-                  <input 
-                    type="radio" 
-                    name={`question-${q._id}`} 
-                    value={option} 
-                    onChange={() => handleOptionChange(q._id, option)} 
+                  <input
+                    type="radio"
+                    name={`question-${q._id}`}
+                    value={option}
+                    onChange={() => handleOptionChange(q._id, option)}
                   />
                   {option}
                 </Option>
@@ -156,7 +189,7 @@ const SkillAssessment = ({
 
       {!submitted && (
         <ButtonWrapper>
-          <SkipButton onClick={onCloseModal}>Skip</SkipButton>
+          {/* <SkipButton onClick={onCloseModal}>Skip</SkipButton> */}
           <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
         </ButtonWrapper>
       )}

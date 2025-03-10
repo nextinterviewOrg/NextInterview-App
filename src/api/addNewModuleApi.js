@@ -80,14 +80,45 @@ export const getTopicCode = async (module_code) => {
   }
 };
 
-export const getSubTopicCode = async (module_code, topic_code) => {
-  try {
-    const response = await api.get(
-      `/addNewModule/get/module/topic/subtopic/${module_code}/${topic_code}`
-    );
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
+export const getSubTopicCode = async (module_code,topic_code) => {
+    try {
+        const response = await api.get(`/addNewModule/get/module/topic/subtopic/${module_code}/${topic_code}`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getLastTopicByModuleCode = async (data) => {
+    try {
+        const response = await api.post(`/addNewModule/getModuleLastTopic`,data);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getLastSubTopicByTopicCode = async (data) => {
+    try {
+        const response = await api.post(`/addNewModule/getModuleTopicLastSubtopic`,data);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getModuleByModuleCode = async (moduleCode) => {
+    try {
+        const response = await api.get(`/addNewModule/getModule/${moduleCode}`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
 };

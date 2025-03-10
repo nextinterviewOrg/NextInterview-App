@@ -308,7 +308,7 @@ const UploadModule = () => {
               <Input
                 id="moduleName"
                 type="text"
-                maxLength={20}
+                maxLength={100}
                 placeholder="Enter module name..."
                 value={moduleName}
                 onChange={handleModuleNameChange}

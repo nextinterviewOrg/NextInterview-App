@@ -76,6 +76,7 @@ import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryI
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
+import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 
 function App() {
   return (
@@ -100,7 +101,7 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
-          <Route path="/testing" element={<JDoodleEditor />} />
+          <Route path="/testing" element={<TinymceEditor />} />
           <Route path="/learning" element={<LearningModules />} />
           <Route path="/verifytotp" element={<VerifyTOTP />} />
           <Route path="/chatmode" element={<MockInterviewChat />} />

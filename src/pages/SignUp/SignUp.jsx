@@ -94,7 +94,7 @@ const SignUp = () => {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: window.location.origin + "/login", // Optional
-        redirectUrlComplete: window.location.origin + "/verification", // Where to go after successful sign-up
+        redirectUrlComplete: window.location.origin + "/validation", // Where to go after successful sign-up
       });
     } catch (err) {
       console.error("Google Sign-Up Error:", err);

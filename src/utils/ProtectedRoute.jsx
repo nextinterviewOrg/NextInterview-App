@@ -16,13 +16,15 @@ const ProtectedRoute = ({ component: Component, roles }) => {
       try {
         const dd = await user?.getSessions();
         let sessionVar;
-        if (!isLoaded || !sessionId) {
-          sessionVar =
-            JSON.parse(localStorage.getItem("sessionId")) ||
-            (dd && dd.length > 0 ? dd[0].id : null);
+        if ( !isLoaded || !sessionId) {
+         console.log(" v ",sessionVar,sessionVar==null );
+          sessionVar = JSON.parse(localStorage.getItem("sessionId"))||(dd && dd.length > 0 ? dd[0].id : null);
+         
+          
         } else {
           sessionVar = sessionId || (dd && dd.length > 0 ? dd[0].id : null);
         }
+        console.log("ruuning");
         // Get session ID from local storage
 
         if (!sessionVar) {
@@ -47,7 +49,8 @@ const ProtectedRoute = ({ component: Component, roles }) => {
         // Fetch user data based on user ID
         const userResponse = await getUserByClerkId(userId.userId);
         setUserData(userResponse.data.user);
-        if (roles) {
+        console.log("ruunig 1")
+        if(roles){
           if (!roles.includes(userResponse.data.user.user_role)) {
             localStorage.clear();
             if (userResponse.data.user.user_role == "admin") {
@@ -59,15 +62,17 @@ const ProtectedRoute = ({ component: Component, roles }) => {
             return <Navigate to="/login" />;
           }
         }
-
-        localStorage.clear();
-        if (userResponse.data.user.user_role == "admin") {
-          setLoading(false);
-          return <Navigate to="/admin" />;
-        } else if (userResponse.data.user.user_role == "user") {
-          setLoading(false);
-          return <Navigate to="/user" />;
-        }
+        console.log("ruunig 2")
+          localStorage.clear(); 
+          if (userResponse.data.user.user_role == "admin") {
+            setLoading(false);
+            return <Navigate to="/admin" />;
+          } else if (userResponse.data.user.user_role == "user") {
+            setLoading(false);
+            return <Navigate to="/user" />;
+          }
+         
+      
 
         // After data is loaded, stop loading
       } catch (err) {
