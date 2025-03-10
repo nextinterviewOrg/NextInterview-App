@@ -240,7 +240,9 @@ const UploadModule = () => {
       courseOverview: courseOverview,
       userLearntData: whatUsersLearn.map((item) => ({ learntData: item })),
     };
-    navigate("/admin/learning", { state: { data: submissionData } });
+
+    console.log("submissionData", submissionData);
+    navigate("/admin/addnewmodule", { state: { data: submissionData } });
   };
 
   return (
