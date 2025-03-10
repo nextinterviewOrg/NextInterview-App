@@ -64,23 +64,18 @@ const Editupload = () => {
   const [whatUsersLearnError, setWhatUsersLearnError] = useState("");
   const [moduleDataId, setModuleDataId] = useState(null);
   useEffect(() => {
-    console.log("useEffect called");
-
     // If module data is passed from previous page, set it in the state
     const moduleId = location.state?.moduleId;
     setModuleDataId(moduleId); // Check for moduleId passed via state
     if (moduleId) {
-      console.log("Fetching module data for ID:", moduleId);
       fetchModuleData(moduleId);
     }
   }, [location]);
 
   const fetchModuleData = async (id) => {
-    console.log("Fetching data for module with ID:", id);
     try {
       const data = await getModuleById(id); // Assuming this function fetches the data
 
-      console.log("Fetched module data:", data);
       // Map the fetched data to state
       setModuleData({
         moduleName: data.data.moduleName || "",
@@ -92,10 +87,7 @@ const Editupload = () => {
         whatUsersLearn: data.data.userLearntData
           ? data.data.userLearntData.map((item) => item.learntData)
           : [],
-        imageURL: data.data.imageURL,
-        interviewSampleURL: data.data.interviewSampleURL,
       });
-      console.log("data", data.data.imageURL);
       setImageUrl(data.data.imageURL);
       setVideoUrl(data.data.interviewSampleURL);
     } catch (error) {
@@ -134,7 +126,6 @@ const Editupload = () => {
   };
 
   const handleVideoChange = async (e) => {
-    console.log("handleVideoChange called");
     const file = e.target.files[0];
     if (file && file.type.startsWith("video/")) {
       setButtonDisabled(true);
@@ -142,7 +133,6 @@ const Editupload = () => {
       setSampleVideo(videoURL); // This was missing, now it sets the video preview
 
       const url = await uploadVideoToFirebase(file, "moduleVideo");
-      console.log("Video URL:", url);
       setModuleData((prevData) => ({ ...prevData, interviewSampleURL: url }));
       setVideoUrl(url);
       setButtonDisabled(false);
@@ -159,7 +149,6 @@ const Editupload = () => {
   };
 
   const handleNext = async () => {
-    console.log("handleNext called");
     try {
       // Reset errors
       setImageError("");
@@ -234,16 +223,12 @@ const Editupload = () => {
         userLearntData: whatUsersLearn.map((item) => ({ learntData: item })),
       };
 
-      console.log("submissionData", submissionData);
-
       // Call updateModuleById API
       try {
-        console.log("Hello module Id", moduleData?.id);
         const updatedModule = await updateModuleById(
           moduleDataId,
           submissionData
         ); // Use the ID from moduleData
-        console.log("Module updated successfully:", updatedModule);
         navigate(`/admin/editaddmodule/${moduleDataId}`, {
           state: { data: updatedModule },
         });

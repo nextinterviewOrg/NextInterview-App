@@ -267,7 +267,6 @@ const AddNewModule = () => {
     if (file) {
       const previewURL = URL.createObjectURL(file);
       const dataUrl = await uploadFileToFirebase(file, "cheatSheet");
-      console.log(dataUrl);
       setTopics((prevTopics) => {
         const updated = [...prevTopics];
         updated[topicIndex].subtopics[subIndex].cheatSheet = {
@@ -356,8 +355,6 @@ const AddNewModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-    console.log("All topics data:", topics);
-
     const topicData = topics.map((topic) => {
       return {
         topicName: topic.topicName,
@@ -403,7 +400,6 @@ const AddNewModule = () => {
       topicData: topicData,
     };
 
-    console.log("sub", submissionData);
     const response = await addNewModule(submissionData);
 
     // Reset form

@@ -57,7 +57,6 @@ const UserLearningModule = () => {
           }),
           imageUrl: response.data?.imageURL, // Course Image URL
         };
-        console.log("data", data);
         setCourseData(data);
         const moduleStatusData = await getUserProgress(userData.data.user._id);
         console.log("moduleStatusData", moduleStatusData);

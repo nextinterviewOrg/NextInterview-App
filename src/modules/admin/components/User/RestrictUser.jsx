@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 import { restrictUser } from "../../../../api/userApi";
+import restrict from "../../../../assets/restrict.gif";
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -16,6 +17,12 @@ const ModalContainer = styled.div`
   z-index: 1000;
 `;
 
+const Modal = styled.div`
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+`;
+
 const ModalContent = styled.div`
   background: ${theme.colors.light};
   border-radius: 8px;
@@ -27,7 +34,8 @@ const ModalContent = styled.div`
 
 const ModalHeader = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: ${(props) =>
+    props.showSuccess ? "flex-end" : "space-between"};
   align-items: center;
   margin-bottom: 20px;
 `;
@@ -40,7 +48,7 @@ const Title = styled.h3`
 const CloseButton = styled.button`
   background: none;
   border: none;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   color: ${theme.colors.textgray};
 `;
@@ -85,10 +93,10 @@ const InputGroup = styled.div`
 `;
 
 const Input = styled.input`
-border: 1px solid ${theme.colors.textgray};
+  border: 1px solid ${theme.colors.textgray};
   flex: 1;
   padding: 8px;
-//   border: 1px solid ${theme.colors.light};
+  //   border: 1px solid ${theme.colors.light};
   border-radius: 4px;
   font-size: 14px;
 `;
@@ -109,8 +117,14 @@ const Button = styled.button`
   cursor: pointer;
 
   &:hover {
-    background-color:${theme.colors.secondary};
+    background-color: ${theme.colors.secondary};
   }
+`;
+
+const RestrictImage = styled.img`
+  width: 100px;
+  height: 100px;
+  margin-bottom: 20px;
 `;
 
 const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
@@ -118,6 +132,13 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
   const [remarks, setRemarks] = useState("");
   const [duration, setDuration] = useState(1);
   const [durationUnit, setDurationUnit] = useState("Week");
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  const handleClose = () => {
+    setShowSuccess(false);
+    onClose();
+    window.location.reload();
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -129,23 +150,18 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
       const days = duration * 7;
       endDate.setDate(startDate.getDate() + days * duration);
     } else if (durationUnit === "Month") {
-
       endDate.setMonth(startDate.getMonth() + duration);
     } else if (durationUnit === "Day") {
-
       endDate.setFullYear(startDate.getDate() + duration);
     }
-    console.log({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
-    console.log({
-      selectedRows,
-      reason,
-      remarks,
-      duration,
-      durationUnit,
+    await restrictUser({
+      clerk_ids: selectedRows,
+      startDate: startDate,
+      endDate: endDate,
+      reason: reason,
+      remarks: remarks,
     });
-    await restrictUser({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
-    window.location.reload();
-    onClose();
+    setShowSuccess(true);
   };
 
   if (!isOpen) return null;
@@ -153,55 +169,65 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
   return (
     <ModalContainer>
       <ModalContent>
-        <ModalHeader>
-          <Title>Restrict user</Title>
-          <CloseButton onClick={onClose}>&times;</CloseButton>
+        <ModalHeader showSuccess={showSuccess}>
+          {!showSuccess && <Title>Restrict user</Title>}
+          <CloseButton onClick={handleClose}>&times;</CloseButton>
         </ModalHeader>
-        <form onSubmit={handleSubmit}>
-          <FormGroup>
-            <Label>Reason</Label>
-            <Select value={reason} onChange={(e) => setReason(e.target.value)}>
-              <option value="Illegal activities">Illegal activities</option>
-              <option value="Violation of terms">Violation of terms</option>
-              <option value="Spamming">Spamming</option>
-              <option value="Other">Other</option>
-            </Select>
-          </FormGroup>
-          <FormGroup>
-            <Label>Remarks (optional)</Label>
-            <TextArea
-              rows="3"
-              value={remarks}
-              onChange={(e) => setRemarks(e.target.value)}
-              placeholder="Add remarks here..."
-            />
-          </FormGroup>
-          <FormGroup>
-            <Label>Duration</Label>
-            <InputGroup>
-              <Input
-                type="number"
-                min="1"
-                value={duration}
-                onChange={(e) => setDuration(e.target.value)}
-              />
+        {showSuccess ? (
+          <Modal>
+            <RestrictImage src={restrict} alt="Success" />
+            <h3>User Restricted Successfully</h3>
+          </Modal>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <FormGroup>
+              <Label>Reason</Label>
               <Select
-                value={durationUnit}
-                onChange={(e) => setDurationUnit(e.target.value)}
+                value={reason}
+                onChange={(e) => setReason(e.target.value)}
               >
-                <option value="Day">Day</option>
-                <option value="Week">Week</option>
-                <option value="Month">Month</option>
+                <option value="Illegal activities">Illegal activities</option>
+                <option value="Violation of terms">Violation of terms</option>
+                <option value="Spamming">Spamming</option>
+                <option value="Other">Other</option>
               </Select>
-            </InputGroup>
-          </FormGroup>
-          <p style={{ fontSize: "12px", color: "#666", marginTop: "-10px" }}>
-            This will be notified to the user through email
-          </p>
-          <ButtonContainer>
-            <Button type="submit">Restrict</Button>
-          </ButtonContainer>
-        </form>
+            </FormGroup>
+            <FormGroup>
+              <Label>Remarks (optional)</Label>
+              <TextArea
+                rows="3"
+                value={remarks}
+                onChange={(e) => setRemarks(e.target.value)}
+                placeholder="Add remarks here..."
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label>Duration</Label>
+              <InputGroup>
+                <Input
+                  type="number"
+                  min="1"
+                  value={duration}
+                  onChange={(e) => setDuration(e.target.value)}
+                />
+                <Select
+                  value={durationUnit}
+                  onChange={(e) => setDurationUnit(e.target.value)}
+                >
+                  <option value="Day">Day</option>
+                  <option value="Week">Week</option>
+                  <option value="Month">Month</option>
+                </Select>
+              </InputGroup>
+            </FormGroup>
+            <p style={{ fontSize: "12px", color: "#666", marginTop: "-10px" }}>
+              This will be notified to the user through email
+            </p>
+            <ButtonContainer>
+              <Button type="submit">Restrict</Button>
+            </ButtonContainer>
+          </form>
+        )}
       </ModalContent>
     </ModalContainer>
   );

@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { Navigate } from "react-router-dom";
 import { getUserByClerkId, getUserBySessionId } from "../api/userApi";
-import { useClerk } from '@clerk/clerk-react';
+import { useClerk } from "@clerk/clerk-react";
 
 const ProtectedRoute = ({ component: Component, roles }) => {
-  const { isSignedIn, user,isLoaded, sessionId, } = useUser();
+  const { isSignedIn, user, isLoaded, sessionId } = useUser();
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
@@ -14,8 +14,7 @@ const ProtectedRoute = ({ component: Component, roles }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("isSignedIn", isSignedIn, "isLoaded", isLoaded, "sessionId", sessionId, "user", user);
-        const dd=await user?.getSessions();
+        const dd = await user?.getSessions();
         let sessionVar;
         if ( !isLoaded || !sessionId) {
          console.log(" v ",sessionVar,sessionVar==null );
@@ -23,29 +22,25 @@ const ProtectedRoute = ({ component: Component, roles }) => {
          
           
         } else {
-
-          console.log(sessionId, "ho ho ho");
-          sessionVar = sessionId||(dd && dd.length > 0 ? dd[0].id : null);
+          sessionVar = sessionId || (dd && dd.length > 0 ? dd[0].id : null);
         }
         console.log("ruuning");
         // Get session ID from local storage
-       
+
         if (!sessionVar) {
-          
           setError("No session found");
-          
-          return   <Navigate to="/login" />;
+
+          return <Navigate to="/login" />;
         }
-        if(sessionVar==null){
-          return   <Navigate to="/login" />;
+        if (sessionVar == null) {
+          return <Navigate to="/login" />;
         }
-        if(sessionVar){
+        if (sessionVar) {
           setError(null);
         }
 
         // Fetch user ID based on session ID
         const userId = await getUserBySessionId({ sessionId: sessionVar });
-        console.log(userId);  
         if (!userId?.userId) {
           setError("Invalid user data");
           return;
@@ -53,21 +48,19 @@ const ProtectedRoute = ({ component: Component, roles }) => {
 
         // Fetch user data based on user ID
         const userResponse = await getUserByClerkId(userId.userId);
-        console.log(userResponse);
         setUserData(userResponse.data.user);
         console.log("ruunig 1")
         if(roles){
           if (!roles.includes(userResponse.data.user.user_role)) {
-            localStorage.clear(); 
+            localStorage.clear();
             if (userResponse.data.user.user_role == "admin") {
               return <Navigate to="/admin" />;
             } else if (userResponse.data.user.user_role == "user") {
               return <Navigate to="/user" />;
             }
-            signOut()
+            signOut();
             return <Navigate to="/login" />;
           }
-  
         }
         console.log("ruunig 2")
           localStorage.clear(); 
@@ -82,23 +75,19 @@ const ProtectedRoute = ({ component: Component, roles }) => {
       
 
         // After data is loaded, stop loading
-        
       } catch (err) {
         setError(err.message || "An error occurred");
-        console.log("error",err);
+        console.log("error", err);
         setLoading(false);
-      }
-      finally {
+      } finally {
         setLoading(false);
-        
       }
     };
 
     fetchData();
-  }, [sessionId,isLoaded,user,isSignedIn]);
+  }, [sessionId, isLoaded, user, isSignedIn]);
 
   if (loading) {
-   
     return <div>Loading...</div>; // Optionally, show loading state while checking if the user is loaded
   }
 
@@ -110,19 +99,19 @@ const ProtectedRoute = ({ component: Component, roles }) => {
     return <div>Error: {error}</div>;
   }
 
-if(userData){
-  // If the user is not signed in or doesn't have the proper role, redirect to login  !isSignedIn || !userData ||
-  if (!roles.includes(userData?.user_role)) {
-    localStorage.clear(); 
-    if (userData.user_role == "admin") {
-      return <Navigate to="/admin" />;
-    } else if (userData.user_role == "user") {
-      return <Navigate to="/user" />;
+  if (userData) {
+    // If the user is not signed in or doesn't have the proper role, redirect to login  !isSignedIn || !userData ||
+    if (!roles.includes(userData?.user_role)) {
+      localStorage.clear();
+      if (userData.user_role == "admin") {
+        return <Navigate to="/admin" />;
+      } else if (userData.user_role == "user") {
+        return <Navigate to="/user" />;
+      }
+      signOut();
+      return <Navigate to="/login" />;
     }
-    signOut()
-    return <Navigate to="/login" />;
   }
-}
   // If the user is signed in and has the proper role, render the protected component
   return <Component />;
 };

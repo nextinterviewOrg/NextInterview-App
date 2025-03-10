@@ -157,7 +157,6 @@ const OtpEmail = () => {
         const attempt = await signUp.attemptEmailAddressVerification({
           code: otpCode,
         });
-        console.log("attempt", attempt);
 
         const { verifications, status, createdSessionId } = attempt;
 

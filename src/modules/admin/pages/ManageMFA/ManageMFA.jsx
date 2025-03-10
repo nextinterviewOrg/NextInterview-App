@@ -7,21 +7,19 @@ const ManageMFA = () => {
   const [showBackupCodes, setShowBackupCodes] = useState(false);
   const [backupCodes, setBackupCodes] = useState(null);
 
-  useEffect(() => { 
-    console.log("user", user   );  
+  useEffect(() => {
+    console.log("user", user);
   }, [user]);
 
   const generateBackupCodes = async () => {
     try {
       const response = await user.createBackupCode();
       setBackupCodes(response.codes);
-      console.log("response", response);
     } catch (error) {
       console.error("Error generating backup codes", error);
     }
   };
 
- 
   const disableTOTP = async () => {
     try {
       await user.disableTOTP();
@@ -35,7 +33,7 @@ const ManageMFA = () => {
   }
 
   return (
-    <div style={{marginLeft:"60px"}}>
+    <div style={{ marginLeft: "60px" }}>
       <h1>Manage Multi-Factor Authentication (MFA)</h1>
 
       {/* If TOTP is enabled, show option to disable it */}

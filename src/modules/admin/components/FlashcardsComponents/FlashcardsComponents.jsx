@@ -34,7 +34,6 @@ const FlashcardsComponents = () => {
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const apiCaller = async () => {
     const data = await getFlashcards();
-    console.log("data", data);
     const response = data.data.map((item, index) => {
       return {
         id: index + 1,
@@ -60,7 +59,6 @@ const FlashcardsComponents = () => {
   };
 
   const handleDeleteClick = (id) => {
-    console.log("id", id);
     setCurrentCard(id);
     setDeleteModalVisible(true); // Show DeleteModule
   };
@@ -80,8 +78,6 @@ const FlashcardsComponents = () => {
   };
 
   const handleAddFlashcard = async (newFlashcard) => {
-    console.log("newFlashcard", newFlashcard);
-
     const response = await addFlashcard({ cardContent: newFlashcard.text });
 
     apiCaller();
@@ -89,7 +85,6 @@ const FlashcardsComponents = () => {
   };
 
   const handleSaveEdit = async (updatedCard) => {
-    console.log("updatedCard", updatedCard);
     const response = await updateFlashcard(updatedCard._id, {
       cardContent: updatedCard.text,
     });

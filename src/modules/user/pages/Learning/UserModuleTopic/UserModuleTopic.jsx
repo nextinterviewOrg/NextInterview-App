@@ -13,7 +13,7 @@ import {
   ModalContent,
   // CloseButton,
   TryItYourself,
-  TryButton
+  TryButton,
 } from "./UserModuleTopic.style";
 import { SlLike } from "react-icons/sl";
 import { SlDislike } from "react-icons/sl";
@@ -138,12 +138,10 @@ const UserModuleTopic = () => {
     navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
   };
   useEffect(() => {
-    console.log("location Data=>", location.state);
     const apiCaller = async () => {
       try {
         const response = await getModuleById(moduleId);
         setModuleName(response.data.moduleName);
-        console.log("RR", response.data);
         const data = {
           title: response.data.moduleName,
           topicsList: await Promise.all(
@@ -155,8 +153,6 @@ const UserModuleTopic = () => {
                     const gptSumm = await summariseTopic({
                       message: subitem.subtopicContent,
                     });
-                    console.log(gptSumm.data);
-                    console.log("gpt ", subitem.subtopicName);
                     return {
                       title: subitem.subtopicName,
                       completed: subitem.completed,
@@ -172,7 +168,6 @@ const UserModuleTopic = () => {
           ),
         };
         setCourseData(data);
-
       } catch (error) {
         console.log(error);
       }
@@ -183,7 +178,6 @@ const UserModuleTopic = () => {
   useEffect(() => {
     setDelayedText([]);
     setShowSummary(false);
-    console.log("location Data=>", location.state);
     if (!location.state) return; // Ensure location.state is defined
 
     const apiCaller = async () => {
@@ -218,7 +212,6 @@ const UserModuleTopic = () => {
                     const gptSumm = await summariseTopic({
                       message: subitem.subtopicContent,
                     });
-                    console.log(subitem.subtopicName, " ", gptSumm.data, " ");
                     return {
                       title: subitem.subtopicName,
                       // completed: subitem.completed,
@@ -239,18 +232,8 @@ const UserModuleTopic = () => {
           data.topicsList?.[location.state.topicIndex]?.subtopics?.[
           location.state.subtopicIndex
           ];
-        console.log("subtoipi ", topic);
         if (topic) {
           setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          console.log("title", topic.title);
-
-          console.log("dfghj sjhbsjbh", {
-            title: topic.title,
-            description: topic.subtopicContent,
-            summary: topic.subtopicSummary,
-            gptSummary: topic.gptSummary,
-            cheatSheetURL: topic.cheatSheetURL || "#",
-          });
           setTopicData([
             {
               title: topic.title,
@@ -332,7 +315,10 @@ const UserModuleTopic = () => {
       const topicData = moduleResponse.data.topicData[topicIndex];
 
       if (!topicData || !topicData.topic_code) {
-        console.error(" topic_code not found. Available Topics:", moduleResponse.data.topicData);
+        console.error(
+          " topic_code not found. Available Topics:",
+          moduleResponse.data.topicData
+        );
         return;
       }
       const topic_code = topicData.topic_code;
@@ -350,7 +336,10 @@ const UserModuleTopic = () => {
       const subtopicData = topicData.subtopicData[subtopicIndex];
 
       if (!subtopicData || !subtopicData.subtopic_code) {
-        console.error(" subtopic_code not found. Available Subtopics:", topicData.subtopicData);
+        console.error(
+          " subtopic_code not found. Available Subtopics:",
+          topicData.subtopicData
+        );
         return;
       }
       const subtopic_code = subtopicData.subtopic_code;
@@ -415,7 +404,6 @@ const UserModuleTopic = () => {
         <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
       </TryItYourself>
       <div>
-        {console.log("topicData inner", topicData)}
         {topicData && (
           <>
             {topicData?.map((topic, index) => (

@@ -9,7 +9,6 @@ export default function ValidationPage() {
   const location = useLocation();
   const { session } = useSession();
   useEffect(() => {
-    // Only run the effect if the user is signed in and the user data has been loaded
     const apiCaller = async () => {
       console.log("location", location);
       console.log("isSignedIn", isSignedIn, "user", user, "isLoaded", isLoaded, "sessionId", sessionId);
@@ -71,7 +70,5 @@ export default function ValidationPage() {
     return <div>Loading...</div>;
   }
 
-  return (
-    <div>Validating...</div>
-  );
+  return <></>;
 }

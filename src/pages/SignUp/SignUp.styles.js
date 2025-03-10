@@ -117,7 +117,7 @@ export const Button = styled.button`
   font-size: 1rem;
   border-radius: 5px;
   cursor: pointer;
-  margin-top: 20%;
+  margin-top: ${(message) => (message ? "4rem" : "20%")};
 
   &:hover {
     background-color: ${theme.colors.bluetext};
@@ -162,6 +162,7 @@ export const AlternativeLogin = styled.div`
   button:nth-child(3) {
     margin-top: 1rem;
   }
+}
 `;
 // export const GoogleButton = styled.div`
 // height: '20px', marginRight: '10px';
@@ -218,4 +219,21 @@ export const Footer = styled.p`
       text-decoration: underline;
     }
   }
+`;
+
+export const MessageCard = styled.div`
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  ${({ type }) =>
+    type === "error" && "background-color: #ffe6e6; color: #d9534f; border: 1px solid #d9534f;"}
+  ${({ type }) =>
+    type === "success" && "background-color: #e6ffed; color: #5cb85c; border: 1px solid #5cb85c;"}
+  ${({ type }) =>
+    type === "warning" && "background-color: #fff8e6; color: #f0ad4e; border: 1px solid #f0ad4e;"}
 `;
