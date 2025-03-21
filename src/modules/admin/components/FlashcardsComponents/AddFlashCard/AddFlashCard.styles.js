@@ -48,7 +48,7 @@ export const CloseButton = styled.button`
 
 export const ContentWrapper = styled.div`
   display: flex;
-  // flex-direction: column;
+  flex-direction: column;
   // align-items: center;
   gap: ${theme.spacing(2)};
   width: 700px;

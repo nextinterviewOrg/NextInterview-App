@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 import { restrictUser } from "../../../../api/userApi";
+import { message } from "antd";
 import restrict from "../../../../assets/restrict.gif";
 
 const ModalContainer = styled.div`
@@ -154,14 +155,11 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
     } else if (durationUnit === "Day") {
       endDate.setFullYear(startDate.getDate() + duration);
     }
-    await restrictUser({
-      clerk_ids: selectedRows,
-      startDate: startDate,
-      endDate: endDate,
-      reason: reason,
-      remarks: remarks,
-    });
-    setShowSuccess(true);
+  
+    await restrictUser({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
+   message.success("User restricted successfully!");
+    // window.location.reload();
+    onClose();
   };
 
   if (!isOpen) return null;

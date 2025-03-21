@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
+import { sendReminder } from "../../../../api/reminderApi";
+import { getUserByClerkId } from "../../../../api/userApi";
+import { message } from "antd";
 
+// Styled components
 const ModalContainer = styled.div`
   position: fixed;
   top: 0;
@@ -34,7 +38,7 @@ const ModalHeader = styled.div`
 `;
 
 const Title = styled.h3`
-  font-family: ${theme.fonts.body};
+    font-family: ${theme.fonts.body};
   font-size: 20px;
   margin: 0;
   color: ${({ theme }) => theme.colors.text};
@@ -50,17 +54,16 @@ const CloseButton = styled.button`
 
 const FormGroup = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   margin-bottom: 16px;
 `;
 
 const Label = styled.label`
   font-family: ${theme.fonts.body};
+  font-family: ${theme.fonts.body};
   font-size: 14px;
   color: ${({ theme }) => theme.colors.text};
-  margin-right: 16px;
-  width: 120px; /* Adjust this width as needed */
-  text-align: left;
+  margin-bottom: 6px;
 `;
 
 const Input = styled.input`
@@ -69,7 +72,6 @@ const Input = styled.input`
   border: 1px solid ${({ theme }) => theme.colors.borderblue};
   border-radius: 4px;
   font-size: 14px;
-  flex: 1;
 `;
 
 const TextArea = styled.textarea`
@@ -79,7 +81,12 @@ const TextArea = styled.textarea`
   border-radius: 4px;
   font-size: 14px;
   resize: none;
-  flex: 1;
+`;
+
+const ErrorMessage = styled.div`
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 `;
 
 const RadioGroup = styled.div`
@@ -122,30 +129,75 @@ const Button = styled.button`
   }
 `;
 
-import { sendReminder } from "../../../../api/reminderApi";
-import { getUserByClerkId } from "../../../../api/userApi";
 const SendReminder = ({ isOpen, onClose, selectedRows }) => {
   const [heading, setHeading] = useState("");
   const [subText, setSubText] = useState("");
   const [deliveryMode, setDeliveryMode] = useState("Only notification");
 
+  // Error states for validation
+  const [errors, setErrors] = useState({
+    heading: "",
+    subText: "",
+  });
+
+  // Validate form fields
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { heading: "", subText: "" };
+
+    if (!heading.trim()) {
+      newErrors.heading = "Please fill the above field.";
+      isValid = false;
+    }
+
+    if (!subText.trim()) {
+      newErrors.subText = "Please fill the above field.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    let userIds = [];
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
+    message.loading("Sending reminder...");
+
+    // Close the modal after clicking the button
+    onClose();
+
     try {
-      selectedRows.map(async (row) => {
-        const user = await getUserByClerkId(row);
-        userIds.push(user.data.user._id);
-      });
+      let userIds = [];
+
+      // Using Promise.all to ensure all API calls complete before proceeding
+      await Promise.all(
+        selectedRows.map(async (row) => {
+          const user = await getUserByClerkId(row);
+          if (user.data && user.data.user) {
+            userIds.push(user.data.user._id);
+          }
+        })
+      );
+
+      // Sending reminder to all selected users
       await sendReminder({
         heading: heading,
         subText: subText,
         notificationType: deliveryMode,
         user_id: userIds,
       });
-      onClose(); // Close modal after sending
+
+      message.success("Reminder sent successfully!");
     } catch (error) {
       console.error("Error sending reminder:", error);
+      message.error("Failed to send reminder. Please try again.");
     }
   };
 
@@ -159,6 +211,7 @@ const SendReminder = ({ isOpen, onClose, selectedRows }) => {
           <CloseButton onClick={onClose}>&times;</CloseButton>
         </ModalHeader>
         <form onSubmit={handleSubmit}>
+          {/* Heading Input */}
           <FormGroup>
             <Label>Heading</Label>
             <Input
@@ -167,7 +220,10 @@ const SendReminder = ({ isOpen, onClose, selectedRows }) => {
               onChange={(e) => setHeading(e.target.value)}
               placeholder="Enter heading here..."
             />
+            {errors.heading && <ErrorMessage>{errors.heading}</ErrorMessage>}
           </FormGroup>
+
+          {/* SubText Input */}
           <FormGroup>
             <Label>Sub Text</Label>
             <TextArea
@@ -176,7 +232,10 @@ const SendReminder = ({ isOpen, onClose, selectedRows }) => {
               onChange={(e) => setSubText(e.target.value)}
               placeholder="Enter sub text here..."
             />
+            {errors.subText && <ErrorMessage>{errors.subText}</ErrorMessage>}
           </FormGroup>
+
+          {/* Radio Options */}
           <RadioGroup>
             <RadioButton>
               <input
@@ -206,6 +265,8 @@ const SendReminder = ({ isOpen, onClose, selectedRows }) => {
               Both notification and e-mail
             </RadioButton>
           </RadioGroup>
+
+          {/* Button Group */}
           <ButtonContainer>
             <Button type="submit">Send</Button>
           </ButtonContainer>

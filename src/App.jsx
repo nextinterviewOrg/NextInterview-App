@@ -76,9 +76,10 @@ import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryI
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
-import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
+import NotFound from "./components/NotFound/NotFound";import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 
 function App() {
+  
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -225,7 +226,9 @@ function App() {
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
+           
           </Route>
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
     </ThemeProvider>

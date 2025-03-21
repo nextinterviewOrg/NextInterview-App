@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { message } from "antd";
 import {
   Container,
   Header,
@@ -24,6 +25,7 @@ import {
   updateSupportQuery,
 } from "../../../../../api/supportQueryApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
+import ConfirmationModal from "../Confirmation/Confirmation";
 
 const SupportQueryUserDetails = () => {
   const { id } = useParams();
@@ -33,16 +35,16 @@ const SupportQueryUserDetails = () => {
   const [error, setError] = useState(null);
   const [queryDate, setQueryDate] = useState(null);
   const [closedDate, setClosedDate] = useState("Pending");
+  const [querySolvedMessage, setQuerySolvedMessage] = useState("");
+  const [showModal, setShowModal] = useState(false); // State for the modal visibility
 
   useEffect(() => {
     const fetchQueryAndUserDetails = async () => {
       try {
         const queryData = await getSupportQueryById(id);
 
-        // Format the submitted date
         setQueryDate(new Date(queryData.submitted_on).toLocaleDateString());
 
-        // Format the closed date (If already closed, show date; otherwise, show "Pending")
         if (queryData.closed_on) {
           setClosedDate(
             ` ${new Date(
@@ -85,13 +87,13 @@ const SupportQueryUserDetails = () => {
     try {
       if (!queryDetails) return;
 
-      const updatedClosedDate = new Date().toLocaleDateString();
+      const updatedClosedDate = new Date();
 
       const updatedLog = [
         ...(queryDetails.communicationLog || []),
         {
-          date: updatedClosedDate,
-          time: new Date().toLocaleTimeString(),
+          date: updatedClosedDate, 
+          time: updatedClosedDate.toLocaleTimeString(),
           message: "Query solved by admin.",
         },
       ];
@@ -99,25 +101,40 @@ const SupportQueryUserDetails = () => {
       const data = {
         status: "solved",
         communicationLog: updatedLog,
-        closed_on: updatedClosedDate, // Send closed date to backend
+        closed_on: updatedClosedDate, 
       };
 
       const response = await updateSupportQuery(id, data);
+      console.log("Update query response:", response);
 
-      if (response) {
+      if (response?.status === "solved") {
         setQueryDetails((prevState) => ({
           ...prevState,
           status: "solved",
           communicationLog: updatedLog,
-          closed_on: updatedClosedDate, // Update closed date in UI
+          closed_on: updatedClosedDate,
         }));
-
-        // Update UI to show closed date instead of "Pending"
-        setClosedDate(`Closed on: ${updatedClosedDate}`);
+        setClosedDate(`Closed on: ${updatedClosedDate.toLocaleDateString()}`);
+        setQuerySolvedMessage("Query Solved by Admin!");
+       message.success("Query solved successfully!");
       }
     } catch (error) {
       console.error("Error updating query:", error);
+      message.error("Failed to solve query. Please try again.");
     }
+  };
+
+  const handleMarkAsSolvedClick = () => {
+    setShowModal(true); 
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false); 
+  };
+
+  const handleConfirmModal = () => {
+    handleQueryUpdate();
+    setShowModal(false); 
   };
 
   if (loading) return;
@@ -184,21 +201,31 @@ const SupportQueryUserDetails = () => {
           <LogMessage>{closedDate}</LogMessage>
         </LogEntry>
 
+        {querySolvedMessage && <p style={{ color: "green" }}>{querySolvedMessage}</p>}
+
         <button
-          onClick={handleQueryUpdate}
+          onClick={handleMarkAsSolvedClick}
           disabled={queryDetails.status === "solved"}
           style={{
-            color: queryDetails.status === "solved" ? "Green" : "red",
+            color: queryDetails.status === "solved" ? "green" : "red", 
             backgroundColor:
-              queryDetails.status === "solved" ? "#f0fff0" : "#ffebeb",
+              queryDetails.status === "solved" ? "#f0fff0" : "#ffebeb", 
             border: "none",
             borderRadius: "4px",
             padding: "8px 16px",
           }}
         >
-          {queryDetails.status === "solved" ? "solved" : "Mark as Solved"}
+          {queryDetails.status === "solved" ? "Solved" : "Mark as Solved"}
         </button>
       </CommunicationLog>
+
+      {/* Display modal when showModal is true */}
+      {showModal && (
+        <ConfirmationModal
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmModal}
+        />
+      )}
     </Container>
   );
 };

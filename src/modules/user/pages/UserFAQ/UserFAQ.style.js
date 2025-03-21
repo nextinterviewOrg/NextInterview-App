@@ -35,6 +35,7 @@ export const FAQItem = styled.div`
 export const FAQQuestion = styled.div`
   cursor: pointer;
   display: flex;
+  padding: 10px;
   justify-content: space-between;
   align-items: center;
   font-family: "DM Sans";
@@ -42,6 +43,7 @@ export const FAQQuestion = styled.div`
   font-style: normal;
   font-weight: 500;
   line-height: 28px;
+  background-color:  ${({ theme }) => theme.colors.sidebarBgColor};;
   color: ${theme.colors.text};
   font-family: ${theme.fonts.body};
 `;
@@ -49,6 +51,7 @@ export const FAQQuestion = styled.div`
 export const FAQAnswer = styled.p`
   color: ${theme.colors.textgray};
   margin-top: 10px;
+  margin-left: 20px;
   line-height: 24px;
   font-size: 16px;
   font-style: normal;
