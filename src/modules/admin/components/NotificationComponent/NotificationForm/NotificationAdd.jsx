@@ -18,6 +18,7 @@ import {
 import { message } from "antd";
 import { sendNotification } from "../../../../../api/notificationApi"; // API function
 
+
 const NotificationAdd = ({ isOpen, onClose, onSave }) => {
   const [timeVisibility, setTimeVisibility] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -128,6 +129,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
             )}
           </FormGroup>
 
+
           <FormGroup>
             <Label>Sub text</Label>
             <TextArea
@@ -143,6 +145,7 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
               </div>
             )}
           </FormGroup>
+
 
           <FormGroup>
             <Label>Trigger</Label>
@@ -164,10 +167,12 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
                 </Select>
               </FormGroup>
 
+
               <FormGroup>
                 <Label>Select time</Label>
                 <input type="time" name="time" value={formData.time} onChange={handleInputChange} required />
               </FormGroup>
+
 
               <FormGroup>
                 <Label>Frequency</Label>
@@ -214,10 +219,15 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
             </RadioOption>
           </RadioGroup>
 
+
           <ButtonGroup>
-            <Button type="submit" disabled={isLoading} style={{ cursor: isLoading ? "not-allowed" : "pointer" }}>
-              {isLoading ? "Creating..." : "Create"}
-            </Button>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              style={{ cursor: isLoading ? "not-allowed" : "pointer" }}
+            >
+                          {isLoading ? "Creating..." : "Create"}
+                        </Button>
           </ButtonGroup>
         </form>
       </ModalContent>

@@ -23,7 +23,6 @@ const QuestionPage1 = () => {
   useEffect(() => {
     const apiCaller = async () => {
       const data = await getJobs();
-      console.log("data", data);
       setOptions(data.data);
     };
     apiCaller();
@@ -34,14 +33,11 @@ const QuestionPage1 = () => {
     setSelectedOption(option);
   };
   const handleClick = async () => {
-    console.log("selectedOption", selectedOption);
     const data = await getUserByClerkId(user.id);
-    console.log("data", data);
     const submissionData = {
       user_id: data.data.user._id,
       data_job_response: selectedOption,
     };
-    // console.log("submissionData", submissionData);
     await createUserProfile(submissionData);
     const jobData = await getJobById(selectedOption);
     console.log("jobData", jobData);

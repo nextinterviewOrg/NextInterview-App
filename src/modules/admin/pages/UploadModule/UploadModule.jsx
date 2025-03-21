@@ -48,8 +48,6 @@ const UploadModule = () => {
   const navigate = useNavigate();
   useEffect(() => {
     const intializeData = () => {
-      console.log("location.state", location.state);
-      // console.log(location.state.data?.userLearntData?.map((item) =>`${item.learntData}`) );
       setImageUrl(location.state.data?.imageURL);
       setModuleImage(location.state.data?.imageURL);
       setModuleName(location.state.data?.moduleName);
@@ -139,11 +137,11 @@ const UploadModule = () => {
     const timePattern = /^\d*\.?\d*\s*(hours?|hr)?$/i;
 
     // Allow input that matches the timePattern (or partial inputs before "hours" or "hr" is typed)
-    if (value === '' || timePattern.test(value)) {
+    if (value === "" || timePattern.test(value)) {
       setApproxTime(value);
-      setApproxTimeError('');
+      setApproxTimeError("");
     } else {
-      setApproxTimeError('Please enter a valid time (e.g., 2 hours)');
+      setApproxTimeError("Please enter a valid time (e.g., 2 hours)");
     }
   };
 
@@ -244,7 +242,7 @@ const UploadModule = () => {
     };
 
     console.log("submissionData", submissionData);
-    navigate("/admin/learning", { state: { data: submissionData } });
+    navigate("/admin/addnewmodule", { state: { data: submissionData } });
   };
 
   return (
@@ -310,7 +308,7 @@ const UploadModule = () => {
               <Input
                 id="moduleName"
                 type="text"
-                maxLength={20}
+                maxLength={100}
                 placeholder="Enter module name..."
                 value={moduleName}
                 onChange={handleModuleNameChange}

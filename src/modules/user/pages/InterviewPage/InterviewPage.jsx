@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LuHeart } from "react-icons/lu";
 import theme from "../../../../theme/Theme"; // Adjust the path according to your structure
 import {
@@ -10,67 +10,84 @@ import {
   Title,
 } from "./InterviewPage.style";
 import StartInterview from "../../components/UserInterview/StartInterview"; // Import the modal component
+import { getModule } from "../../../../api/addNewModuleApi";
 
 const InterviewPage = () => {
   const [selectedCourse, setSelectedCourse] = useState(null); // Store the selected course
   const [likedCourses, setLikedCourses] = useState(false);
+  const [courses, setCourses] = useState([]);
+  useEffect(() => {
+    const apiCaller = async () => {
+      const response = await getModule();
+      const data = response.data.map((item) => ({
+        id: item._id,
+        title: item.moduleName,
+        level: "Beginner",
+        difficulty: "Easy Level",
+        totalTime: "10h",
+        image: item.imageURL,
+      }));
+      setCourses(data);
+    };
+    apiCaller();
+  }, []);
 
-  const courses = [
-    {
-      id: 1,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "React Basics",
-      level: "Beginner",
-      difficulty: "Easy Level",
-      totalTime: "10h",
-    },
-    {
-      id: 2,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "Advanced React",
-      level: "Intermediate",
-      difficulty: "Medium Level",
-      totalTime: "15h",
-    },
-    {
-      id: 3,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "Full-Stack Development",
-      level: "Advanced",
-      difficulty: "Hard Level",
-      totalTime: "20h",
-    },
-    {
-      id: 4,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "React Basics",
-      level: "Beginner",
-      difficulty: "Easy Level",
-      totalTime: "10h",
-    },
-    {
-      id: 5,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "Advanced React",
-      level: "Intermediate",
-      difficulty: "Medium Level",
-      totalTime: "15h",
-    },
-    {
-      id: 6,
-      image:
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      title: "Full-Stack Development",
-      level: "Advanced",
-      difficulty: "Hard Level",
-      totalTime: "20h",
-    },
-  ];
+  // const courses = [
+  //   {
+  //     id: 1,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "React Basics",
+  //     level: "Beginner",
+  //     difficulty: "Easy Level",
+  //     totalTime: "10h",
+  //   },
+  //   {
+  //     id: 2,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "Advanced React",
+  //     level: "Intermediate",
+  //     difficulty: "Medium Level",
+  //     totalTime: "15h",
+  //   },
+  //   {
+  //     id: 3,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "Full-Stack Development",
+  //     level: "Advanced",
+  //     difficulty: "Hard Level",
+  //     totalTime: "20h",
+  //   },
+  //   {
+  //     id: 4,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "React Basics",
+  //     level: "Beginner",
+  //     difficulty: "Easy Level",
+  //     totalTime: "10h",
+  //   },
+  //   {
+  //     id: 5,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "Advanced React",
+  //     level: "Intermediate",
+  //     difficulty: "Medium Level",
+  //     totalTime: "15h",
+  //   },
+  //   {
+  //     id: 6,
+  //     image:
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     title: "Full-Stack Development",
+  //     level: "Advanced",
+  //     difficulty: "Hard Level",
+  //     totalTime: "20h",
+  //   },
+  // ];
   const toggleLike = (id) => {
     setLikedCourses((prev) => ({
       ...prev,

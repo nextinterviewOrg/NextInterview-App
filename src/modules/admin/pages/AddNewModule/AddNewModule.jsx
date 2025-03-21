@@ -37,6 +37,12 @@ import { ClassicEditor } from "ckeditor5";
 import { editorConfig } from "../../../../config/ckEditorConfig";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+import TinymceEditor from "../../components/TinymceEditor/TinymceEditor";
+import { Editor } from "@tinymce/tinymce-react";
+import { TinyMCEapiKey, TinyMCEmergetags_list, TinyMCEplugins, TinyMCEToolbar } from "../../../../config/TinyMceConfig";
+
+
+
 
 // Styled icon/button if you want to show a delete icon
 const DeleteIconWrapper = styled.span`
@@ -199,6 +205,7 @@ const AddNewModule = () => {
 
   const handleConceptClarifierChange = (
     e,
+    newValue,
     editor,
     topicIndex,
     subIndex,
@@ -209,7 +216,7 @@ const AddNewModule = () => {
     if (e != null) {
       value = e.target.value;
     } else {
-      value = editor.getData();
+      value = newValue;
     }
 
     setTopics((prevTopics) => {
@@ -231,12 +238,12 @@ const AddNewModule = () => {
     });
   };
 
-  const handleSubtopicChange = (e, event, topicIndex, subIndex, field) => {
+  const handleSubtopicChange = (e, newValue, event, topicIndex, subIndex, field) => {
     let value;
     if (e != null) {
       value = e.target.value;
     } else {
-      value = event.getData();
+      value = newValue;
     }
     setTopics((prevTopics) => {
       const updated = [...prevTopics];
@@ -260,7 +267,6 @@ const AddNewModule = () => {
     if (file) {
       const previewURL = URL.createObjectURL(file);
       const dataUrl = await uploadFileToFirebase(file, "cheatSheet");
-      console.log(dataUrl);
       setTopics((prevTopics) => {
         const updated = [...prevTopics];
         updated[topicIndex].subtopics[subIndex].cheatSheet = {
@@ -349,8 +355,6 @@ const AddNewModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-    console.log("All topics data:", topics);
-
     const topicData = topics.map((topic) => {
       return {
         topicName: topic.topicName,
@@ -396,7 +400,6 @@ const AddNewModule = () => {
       topicData: topicData,
     };
 
-    console.log("sub", submissionData);
     const response = await addNewModule(submissionData);
 
     // Reset form
@@ -639,6 +642,7 @@ const AddNewModule = () => {
                     handleSubtopicChange(
                       e,
                       null,
+                      null,
                       topicIndex,
                       subIndex,
                       "subtopicName"
@@ -650,7 +654,32 @@ const AddNewModule = () => {
               {/* SUBTOPIC CONTENT */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
-                <CKEditor
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: TinyMCEmergetags_list,
+                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    branding: false,
+
+                  }}
+                  value={subtopic.subtopicContent || ""}
+                  onEditorChange={(newValue, editor) => {
+                    handleSubtopicChange(
+                      null,
+                      newValue,
+                      editor,
+                      topicIndex,
+                      subIndex,
+                      "subtopicContent"
+                    );
+                  }}
+                  initialValue=""
+                />
+                {/* <CKEditor
                   editor={ClassicEditor}
                   data={subtopic.subtopicContent}
                   config={editorConfig}
@@ -663,13 +692,38 @@ const AddNewModule = () => {
                       "subtopicContent"
                     );
                   }}
-                />
+                /> */}
               </FormGroup>
 
               {/* SUBTOPIC SUMMARY */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
-                <CKEditor
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: TinyMCEmergetags_list,
+                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    branding: false,
+
+                  }}
+                  value={subtopic.subtopicSummary || ""}
+                  onEditorChange={(newValue, editor) => {
+                    handleSubtopicChange(
+                      null,
+                      newValue,
+                      editor,
+                      topicIndex,
+                      subIndex,
+                      "subtopicSummary"
+                    );
+                  }}
+                  initialValue=""
+                />
+                {/* <CKEditor
                   editor={ClassicEditor}
                   data={subtopic.subtopicSummary}
                   config={editorConfig}
@@ -682,13 +736,38 @@ const AddNewModule = () => {
                       "subtopicSummary"
                     );
                   }}
-                />
+                /> */}
               </FormGroup>
 
               {/* QUICK REVISE POINTS */}
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
-                <CKEditor
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    tinycomments_mode: 'embedded',
+                    tinycomments_author: 'Author name',
+                    mergetags_list: TinyMCEmergetags_list,
+                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    branding: false,
+
+                  }}
+                  value={subtopic.quickRevisePoints || ""}
+                  onEditorChange={(newValue, editor) => {
+                    handleSubtopicChange(
+                      null,
+                      newValue,
+                      editor,
+                      topicIndex,
+                      subIndex,
+                      "quickRevisePoints"
+                    );
+                  }}
+                  initialValue=""
+                />
+                {/* <CKEditor
                   editor={ClassicEditor}
                   data={subtopic.quickRevisePoints}
                   config={editorConfig}
@@ -701,7 +780,7 @@ const AddNewModule = () => {
                       "quickRevisePoints"
                     );
                   }}
-                />
+                /> */}
               </FormGroup>
 
               {/* CHEAT SHEET VIDEO */}
@@ -794,6 +873,7 @@ const AddNewModule = () => {
                           handleConceptClarifierChange(
                             e,
                             null,
+                            null,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
@@ -806,7 +886,33 @@ const AddNewModule = () => {
 
                     <FormGroup>
                       <Label>Explanation on Hover</Label>
-                      <CKEditor
+                      <Editor
+                        apiKey={TinyMCEapiKey}
+                        init={{
+                          plugins: TinyMCEplugins,
+                          toolbar: TinyMCEToolbar,
+                          tinycomments_mode: 'embedded',
+                          tinycomments_author: 'Author name',
+                          mergetags_list: TinyMCEmergetags_list,
+                          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                          branding: false,
+
+                        }}
+                        value={clarifier.explanationOnHover || ""}
+                        onEditorChange={(newValue, editor) => {
+                          handleConceptClarifierChange(
+                            null,
+                            newValue,
+                            editor,
+                            topicIndex,
+                            subIndex,
+                            clarifierIndex,
+                            "explanationOnHover"
+                          );
+                        }}
+                        initialValue=""
+                      />
+                      {/* <CKEditor
                         editor={ClassicEditor}
                         data={clarifier.explanationOnHover}
                         config={editorConfig}
@@ -820,12 +926,38 @@ const AddNewModule = () => {
                             "explanationOnHover"
                           );
                         }}
-                      />
+                      /> */}
                     </FormGroup>
 
                     <FormGroup>
                       <Label>More Explanation on Popup</Label>
-                      <CKEditor
+                      <Editor
+                        apiKey={TinyMCEapiKey}
+                        init={{
+                          plugins: TinyMCEplugins,
+                          toolbar: TinyMCEToolbar,
+                          tinycomments_mode: 'embedded',
+                          tinycomments_author: 'Author name',
+                          mergetags_list: TinyMCEmergetags_list,
+                          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                          branding: false,
+
+                        }}
+                        value={clarifier.moreExplanation || ""}
+                        onEditorChange={(newValue, editor) => {
+                          handleConceptClarifierChange(
+                            null,
+                            newValue,
+                            editor,
+                            topicIndex,
+                            subIndex,
+                            clarifierIndex,
+                            "moreExplanation"
+                          );
+                        }}
+                        initialValue=""
+                      />
+                      {/* <CKEditor
                         editor={ClassicEditor}
                         data={clarifier.moreExplanation}
                         config={editorConfig}
@@ -839,7 +971,7 @@ const AddNewModule = () => {
                             "moreExplanation"
                           );
                         }}
-                      />
+                      /> */}
                     </FormGroup>
 
                     {/* DELETE CLARIFIER BUTTON/ICON */}
@@ -1131,10 +1263,10 @@ const AddNewModule = () => {
             deleteType === "topic"
               ? "Are you sure you want to delete this entire topic?"
               : deleteType === "subtopic"
-              ? "Are you sure you want to delete this subtopic?"
-              : deleteType === "layman"
-              ? "Are you sure you want to delete this Layman explanation?"
-              : "Are you sure you want to delete this Concept Clarifier?"
+                ? "Are you sure you want to delete this subtopic?"
+                : deleteType === "layman"
+                  ? "Are you sure you want to delete this Layman explanation?"
+                  : "Are you sure you want to delete this Concept Clarifier?"
           }
         />
       )}

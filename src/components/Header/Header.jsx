@@ -54,7 +54,6 @@ const Dropdown = ({
 
   const handleLogout = () => {
     // Perform logout actions here (e.g., clearing session, redirecting)
-    alert("Logged out successfully!");
     setIsLogoutModalOpen(false);
   };
 
@@ -145,7 +144,6 @@ const Header = ({ title }) => {
 
   const handleLogout = () => {
     // Perform logout actions here (e.g., clearing session, redirecting)
-    alert("Logged out successfully!");
     setIsLogoutModalOpen(false);
   };
 

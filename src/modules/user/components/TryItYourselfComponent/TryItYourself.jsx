@@ -42,7 +42,6 @@ const TryItYourself = () => {
     const fetchAllQuestions = async () => {
       try {
         const response = await gettiy(); // Fetch all questions
-        console.log("Question data:", response.data);
         if (response && response.success && response.data) {
           setAllQuestions(response.data);
         } else {
@@ -56,7 +55,6 @@ const TryItYourself = () => {
     const fetchModuleCodes = async () => {
       try {
         const response = await getModuleCode(); // Fetch module codes
-        console.log("Module Codes:", response.data);
         if (response && response.success && response.data) {
           setModuleCodes(response.data);
         } else {
@@ -87,7 +85,6 @@ const TryItYourself = () => {
       const filteredQuestions = allQuestions.filter(
         (q) => q.module_code === currentModuleCode
       );
-      console.log("Filtered Questions:", filteredQuestions);
 
       // Set the first question as the selected question
       if (filteredQuestions.length > 0) {
@@ -118,13 +115,11 @@ const TryItYourself = () => {
     );
 
     if (currentIndex + 1 < filteredQuestions.length) {
-      console.log("Condition is true: Moving to the next question.");
       setSelectedQuestion(filteredQuestions[currentIndex + 1]);
       setSelectedAnswer(null);
       setUserAnswer("");
       setShowSolution(false);
     } else {
-      console.log("Condition is false: Navigating to the learning module.");
       navigate(`/user/learning`);
     }
   };

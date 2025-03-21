@@ -47,7 +47,6 @@ const QuestionBank = () => {
     const fetchQuestions = async () => {
       try {
         const response = await getQuestionBank();
-        console.log("Question data:", response.data);
         setFilteredQuestions(response.data);
       } catch (error) {
         console.error("Error fetching questions:", error);
@@ -58,7 +57,6 @@ const QuestionBank = () => {
       try {
         const response = await getModuleCode();
         setModuleCodes(response.data);
-        console.log("Fetching Modules:", response.data);
       } catch (error) {
         console.error("Error fetching modules:", error);
       }
@@ -67,7 +65,6 @@ const QuestionBank = () => {
     const fetchDifficultyLevels = async () => {
       try {
         const response = await getQuestionBank();
-        console.log("Question data:", response.data);
         const levels = response.data.map((question) => question.level);
         const uniqueLevels = [...new Set(levels)];
         setDifficultyLevels(uniqueLevels);
@@ -110,8 +107,6 @@ const QuestionBank = () => {
       subtopic_code: "",
     };
 
-    console.log("selectedFilters:", selectedFilters);
-
     if (selectedFilters.easy) filters.level.push("easy");
     if (selectedFilters.medium) filters.level.push("medium");
     if (selectedFilters.hard) filters.level.push("hard");
@@ -125,14 +120,16 @@ const QuestionBank = () => {
       }
     }
 
-    if (selectedFilters.topic_code) filters.topic_code = selectedFilters.topic_code;
-    if (selectedFilters.subtopic_code) filters.subtopic_code = selectedFilters.subtopic_code;
-    if (selectedFilters.question_type) filters.question_type = selectedFilters.question_type;
+    if (selectedFilters.topic_code)
+      filters.topic_code = selectedFilters.topic_code;
+    if (selectedFilters.subtopic_code)
+      filters.subtopic_code = selectedFilters.subtopic_code;
+    if (selectedFilters.question_type)
+      filters.question_type = selectedFilters.question_type;
 
     const levelFilter = filters.level.length ? filters.level.join(",") : "";
 
     try {
-      console.log("updated filters", filters);
       const response = await getQuestionBank(
         filters.module_code,
         filters.topic_code,
@@ -167,7 +164,9 @@ const QuestionBank = () => {
   };
 
   const getModuleName = (moduleCode) => {
-    const module = moduleCodes.find((module) => module.module_code === moduleCode);
+    const module = moduleCodes.find(
+      (module) => module.module_code === moduleCode
+    );
     return module ? module.module_name : "Unknown Module";
   };
 
@@ -187,7 +186,9 @@ const QuestionBank = () => {
                 type="text"
                 placeholder="Search filters..."
                 value={filterSearchQuery}
-                onChange={(e) => setFilterSearchQuery(e.target.value.toLowerCase())}
+                onChange={(e) =>
+                  setFilterSearchQuery(e.target.value.toLowerCase())
+                }
               />
               <CloseFilterButton onClick={closeDropdown}>
                 <IoClose size={22} />
@@ -211,7 +212,9 @@ const QuestionBank = () => {
             <FilterSection>
               <SubText>Topics</SubText>
               {moduleCodes
-                .filter((module) => module.module_name.toLowerCase().includes(filterSearchQuery))
+                .filter((module) =>
+                  module.module_name.toLowerCase().includes(filterSearchQuery)
+                )
                 .map((module) => (
                   <CheckboxLabel key={module.module_code}>
                     <input
@@ -224,7 +227,13 @@ const QuestionBank = () => {
                 ))}
             </FilterSection>
 
-            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px" }}>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "10px",
+              }}
+            >
               <ClearButton onClick={clearFilters}>Clear all</ClearButton>
               <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
             </div>
@@ -238,13 +247,18 @@ const QuestionBank = () => {
               key={index}
               style={{ textDecoration: "none" }}
             >
-              <QuestionCard key={index} style={{ display: "flex", justifyContent: "space-between" }}>
+              <QuestionCard
+                key={index}
+                style={{ display: "flex", justifyContent: "space-between" }}
+              >
                 <div>
                   <QuestionText>
                     {index + 1}. {item.question}
                   </QuestionText>
                   <MetaInfo>
-                    <Topic>Module Name - {getModuleName(item.module_code)}</Topic>
+                    <Topic>
+                      Module Name - {getModuleName(item.module_code)}
+                    </Topic>
                     <Difficulty>Level - {item.level}</Difficulty>
                     <Type>Type - {item.question_type}</Type>
                   </MetaInfo>
@@ -254,7 +268,7 @@ const QuestionBank = () => {
             </Link>
           ))
         ) : (
-          <p>No questions match the selected filters.</p>
+          <p>Loading questions...</p>
         )}
       </Container>
     </ThemeProvider>

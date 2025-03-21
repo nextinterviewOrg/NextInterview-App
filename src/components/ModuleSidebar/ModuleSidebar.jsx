@@ -27,10 +27,14 @@ import { MdExpandLess } from "react-icons/md";
 import { MdExpandMore } from "react-icons/md";
 import { getModuleById } from "../../api/addNewModuleApi";
 import { RiGeminiLine } from "react-icons/ri";
+import { getUserProgressByModule, getUserProgressBySubTopic, getUserProgressStats } from "../../api/userProgressApi";
 const courseData1 = {
-  title: "Diagnosing and Investigating the userMetrics",
+  title: "",
   topicsList: [],
 };
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../api/userApi";
+import { use } from "react";
 
 export default function ModuleSidebar({
   isExpanded,
@@ -40,39 +44,59 @@ export default function ModuleSidebar({
 }) {
   const location = useLocation();
   const [expandedTopic, setExpandedTopic] = useState(null);
+  const [totalTopics, setTotalTopics] = useState(0);
+  const [totalCompletedTopics, setTotalCompletedTopics] = useState(0);
+  const [moduleProgressPercentage, setModuleProgressPercentage] = useState(0);
   const navigate = useNavigate();
-
+  const [slectectedCurrentSubTopic, setSelectedCurrentSubTopic] = useState(null);
   const [courseData, setCourseData] = useState(courseData1);
   const moduleId = useParams().id;
+  const { isLoaded, user, isSignedIn } = useUser();
 
   useEffect(() => {
     setIsExpanded(true);
-    console.log("location Data=>", location.state);
     const apiCaller = async () => {
       try {
         const response = await getModuleById(moduleId);
-        console.log(response.data);
+        console.log("jjsjs", response.data);
+        const responseUser = await getUserByClerkId(user.id);
+        const userModuleProgress = await getUserProgressByModule({ userId: responseUser.data.user._id, moduleCode: response.data.module_code });
+        const userModuleProgressStats = await getUserProgressStats(responseUser.data.user._id);
+        setExpandedTopic(location.state.topicIndex);
+        setSelectedCurrentSubTopic(location.state.subtopicIndex);
+
+        userModuleProgressStats.ModuleProgress.map((item) => {
+          if (item.moduleCode === response.data.module_code) {
+            setTotalCompletedTopics(item.topicStats.completed);
+
+            setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length ) * 100).toFixed(0));
+          }
+        })
+        setTotalTopics(response.data.topicData.length + 1);
         const data = {
           title: response.data.moduleName,
-          topicsList: response.data.topicData.map((item) => {
+          topicsList: await Promise.all(response.data.topicData.map(async (item) => {
             return {
               title: item.topicName,
-              subtopics: item.subtopicData.map((subitem) => {
+              subtopics: await Promise.all(item.subtopicData.map(async (subitem) => {
+                console.log("subitem", subitem);
+                const subTopicProgress = await getUserProgressBySubTopic({ userId: responseUser.data.user._id, moduleCode: response.data.module_code, topicCode: item.topic_code, subtopicCode: subitem.subtopic_code });
                 return {
                   title: subitem.subtopicName,
-                  completed: subitem.completed,
+                  completed: subTopicProgress?.data?.status === "completed" ? true : false||false,
                 };
-              }),
+              })),
             };
-          }),
+          })),
         };
+        console.log("returned Data=>", data);
         setCourseData(data);
       } catch (error) {
         console.log(error);
       }
     };
     apiCaller();
-  }, [navigate]);
+  }, [navigate, location.state]);
 
   const toggleExpand = (index) => {
     setExpandedTopic(expandedTopic === index ? null : index);
@@ -94,16 +118,17 @@ export default function ModuleSidebar({
         <div className="progress-bar-container">
           <div
             className="progress-bar"
-            style={{ width: `${courseProgress}%` }}
+            style={{ width: `${moduleProgressPercentage}%`, backgroundColor: moduleProgressPercentage>=35? moduleProgressPercentage>=75?"green" :  "orange":"red" }}
           ></div>
         </div>
         <div className="progress-details">
           <div className="progress-details-count">
-            <span>1 /{courseData.topicsList.length} Topics</span>
+            <span>{totalCompletedTopics} /{courseData.topicsList.length} Topics</span>
             <span>completed</span>
           </div>
-          <div className="progress-details-percentage">
-            <span>10%</span>
+
+          <div className="progress-details-percentage" >
+            <span>{moduleProgressPercentage}%</span>
           </div>
         </div>
         <button
@@ -116,7 +141,7 @@ export default function ModuleSidebar({
         </button>
       </div>
 
-      <div className="course-topics">
+      <div className="course-topics" style={{ overflowY: "auto" }}>
         <h3 className="course-topics-title">Topics</h3>
         {courseData.topicsList?.map((topic, index) => (
           <div key={index} className="topic">
@@ -133,21 +158,23 @@ export default function ModuleSidebar({
                   <p>No subtopics available</p>
                 ) : (
                   topic.subtopics?.map((subtopic, subIndex) => (
-                    <div key={subIndex} className="subtopic">
-                      <div className="subtopic-info">
-                        <span
-                          className={
-                            subtopic.completed ? "completed" : "pending"
-                          }
-                        >
-                          <Link
-                            className="subtopic-link"
-                            to={`/user/learning/${moduleId}/topic`}
-                            state={{
-                              topicIndex: index,
-                              subtopicIndex: subIndex,
-                            }}
+                    <Link
+                      className="subtopic-link"
+                      to={`/user/learning/${moduleId}/topic`}
+                      state={{
+                        topicIndex: index,
+                        subtopicIndex: subIndex,
+                      }}
+                    >
+                      <div key={subIndex} className="subtopic">
+
+                        <div className="subtopic-info" style={{ backgroundColor: slectectedCurrentSubTopic == subIndex ? "lightgray" : "transparent", borderRadius: "5px" }}>
+                          <span
+                            className={
+                              subtopic.completed ? "completed" : "pending"
+                            }
                           >
+
                             <div
                               style={{
                                 display: "flex",
@@ -160,7 +187,7 @@ export default function ModuleSidebar({
                                 {subtopic.completed ? (
                                   <FaCheckCircle />
                                 ) : (
-                                  <MdExpandCircleDown />
+                                  <FaCheckCircle style={{ color: "gray" }} />
                                 )}
                               </span>{" "}
                               <span className="subtopic-title">
@@ -168,11 +195,12 @@ export default function ModuleSidebar({
                                 {subtopic.title}
                               </span>
                             </div>
-                          </Link>
-                        </span>
-                        {/* <span className="time">{subtopic.time}</span> */}
+
+                          </span>
+                          {/* <span className="time">{subtopic.time}</span> */}
+                        </div>
                       </div>
-                    </div>
+                    </Link>
                   ))
                 )}
               </div>

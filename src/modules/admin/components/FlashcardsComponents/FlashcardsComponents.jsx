@@ -37,7 +37,6 @@ const FlashcardsComponents = () => {
   const apiCaller = async () => {
     setLoading(true);
     const data = await getFlashcards();
-    console.log("data", data);
     const response = data.data.map((item, index) => {
       return {
         id: index + 1,
@@ -64,7 +63,6 @@ const FlashcardsComponents = () => {
   };
 
   const handleDeleteClick = (id) => {
-    console.log("id", id);
     setCurrentCard(id);
     setDeleteModalVisible(true); // Show DeleteModule
   };

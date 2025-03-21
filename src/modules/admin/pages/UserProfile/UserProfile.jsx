@@ -12,6 +12,7 @@ import theme from "../../../../theme/Theme";
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { getUserByClerkId, unrestrictUser } from "../../../../api/userApi";
+import NotificationModal from "../../../../pages/NotificationModal/NotificationModal";
 
 export default function UserProfile() {
   const [showModal, setShowModal] = useState(false);
@@ -34,10 +35,14 @@ export default function UserProfile() {
   const location = useLocation();
   const clerkID = location.state.clerkId;
   const [clekId, setClerkId] = useState(clerkID);
+  const [notification, setNotification] = useState({
+    type: "",
+    message: "",
+    isOpen: false,
+  });
   useEffect(() => {
     const apiCaller = async () => {
       const response = await getUserByClerkId(clerkID);
-      console.log("response", response);
 
       const userInfoData = {
         name: response.data.clerkUserData.firstName || "Anonymous",
@@ -63,9 +68,30 @@ export default function UserProfile() {
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  const handleUnrestrictUser = async () => {
+    await unrestrictUser({ clerk_ids: [clerkID] });
+    setNotification({
+      isOpen: true,
+      message: "Restriction removed successfully!",
+      type: "success",
+    });
+    setShowModal(false);
+    setUserInfo((prev) => ({ ...prev, locked: false }));
+  };
+
   return (
     <UserProfileContainer>
       {/* user profile restriction conditionally */}
+      {notification.isOpen && (
+        <NotificationModal
+          type={notification.type}
+          message={notification.message}
+          isOpen={notification.isOpen}
+          onClose={() =>
+            setNotification({ isOpen: false, message: "", type: "" })
+          }
+        />
+      )}
       {userInfo?.locked && (
         <div className="restriction-banner">
           <p className="restriction-banner-text">
@@ -87,17 +113,7 @@ export default function UserProfile() {
               <button style={styles.cancelBtn} onClick={handleCloseModal}>
                 Cancel
               </button>
-              <button
-                style={styles.yesBtn}
-                onClick={async () => {
-                  // Your "Yes" logic here:
-                  // e.g. call an API or update state
-                  await unrestrictUser({ clerk_ids: [clerkID] });
-                  alert("Restriction removed!");
-                  window.location.reload();
-                  setShowModal(false);
-                }}
-              >
+              <button style={styles.yesBtn} onClick={handleUnrestrictUser}>
                 Yes
               </button>
             </div>

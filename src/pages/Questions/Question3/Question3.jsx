@@ -31,9 +31,7 @@ const QuestionPage3 = () => {
     navigate("/question2");
   };
   const handleClick = async () => {
-    console.log("selectedOption", selectedOption);
     const data = await getUserByClerkId(user.id);
-    console.log("data", data);
     const submissionData = {
       user_id: data.data.user._id,
       data_experience_response: selectedOption,

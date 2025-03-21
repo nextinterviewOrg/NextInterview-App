@@ -38,7 +38,7 @@ const ModalHeader = styled.div`
 `;
 
 const Title = styled.h3`
-  font-family: ${theme.fonts.body};
+    font-family: ${theme.fonts.body};
   font-size: 20px;
   margin: 0;
   color: ${({ theme }) => theme.colors.text};
@@ -59,6 +59,7 @@ const FormGroup = styled.div`
 `;
 
 const Label = styled.label`
+  font-family: ${theme.fonts.body};
   font-family: ${theme.fonts.body};
   font-size: 14px;
   color: ${({ theme }) => theme.colors.text};

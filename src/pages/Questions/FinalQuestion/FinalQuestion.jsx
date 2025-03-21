@@ -27,7 +27,6 @@ function FinalQuestion() {
       profile_status: true,
     };
     const responseData = await createUserProfile(submissionData);
-    console.log("data", responseData);
     navigate("/profileComplete");
   };
   const handleSkip = async () => {
@@ -37,7 +36,6 @@ function FinalQuestion() {
       profile_status: true,
     };
     const responseData = await createUserProfile(submissionData);
-    console.log("data", responseData);
     navigate("/profileComplete");
   };
   return (

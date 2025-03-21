@@ -83,7 +83,7 @@ export const Subtitle = styled.p`
 
 export const InputContainer = styled.div`
   color: ${theme.colors.sidebarTextColor}60;
-  margin-bottom: ${theme.spacing(8)};
+  margin-bottom: ${theme.spacing(1)};
 `;
 
 export const Label = styled.label`
@@ -98,13 +98,14 @@ export const Label = styled.label`
 `;
 
 export const Input = styled.input`
-  width: 95%;
+  width: 100%;
   padding: ${theme.spacing(1)};
   font-size: 1rem;
   border: 0.1rem solid ${theme.colors.sidebarTextColor}60;
   border-radius: 0.25rem;
   outline: none;
   transition: border 0.3s;
+  box-sizing: border-box;
 
   &:focus {
     border-color: ${theme.colors.primary};
@@ -126,6 +127,7 @@ export const Button = styled.button`
   border-radius: 0.25rem;
   cursor: pointer;
   transition: background-color 0.3s;
+  margin-top: ${({ message }) => (message ? "4rem" : "20%")};
 
   &:hover {
     background-color: ${theme.colors.bluetext};

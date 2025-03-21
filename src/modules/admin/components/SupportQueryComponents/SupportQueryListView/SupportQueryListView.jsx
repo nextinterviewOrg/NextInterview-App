@@ -47,14 +47,12 @@ const SupportQueryListView = () => {
       setLoading(true);  // Set loading to true while fetching data
       try {
         const response = await getAllSupportQuery();
-        console.log("response", response);
         if (response && Array.isArray(response.data)) {
           let queriesWithProfilePics = await Promise.all(
             response.data.map(async (query) => {
               if (query.user_id?.clerkUserId) {
                 try {
                   const userData = await getUserByClerkId(query.user_id.clerkUserId);
-                  console.log("userData", userData);
                   return {
                     ...query,
                     profileImage:

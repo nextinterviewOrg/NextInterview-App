@@ -79,7 +79,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
     // },
     {
       id: 10,
-      name: "MultiFactor Authentication",
+      name: "Multi Factor Authentication",
       path: "/admin/manage-mfa/add",
       //  icon: <MdNotificationsNone />
       icon: <img className="svgicon" src={Settings} alt="Users Icon" />,
