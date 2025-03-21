@@ -55,7 +55,6 @@ const AddFlashCard = ({ onClose, onSave, flashcardCount }) => {
 
     console.log("Saving Flashcard with image:", image); // Debugging
 
-    // Pass the content and backgroundImage URL to the parent component
     onSave({
       id: flashcardCount + 1,
       text: content,
