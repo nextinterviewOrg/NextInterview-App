@@ -9,11 +9,11 @@ import {
   TextBox,
   Title,
 } from "../../components/SupportQuery/SupportQuery.style";
-import { theme } from "antd";
 import { createSupportQuery } from "../../../../api/supportQueryApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
-// import theme from "../../../../theme/Theme";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; 
 
 const SupportQuery = ({ isOpen, onClose }) => {
   const [priority, setPriority] = useState("Low");
@@ -22,15 +22,25 @@ const SupportQuery = ({ isOpen, onClose }) => {
   const { isSignedIn, user, isLoaded } = useUser();
 
   const handleSend = async () => {
-    const userData = await getUserByClerkId(user.id);
-    const data = await createSupportQuery({
-      user_id: userData.data.user._id,
-      priority,
-      category,
-      status: "Created",
-      query_description: query,
-    });
-    alert(`Priority: ${priority}\nCategory: ${category}\nQuery: ${query}`);
+    try {
+      const userData = await getUserByClerkId(user.id);
+      const data = await createSupportQuery({
+        user_id: userData.data.user._id,
+        priority,
+        category,
+        status: "Created",
+        query_description: query,
+      });
+
+      // Show toast on successful query submission
+      toast.success("Query sent successfully!");
+
+      alert("Query sent successfully!");
+      onClose();
+    } catch (error) {
+      // Show toast on error
+      toast.error("Error sending query. Please try again.");
+    }
   };
 
   return (
@@ -55,7 +65,8 @@ const SupportQuery = ({ isOpen, onClose }) => {
               <option value="Billing">Billing</option>
               {/* <option value="Support">Support</option> */}
               <option value="General">General</option>
-              <option value="Technical">Technical</option>            </Dropdown>
+              <option value="Technical">Technical</option>
+            </Dropdown>
           </div>
 
           <div
@@ -105,6 +116,9 @@ const SupportQuery = ({ isOpen, onClose }) => {
         </ModalContent>
         <CloseButton onClick={onClose}>&times;</CloseButton>
       </Modal>
+
+      {/* ToastContainer should be placed at the root of your component tree */}
+      <ToastContainer />
     </Container>
   );
 };

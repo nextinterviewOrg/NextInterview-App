@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 import { restrictUser } from "../../../../api/userApi";
+import { message } from "antd";
 
 const ModalContainer = styled.div`
   position: fixed;
@@ -135,16 +136,10 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
 
       endDate.setFullYear(startDate.getDate() + duration);
     }
-    console.log({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
-    console.log({
-      selectedRows,
-      reason,
-      remarks,
-      duration,
-      durationUnit,
-    });
+  
     await restrictUser({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
-    window.location.reload();
+   message.success("User restricted successfully!");
+    // window.location.reload();
     onClose();
   };
 

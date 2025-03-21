@@ -12,6 +12,21 @@ export const ModalOverlay = styled.div`
   justify-content: center; /* Center horizontally */
   z-index: 1000;
   padding: 40px 0; /* Add gap from top and bottom */
+
+  @media (max-width: 768px) {
+    padding: 20px 0; /* Adjust padding for smaller screens */
+    scroll-behavior: auto;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 0; /* Adjust padding for smaller screens */
+    scroll-behavior: auto;
+  }
+
+  @media(max-width: 900px) {
+    padding: 20px 0; /* Adjust padding for smaller screens */
+    }
+    
 `;
  
 export const ModalContent = styled.div`
@@ -52,33 +67,39 @@ export const CloseButton = styled.button`
     color: ${({ theme }) => theme.colors.primary};
   }
 `;
- 
 export const FormGroup = styled.div`
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
- 
-  label {
-    flex: 0.3;
-    font-size: 0.8rem;
-    color: ${({ theme }) => theme.colors.text};
+display: flex;
+flex-direction: column; /* Stack label, input, and error message vertically */
+margin-bottom: 20px;
+
+label {
+  font-size: 0.8rem;
+  color: ${({ theme }) => theme.colors.text};
+  margin-bottom: 5px;
+}
+
+input,
+textarea,
+select {
+  padding: 10px;
+  border: 1px solid ${({ theme }) => theme.colors.textgray};
+  border-radius: 5px;
+  font-size: 0.8rem;
+  margin-bottom: 5px;
+
+  &:focus {
+    border-color: ${({ theme }) => theme.colors.primary};
+    outline: none;
   }
- 
-  input,
-  textarea,
-  select {
-    flex: 0.7;
-    padding: 10px;
-    border: 1px solid ${({ theme }) => theme.colors.textgray};
-    border-radius: 5px;
-    font-size: 0.8rem;
- 
-    &:focus {
-      border-color: ${({ theme }) => theme.colors.primary};
-      outline: none;
-    }
-  }
+}
+
+.error {
+  color: red;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
 `;
+
  
  
  

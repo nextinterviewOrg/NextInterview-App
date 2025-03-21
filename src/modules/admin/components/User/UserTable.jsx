@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { ShimmerTable } from "react-shimmer-effects";
 import { FaBell, FaBan } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
@@ -116,85 +117,130 @@ const NoUsersMessage = styled.div`
 `;
 
 const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
-  if (users.length === 0) {
-    return (
-      <TableContainer>
-        <NoUsersMessage>No users found</NoUsersMessage>
-      </TableContainer>
-    );
-  }
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 12;
+  const totalPages = Math.ceil(users.length / rowsPerPage);
+
+  const currentUsers = users.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+
+  useEffect(() => {
+    // Simulate loading data (replace with actual data fetching logic)
+    setTimeout(() => {
+      setLoading(false);
+    }, 2000); // Set the time delay as per your actual data fetch time
+  }, [users]);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  // if (users.length === 0) {
+  //   return (
+  //     <TableContainer>
+  //       <NoUsersMessage>No users found</NoUsersMessage>
+  //     </TableContainer>
+  //   );
+  // }
 
   return (
-    <TableContainer>
-      <Table>
-        <thead>
-          <tr>
-            <Th></Th>
-            <Th>Name</Th>
-            <Th>Topics Completed</Th>
-            <Th>Avg. Active Hours</Th>
-            <Th>Last Active</Th>
-            <Th></Th>
-            <Th></Th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user, index) => (
-            <Tr
-              key={index}
-              isSelected={selectedRows.includes(user.clerkId)}
-              onClick={() => onRowSelectionChange(user.clerkId)}
-            >
-              <Td>
-                <Checkbox
-                  checked={selectedRows.includes(user.clerkId)}
-                  onChange={(e) => e.stopPropagation()}
-                />
-              </Td>
-              <Td>
-                <UserCell>
-                  <Avatar>
-                    {" "}
-                    <img
-                      style={{
-                        borderRadius: "50%",
-                        width: "40px",
-                        height: "40px",
-                      }}
-                      src={user.profilePic}
-                      alt={user.name}
+    <div>
+      <TableContainer>
+        {loading ? (
+          <ShimmerTable row={8} col={7} /> // shimmer effect when loading
+        ) : (
+          <Table>
+            <thead>
+              <tr>
+                <Th></Th>
+                <Th>Name</Th>
+                <Th>Topics Completed</Th>
+                <Th>Avg. Active Hours</Th>
+                <Th>Last Active</Th>
+                <Th></Th>
+                <Th></Th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentUsers.map((user, index) => (
+                <Tr
+                  key={index}
+                  isSelected={selectedRows.includes(user.clerkId)}
+                  onClick={() => onRowSelectionChange(user.clerkId)}
+                >
+                  <Td>
+                    <Checkbox
+                      checked={selectedRows.includes(user.clerkId)}
+                      onChange={(e) => e.stopPropagation()}
                     />
-                  </Avatar>
-                  <UserInfo>
-                    <Name>{user.name}</Name>
-                    <Email>{user.email}</Email>
-                  </UserInfo>
-                </UserCell>
-              </Td>
-              <Td>{user.topicsCompleted}</Td>
-              <Td>
-                <ActiveHours
-                  color={user.activeHours.includes("18h") ? "success" : "warning"}
-                >
-                  {user.activeHours}
-                </ActiveHours>
-              </Td>
-              <Td>{user.lastActive}</Td>
-              <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
-              <Td>
-                <Link
-                  to={`/admin/userProfile`}
-                  state={{ clerkId: user.clerkId }}
-                  style={{ textDecoration: "none" }}
-                >
-                  <FaEye />
-                </Link>
-              </Td>
-            </Tr>
-          ))}
-        </tbody>
-      </Table>
-    </TableContainer>
+                  </Td>
+                  <Td>
+                    <UserCell>
+                      <Avatar>
+                        <img
+                          style={{
+                            borderRadius: "50%",
+                            width: "40px",
+                            height: "40px",
+                          }}
+                          src={user.profilePic}
+                          alt={user.name}
+                        />
+                      </Avatar>
+                      <UserInfo>
+                        <Name>{user.name}</Name>
+                        <Email>{user.email}</Email>
+                      </UserInfo>
+                    </UserCell>
+                  </Td>
+                  <Td>{user.topicsCompleted}</Td>
+                  <Td>
+                    <ActiveHours
+                      color={user.activeHours.includes("18h") ? "success" : "warning"}
+                    >
+                      {user.activeHours}
+                    </ActiveHours>
+                  </Td>
+                  <Td>{user.lastActive}</Td>
+                  <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
+                  <Td>
+                    <Link
+                      to={`/admin/userProfile`}
+                      state={{ clerkId: user.clerkId }}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <FaEye />
+                    </Link>
+                  </Td>
+                </Tr>
+              ))}
+            </tbody>
+          </Table>
+        )}
+      </TableContainer>
+
+      {/* Pagination Controls */}
+      <div className="pagination" style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", marginRight: "20px", marginLeft:"60px", }}>
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+          style={{ padding:"10px", backgroundColor:"#68c184", borderRadius:"5px", border:"none", color:"white" }}
+        >
+          Prev
+        </button>
+        <span>{` ${currentPage}  of ${totalPages}`}</span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+          style={{ padding:"10px", backgroundColor:"#68c184", borderRadius:"5px", border:"none", color:"white" }}
+        >
+          Next
+        </button>
+      </div>
+    </div>
   );
 };
 

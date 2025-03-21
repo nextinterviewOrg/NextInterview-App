@@ -15,6 +15,7 @@ import { MdDelete } from "react-icons/md";
 import AddFaqModal from "../../components/FAQComponent/FAQAdd/FaqAdd";
 import { IoAddCircleOutline } from "react-icons/io5";
 import { CiCircleMinus } from "react-icons/ci";
+import { ShimmerText } from "react-shimmer-effects";
 import {
   getFaq,
   createFaq,
@@ -22,6 +23,7 @@ import {
   updateFaq,
 } from "../../../../api/faqApi";
 import theme from "../../../../theme/Theme";
+import { message } from "antd";
  
 const FAQ = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -31,12 +33,15 @@ const FAQ = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [currentEditIndex, setCurrentEditIndex] = useState(null);
   const [reload, setReload] = useState(false);
+  const [loading, setLoading] = useState(true);
  
   useEffect(() => {
     const fetchFaqs = async () => {
       try {
+        setLoading(true);
         const faqs = await getFaq();
         setFaqs(faqs);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching faqs:", error);
       }
@@ -59,10 +64,12 @@ const FAQ = () => {
         question,
         answer,
       });
+      message.success("FAQ updated successfully!");
       setReload((prev) => !prev);
       setIsEditModalOpen(false);
     } catch (error) {
       console.error("Error updating FAQ:", error);
+      message.error("Failed to update FAQ. Please try again.");
     }
   };
  
@@ -74,10 +81,12 @@ const FAQ = () => {
   const handleDelete = async () => {
     try {
       await deleteFaq(faqs[currentDeleteIndex]._id);
+      message.success("FAQ deleted successfully!");
       setReload((prev) => !prev);
       setIsDeleteModalOpen(false);
     } catch (error) {
       console.error("Error deleting FAQ:", error);
+      message.error("Failed to delete FAQ. Please try again.");
     }
   };
  
@@ -89,10 +98,12 @@ const FAQ = () => {
   const addQuestion = async (newFaq) => {
     try {
       await createFaq(newFaq);
+      message.success("FAQ added successfully!");
       setReload((prev) => !prev);
       setIsAddModalOpen(false);
     } catch (error) {
       console.error("Error adding FAQ:", error);
+      message.error("Failed to add FAQ. Please try again.");
     }
   };
  
@@ -101,12 +112,16 @@ const FAQ = () => {
       <FAQContainer>
         {faqs.map((faq, index) => (
           <div key={index}>
+           {loading ? (
+             <ShimmerText width="100%" height="20px" />
+           ) : (
             <Question onClick={() => toggleAnswerVisibility(index)}>
-              {faq.question}
-              <span style={{ color: `${theme.colors.bluetext}` }}>
-                {faq.isVisible ? <CiCircleMinus /> : <IoAddCircleOutline />}
-              </span>
-            </Question>
+            {faq.question}
+            <span style={{ color: `${theme.colors.bluetext}` }}>
+              {faq.isVisible ? <CiCircleMinus /> : <IoAddCircleOutline />}
+            </span>
+          </Question>
+           )}
             <Answer isVisible={faq.isVisible}>
               {faq.answer}
               {faq.isVisible && (
