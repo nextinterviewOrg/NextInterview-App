@@ -8,6 +8,7 @@ import {
   Footer,
   SaveButton,
   CloseButton,
+  ModalWrapper
 } from "./EditFlashCard.styles";
 
 const EditFlashCard = ({ card, onClose, onSave }) => {
@@ -23,6 +24,7 @@ const EditFlashCard = ({ card, onClose, onSave }) => {
   };
 
   return (
+    <ModalWrapper>
     <ModalContainer>
       <Header>
         Edit Flash Card
@@ -47,6 +49,7 @@ const EditFlashCard = ({ card, onClose, onSave }) => {
         <SaveButton onClick={handleSave}>Save</SaveButton>
       </Footer>
     </ModalContainer>
+    </ModalWrapper>
   );
 };
 

@@ -26,6 +26,7 @@ import {
 } from "../../../../../api/supportQueryApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import ConfirmationModal from "../Confirmation/Confirmation";
+import { ShimmerText } from "react-shimmer-effects"; // Import ShimmerText
 
 const SupportQueryUserDetails = () => {
   const { id } = useParams();
@@ -116,7 +117,7 @@ const SupportQueryUserDetails = () => {
         }));
         setClosedDate(`Closed on: ${updatedClosedDate.toLocaleDateString()}`);
         setQuerySolvedMessage("Query Solved by Admin!");
-       message.success("Query solved successfully!");
+        message.success("Query solved successfully!");
       }
     } catch (error) {
       console.error("Error updating query:", error);
@@ -137,7 +138,23 @@ const SupportQueryUserDetails = () => {
     setShowModal(false); 
   };
 
-  if (loading) return;
+  if (loading) return (
+    <Container>
+      <Header>
+        <ShimmerText width="50%" height="20px" />
+        <ShimmerText width="70%" height="15px" />
+      </Header>
+      <Divider />
+      <QueryInfoSection>
+        <ShimmerText width="100%" height="40px" />
+      </QueryInfoSection>
+      <Divider />
+      <CommunicationLog>
+        <ShimmerText width="100%" height="40px" />
+      </CommunicationLog>
+    </Container>
+  );
+  
   if (error) return <p>{error}</p>;
   if (!queryDetails) return <p>No query details found.</p>;
 
@@ -170,6 +187,7 @@ const SupportQueryUserDetails = () => {
           </UserInfo>
         </RaisedBy>
       </Header>
+
       <Divider />
 
       <QueryInfoSection>

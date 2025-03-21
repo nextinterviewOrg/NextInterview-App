@@ -7,7 +7,9 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import { SearchBarWrapper } from "./FlashcardsComponents.styles";
 import { IoSearch } from "react-icons/io5";
 import { message } from "antd";
-import { ShimmerText, ShimmerTitle, ShimmerButton } from "react-shimmer-effects"; // Ensure correct import
+
+import { ShimmerText, ShimmerTitle } from "react-shimmer-effects"; 
+import Slider from "react-slick";
 import {
   FlashcardContainer,
   Flashcard,
@@ -16,6 +18,8 @@ import {
   AddButton,
   SearchBar,
   Header,
+  FlashContainer,
+  Image
 } from "./FlashcardsComponents.styles";
 import {
   addFlashcard,
@@ -28,7 +32,6 @@ const FlashcardsComponents = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(false);
   const [flashcards, setFlashcards] = useState([]);
-
   const [isAdding, setIsAdding] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [currentCard, setCurrentCard] = useState(null);
@@ -37,10 +40,16 @@ const FlashcardsComponents = () => {
   const apiCaller = async () => {
     setLoading(true);
     const data = await getFlashcards();
+    console.log("API Response:", data); // Check the full response
     const response = data.data.map((item, index) => {
+      const createdAt = new Date(item.createdAt);
+      const formattedDate = createdAt.toLocaleDateString("en-GB"); 
+  
       return {
         id: index + 1,
         text: item.cardContent,
+        backgroundImage: item.backgroundImage, // Make sure this field contains the correct data
+        createdAt: formattedDate,
         know: item.cardKnown || 0,
         dontKnow: item.cardUnknown || 0,
         sharedCount: item.sharedCount || 0,
@@ -48,9 +57,11 @@ const FlashcardsComponents = () => {
         _id: item._id,
       };
     });
+    console.log("Flashcard image response", response); // Debugging response
     setFlashcards(response);
     setLoading(false);
   };
+  
 
   useEffect(() => {
     apiCaller();
@@ -64,27 +75,39 @@ const FlashcardsComponents = () => {
 
   const handleDeleteClick = (id) => {
     setCurrentCard(id);
-    setDeleteModalVisible(true); // Show DeleteModule
+    setDeleteModalVisible(true);
   };
 
   const handleConfirmDelete = async (id) => {
     const response = await deleteFlashcard(currentCard);
     message.success("Flashcard deleted successfully!");
     apiCaller();
-    setDeleteModalVisible(false); // Hide DeleteModule after deletion
+    setDeleteModalVisible(false);
     setCurrentCard(null);
   };
 
   const handleCancelDelete = () => {
     message.error("Flashcard deletion canceled!");
-    setDeleteModalVisible(false); // Hide DeleteModule without deletion
+    setDeleteModalVisible(false);
     setCurrentCard(null);
   };
 
   const handleAddFlashcard = async (newFlashcard) => {
-    const response = await addFlashcard({ cardContent: newFlashcard.text });
+    console.log("New Flashcard:", newFlashcard);
+    const submissionData={
+      cardContent: newFlashcard.text,
+      sharedCount: 0,
+      peopleInteractionCount: 0,
+      cardKnown: newFlashcard.know,
+      cardUnknown: newFlashcard.know,
+      date: "",
+      backgroundImage: newFlashcard.backgroundImage
+    }
+    const response = await addFlashcard(submissionData);
+    console.log("API Response: ghajgjsghj ", response);
     message.success("Flashcard added successfully!");
     apiCaller();
+
     setIsAdding(false);
   };
 
@@ -107,100 +130,85 @@ const FlashcardsComponents = () => {
   );
 
   return (
-    <>
-      <FlashcardContainer>
-        <Header>
-          <SearchBarWrapper>
-            <IoSearch size={20} />
-            <SearchBar
-              type="text"
-              placeholder="Search"
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-          </SearchBarWrapper>
-          <AddButton onClick={() => setIsAdding(true)}>Add flashcard</AddButton>
-        </Header>
-
-        {isAdding && (
-          <AddFlashCard
-            onClose={() => setIsAdding(false)}
-            onSave={handleAddFlashcard}
-            flashcardCount={flashcards.length}
+    <FlashcardContainer>
+      <Header>
+        <SearchBarWrapper>
+          <IoSearch size={20} />
+          <SearchBar
+            type="text"
+            placeholder="Search"
+            value={searchTerm}
+            onChange={handleSearch}
           />
-        )}
+        </SearchBarWrapper>
+        <AddButton onClick={() => setIsAdding(true)}>Add flashcard</AddButton>
+      </Header>
 
-        {isEditing && currentCard && (
-          <EditFlashCard
-            card={currentCard}
-            onClose={() => setIsEditing(false)}
-            onSave={handleSaveEdit}
-          />
-        )}
+      {isAdding && (
+        <AddFlashCard
+          onClose={() => setIsAdding(false)}
+          onSave={handleAddFlashcard}
+          flashcardCount={flashcards.length}
+        />
+      )}
 
-        {loading ? (
-          <div className="loading-cards">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <div key={index} className="loading-card">
-                <ShimmerTitle width="80%" height="20px" style={{ margin: "10px 0" }} />
-                <ShimmerText width="90%" height="15px" style={{ margin: "5px 0" }} />
-                {/* <ShimmerText width="80%" height="15px" style={{ margin: "5px 0" }} /> */}
-                {/* /<ShimmerButton width="60%" height="40px" style={{ marginTop: "10px" }} /> */}
-              </div>
-            ))}
-          </div>
-        ) : (
-          filteredFlashcards.map((card) => (
-            <Flashcard key={card.id}>
-              <h4>Flash Card - {card.id}</h4>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <p>{card.text}</p>
-                <div className="actions">
-                  <ActionButton onClick={() => handleEdit(card.id)}>
-                    <FiEdit3 />
-                  </ActionButton>
-                  <ActionButton onClick={() => handleDeleteClick(card._id)} delete>
-                    <RiDeleteBinLine />
-                  </ActionButton>
-                </div>
-              </div>
-              <InteractionStats>
-                <span>Shared with - {card.sharedCount} people</span>
-                <span>No. of people interacted - {card.peopleInteractionCount}</span>
-                <div>
-                  <span
-                    style={{
-                      color: "#68c184",
-                      fontWeight: "bold",
-                      backgroundColor: "#f0f8f1",
-                      border: "1px solid #defcd6",
-                    }}
-                  >
-                    I know - {card.know}%
-                  </span>
-                  <span
-                    style={{
-                      color: "#843838",
-                      fontWeight: "bold",
-                      marginLeft: "10px",
-                      backgroundColor: "#ffebeb",
-                      border: "1px solid #fcd6d6",
-                    }}
-                  >
-                    I don't know - {card.dontKnow}%
-                  </span>
-                </div>
-              </InteractionStats>
-            </Flashcard>
-          ))
-        )}
-      </FlashcardContainer>
+      {isEditing && currentCard && (
+        <EditFlashCard
+          card={currentCard}
+          onClose={() => setIsEditing(false)}
+          onSave={handleSaveEdit}
+        />
+      )}
+
+      {loading ? (
+        <div className="loading-cards"
+        style={{
+          marginLeft: "60px",
+        }}
+        >
+          {Array.from({ length: 5 }).map((_, index) => (
+            <div key={index} className="loading-card">
+              <ShimmerTitle width="80%" height="20px" 
+              style={{ marginLeft: "60px", marginBottom: "5px" }} />
+              <ShimmerText width="90%" height="15px" 
+                style={{ marginLeft: "60px", marginBottom: "5px" }} 
+              />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}> 
+    {filteredFlashcards.map((card) => (
+  <FlashContainer key={card.id}>
+    <Flashcard>
+      <h4>Flash Card - {card.id}</h4>
+     
+      <Image src={card.backgroundImage} /> 
+      <p>{card.text}</p>
+      <p>{card.createdAt}</p>
+     
+      <InteractionStats>
+        <span>Shared with - {card.sharedCount} people</span>
+        <span>No. of people interacted - {card.peopleInteractionCount}</span>
+        <div>
+          <span>I know - {card.know}%</span>
+          <span>I don't know - {card.dontKnow}%</span>
+        </div>
+      </InteractionStats>
+      <div className="actions">
+        {/* <ActionButton onClick={() => handleEdit(card.id)}>
+          <FiEdit3 />
+        </ActionButton> */}
+        <ActionButton onClick={() => handleDeleteClick(card._id)} delete>
+          <RiDeleteBinLine />
+        </ActionButton>
+      </div>
+    </Flashcard>
+  </FlashContainer>
+))}
+
+        </div>
+      )}
 
       {deleteModalVisible && (
         <DeleteModule
@@ -208,7 +216,7 @@ const FlashcardsComponents = () => {
           onCancel={handleCancelDelete}
         />
       )}
-    </>
+    </FlashcardContainer>
   );
 };
 
