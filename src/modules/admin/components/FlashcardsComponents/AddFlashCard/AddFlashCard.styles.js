@@ -1,6 +1,19 @@
 import styled from "styled-components";
 import theme from "../../../../../theme/Theme";
 
+export const ModalWrapper = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
 export const Container = styled.div`
   width: 700px;
   padding: ${theme.spacing(4)};
@@ -72,7 +85,7 @@ export const FlashcardNumber = styled.span`
 `;
 
 export const TextArea = styled.textarea`
-  width: 100%;
+  width: 95%;
   height: 100px;
   padding: ${theme.spacing(2)};
   border: 1px solid ${theme.colors.sidebarHoverBgColor};
@@ -113,4 +126,14 @@ export const UploadButton = styled.button`
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 0.9rem;
   }
+`;
+
+
+export const FileInputWrapper = styled.div`
+  margin-top: 10px;
+`;
+
+export const ImagePreview = styled.div`
+  margin-top: 15px;
+  text-align: center;
 `;

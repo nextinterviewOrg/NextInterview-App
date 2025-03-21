@@ -4,25 +4,79 @@ import theme from "../../../../theme/Theme";
 export const FlashcardContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing(2)};
+  flex-wrap: wrap;
+  gap: ${theme.spacing(1)};
   padding: ${theme.spacing(2)};
-  margin: auto;
-  background-color: ${theme.colors.light};
-  margin-left: ${theme.spacing(5)};
-
-  @media (max-width: ${theme.breakpoints.desktop}) {
-    margin-left: ${theme.spacing(2)};
-  }
+  justify-content: center;
+  position: relative;
+ 
 
   @media (max-width: ${theme.breakpoints.tablet}) {
-    margin-left: ${theme.spacing(1)};
-    width: 100%;
-  }
-
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    padding: ${theme.spacing(1)};
+    flex-direction: column;
+    align-items: center;
   }
 `;
+export const FlashContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  // gap: ${theme.spacing(1)};
+  padding: ${theme.spacing(2)};
+ 
+
+  
+  `;
+
+export const Flashcard = styled.div`
+  position: relative;
+  gap: ${theme.spacing(1)};
+  display: flex;
+  flex-direction: column;
+  width: 250px;  // Adjust the width of each flashcard
+  margin: 0 10px;
+  padding: ${theme.spacing(2)};
+  background-color: ${theme.colors.white};
+  display: flex;
+  flex-direction: column;
+  border-radius: 15px;  
+  box-shadow: 0px 4px 10px rgba(8, 8, 8, 0.1);
+  transition: transform 0.3s ease, z-index 0.3s ease; // Adding transition for hover effect
+  
+  &:hover {
+    transform: scale(1.1); // Increase the size when hovered
+    z-index: 10;  // Bring the hovered card to the front
+    // color: ${theme.colors.bluetext};
+    background-color: ${theme.colors.lightgreen};
+    box-shadow: 0px 4px 10px rgba(8, 8,08, 0.3);
+  }
+
+  h4 {
+    font-family: ${theme.fonts.heading};
+    margin-bottom: ${theme.spacing(1)};
+    background-color: ${theme.colors.sidebarBgColor};
+    border: 1px solid ${theme.colors.sidebarHoverBgColor};
+    width: fit-content;
+    padding: ${theme.spacing(0.5)};
+    border-radius: 4px;
+    color: ${theme.colors.bluetext};
+  }
+
+  p {
+    font-family: ${theme.fonts.body};
+    color: ${theme.colors.text};
+    margin-bottom: ${theme.spacing(2)};
+   
+  }
+
+  .actions {
+    display: flex;
+    gap: ${theme.spacing(1)};
+    margin-top: ${theme.spacing(2)};
+    justify-content: flex-end;
+  }
+`;
+
+
 
 export const Header = styled.div`
   display: flex;
@@ -74,51 +128,6 @@ export const SearchBarWrapper = styled.div`
   }
 `;
 
-export const Flashcard = styled.div`
-  padding: ${theme.spacing(2)};
-  background-color: ${theme.colors.white};
-  display: flex;
-  flex-direction: column;
-
-  h4 {
-    font-family: ${theme.fonts.heading};
-    margin-bottom: ${theme.spacing(1)};
-    background-color: ${theme.colors.sidebarBgColor};
-    border: 1px solid ${theme.colors.sidebarHoverBgColor};
-    width: fit-content;
-    padding: ${theme.spacing(0.5)};
-    border-radius: 4px;
-    color: ${theme.colors.bluetext};
-  }
-
-  p {
-    font-family: ${theme.fonts.body};
-    color: ${theme.colors.text};
-    margin-bottom: ${theme.spacing(2)};
-  }
-
-  .actions {
-    display: flex;
-    gap: ${theme.spacing(1)};
-    margin-top: ${theme.spacing(2)};
-    justify-content: flex-end;
-  }
-
-  @media (max-width: ${theme.breakpoints.tablet}) {
-    padding: ${theme.spacing(1)};
-  }
-
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    h3 {
-      font-size: 14px;
-    }
-
-    p {
-      font-size: 12px;
-    }
-  }
-`;
-
 export const InteractionStats = styled.div`
   margin-top: ${theme.spacing(1)};
   font-family: ${theme.fonts.body};
@@ -126,6 +135,7 @@ export const InteractionStats = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(2)};
+ 
 
   div {
     display: flex;
@@ -205,4 +215,14 @@ export const AddButton = styled.button`
     font-size: 12px;
     padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
   }
+`;
+
+
+export const Image = styled.div`
+  width: 100%;
+  height: 200px;
+  background-image: ${(props) => (props.src ? `url(${props.src})` : 'none')};
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
 `;

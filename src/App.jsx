@@ -77,6 +77,8 @@ import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
 import NotFound from "./components/NotFound/NotFound";import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   
