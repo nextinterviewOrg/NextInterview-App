@@ -22,12 +22,14 @@ import { getAllSupportQuery } from "../../../../../api/supportQueryApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { IoSearch } from "react-icons/io5";
 import { FiFilter } from "react-icons/fi";
+import { ShimmerTable } from "react-shimmer-effects";
 
 const SupportQueryListView = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [queries, setQueries] = useState([]);
   const [filteredQueries, setFilteredQueries] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [storedFilters, setStoredFilters] = useState({
     status: "All",
     categories: {
@@ -42,6 +44,7 @@ const SupportQueryListView = () => {
 
   useEffect(() => {
     const fetchQueries = async () => {
+      setLoading(true);  // Set loading to true while fetching data
       try {
         const response = await getAllSupportQuery();
         if (response && Array.isArray(response.data)) {
@@ -49,9 +52,7 @@ const SupportQueryListView = () => {
             response.data.map(async (query) => {
               if (query.user_id?.clerkUserId) {
                 try {
-                  const userData = await getUserByClerkId(
-                    query.user_id.clerkUserId
-                  );
+                  const userData = await getUserByClerkId(query.user_id.clerkUserId);
                   return {
                     ...query,
                     profileImage:
@@ -79,10 +80,13 @@ const SupportQueryListView = () => {
         console.error("Error fetching queries:", error);
         setQueries([]);
         setFilteredQueries([]);
+      } finally {
+        setLoading(false); // Set loading to false after fetching the data
       }
     };
     fetchQueries();
   }, []);
+
   useEffect(() => {
     applyFilters(storedFilters);
   }, [storedFilters, queries]);
@@ -103,14 +107,6 @@ const SupportQueryListView = () => {
       const matchesCategory =
         Object.keys(categories).every((key) => !categories[key]) ||
         categories[query.category];
-
-      // const matchesDate = Object.keys(dateRange).some(
-      //   (key) => dateRange[key] && isDateInRange(query.submitted_on, key)
-      // );
-
-      // const matchesDate = Object.keys(dateRange).every(
-      //   (key) => !dateRange[key]
-      // );
 
       const matchesDate = Object.keys(dateRange).every(
         (key) => !dateRange[key] || isDateInRange(query.submitted_on, key)
@@ -164,86 +160,90 @@ const SupportQueryListView = () => {
           Filter
         </FilterButton>
       </SearchBar>
-      <Table>
-        <thead className="theader">
-          <TableRow>
-            <TableHeader style={{ width: "20%" }}>Query ID</TableHeader>
-            <TableHeader style={{ width: "20%" }}> Name</TableHeader>
-            <TableHeader style={{ width: "15%" }}>Category</TableHeader>
-            <TableHeader style={{ width: "15%" }}>Status</TableHeader>
-            <TableHeader style={{ width: "15%" }}>Submitted On</TableHeader>
-            <TableHeader style={{ width: "15%" }}>Resolution Time</TableHeader>
-          </TableRow>
-        </thead>
-        <tbody>
-          {filteredQueries.length === 0 ? (
+      {loading ? (
+        <ShimmerTable rows={5} columns={6} />  
+      ) : (
+        <Table>
+          <thead className="theader">
             <TableRow>
-              <TableCell colSpan="6" style={{ textAlign: "center" }}>
-                No Queries Found
-              </TableCell>
+              <TableHeader style={{ width: "20%" }}>Query ID</TableHeader>
+              <TableHeader style={{ width: "20%" }}> Name</TableHeader>
+              <TableHeader style={{ width: "15%" }}>Category</TableHeader>
+              <TableHeader style={{ width: "15%" }}>Status</TableHeader>
+              <TableHeader style={{ width: "15%" }}>Submitted On</TableHeader>
+              <TableHeader style={{ width: "15%" }}>Resolution Time</TableHeader>
             </TableRow>
-          ) : (
-            filteredQueries
-              .filter(
-                (query) =>
-                  query.user_id?.user_name
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase()) ||
-                  query.user_id?.user_email
-                    ?.toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-              )
-              .map((query, index) => (
-                <TableRow key={index}>
-                  <TableCell>
-                    <QueryLink to={`/admin/SupportQuery/${query._id}`}>
-                      {query._id}
-                    </QueryLink>
-                  </TableCell>
-                  <TableCell>
-                    <NameContainer>
-                      <ProfileImage
-                        src={query.profileImage}
-                        alt={`${query.user_id?.user_name || "User"}'s profile`}
-                      />
-                      <NameEmail>
-                        <strong>{query.user_id?.user_name || "N/A"}</strong>
-                        <br />
-                        <span>{query.user_id?.user_email || "N/A"}</span>
-                      </NameEmail>
-                    </NameContainer>
-                  </TableCell>
-                  <TableCell>{query.category}</TableCell>
-                  <TableCell>
-                    <StatusBadge status={query.status}>
-                      {query.status}
-                    </StatusBadge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(query.submitted_on).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell>
-                    {query.submitted_on && query.closed_on
-                      ? (() => {
-                          const submitted = new Date(query.submitted_on);
-                          const closed = new Date(query.closed_on);
-                          const diffInMs = closed - submitted;
-                          const diffInHours = diffInMs / (1000 * 60 * 60);
-                          const days = Math.floor(diffInHours / 24);
-                          const hours = Math.round(diffInHours % 24);
-                          return days > 0
-                            ? `${days} day${days > 1 ? "s" : ""} ${hours} hr${
-                                hours !== 1 ? "s" : ""
-                              }`
-                            : `${hours} hr${hours !== 1 ? "s" : ""}`;
-                        })()
-                      : "N/A"}
-                  </TableCell>
-                </TableRow>
-              ))
-          )}
-        </tbody>
-      </Table>
+          </thead>
+          <tbody>
+            {filteredQueries.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan="6" style={{ textAlign: "center" }}>
+                  No Queries Found
+                </TableCell>
+              </TableRow>
+            ) : (
+              filteredQueries
+                .filter(
+                  (query) =>
+                    query.user_id?.user_name
+                      ?.toLowerCase()
+                      .includes(searchTerm.toLowerCase()) ||
+                    query.user_id?.user_email
+                      ?.toLowerCase()
+                      .includes(searchTerm.toLowerCase())
+                )
+                .map((query, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <QueryLink to={`/admin/SupportQuery/${query._id}`}>
+                        Query Id {index + 1}
+                      </QueryLink>
+                    </TableCell>
+                    <TableCell>
+                      <NameContainer>
+                        <ProfileImage
+                          src={query.profileImage}
+                          alt={`${query.user_id?.user_name || "User"}'s profile`}
+                        />
+                        <NameEmail>
+                          <strong>{query.user_id?.user_name || "N/A"}</strong>
+                          <br />
+                          <span>{query.user_id?.user_email || "N/A"}</span>
+                        </NameEmail>
+                      </NameContainer>
+                    </TableCell>
+                    <TableCell>{query.category}</TableCell>
+                    <TableCell>
+                      <StatusBadge status={query.status}>
+                        {query.status}
+                      </StatusBadge>
+                    </TableCell>
+                    <TableCell>
+                      {new Date(query.submitted_on).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      {query.submitted_on && query.closed_on
+                        ? (() => {
+                            const submitted = new Date(query.submitted_on);
+                            const closed = new Date(query.closed_on);
+                            const diffInMs = closed - submitted;
+                            const diffInHours = diffInMs / (1000 * 60 * 60);
+                            const days = Math.floor(diffInHours / 24);
+                            const hours = Math.round(diffInHours % 24);
+                            return days > 0
+                              ? `${days} day${days > 1 ? "s" : ""} ${hours} hr${
+                                  hours !== 1 ? "s" : ""
+                                }`
+                              : `${hours} hr${hours !== 1 ? "s" : ""}`;
+                          })()
+                        : "N/A"}
+                    </TableCell>
+                  </TableRow>
+                ))
+            )}
+          </tbody>
+        </Table>
+      )}
       {isFilterOpen && (
         <>
           <ModalOverlay>

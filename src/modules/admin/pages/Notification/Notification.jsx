@@ -18,7 +18,7 @@ import {
   deleteNotification,
   getAllNotifications,
 } from "../../../../api/notificationApi"; // Import the API functions
- 
+ import { message } from "antd";
 const Notifications = () => {
   const [selectedNotificationId, setSelectedNotificationId] = useState(null);
   const [notifications, setNotifications] = useState([]); // Already initialized to an empty array
@@ -87,6 +87,7 @@ const Notifications = () => {
         setNotifications((prev) =>
           prev.filter((_, i) => i !== selectedNotificationIndex)
         );
+        message.success("Notification deleted successfully!");
         setSelectedNotificationIndex(null);
         setSelectedNotificationId(null); // Reset ID after deletion
         setIsDeleteModalOpen(false);

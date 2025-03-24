@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ShimmerTable } from "react-shimmer-effects";
 import {
   ModulesSection,
   ModuleCard,
@@ -13,6 +14,7 @@ import { FiEdit3 } from "react-icons/fi";
 import { IoSearch } from "react-icons/io5";
 import { deleteModule, getModule } from "../../../../../api/addNewModuleApi";
 import DeleteModule from "../../../components/DeleteModule/DeleteModule"; // Import Delete Modal
+import { message } from "antd";
 
 const LearningModulesListView = () => {
   const [modules, setModules] = useState([]);
@@ -20,6 +22,7 @@ const LearningModulesListView = () => {
   const [filteredModules, setFilteredModules] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // Modal state
   const [selectedModuleId, setSelectedModuleId] = useState(null); // Store module ID
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate(); // React Router hook for navigation
 
   useEffect(() => {
@@ -27,15 +30,20 @@ const LearningModulesListView = () => {
   }, []);
 
   const fetchModules = async () => {
-    const data = await getModule();
-    const response = data.data.map((item) => ({
-      title: item.moduleName,
-      topics: item.topicData.length || 0,
-      _id: item._id,
-      imageURL: item.imageURL || "",
-    }));
-    setModules(response);
-    setFilteredModules(response);
+    try {
+      const response = await getModule();
+      const data = response.data.map((item) => ({
+        title: item.moduleName,
+        topics: item.topicData.length || 0,
+        id: item.moduleId,
+        imageURL: item.imageURL || "",
+      }));
+      setModules(data);
+      setFilteredModules(data);
+      setLoading(false); // Set loading to false when data is fetched
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDeleteClick = (id) => {
@@ -46,6 +54,7 @@ const LearningModulesListView = () => {
   const handleDeleteConfirm = async () => {
     if (selectedModuleId) {
       await deleteModule(selectedModuleId);
+      message.success("Module deleted successfully!");
       fetchModules(); // Refresh the list after deletion
     }
     setIsDeleteModalOpen(false); // Close modal
@@ -53,6 +62,7 @@ const LearningModulesListView = () => {
   };
 
   const handleCancelDelete = () => {
+    message.error("Module deletion canceled!");
     setIsDeleteModalOpen(false); // Close modal
     setSelectedModuleId(null); // Reset selected module ID
   };
@@ -98,39 +108,59 @@ const LearningModulesListView = () => {
         </div>
       </div>
 
-      {filteredModules.map((module, index) => (
-        <ModuleCard key={index}>
-          <img
-            src={module.imageURL}
-            alt={module.title}
-            className="module-image"
-          />
-          <div className="module-info">
-            <h4>
-              <Link to={`/admin/Diagnosing-and-Investigating-Metrics`}>
-                {module.title}
-              </Link>
-            </h4>
-            <p>{module.topics} topic</p>
-          </div>
-          <ModuleActions>
-            <button
-              className="edit-btn"
-              onClick={() => handleEditClick(module)}
-            >
-              <FiEdit3 size={20} />
-            </button>
-            <button
-              className="delete-btn"
-              onClick={() => handleDeleteClick(module._id)}
-            >
-              <RiDeleteBinLine size={20} />
-            </button>
-          </ModuleActions>
-        </ModuleCard>
-      ))}
+      {/* Show shimmer effect if loading */}
+      {loading ? (
+        <div>
+          {[...Array(5)].map((_, index) => (
+            <ModuleCard key={index}>
+              <div className="module-image shimmer"></div> 
+              <div className="module-info">
+                <div className="shimmer title"></div>
+                <div className="shimmer topic"></div> 
+              </div>
+              <ModuleActions>
+                <div className="shimmer edit-btn"></div>
+                <div className="shimmer delete-btn"></div> 
+              </ModuleActions>
+            </ModuleCard>
+          ))}
+        </div>
+      ) : (
+        <div>
+          {filteredModules.map((module, index) => (
+            <ModuleCard key={index}>
+              <img
+                src={module.imageURL}
+                alt={module.title}
+                className="module-image"
+              />
+              <div className="module-info">
+                <h4>
+                  <Link to={`/admin/Diagnosing-and-Investigating-Metrics`}>
+                    {module.title}
+                  </Link>
+                </h4>
+                <p>{module.topics} topic</p>
+              </div>
+              <ModuleActions>
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEditClick(module)}
+                >
+                  <FiEdit3 size={20} />
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDeleteClick(module._id)}
+                >
+                  <RiDeleteBinLine size={20} />
+                </button>
+              </ModuleActions>
+            </ModuleCard>
+          ))}
+        </div>
+      )}
 
-      {/* Delete Confirmation Modal */}
       {isDeleteModalOpen && (
         <DeleteModule
           onDelete={handleDeleteConfirm}

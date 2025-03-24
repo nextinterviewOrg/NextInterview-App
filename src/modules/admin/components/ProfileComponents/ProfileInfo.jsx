@@ -18,6 +18,7 @@ import { GoPerson } from "react-icons/go";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId, updateUser } from "../../../../api/userApi";
 import { useClerk } from "@clerk/clerk-react";
+import { message } from "antd";
 
 const ProfileInfo = () => {
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -66,7 +67,7 @@ const ProfileInfo = () => {
       console.log(pair[0], pair[1]);
     }
     const data = await updateUser(formData);
-    alert("Profile updated successfully!");
+   message.success("Profile updated successfully!");
   };
 
   const handleResetPasswordClick = () => {

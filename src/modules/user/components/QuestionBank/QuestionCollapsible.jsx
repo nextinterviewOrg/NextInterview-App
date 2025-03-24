@@ -26,6 +26,7 @@ import {
   getQuestionBank,
   getQuestionBankById,
 } from "../../../../api/questionBankApi";
+import { ShimmerSectionHeader, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 
 const QuestionCollapsible = () => {
   const { id } = useParams();
@@ -36,11 +37,12 @@ const QuestionCollapsible = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [userAnswer, setUserAnswer] = useState(""); // To store answer for single-line, multi-line, approach questions
   const [showSolution, setShowSolution] = useState(false);
-
+const [loading, setLoading] = useState(true);
   useEffect(() => {
     // Fetch all questions to display in the sidebar
     const fetchAllQuestions = async () => {
       try {
+        setLoading(true);
         const response = await getQuestionBank(); // API call to get all questions
         if (response && response.data) {
           setAllQuestions(response.data); // Set the all questions data for sidebar
@@ -48,6 +50,7 @@ const QuestionCollapsible = () => {
             setSelectedQuestion(response.data[0]); // Set the first question as the default selected question
             navigate(`/user/questionBank/${response.data[0]._id}`); // Redirect to the first question
           }
+       setLoading(false);
         } else {
           console.error("No questions found");
         }
@@ -113,12 +116,13 @@ const QuestionCollapsible = () => {
       <Content>
         {selectedQuestion ? (
           <>
+        
             <MetaInfo1>
               <Topic1>Module: {selectedQuestion.topic}</Topic1>
               <Difficulty1>Difficulty: {selectedQuestion.level}</Difficulty1>
               <Type1>Type: {selectedQuestion.question_type}</Type1>
             </MetaInfo1>
-
+    
             <QuestionContainer>
               <QuestionHeader>{selectedQuestion.question}</QuestionHeader>
 
@@ -467,7 +471,7 @@ const QuestionCollapsible = () => {
             </QuestionContainer>
           </>
         ) : (
-          <p>Loading ...</p>
+       <ShimmerSectionHeader  />
         )}
       </Content>
     </PageContainer>

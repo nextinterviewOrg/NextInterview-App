@@ -8,14 +8,16 @@ import {
   Footer,
   SaveButton,
   CloseButton,
+  ModalWrapper
 } from "./EditFlashCard.styles";
+import { message } from "antd";
 
 const EditFlashCard = ({ card, onClose, onSave }) => {
   const [text, setText] = useState(card.text);
 
   const handleSave = () => {
     if (text.trim() === "") {
-      alert("Flashcard content cannot be empty");
+      message.error("Please enter flash card content.");
       return;
     }
     onSave({ ...card, text });
@@ -23,6 +25,7 @@ const EditFlashCard = ({ card, onClose, onSave }) => {
   };
 
   return (
+    <ModalWrapper>
     <ModalContainer>
       <Header>
         Edit Flash Card
@@ -47,6 +50,7 @@ const EditFlashCard = ({ card, onClose, onSave }) => {
         <SaveButton onClick={handleSave}>Save</SaveButton>
       </Footer>
     </ModalContainer>
+    </ModalWrapper>
   );
 };
 

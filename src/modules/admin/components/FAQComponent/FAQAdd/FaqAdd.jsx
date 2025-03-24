@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import styled from "styled-components";
-
 import {
   ModalOverlay,
   ModalContent,
@@ -11,43 +9,78 @@ import {
   TextArea,
   ButtonGroup,
   Button,
+  ErrorMessage,
+  CloseButton, // Import CloseButton
 } from "./FaqAdd.style";
+import { message } from "antd";
 
 const FaqAdd = ({ onClose, onSave }) => {
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [errors, setErrors] = useState({ question: "", answer: "" });
+
+  // Validate input fields
+  const validateForm = () => {
+    let isValid = true;
+    const newErrors = { question: "", answer: "" };
+
+    if (!question.trim()) {
+      newErrors.question = "Please fill the required field.";
+      isValid = false;
+    }
+    if (!answer.trim()) {
+      newErrors.answer = "Please fill the required field.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
 
   const handleSave = () => {
-    if (question.trim() && answer.trim()) {
+    if (validateForm()) {
       onSave({ question, answer, isVisible: false });
       onClose();
-    } else {
-      alert("Please fill in both fields.");
     }
   };
 
   return (
     <ModalOverlay>
       <ModalContent>
+        {/* Close Button */}
+        <CloseButton onClick={onClose}>&times;</CloseButton>
+
         <ModalHeader>Add FAQ Question</ModalHeader>
+
+        {/* Question Input */}
         <InputContainer>
           <Label>Question</Label>
-          <Input
-            type="text"
-            placeholder="Type here"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-          />
+          <div style={{ width: "100%" }}>
+            <Input
+              type="text"
+              placeholder="Type here"
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+            />
+            {errors.question && <ErrorMessage>{errors.question}</ErrorMessage>}
+          </div>
         </InputContainer>
+
+        {/* Answer Input */}
         <InputContainer>
           <Label>Answer</Label>
-          <TextArea
-            rows="5"
-            placeholder="Type here"
-            value={answer}
-            onChange={(e) => setAnswer(e.target.value)}
-          />
+          <div style={{ width: "100%" }}>
+            <TextArea
+              rows="5"
+              placeholder="Type here"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+            />
+            {errors.answer && <ErrorMessage>{errors.answer}</ErrorMessage>}
+          </div>
         </InputContainer>
+
+        {/* Button Group */}
         <ButtonGroup>
           <Button type="cancel" onClick={onClose}>
             Cancel

@@ -15,6 +15,7 @@ import { Link } from "react-router-dom";
 import { getUserProgress, startModule } from "../../../../../api/userProgressApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
+import { ShimmerPostItem, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 
 const UserLearningModule = () => {
   const [expandedTopic, setExpandedTopic] = useState(null);
@@ -24,10 +25,12 @@ const UserLearningModule = () => {
   const { isLoaded, user, sessionId } = useUser();
   const [startModuleData, setStartModuleData] = useState({});
   const [buttonText, setButtonText] = useState("Resume Learning");
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
     const apiCaller = async () => {
       try {
+        setLoading(true);
         console.log("ModuleId", moduleId);
         const userData = await getUserByClerkId(user.id);
         const response = await getModuleById(moduleId);
@@ -78,10 +81,13 @@ const UserLearningModule = () => {
             }
           }
         }
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
+
+
     apiCaller();
   }, []);
 
@@ -159,7 +165,10 @@ const UserLearningModule = () => {
 
   return (
     <UserLearningModuleWrapper>
-      {/* Image and course details section */}
+      {loading ? (
+        <ShimmerPostItem card title text cta />
+      ) : (
+     
       <div className="course-header">
         <img src={courseData.imageUrl} alt="Course" className="course-image" />
         <div className="course-info">
@@ -206,6 +215,7 @@ const UserLearningModule = () => {
             >
               <RiGeminiLine /> View Sample Interview
             </button>
+            
             {
               moduleStatus === false ? (<>
                 {/* // <Link
@@ -242,14 +252,21 @@ const UserLearningModule = () => {
           </div>
         </div>
       </div>
+       )}
 
-      {/* Course Overview and Learning Details */}
+    { loading ? (
+      <ShimmerTitle />
+    ) : (
+  
       <div className="course-overview">
         <h3 className="course-overview-title">Course Overview</h3>
         <p className="course-overview-description">{courseData.description}</p>
       </div>
-
-      {/* Learning Goals */}
+  )}
+      {loading ? (
+        <ShimmerText />
+      ) : (
+   
       <div className="learning-goals">
         <h3 className="course-overview-title">What you will learn</h3>
         <ul className="learning-goals-list">
@@ -263,8 +280,11 @@ const UserLearningModule = () => {
           ))}
         </ul>
       </div>
-
-      {/* Course Topics */}
+   )}
+     {loading ? (
+        <ShimmerText />
+      ) : (
+    
       <div className="course-topics">
         <h3 className="course-overview-title">Topics</h3>
         {courseData.topicsList?.map((topic, index) => (
@@ -293,7 +313,9 @@ const UserLearningModule = () => {
             )}
           </div>
         ))}
+        
       </div>
+       )}
     </UserLearningModuleWrapper >
   );
 };

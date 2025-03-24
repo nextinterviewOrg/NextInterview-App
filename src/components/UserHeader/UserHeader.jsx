@@ -108,8 +108,7 @@ const Dropdown = ({
           {" "}
           <CgProfile /> My Profile
         </li>
-        {/* <li style={listLIStyles} onClick={() => { alert("Customer Support clicked"); onClose(); }}> <MdOutlineSupportAgent /> Customer Support</li> */}
-        <li
+          <li
           style={listLIStyles}
           onClick={() => {
             navigate("/user/userfaq");

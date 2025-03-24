@@ -34,8 +34,8 @@ export const updateSupportQuery = async (id, data) => {
         const response = await api.put(`/supportQuery/updatequery/${id}`, data);
         return response.data;
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.error("Error in updateSupportQuery:", error.response ? error.response.data : error.message);
+        throw new Error('Error updating support query');
     }
 };
 

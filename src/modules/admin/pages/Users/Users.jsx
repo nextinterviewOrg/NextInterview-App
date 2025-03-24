@@ -4,7 +4,7 @@ import UserTable from "../../components/User/UserTable";
 import UserCheckTopBar from "../../components/User/UserCheckTopBar";
 import RestrictUser from "../../components/User/RestrictUser";
 import SendReminder from "../../components/User/SendReminder";
-
+import { message } from "antd";
 import { getUsers } from "../../../../api/userApi";
 import NotificationModal from "../../../../pages/NotificationModal/NotificationModal";
 
@@ -51,36 +51,7 @@ const Users = () => {
     setNotification({ type, message, isOpen: true });
   };
 
-  const users = [
-    {
-      name: "Olivia Rhye",
-      email: "olivia@gmail.com",
-      role: "User",
-      topicsCompleted: "12/15 (80%)",
-      activeHours: "~12h / week",
-      lastActive: "3h ago",
-      bellIcon: false,
-    },
-    {
-      name: "Rhodes",
-      email: "rhodes@gmail.com",
-      role: "User",
-      topicsCompleted: "10/15 (66%)",
-      activeHours: "~19h / week",
-      lastActive: "2/12/24",
-      bellIcon: false,
-    },
-    {
-      name: "Phoenix Baker",
-      email: "phoenix@gmail.com",
-      role: "User",
-      topicsCompleted: "12/15 (80%)",
-      activeHours: "~18h / week",
-      lastActive: "12/12/24",
-      bellIcon: false,
-    },
-    // Add more users as needed...
-  ];
+ 
 
   const filteredUsers = userList.filter(
     (user) =>
@@ -97,14 +68,6 @@ const Users = () => {
     );
   };
 
-  // const toggleSelectAll = (isChecked) => {
-  //   if (isChecked) {
-  //     setSelectedRows(filteredUsers.map((_, index) => index)); // Select all visible users
-  //   } else {
-  //     setSelectedRows([]); // Deselect all users
-  //   }
-  // };
-
   const toggleSelectAll = (isChecked) => {
     if (isChecked) {
       setSelectedRows(filteredUsers.map((user) => user.clerkId)); // Select all users using unique IDs
@@ -115,10 +78,7 @@ const Users = () => {
 
   const handleRestrictUserClick = () => {
     if (selectedRows.length === 0) {
-      showNotification(
-        "warning",
-        "Please select at least one user to restrict."
-      );
+      message.error("Please select at least one user to restrict.");
       return;
     }
     setRestrictModalOpen(true);
@@ -126,10 +86,7 @@ const Users = () => {
 
   const handleSendReminderClick = () => {
     if (selectedRows.length === 0) {
-      showNotification(
-        "warning",
-        "Please select at least one user to send a reminder."
-      );
+      message.error("Please select at least one user to send a reminder.");
       return;
     }
     setReminderModalOpen(true);

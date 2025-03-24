@@ -8,6 +8,7 @@ import {
   Stats,
 } from "./SupportQueryStats.styles";
 import { getSupportQueryStats } from "../../../../../api/supportQueryApi";
+import { ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 const SupportQueryStats = () => {
   const [stats, setStats] = useState({});
   const [loading, setLoading] = useState(true);
@@ -28,7 +29,9 @@ const SupportQueryStats = () => {
     fetchStats();
   }, []);
   if (loading) {
-    return <div style={{ textAlign: "center" }}>Fetching Statistics</div>;
+    return <div style={{ textAlign: "center" }}>
+      <ShimmerTitle>Loading...</ShimmerTitle>
+    </div>;
   }
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -36,6 +39,18 @@ const SupportQueryStats = () => {
 
   return (
     <Container>
+       {loading ? (
+                <div className="loading-cards">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <div key={index} className="loading-card">
+                      <ShimmerTitle width="80%" height="20px" style={{ margin: "10px 0" }} />
+                      <ShimmerText width="90%" height="15px" style={{ margin: "5px 0" }} />
+                      {/* <ShimmerText width="80%" height="15px" style={{ margin: "5px 0" }} /> */}
+                      {/* /<ShimmerButton width="60%" height="40px" style={{ marginTop: "10px" }} /> */}
+                    </div>
+                  ))}
+                </div>
+              ) : (
       <Stats>
         <div className="stats-container">
           <StatCard>
@@ -59,6 +74,7 @@ const SupportQueryStats = () => {
           </StatCard>
         </div>
       </Stats>
+      )}
     </Container>
   );
 };
