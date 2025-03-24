@@ -24,7 +24,9 @@ import {
   ModalContainer,
   ModalContent,
   ModalButton,
+  Button
 } from "./AddNewModule.style";
+import { RiGeminiFill } from "react-icons/ri";
 import theme from "../../../../theme/Theme";
 import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
 import {
@@ -694,7 +696,22 @@ const AddNewModule = () => {
                   }}
                 /> */}
               </FormGroup>
+<FormGroup 
+style={
+  {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent:"flex-end",
 
+  }
+}>
+  <Button> <RiGeminiFill
+  style={{
+    fontSize: "20px",
+    marginRight: "5px"
+  }}
+  />Generate with AI</Button>
+</FormGroup>
               {/* SUBTOPIC SUMMARY */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>

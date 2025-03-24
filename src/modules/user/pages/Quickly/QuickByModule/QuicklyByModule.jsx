@@ -12,6 +12,8 @@ import {
 import { useParams } from "react-router-dom";
 import spark from "../../../../../assets/fluentsparkle.svg";
 
+import { ShimmerText, ShimmerButton } from "react-shimmer-effects";
+
 const QuicklyByModule = () => {
   const [moduleData, setModuleData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +36,36 @@ const QuicklyByModule = () => {
     fetchModuleData();
   }, [moduleId]);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return (
+      <div style={{ minHeight: "100vh", width: "100%" }}>
+        {/* You can also put a flexbox or grid here to structure your skeletons */}
+        <ShimmerText line={1} gap={10} />
+        <ShimmerButton size="md" />
+        {/* Replicate as many placeholders as needed to match final layout */}
+        
+        {[1, 2, 3].map((_, topicIndex) => (
+          <div key={topicIndex} style={{ marginTop: "20px" }}>
+            <ShimmerText line={1} gap={10} />
+            {[1, 2].map((_, subtopicIndex) => (
+              <div
+                key={subtopicIndex}
+                style={{
+                  position: "relative",
+                  paddingBottom: "40px",
+                }}
+              >
+                <ShimmerText line={1} gap={8} />
+                <ShimmerText line={3} gap={6} />
+                <ShimmerButton size="sm" />
+              </div>
+            ))}
+          </div>
+        ))}
+      </div>
+    );
+  }
+  
   if (error) return <div>{error}</div>;
 
   return (
@@ -49,20 +80,37 @@ const QuicklyByModule = () => {
               gap: "20px",
             }}
           >
-            <Title>{moduleData.moduleName}</Title>
-            <LinkStyled href={moduleData.interviewSampleURL} target="_blank">
-              <Button>
-                <img src={spark} alt="start" /> View Sample Interview
-              </Button>
-            </LinkStyled>
+            {/* Shimmer for Title during loading */}
+            {loading ? (
+              <ShimmerText line={1} gap={10} />
+            ) : (
+              <Title>{moduleData.moduleName}</Title>
+            )}
+
+            {/* Shimmer for View Sample Button during loading */}
+            {loading ? (
+              <ShimmerButton size="md" />
+            ) : (
+              <LinkStyled href={moduleData.interviewSampleURL} target="_blank">
+                <Button>
+                  <img src={spark} alt="start" /> View Sample Interview
+                </Button>
+              </LinkStyled>
+            )}
           </div>
 
           <div>
             {moduleData.topicData.map((topic, topicIndex) => (
               <div key={topicIndex}>
-                <h3 style={{ margin: "0" }}>
-                  Topic {topicIndex + 1} - {topic.topicName}
-                </h3>
+                {/* Shimmer for Topic Name */}
+                {loading ? (
+                  <ShimmerText line={10} gap={10} />
+                ) : (
+                  <h3 style={{ margin: "0" }}>
+                    Topic {topicIndex + 1} - {topic.topicName}
+                  </h3>
+                )}
+
                 {topic.subtopicData.map((subtopic, subtopicIndex) => (
                   <div
                     key={subtopicIndex}
@@ -72,30 +120,46 @@ const QuicklyByModule = () => {
                     }}
                   >
                     <div>
-                      <h4 style={{ margin: "0", marginTop: "30px" }}>
-                        {subtopic.subtopicName}
-                      </h4>
-                      {/* Parse and render JSON content from subtopicSummary */}
-                      <p
-                        dangerouslySetInnerHTML={{
-                          __html: parseJSONContent(subtopic.subtopicSummary),
-                        }}
-                        style={{ margin: "0" }}
-                      ></p>
+                      {/* Shimmer for Subtopic Name */}
+                      {loading ? (
+                        <ShimmerText line={1} gap={8} />
+                      ) : (
+                        <h4 style={{ margin: "0", marginTop: "30px" }}>
+                          {subtopic.subtopicName}
+                        </h4>
+                      )}
+
+                      {/* Shimmer for Subtopic Summary */}
+                      {loading ? (
+                        <ShimmerText line={3} gap={6} />
+                      ) : (
+                        <p
+                          dangerouslySetInnerHTML={{
+                            __html: parseJSONContent(subtopic.subtopicSummary),
+                          }}
+                          style={{ margin: "0" }}
+                        ></p>
+                      )}
                     </div>
-                    <Link to={`/user/learning/${moduleId}/topic`}>
-                      <Button
-                        style={{
-                          position: "absolute",
-                          right: "10px",
-                          bottom: "10px",
-                          width: "auto", // Keep the button width fixed
-                          border: "none",
-                        }}
-                      >
-                        Revisit Subtopic
-                      </Button>
-                    </Link>
+
+                    {/* Shimmer for Revisit Button */}
+                    {loading ? (
+                      <ShimmerButton size="sm" />
+                    ) : (
+                      <Link to={`/user/learning/${moduleId}/topic`}>
+                        <Button
+                          style={{
+                            position: "absolute",
+                            right: "10px",
+                            bottom: "10px",
+                            width: "auto",
+                            border: "none",
+                          }}
+                        >
+                          Revisit Subtopic
+                        </Button>
+                      </Link>
+                    )}
                   </div>
                 ))}
               </div>

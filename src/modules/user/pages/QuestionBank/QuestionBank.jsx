@@ -26,6 +26,7 @@ import { IoClose } from "react-icons/io5"; // Close icon
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { getQuestionBank } from "../../../../api/questionBankApi"; // Adjust the API path
 import { getModuleCode } from "../../../../api/addNewModuleApi"; // Adjust the API path
+import { ShimmerCategoryItem, ShimmerCategoryList, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 
 const QuestionBank = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -42,12 +43,15 @@ const QuestionBank = () => {
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [moduleCodes, setModuleCodes] = useState([]);
   const [difficultyLevels, setDifficultyLevels] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
+        setLoading(true);
         const response = await getQuestionBank();
         setFilteredQuestions(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching questions:", error);
       }
@@ -173,102 +177,116 @@ const QuestionBank = () => {
   return (
     <ThemeProvider theme={theme}>
       <Container>
-        <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <MoreFilters onClick={toggleDropdown}>
-            More filters <RiArrowDropDownLine style={{ fontSize: "25px" }} />
-          </MoreFilters>
-        </div>
-
-        {isDropdownOpen && (
-          <DropdownContainer>
-            <FilterHeader>
-              <SearchInput
-                type="text"
-                placeholder="Search filters..."
-                value={filterSearchQuery}
-                onChange={(e) =>
-                  setFilterSearchQuery(e.target.value.toLowerCase())
-                }
-              />
-              <CloseFilterButton onClick={closeDropdown}>
-                <IoClose size={22} />
-              </CloseFilterButton>
-            </FilterHeader>
-
-            <FilterSection>
-              <SubText>Difficulty Level</SubText>
-              {difficultyLevels.map((level) => (
-                <CheckboxLabel key={level}>
-                  <input
-                    type="checkbox"
-                    checked={selectedFilters[level.toLowerCase()]}
-                    onChange={() => handleDifficultyChange(level.toLowerCase())}
-                  />{" "}
-                  {level}
-                </CheckboxLabel>
-              ))}
-            </FilterSection>
-
-            <FilterSection>
-              <SubText>Topics</SubText>
-              {moduleCodes
-                .filter((module) =>
-                  module.module_name.toLowerCase().includes(filterSearchQuery)
-                )
-                .map((module) => (
-                  <CheckboxLabel key={module.module_code}>
-                    <input
-                      type="checkbox"
-                      checked={selectedFilters.topic === module.module_name}
-                      onChange={() => handleTopicChange(module.module_name)}
-                    />{" "}
-                    {module.module_name}
-                  </CheckboxLabel>
-                ))}
-            </FilterSection>
-
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                padding: "10px",
-              }}
-            >
-              <ClearButton onClick={clearFilters}>Clear all</ClearButton>
-              <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
+  
+            <div style={{ display: "flex", justifyContent: "flex-end" }}>
+              <MoreFilters onClick={toggleDropdown}>
+                More filters <RiArrowDropDownLine style={{ fontSize: "25px" }} />
+              </MoreFilters>
             </div>
-          </DropdownContainer>
-        )}
 
-        {filteredQuestions.length > 0 ? (
-          filteredQuestions.map((item, index) => (
-            <Link
-              to={`/user/questionBank/${item._id}`}
-              key={index}
-              style={{ textDecoration: "none" }}
-            >
-              <QuestionCard
-                key={index}
-                style={{ display: "flex", justifyContent: "space-between" }}
-              >
-                <div>
-                  <QuestionText>
-                    {index + 1}. {item.question}
-                  </QuestionText>
-                  <MetaInfo>
-                    <Topic>
-                      Module Name - {getModuleName(item.module_code)}
-                    </Topic>
-                    <Difficulty>Level - {item.level}</Difficulty>
-                    <Type>Type - {item.question_type}</Type>
-                  </MetaInfo>
+            {isDropdownOpen && (
+              <DropdownContainer>
+                <FilterHeader>
+                  <SearchInput
+                    type="text"
+                    placeholder="Search filters..."
+                    value={filterSearchQuery}
+                    onChange={(e) =>
+                      setFilterSearchQuery(e.target.value.toLowerCase())
+                    }
+                  />
+                  <CloseFilterButton onClick={closeDropdown}>
+                    <IoClose size={22} />
+                  </CloseFilterButton>
+                </FilterHeader>
+
+                <FilterSection>
+                  <SubText>Difficulty Level</SubText>
+                  {difficultyLevels.map((level) => (
+                    <CheckboxLabel key={level}>
+                      <input
+                        type="checkbox"
+                        checked={selectedFilters[level.toLowerCase()]}
+                        onChange={() =>
+                          handleDifficultyChange(level.toLowerCase())
+                        }
+                      />{" "}
+                      {level}
+                    </CheckboxLabel>
+                  ))}
+                </FilterSection>
+
+                <FilterSection>
+                  <SubText>Topics</SubText>
+                  {moduleCodes
+                    .filter((module) =>
+                      module.module_name
+                        .toLowerCase()
+                        .includes(filterSearchQuery)
+                    )
+                    .map((module) => (
+                      <CheckboxLabel key={module.module_code}>
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedFilters.topic === module.module_name
+                          }
+                          onChange={() => handleTopicChange(module.module_name)}
+                        />{" "}
+                        {module.module_name}
+                      </CheckboxLabel>
+                    ))}
+                </FilterSection>
+
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: "10px",
+                  }}
+                >
+                  <ClearButton onClick={clearFilters}>Clear all</ClearButton>
+                  <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
                 </div>
-                <Status>{item.status}</Status>
-              </QuestionCard>
-            </Link>
-          ))
+              </DropdownContainer>
+            )}
+      {loading ? (
+          <ShimmerText line={5} gap={10} />
         ) : (
-          <p>Loading questions...</p>
+          <>
+            {filteredQuestions.length > 0 ? (
+              filteredQuestions.map((item, index) => (
+                <Link
+                  to={`/user/questionBank/${item._id}`}
+                  key={index}
+                  style={{ textDecoration: "none" }}
+                >
+                  <QuestionCard
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <div>
+                      <QuestionText>
+                        {index + 1}. {item.question}
+                      </QuestionText>
+                      <MetaInfo>
+                        <Topic>
+                          Module Name - {getModuleName(item.module_code)}
+                        </Topic>
+                        <Difficulty>Level - {item.level}</Difficulty>
+                        <Type>Type - {item.question_type}</Type>
+                      </MetaInfo>
+                    </div>
+                    <Status>{item.status}</Status>
+                  </QuestionCard>
+                </Link>
+              ))
+            ) : (
+              <p>No questions found.</p>
+            )}
+          </>
         )}
       </Container>
     </ThemeProvider>

@@ -10,13 +10,14 @@ import {
   CloseButton,
   ModalWrapper
 } from "./EditFlashCard.styles";
+import { message } from "antd";
 
 const EditFlashCard = ({ card, onClose, onSave }) => {
   const [text, setText] = useState(card.text);
 
   const handleSave = () => {
     if (text.trim() === "") {
-      alert("Flashcard content cannot be empty");
+      message.error("Please enter flash card content.");
       return;
     }
     onSave({ ...card, text });

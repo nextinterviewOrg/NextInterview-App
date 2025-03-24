@@ -26,6 +26,7 @@ import { GoThumbsup, GoThumbsdown, GoX } from "react-icons/go";
 // import { getQuestionBank, getQuestionBankById } from "../../../../api/questionBankApi";
 import { gettiy } from "../../../../api/tiyApi";
 import { getModuleCode } from "../../../../api/addNewModuleApi";
+import { ShimmerBadge, ShimmerContentBlock, ShimmerPostDetails } from "react-shimmer-effects";
 const TryItYourself = () => {
   const { module_name } = useParams();
   const navigate = useNavigate();
@@ -488,7 +489,7 @@ const TryItYourself = () => {
             </QuestionContainer>
           </>
         ) : (
-          <p>Question not found</p>
+          <ShimmerPostDetails />
         )}
       </Content>
       <div style={{ width: "25%" }}>

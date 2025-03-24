@@ -35,6 +35,7 @@ import {
 } from "../../../../api/aiMockInterviewApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
+import { message } from "antd";
 
 const MockInterview = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -281,7 +282,7 @@ const MockInterview = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      alert("The interview is starting in 3 seconds...");
+      message.success("The interview is starting in 3 seconds...");
       setTimeout(() => {
         setTimeLeft(30);
         setIsRunning(true);

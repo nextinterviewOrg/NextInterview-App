@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Container, ImageWrapper, Image, Card, Title } from "./QuicklyRevise.styles";
-import { getModule } from "../../../../../api/addNewModuleApi"; // Import API function
+import {
+  Container,
+  ImageWrapper,
+  Image,
+  Card,
+  Title,
+} from "./QuicklyRevise.styles";
+import { getModule } from "../../../../../api/addNewModuleApi";
+import { ShimmerPostItem } from "react-shimmer-effects";
 import { Link } from "react-router-dom";
+
 const QuicklyRevise = () => {
-  const [modules, setModules] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [modules, setModules] = useState([]); // Store modules
+  const [loading, setLoading] = useState(true); // Global loading for API call
+  const [imageLoaded, setImageLoaded] = useState({}); // Track image load state for each module
 
   useEffect(() => {
     const fetchModules = async () => {
@@ -17,8 +25,7 @@ const QuicklyRevise = () => {
           throw new Error("Invalid API response format.");
         }
       } catch (err) {
-        setError("Failed to fetch modules.");
-        console.error(err);
+        console.error("Failed to fetch modules:", err);
       } finally {
         setLoading(false);
       }
@@ -27,32 +34,71 @@ const QuicklyRevise = () => {
     fetchModules();
   }, []);
 
+  // Handle image load for each module
+  const handleImageLoad = (id) => {
+    setImageLoaded((prev) => ({
+      ...prev,
+      [id]: true, // Set true when image is loaded
+    }));
+  };
+
   return (
     <Container>
-      {loading && <p>Loading modules...</p>}
-      {error && <p>{error}</p>}
-
-      {modules.length > 0 ? (
-        modules.map((module, index) => (
-          <Card key={module._id || index}>
-            <ImageWrapper>
-              <Image src={module.imageURL || "https://via.placeholder.com/300"} alt={module.moduleName}
+      {loading ? (
+        <>
+          {/* ShimmerPostItem with 3 columns */}
+          {[...Array(6)].map((_, index) => (
+            <ShimmerPostItem
+              key={index}
+              card
+              title
+              cta
+              imageHeight={200}
+              contentCenter
               style={{
-                borderRadius: "10px",
+                width: "100%",
+                maxWidth: "320px",
+                height: "300px",
               }}
-              />
-            </ImageWrapper>
-           <Link to={`/user/revise/${module._id}`
-           }
-           style={{textDecoration: "none"}}> 
-            <Title
-            style={{
-              textAlign: "left"
-            }} >{module.moduleName}</Title></Link>
-          </Card>
+            />
+          ))}
+        </>
+      ) : modules.length > 0 ? (
+        modules.map((module) => (
+          <Link
+            to={`/user/revise/${module._id}`}
+            style={{ textDecoration: "none" }}
+            key={module._id}
+          >
+            <Card>
+              <ImageWrapper>
+                {!imageLoaded[module._id] && (
+                  <ShimmerPostItem
+                    card
+                    imageHeight={200}
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      borderRadius: "8px",
+                    }}
+                  />
+                )}
+                <Image
+                  src={module.imageURL || "https://via.placeholder.com/300"}
+                  alt={module.moduleName}
+                  onLoad={() => handleImageLoad(module._id)}
+                  style={{
+                    display: imageLoaded[module._id] ? "block" : "none",
+                  }}
+                />
+              </ImageWrapper>
+
+              <Title>{module.moduleName}</Title>
+            </Card>
+          </Link>
         ))
       ) : (
-        !loading && <p>No modules found.</p>
+        <p>No modules found.</p>
       )}
     </Container>
   );

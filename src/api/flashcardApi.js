@@ -3,7 +3,7 @@ import api from "../config/axiosconfig";
 
 export const addFlashcard = async (data) => {
     try {
-        
+
         const response = await api.post("/flashCards", data);
         return response.data;
     } catch (error) {
@@ -15,7 +15,8 @@ export const addFlashcard = async (data) => {
 export const getFlashcards = async () => {
     try {
         const response = await api.get("/flashCards");
-        return response.data;
+        console.log("Response Data",response.data);
+        return response.data.data;
     } catch (error) {
         console.log(error);
         throw error;

@@ -17,6 +17,7 @@ import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId, updatePassword } from "../../../../../api/userApi";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { PiEyeLight } from "react-icons/pi";
+import { message } from "antd";
 
 const ResetPassword = ({ onClose }) => {
   const [oldPassword, setOldPassword] = useState("");
@@ -39,7 +40,7 @@ const ResetPassword = ({ onClose }) => {
 
   const handleSubmit = async () => {
     if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match!");
+      message.error("New password and confirm password do not match!");
       return;
     }
     const response = await updatePassword({
@@ -48,8 +49,7 @@ const ResetPassword = ({ onClose }) => {
       newPassword: confirmPassword,
     });
     console.log("response", response);
-
-    alert("Password reset successfully!");
+message.success("Password updated successfully!");
     onClose();
   };
 

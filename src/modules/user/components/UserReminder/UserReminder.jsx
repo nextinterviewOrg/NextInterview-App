@@ -1,99 +1,107 @@
-import React, { useState, useEffect } from "react";
-import { UserReminderWrapper } from "./UserReminder.styles";
-import { IoMdCheckmark } from "react-icons/io";
+import React, { useEffect, useState } from "react";
+import { MarqueeContainer, MarqueeTrack, Card } from "./UserReminder.styles";
+import { getFlashcards } from "../../../../api/flashcardApi"; 
 
-const reminders = [
-  {
-    title: "Understanding you better",
-    subtitle: "This would help us to personalize your learning experience",
-    description:
-      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions.",
-  },
-  {
-    title: "Data Insights",
-    subtitle: "Unlock key insights from user data",
-    description:
-      "Analyzing user patterns can help optimize engagement and retention strategies.",
-  },
-  {
-    title: "Optimize Performance",
-    subtitle: "Make data-driven decisions",
-    description:
-      "Using predictive analytics can help forecast user behavior and improve business strategies.",
-  },
-];
-
-const UserReminder = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [showThanks, setShowThanks] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+const MarqueeCards = () => {
+  const [flashcards, setFlashcards] = useState([]);
 
   useEffect(() => {
-    let timer;
-    if (showThanks) {
-      timer = setTimeout(() => setDismissed(true), 500000); // Hide after 5 seconds
-    }
-    return () => clearTimeout(timer);
-  }, [showThanks]);
+    const fetchData = async () => {
+      try {
+        const data = await getFlashcards();
+        setFlashcards(data);
+      } catch (error) {
+        console.error("Error fetching flashcards:", error);
+      }
+    };
 
-  const handleNext = () => {
-    if (currentIndex < reminders.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setShowThanks(true);
-    }
-  };
+    fetchData();
+  }, []);
 
-  const handleDismiss = () => {
-    if (currentIndex < reminders.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setDismissed(true);
-    }
-  };
-
-  if (dismissed) {
-    return null;
+  if (!Array.isArray(flashcards)) {
+    return <div>No flashcards available</div>;
   }
 
+  const doubleFlashcards = [...flashcards, ...flashcards];
+
   return (
-    <UserReminderWrapper>
-      {showThanks ? (
-        <div className="reminder-thanks">
-          <div className="reminder-thanks-icon">
-            <IoMdCheckmark className="checkmark-icon" />
-            <span className="thanks-message">Thanks!</span>
-          </div>
-        </div>
-      ) : (
-        <div className="user-reminder-content">
-          <div className="reminder-text">
-            <h3 className="reminder-text-title">
-              {reminders[currentIndex].title}
-            </h3>
-            <p className="reminder-text-subtitle">
-              {reminders[currentIndex].subtitle}
-            </p>
-          </div>
-          <div className="reminder-description">
-            <div className="reminder-actions">
-              <p className="reminder-text-description">
-                {reminders[currentIndex].description}
-              </p>
-              <div className="reminder-buttons">
-                <button className="dismiss-button" onClick={handleDismiss}>
-                  ✖
+    <MarqueeContainer>
+      <MarqueeTrack>
+        {doubleFlashcards.map((card, idx) => {
+          // Format the createdAt date (DD-MM-YYYY)
+          const dateObj = new Date(card.createdAt);
+          const day = String(dateObj.getDate()).padStart(2, "0");
+          const month = String(dateObj.getMonth() + 1).padStart(2, "0");
+          const year = dateObj.getFullYear();
+          const createdAtFormatted = `${day}-${month}-${year}`;
+
+          return (
+            <Card key={idx}>
+              <img
+                src={card.backgroundImage}
+                alt={card.cardContent}
+                style={{
+                  width: "100%",
+                  height: "160px",
+                  objectFit: "cover",
+                  display: "flex",
+                  borderRadius: "8px",
+                }}
+              />
+              <p>{card.cardContent}</p>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-evenly",
+                  marginTop: "10px",
+                  padding: "0 10px",
+                }}
+              >
+                <button
+                  style={{
+                    color: "black",
+                    backgroundColor: "#68c184",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontWeight: "normal",
+                    padding: "6px 12px",
+                  }}
+                >
+                  I know this
                 </button>
-                <button className="thanks-button" onClick={handleNext}>
-                  I Know This
+
+                <p
+                  style={{
+                    margin: "0 12px", // Just a little space around date
+                    fontWeight: "normal",
+                  }}
+                >
+                  {createdAtFormatted}
+                </p>
+
+                <button
+                  style={{
+                    color: "black",
+                    backgroundColor: "#FFEBEB",
+                    border: "none",
+                    borderRadius: "5px",
+                    cursor: "pointer",
+                    fontWeight: "normal",
+                    padding: "6px 12px",
+                  }}
+                >
+                  I don't know
                 </button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </UserReminderWrapper>
+            </Card>
+          );
+        })}
+      </MarqueeTrack>
+    </MarqueeContainer>
   );
 };
 
-export default UserReminder;
+export default MarqueeCards;

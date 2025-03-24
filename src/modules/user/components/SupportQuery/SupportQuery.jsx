@@ -8,46 +8,85 @@ import {
   CloseButton,
   TextBox,
   Title,
+  // ErrorMessage, // Import ErrorMessage for validation messages
 } from "../../components/SupportQuery/SupportQuery.style";
 import { createSupportQuery } from "../../../../api/supportQueryApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css"; 
+import { message } from "antd";
+import "react-toastify/dist/ReactToastify.css";
 
 const SupportQuery = ({ isOpen, onClose }) => {
   const [priority, setPriority] = useState("Low");
   const [category, setCategory] = useState("Content");
   const [query, setQuery] = useState("");
-  const { isSignedIn, user, isLoaded } = useUser();
+  const [errors, setErrors] = useState({ category: "", query: "" }); // Error state for validation
+  const { user } = useUser();
 
+  // ✅ Validation function to check required fields
+  const validateForm = () => {
+    let formErrors = {};
+    let isValid = true;
+
+    // Check if category is selected
+    if (!category) {
+      formErrors.category = "Please select a category.";
+      isValid = false;
+    }
+
+    // Check if query is filled
+    if (!query.trim()) {
+      formErrors.query = "Please describe your issue.";
+      isValid = false;
+    }
+
+    setErrors(formErrors); // Update error state
+    return isValid; // Return form validity
+  };
+
+  // ✅ Handle form submission with validation
+  // ✅ Handle form submission with validation
   const handleSend = async () => {
+    // Validate fields before submission
+    if (!validateForm()) {
+      return; // Prevent submission if invalid
+    }
+
+    // Close the modal immediately
+    onClose();
+
     try {
+      // Get user details using Clerk ID
       const userData = await getUserByClerkId(user.id);
-      const data = await createSupportQuery({
+
+      // Submit the query if validation passes (runs in the background now)
+      createSupportQuery({
         user_id: userData.data.user._id,
         priority,
         category,
         status: "Created",
         query_description: query,
-      });
-
-      // Show toast on successful query submission
-      toast.success("Query sent successfully!");
-
-      alert("Query sent successfully!");
-      onClose();
+      })
+        .then(() => {
+          // Show success message after query submission
+          message.success("Query submitted successfully!");
+        })
+        .catch(() => {
+          // Show error message if submission fails
+          message.error("Failed to submit query. Please try again.");
+        });
     } catch (error) {
-      // Show toast on error
-      toast.error("Error sending query. Please try again.");
+      console.error("Error fetching user data:", error);
     }
   };
+
 
   return (
     <Container isOpen={isOpen}>
       <Modal>
         <Title>Submit a Query</Title>
         <ModalContent>
+          {/* Category Selection */}
           <div
             style={{
               display: "flex",
@@ -63,12 +102,14 @@ const SupportQuery = ({ isOpen, onClose }) => {
             >
               <option value="Content">Content</option>
               <option value="Billing">Billing</option>
-              {/* <option value="Support">Support</option> */}
               <option value="General">General</option>
               <option value="Technical">Technical</option>
             </Dropdown>
+            {/* Show error if category is not selected */}
+            {errors.category && <div>{errors.category}</div>}
           </div>
 
+          {/* Query Description */}
           <div
             style={{
               display: "flex",
@@ -84,8 +125,11 @@ const SupportQuery = ({ isOpen, onClose }) => {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Describe your issue..."
             />
+            {/* Show error if query is empty */}
+            {errors.query && <div>{errors.query}</div>}
           </div>
 
+          {/* Action Buttons */}
           <div
             style={{
               display: "flex",
@@ -114,11 +158,9 @@ const SupportQuery = ({ isOpen, onClose }) => {
             </Button>
           </div>
         </ModalContent>
+
         <CloseButton onClick={onClose}>&times;</CloseButton>
       </Modal>
-
-      {/* ToastContainer should be placed at the root of your component tree */}
-      <ToastContainer />
     </Container>
   );
 };

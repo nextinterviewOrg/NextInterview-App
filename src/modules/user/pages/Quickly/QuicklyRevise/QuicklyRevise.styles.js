@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-
 export const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Three cards in a row */
@@ -28,17 +27,17 @@ export const Text = styled.p`
 export const Card = styled.div`
   background: ${({ theme }) => theme.colors.light};
   border-radius: 12px;
-  // box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.3s ease-in-out;
-  width: 320px; /* Adjusted to fit image and text neatly */
+  width: 100%; /* Full width to respect grid columns */
+  max-width: 320px; /* Limit max width */
   display: flex;
   flex-direction: column;
-  // align-items: center;
-  // text-align: center;
 
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: ${({ theme }) => theme.colors.lightgreen};
   }
 `;
 
@@ -51,18 +50,19 @@ export const ImageWrapper = styled.div`
 
 export const Image = styled.img`
   width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
-  
 `;
 
 export const Title = styled.h3`
   font-size: 18px;
+  margin-left: 10px;
   font-weight: bold;
   color: ${({ theme }) => theme.colors.text};
   width: 100%;
   text-align: left;
-// padding-left: 20px;
-// padding-top: 10px;
   font-family: ${({ theme }) => theme.fonts.body};
   border-radius: 0 0 8px 8px;
+  margin-top: 10px;
 `;

@@ -24,6 +24,7 @@ import SkillAssessment from "../SkillAssessment/SkillAssessment";
 import { completeModule, completeSubTopic, completeTopic, getUserProgressBySubTopic, startSubTopic, startTopic } from "../../../../../api/userProgressApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
+import { ShimmerTitle, ShimmerText, ShimmerButton} from "react-shimmer-effects";
 
 // Sample Data for Dynamic Rendering
 const topics = [
@@ -97,6 +98,7 @@ const UserModuleTopic = () => {
   const navigate = useNavigate();
   const [curIndex, setCurIndex] = useState(0);
   const { isLoaded, user, isSignedIn } = useUser();
+  const [loading, setLoading] = useState(true);
   // const [selectedCheatSheetURL, setSelectedCheatSheetURL] = useState("");
 
   const delayPara = (index, nextWord) => {
@@ -140,6 +142,7 @@ const UserModuleTopic = () => {
   useEffect(() => {
     const apiCaller = async () => {
       try {
+        setLoading(true);
         const response = await getModuleById(moduleId);
         setModuleName(response.data.moduleName);
         const data = {
@@ -167,6 +170,7 @@ const UserModuleTopic = () => {
             })
           ),
         };
+        setLoading(false);
         setCourseData(data);
       } catch (error) {
         console.log(error);
@@ -398,205 +402,218 @@ const UserModuleTopic = () => {
 
 
   return (
-    <Container>
-      {/* Render topics and buttons */}
-      <TryItYourself>
-        <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
-      </TryItYourself>
-      <div>
-        {topicData && (
+    
+      <Container>
+        {loading ? (
           <>
-            {topicData?.map((topic, index) => (
-              <div key={index}>
-                <Title>{topic.title}</Title>
-
-                <Text
-                  dangerouslySetInnerHTML={{
-                    __html: parseJSONContent(topic.description),
-                  }}
-                ></Text>
+            <ShimmerTitle line={1} gap={10} />
+            <ShimmerText line={3} gap={15} />
+            <ShimmerButton size="md" />
+          </>
+        ) : (
+          <>
+            <TryItYourself>
+              <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
+            </TryItYourself>
+    
+            <div>
+              {topicData && (
+                <>
+                  {topicData?.map((topic, index) => (
+                    <div key={index}>
+                      <Title>{topic.title}</Title>
+    
+                      <Text
+                        dangerouslySetInnerHTML={{
+                          __html: parseJSONContent(topic.description),
+                        }}
+                      ></Text>
+                    </div>
+                  ))}
+                </>
+              )}
+            </div>
+    
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                flexDirection: "column",
+                alignContent: "center",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <div>
+                {showDownloadButton && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <a
+                      style={{
+                        backgroundColor: "transparent",
+                        fontWeight: "bold",
+                        color: "#2390ac",
+                        textDecoration: "none",
+                      }}
+                      target="_blank"
+                      download={"cheatSheet.pdf"}
+                      href={selectedCheetSheetURL}
+                    >
+                      Download Cheat Sheet (pdf)
+                    </a>
+                  </div>
+                )}
+    
+                {!showSummary && (
+                  <Button
+                    style={{
+                      border: "2px solid #2390ac",
+                      // fontWeight: "bold",
+                      // color: "#2390ac",
+                      // backgroundColor: "transparent",
+                      backgroundColor: "transparent",
+                      color: "#2390ac",
+                      fontWeight: "bold",
+                      margin: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginTop: "20px",
+                    }}
+                    onClick={handleSummarizeClick}
+                  >
+                    Summarize for me
+                  </Button>
+                )}
               </div>
-            ))}
+            </div>
+    
+            {showSummary && (
+              <SummaryContainer>
+                <SummaryTitle>Summary</SummaryTitle>
+    
+                <SummaryText>{delayedText}</SummaryText>
+    
+                <ButtonGroup
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    flexDirection: "row",
+                    width: "100%",
+                    alignContent: "flex-end",
+                    gap: "20px",
+                  }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <a
+                      style={{
+                        backgroundColor: "transparent",
+                        color: "#2390ac",
+                        fontWeight: "bold",
+                        textDecoration: "none",
+                      }}
+                      href={selectedCheetSheetURL}
+                      target="_blank"
+                      download={"cheatSheet.pdf"}
+                    >
+                      Download Cheat Sheet (pdf)
+                    </a>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      flexDirection: "row",
+                      alignItems: "flex-end",
+                      gap: "20px",
+                      marginRight: "20px",
+                    }}
+                  >
+                    <p>
+                      <SlLike
+                        style={{
+                          paddingRight: "5px",
+                        }}
+                      />
+                      Helpful
+                    </p>
+                    <p>
+                      <SlDislike
+                        style={{
+                          paddingRight: "5px",
+                          paddingTop: "5px",
+                        }}
+                      />
+                      Not helpful
+                    </p>
+                  </div>
+                </ButtonGroup>
+              </SummaryContainer>
+            )}
           </>
         )}
-
-        {/* Buttons */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "column",
-            alignContent: "center",
-            alignItems: "center",
-            gap: "20px",
-          }}
-        >
-          <div>
-            {showDownloadButton && (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <a
-                  style={{
-                    backgroundColor: "transparent",
-                    fontWeight: "bold",
-                    color: "#2390ac",
-                    textDecoration: "none",
-                  }}
-                  target="_blank"
-                  download={"cheatSheet.pdf"}
-                  href={selectedCheetSheetURL}
-                >
-                  Download Cheat Sheet (pdf)
-                </a>
-              </div>
-            )}
-
-            {/* Show "Summarize for me" button only if summary isn't visible */}
-            {!showSummary && (
-              <Button
-                style={{
-                  border: "2px solid #2390ac",
-                  fontWeight: "bold",
-                  color: "#2390ac",
-                  backgroundColor: "transparent",
-                }}
-                onClick={handleSummarizeClick}
-              >
-                Summarize for me
-              </Button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Conditionally render the summary section only after clicking the button */}
-      {showSummary && (
-        <SummaryContainer>
-          <SummaryTitle>Summary</SummaryTitle>
-
-          <SummaryText>{delayedText}</SummaryText>
-
-          <ButtonGroup
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              flexDirection: "row",
-              width: "100%",
-              alignContent: "flex-end",
-
-              gap: "20px",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <a
-                style={{
-                  backgroundColor: "transparent",
-                  color: "#2390ac",
-                  fontWeight: "bold",
-                  textDecoration: "none",
-                }}
-                href={selectedCheetSheetURL}
-                target="_blank"
-                download={"cheatSheet.pdf"}
-              >
-                Download Cheat Sheet (pdf)
-              </a>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "flex-end",
-                flexDirection: "row",
-                alignItems: "flex-end",
-                gap: "20px",
-                marginRight: "20px",
-              }}
-            >
-              <p>
-                {" "}
-                <SlLike
-                  style={{
-                    paddingRight: "5px",
-                  }}
-                />
-                Helpfull
-              </p>
-              <p>
-                <SlDislike
-                  style={{
-                    paddingRight: "5px",
-                    paddingTop: "5px",
-                  }}
-                />
-                Not helpful
-              </p>
-            </div>
-          </ButtonGroup>
-        </SummaryContainer>
-      )}
-
-      {/* Show the "Mark as Read" button only after summary is displayed */}
-      {/* {showMarkAsRead && ( */}
-      {markAsCompleteBtnStatus ? (
-        <>
+    
+        {markAsCompleteBtnStatus ? (
           <Button
             style={{
               backgroundColor: "#2390ac",
               color: "white",
               fontWeight: "bold",
-              // marginTop: "20px"
               margin: "auto",
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
               marginTop: "20px",
             }}
-            // onClick={handleMarkAsCompleted}
             onClick={handleNext}
           >
             Next
           </Button>
-        </>
-      ) :
-        <Button
-          style={{
-            backgroundColor: "#2390ac",
-            color: "white",
-            fontWeight: "bold",
-            // marginTop: "20px"
-            margin: "auto",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-          onClick={handleMarkAsCompleted}
-        >
-          Mark as completed
-        </Button>}
-      {/* )} */}
-      {showModal && (
-        <ModalOverlay>
-          <ModalContent>
-            <SkillAssessment {...assessmentParams} onCloseModal={handleCloseModal} currentTopicIndex={location.state.topicIndex} currentSubTopicIndex={location.state.subtopicIndex} moduleId={moduleId} />
-            {/* <CloseButton onClick={handleCloseModal}>X</CloseButton> */}
-          </ModalContent>
-
-        </ModalOverlay>
-      )}
-    </Container>
-  );
+        ) : (
+          <Button
+            style={{
+              backgroundColor: "#2390ac",
+              color: "white",
+              fontWeight: "bold",
+              margin: "auto",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginTop: "20px",
+            }}
+            onClick={handleMarkAsCompleted}
+          >
+            Mark as completed
+          </Button>
+        )}
+    
+        {showModal && (
+          <ModalOverlay>
+            <ModalContent>
+              <SkillAssessment
+                {...assessmentParams}
+                onCloseModal={handleCloseModal}
+                currentTopicIndex={location.state.topicIndex}
+                currentSubTopicIndex={location.state.subtopicIndex}
+                moduleId={moduleId}
+              />
+            </ModalContent>
+          </ModalOverlay>
+        )}
+      </Container>
+    );
+    
 };
 
 const parseJSONContent = (content) => {
