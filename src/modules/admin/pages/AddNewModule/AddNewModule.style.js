@@ -371,3 +371,13 @@ export const ModalButton = styled.button`
   margin-top: 20px;
   font-size: 16px;
 `;
+
+
+export const Button = styled.button`
+  padding: 10px 20px;
+  background-color: ${theme.colors.secondary};
+  color: ${theme.colors.light};
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  `;

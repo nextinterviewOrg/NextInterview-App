@@ -5,6 +5,7 @@ import UserSubscriptionInfo from "../../components/UserSubscriptionInfo/UserSubs
 import UserPastInterviews from "../../components/UserPastInterviews/UserPastInterviews";
 import { useUser } from "@clerk/clerk-react";
 import { updatePassword } from "../../../../api/userApi";
+import { message } from "antd";
 
 export default function ProfileUser() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,7 +28,7 @@ export default function ProfileUser() {
   const handleResetPassword = async () => {
     // Perform validation or API call here
     if (passwords.newPassword !== passwords.confirmPassword) {
-      alert("New password and confirm password do not match!");
+    message.error("New password and confirm password do not match!");
       return;
     }
     const response = await updatePassword({
@@ -36,7 +37,7 @@ export default function ProfileUser() {
       newPassword: passwords.confirmPassword,
     });
     console.log("response", response);
-    alert("Password reset Successfull !");
+   message.success("Password reset successfully!");
     handleClose();
   };
   return (

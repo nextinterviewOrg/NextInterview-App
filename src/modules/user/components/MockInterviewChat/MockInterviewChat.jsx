@@ -31,6 +31,7 @@ import {
 } from "../../../../api/aiMockInterviewApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
+import { message } from "antd";
 const MockInterview = () => {
   const [messages, setMessages] = useState([]);
 
@@ -133,7 +134,7 @@ const MockInterview = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      alert("The interview is starting in 3 seconds...");
+      message.success("The interview is starting in 3 seconds...");
       setTimeout(() => {
         setTimeLeft(30);
         setIsRunning(true);
@@ -141,23 +142,6 @@ const MockInterview = () => {
     }, 3000);
   }, []);
 
-  // useEffect(() => {
-  //   if (timeLeft === 0) {
-  //     alert("Timeout!");
-  //     setTimeLeft(null);
-  //     setIsRunning(false);
-  //     navigate("/user/interview");
-  //     return;
-  //   }
-  //   if (timeLeft === null) return;
-
-  //   setIsRunning(true);
-  //   const timer = setInterval(() => {
-  //     setTimeLeft((prevTime) => prevTime - 1);
-  //   }, 1000);
-
-  //   return () => clearInterval(timer);
-  // }, [timeLeft]);
 
   return (
     <>

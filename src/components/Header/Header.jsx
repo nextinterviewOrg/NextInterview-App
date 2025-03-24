@@ -113,10 +113,7 @@ const Dropdown = ({
           {" "}
           <CgProfile /> My Profile
         </li>
-        {/* <li style={listLIStyles} onClick={() => { alert("Customer Support clicked"); onClose(); }}> <MdOutlineSupportAgent /> Customer Support</li>
-        <li style={listLIStyles} onClick={() => { navigate("/user/userfaq"); onClose(); }}> <CgProfile /> Help</li>
-        <li onClick={() => { onOpenQueryModal(); onClose(); }}> <CgProfile /> Support Query</li> */}
-        <li style={listLIStyles} onClick={onLogoutClick}>
+          <li style={listLIStyles} onClick={onLogoutClick}>
           <RiLogoutBoxLine /> Logout
         </li>
       </ul>

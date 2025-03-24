@@ -70,12 +70,11 @@ const NotificationAdd = ({ isOpen, onClose, onSave }) => {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-      return; // Stop form submission if validation fails
+      return; 
     }
 
     if (formData.trigger === "Schedule" && (!formData.timeZone || !formData.frequency)) {
-      // alert("Please select both time zone and frequency when trigger is 'Schedule'.");
-      message.error("Please select both time zone and frequency when trigger is 'Schedule'.");
+        message.error("Please select both time zone and frequency when trigger is 'Schedule'.");
       return;
     }
 

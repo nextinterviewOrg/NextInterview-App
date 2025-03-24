@@ -95,6 +95,8 @@ background: #F0F8F1;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
+
+ 
 }
 
 /* Grid View Styling */
@@ -122,6 +124,14 @@ padding: 24px;
   flex-direction: column;
   justify-content: space-between;
 //   padding: 24px;
+border-radius: 15px;
+box-shadow: 0 0 10px rgba(0, 8, 8, 0.2);
+
+&:hover {
+  transform: translateY(-10px);
+  background-color: #F0F8F1;
+  border-radius: 15px;
+  box-shadow: 0 0 10px rgba(0, 8, 8, 0.3);
 }
 .course-card-list{
 background-color: white;

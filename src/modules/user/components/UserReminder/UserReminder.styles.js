@@ -1,123 +1,70 @@
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 
-export const UserReminderWrapper = styled.div`
-  background-color: #fff;
-  border: 1px solid #ddd;
+
+export const MarqueeContainer = styled.div`
+  width: 100%;
+  overflow: hidden;
+  // border: 1px solid #ddd;
   border-radius: 10px;
-  padding: 20px;
+  background: #fff;
+  padding: 10px;
+`;
+
+// The track that actually moves
+export const MarqueeTrack = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
+  animation: scroll 15s linear infinite;
+  border:none;
 
-  .user-reminder-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
+  /* Pause animation on hover */
+  &:hover {
+    animation-play-state: paused;
   }
 
-  .reminder-text {
-    margin-bottom: 10px;
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      /* Because we are duplicating the array once, 
+         moving -50% horizontally loops the set seamlessly */
+      transform: translateX(-50%);
+    }
+  }
+`;
+
+export const Card = styled.div`
+  flex: 0 0 25%; /* Show 4 cards at a time */
+  box-sizing: border-box;
+  margin-right: 1rem; /* Add spacing between cards if you want */
+  border-radius: 20px;
+  background-color: #f8f8f8;
+  padding: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* Basic styling */
+  text-align: left;
+
+  /* On hover, slightly scale up and add shadow */
+  &:hover {
+    transform: scale(1.05);
+    background-color:rgb(209, 250, 248);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
   }
 
-  .reminder-text-title {
-    font-family: "DM Sans";
-    font-size: 20x;
-    font-style: normal;
+  h2 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
     font-weight: 700;
-    color: ${({ theme }) => theme.colors.black};
-    margin: 0;
-  }
-  .reminder-text-subtitle {
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.textgray};
   }
 
-  .reminder-text-description {
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    color: ${({ theme }) => theme.colors.black};
-    margin-bottom: 10px;
-  }
-
-  .reminder-actions {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    flex-direction: column;
-  }
-  .reminder-buttons {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    margin-top: 10px;
-    width: 100%;
-  }
-  .dismiss-button {
-    border-radius: 50%;
-    border: 1px solid #f5f5f5;
-    font-size: 1.5rem;
-    margin-right: 15px;
-    cursor: pointer;
-    padding: 8px;
-    color: ${({ theme }) => theme.colors.error};
-    width: 50px;
-  }
-
-  .thanks-button {
-    display: flex;
-    width: 300px;
-    align-items: center;
-    height: 44px;
-    padding: 5px 9px;
+  p {
+    margin: 20px;
+    display:flex;
     justify-content: center;
-    gap: 8px;
-    flex: 1 0 0;
-    border-radius: 16px;
-    border: 1px solid white !important;
-    font-size: 14px;
-    font-family: "DM Sans";
-    cursor: pointer;
-  }
 
-  .thanks-button:hover {
-    background: ${theme.colors.bluetext};
+    font-size: 0.9rem;
   }
-  .thanks-message {
-    display: flex;
-    flex-direction: column;
-    font-size: 16px;
-    font-weight: bold;
-    color: #28a745; /* Green color for success */
-    border-radius: 8px;
-    justify-content: center;
-  }
-
-  .reminder-description {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 100px;
-  }
-
-  .checkmark-icon {
-    color: #28a745;
-    font-size: 14px;
-    background-color: #e6f4ea;
-    border-radius: 50%;
-    padding: 5px;
-    border: 1px solid #28a745;
-  }
-
-  .reminder-thanks-icon {
-    display: flex;
-    gap: 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100px;
-  }
+  
 `;
