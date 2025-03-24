@@ -109,7 +109,7 @@ export const Input = styled.div`
 `;
 
 export const Button = styled.button`
-  background-color: ${theme.colors.primary};
+  background-color: ${theme.colors.info};
   color: white;
   border: none;
   padding: 0.8rem;
@@ -119,7 +119,7 @@ export const Button = styled.button`
   margin-top: 1rem;
 
   &:hover {
-    background-color: ${theme.colors.success};
+    background-color: ${theme.colors.info};
   }
 `;
 

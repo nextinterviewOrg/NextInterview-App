@@ -1,4 +1,5 @@
 import styled, { css } from "styled-components";
+import theme from "../../../theme/Theme";
 
 export const Container = styled.div`
   max-width: 600px;
@@ -129,7 +130,7 @@ export const Icon = styled.div`
 
 export const Button = styled.button`
   padding: 10px;
-  background-color: ${(props) => (props.secondary ? "#2290ac" : "#2290ac")}45;
+  background-color: ${theme.colors.info};
   color: ${(props) => (props.secondary ? "#333" : "#fff")};
   border: none;
   border-radius: 5px;
@@ -138,7 +139,7 @@ export const Button = styled.button`
   font-size: 1rem;
 
   &:hover {
-    background-color: ${(props) => (props.secondary ? "#cccccc" : "#2290ac")};
+    background-color:  ${theme.colors.bluetext};
   }
 `;
 

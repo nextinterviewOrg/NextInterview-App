@@ -98,7 +98,7 @@ export const SubmitButton = styled.button`
   font-size: 1rem;
   font-weight: bold;
   color: #fff;
-  background-color: ${theme.colors.bluetext}45;
+  background-color: ${theme.colors.info };
   border: none;
   border-radius: 4px;
   cursor: pointer;

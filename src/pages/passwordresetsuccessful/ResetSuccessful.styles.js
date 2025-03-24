@@ -58,9 +58,9 @@ export const Button = styled.button`
   width: 20%;
   padding: ${theme.spacing(1)};
   font-size: 1rem;
-  color: ${theme.colors.text};
-  background-color: transparent;
-  border: 1px solid ${theme.colors.text};
+  color: ${theme.colors.white};
+  background-color: ${theme.colors.info};
+  border: none;
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.3s;

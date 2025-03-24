@@ -23,13 +23,22 @@ export const Loginmobilewrapper = styled.div`
   }
 
   .Input {
-    width: 100%;
+    width: 100% ;
+    height: 80px ;
     padding-top: 10px;
     margin-bottom: 25px;
   }
-  .Form {
-    width: 100%;
-  }
+    .PhoneInputCountry{
+    height: 100% !important;
+    }
+
+    .Input input{
+      height: 40% !important;
+      border-radius: 4px;
+border: 1px solid ${theme.colors.textgray};
+    }
+  
+    
 
   .BackIcon {
     cursor: pointer;
@@ -61,7 +70,7 @@ export const Loginmobilewrapper = styled.div`
     width: 100%;
     padding: 12px;
     text-align: center;
-    background-color: ${(props) => props.theme.colors.bluetext}45;
+    background-color: ${(props) => props.theme.colors.info};
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -137,7 +146,7 @@ export const Button = styled.button`
   padding: 10px;
   font-size: 16px;
   color: ${theme.colors.light};
-  background-color: ${theme.colors.bluetext}45;
+  background-color: ${theme.colors.info};
   border: none;
   border-radius: 5px;
   cursor: pointer;

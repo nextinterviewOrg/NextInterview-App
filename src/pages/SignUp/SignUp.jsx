@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   FormSection,
@@ -13,9 +13,9 @@ import {
 } from "../SignUp/SignUp.styles";
 import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import { FaLinkedin } from "react-icons/fa";
-import { useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
+import { SignIn, SignUpButton, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
 
 import { PiEyeLight } from "react-icons/pi";
 import { IoEyeOffOutline } from "react-icons/io5";
@@ -32,6 +32,11 @@ const SignUp = () => {
   const [messageType, setMessageType] = useState(null);
   const { isSignedIn, user, isLoaded } = useUser();
   const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
+  const [isError, setIsError] = useState(false);
+  const location = useLocation();
+  useEffect(() => {
+    console.log("location", location);
+  },[])
   const {
     isLoaded: signUpLoaded,
     signUp,
@@ -48,6 +53,7 @@ const SignUp = () => {
   };
 
   const handleFormSubmit = async (e) => {
+    setIsError(false);
     e.preventDefault();
     if (email.trim() && email.includes("@")) {
     }
@@ -72,39 +78,58 @@ const SignUp = () => {
       if (data.status === "complete") {
         setMessage("Login successful! Redirecting...");
         setMessageType("success");
-        setTimeout(
-          () =>
             navigate("/validation", {
               state: { sessionId: data.createdSessionId },
-            }),
-          5000
-        );
+            })
       } else if (data.status === "needs_second_factor") {
-        // navigate("/verifytotp");
+        navigate("/verifytotp");
       }
     } catch (error) {
-      console.log("Sign-in error:", error);
-      setMessage("Invalid email or password.");
+      setIsError(true);
+      
+      if (error.errors[0].code == "form_identifier_not_found") {
+        setMessage("Couldn't find your account.");
+      }
+      else if (error.errors[0].code == "session_exists") {
+        setMessage("You're currently in single session mode. You can only be signed into one account at a time.");
+      }
+      else if (error.errors[0].code == "form_param_format_invalid") {
+        setMessage("Invalid Email ");
+      }
+      else if (error.errors[0].code == "form_password_incorrect") {
+        setMessage("Password is incorrect. Try again, or use another method. ");
+      }else if (error.errors[0].code == "user_locked") {
+        setMessage("Your account has been Restricted. For more information, please contact support.");
+      }
       setMessageType("error");
     }
   };
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     try {
-      await signIn.authenticateWithRedirect({
+     const data= await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: window.location.origin + "/login", // Optional
-        redirectUrlComplete: window.location.origin + "/validation", // Where to go after successful sign-up
+        redirectUrl: "/login", // Optional
+        redirectUrlComplete: window.location.origin + "/validation",// Where to go after successful sign-up
       });
+      console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
-      setMessage(
-        "Google sign-up failed. " +
+      
+      // Check if the error indicates that the account does not exist
+      if (err.errors && err.errors.some(error => error.message.includes("Account not found"))) {
+        setMessage("Account does not exist. Please sign up first.");
+        setMessageType("error");
+      } else {
+        setMessage(
+          "Google sign-up failed. " +
           (err.errors?.[0]?.message || "Please try again.")
-      );
-      setMessageType("error");
+        );
+        setMessageType("error");
+      }
     }
   };
+  
 
   const handleLinkedInSignIn = async (e) => {
     e.preventDefault();
@@ -124,14 +149,14 @@ const SignUp = () => {
   return (
     <Container>
       <HeaderWithLogo />
-      {/* <UserButton /> */}
+       {/* <UserButton /> */}
       {/* <UserProfile /> */}
       <div
         style={{
           display: "flex",
           flexDirection: "row",
         }}
-      >
+      > 
         <FormSection>
           <Heading>Welcome to Next Interview</Heading>
           <Form onSubmit={handleFormSubmit}>
@@ -202,7 +227,10 @@ const SignUp = () => {
                 Forgot Password ?
               </Link>
             </div>
-            <MessageStatus message={message} messageType={messageType} />
+            {isError &&
+              <MessageStatus message={message} messageType={messageType} />
+            }
+
             <Button message={!!message} type="submit">
               Log In
             </Button>
@@ -233,11 +261,15 @@ const SignUp = () => {
               </button>
             </LinkedInButton>
           </Form>
+          <Footer style={{fontSize:"14px" }}>
+           Don't have an account? Sign up now. {" "}
+            <a href="/signup">Signup </a>
+          </Footer>
 
           <Footer>
             By signing in, I agree to Next Interview's{" "}
-            <a href="/privacy-policy">Privacy Policy </a>
-            and <a href="/terms">Terms of Service</a>.
+            <a href="/#">Privacy Policy </a>
+            and <a href="/#">Terms of Service</a>.
           </Footer>
         </FormSection>
 
@@ -248,5 +280,4 @@ const SignUp = () => {
     </Container>
   );
 };
-
 export default SignUp;

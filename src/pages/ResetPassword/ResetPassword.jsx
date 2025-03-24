@@ -94,11 +94,15 @@ const ResetPassword = () => {
           }
         })
         .catch((err) => {
-          console.error("error", err.errors[0].longMessage);
+          console.error("error", err.errors);
           if (err.errors[0].code === "verification_code_invalid") {
-            alert("Incorrect verification code. Please try again.");
+            // alert("Incorrect verification code. Please try again.");
           }
-          setMessage(err.errors[0].longMessage);
+          if (err.errors[0].code === "verification_code_invalid") {
+            // alert("Incorrect verification code. Please try again.");
+            setMessage(err.errors[0].message);
+          }
+          setMessage(err.errors[0].message);
           setMessageType("error");
         });
     } catch (error) {

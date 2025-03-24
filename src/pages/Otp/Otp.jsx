@@ -3,7 +3,7 @@ import { RxArrowLeft } from "react-icons/rx";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useSignIn, useSignUp } from "@clerk/clerk-react";
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
-
+import { Input, notification } from "antd";
 // import your styled components
 import {
   Container,
@@ -60,7 +60,7 @@ const Otp = () => {
     }
   };
 
-  const [countdown, setCountdown] = useState(15);
+  const [countdown, setCountdown] = useState(300);
   const [canResend, setCanResend] = useState(false);
 
   useEffect(() => {
@@ -74,11 +74,51 @@ const Otp = () => {
     }
   }, [countdown]);
 
-  const handleResend = () => {
+  const handleResend = async () => {
     if (canResend) {
-      setCountdown(15);
-      setCanResend(false);
+      try {
+        // Resend the OTP using Clerk's signUp object
+        const result = await signIn.create({
+          identifier: location.state.phoneNumber, // Phone number of the user
+          strategy: "phone_code", // Phone OTP verification strategy
+        });
+
+        console.log("OTP Resent: ", result);
+
+        setCountdown(300);  // Set countdown to 5 minutes (300 seconds)
+        setCanResend(false); // Prevent further resend requests until the countdown ends
+
+        // alert("OTP has been resent successfully!");
+        notification.success({
+          message: "Success",  // Title of the notification
+          description: "OTP has been resent successfully!",  // Description of the notification
+          placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+          duration: 3,
+        })
+      } catch (error) {
+        console.log("Error resending OTP: ", error);
+        notification.error({
+          message: "Error",  // Title of the notification
+          description: "Failed to resend OTP. Please try again.",  // Error message description
+          placement: "topRight",
+          duration: 3,
+        });
+        // alert("Failed to resend OTP. Please try again.");
+      }
+    } else {
+      notification.info({
+        message: "Info",  // Title of the notification
+        description: "Please wait before requesting a new OTP.",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      });
+      // alert("Please wait before requesting a new OTP.");
     }
+
+    // if (canResend) {
+    //   setCountdown(3000);
+    //   setCanResend(false);
+    // }
   };
 
   const navigate = useNavigate();
@@ -131,7 +171,13 @@ const Otp = () => {
   const handleVerifyOTP = async () => {
     const otpCode = otp.join("");
     if (otpCode.trim().length === 0) {
-      alert("Please enter the OTP code you received");
+      // alert("Please enter the OTP code you received");
+      notification.error({
+        message: "Error",  // Title of the notification
+        description: "Please enter the OTP code you received",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      });
       return;
     }
 
@@ -142,18 +188,31 @@ const Otp = () => {
           strategy: "phone_code",
           code: otpCode,
         });
+        console.log("result", result);
         localStorage.setItem("session", result.createdSessionId);
         if (result.status === "complete") {
           // Successfully signed in
           await setSignInActive({ session: result.createdSessionId });
-          alert("You have successfully signed in!");
+          notification.success({
+            message: "Success",  // Title of the notification
+            description: "You have successfully signed in!",  // Description of the notification
+            placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+            duration: 3,
+          })
+          // alert("You have successfully signed in!");
           navigate("/validation", {
             state: {
               sessionId: result.createdSessionId,
             },
           });
         } else {
-          alert("Incorrect OTP. Please try again.");
+          notification.error({
+            message: "Error",  // Title of the notification
+            description: "Incorrect OTP. Please try again.",  // Error message description
+            placement: "topRight",
+            duration: 3,
+          });
+          // alert("Incorrect OTP. Please try again.");
         }
       } else if (flow === "SIGN_UP") {
         // Attempt signUp phone verification
@@ -167,7 +226,13 @@ const Otp = () => {
         if (verifications?.phoneNumber?.status === "verified") {
           // Successfully signed up & automatically signed in
           await setSignUpActive({ session: createdSessionId });
-          alert("You Phone Number has been successfully verified!");
+          notification.success({
+            message: "Success",  // Title of the notification
+            description: "Your Phone Number has been successfully verified!",  // Description of the notification
+            placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+            duration: 3,
+          });
+          // alert("You Phone Number has been successfully verified!");
           navigate("/otpEmail", {
             state: {
               flow: "SIGN_UP",
@@ -176,13 +241,45 @@ const Otp = () => {
             },
           });
         } else {
-          alert("Incorrect OTP. Please try again. one");
+          notification.error({
+            message: "Error",  // Title of the notification
+            description: "Incorrect OTP. Please try again. one.",  // Error message description
+            placement: "topRight",
+            duration: 3,
+          });
+          // alert("Incorrect OTP. Please try again. one");
         }
       } else {
-        alert("Unknown flow. Please try again.");
+        // alert("Unknown flow. Please try again.");
       }
     } catch (error) {
-      alert("Failed to verify OTP. Please check and try again.");
+      console.log("Error verifying OTP: ", error.errors);
+      if (error.errors[0].code == "verification_failed") {
+        notification.error({
+          message: "Login Failed",  // Title of the notification
+          description: "Too many failed attempts. You have to try again with the same or another method.",  // Error message description
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+      if (error.errors[0].code == "form_code_incorrect") {
+        notification.error({
+          message: "Login Failed",  // Title of the notification
+          description: "Incorrect OTP. Please check and try again.",  // Error message description
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+      if (error.errors[0].code == "too_many_requests") {
+        notification.error({
+          message: "Error",  // Title of the notification
+          description: "Too many requests. Please try again in a bit.",  // Error message description
+          placement: "topRight",
+          duration: 3,
+        });
+      }
+
+      // al ert("Failed to verify OTP. Please check and try again.");
     }
   };
 

@@ -110,7 +110,7 @@ export const Input = styled.div`
 `;
 
 export const Button = styled.button`
-  background-color: ${theme.colors.bluetext}45;
+  background-color: ${theme.colors.info};
   color: white;
   border: none;
   padding: 0.8rem;
@@ -229,6 +229,8 @@ export const MessageCard = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+      width: 100%;
+    box-sizing: border-box;
   gap: 8px;
   ${({ type }) =>
     type === "error" && "background-color: #ffe6e6; color: #d9534f; border: 1px solid #d9534f;"}

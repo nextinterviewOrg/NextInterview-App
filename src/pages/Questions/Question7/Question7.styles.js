@@ -102,7 +102,7 @@ export const Question7Wrapper = styled.div`
   .NextButton {
     width: 100%;
     padding: 12px;
-    background-color: ${(props) => props.theme.colors.bluetext}45;
+    background-color: ${theme.colors.info};
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -113,7 +113,7 @@ export const Question7Wrapper = styled.div`
   }
 
   .NextButton:hover {
-    background-color: ${(props) => props.theme.colors.bluetext};
+    background-color: ${theme.colors.bluetext};
   }
 
   .SkipButton {

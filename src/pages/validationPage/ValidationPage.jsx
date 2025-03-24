@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
-import { useUser,useSession } from '@clerk/clerk-react';
+import { useUser, useSession } from '@clerk/clerk-react';
 import { getUserByClerkId, getUserBySessionId } from '../../api/userApi';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Lottie from "lottie-react";
+import verifying from "../../assets/Lottie/Animation - verification.json";
+import verifyingText from "../../assets/Lottie/Animation - verifyingText.json";
+import { Container } from './Validation.styles';
 
 export default function ValidationPage() {
   const { isSignedIn, user, isLoaded, sessionId } = useUser();
@@ -16,10 +20,10 @@ export default function ValidationPage() {
       //   console.log("User:", user, "Session ID:", sessionId);
 
       try {
-        
+
         if (user) {
           const data = await getUserByClerkId(user.id);
-          console.log("hehe", user,session);
+          console.log("hehe", user, session);
           localStorage.setItem("sessionId", JSON.stringify(session.id));
           if (data.data.user.user_role === "user") {
             if (data.data.user.profile_status === true) {
@@ -34,7 +38,7 @@ export default function ValidationPage() {
           }
         }
         console.log("location", location.state);
-        const clerId= await getUserBySessionId({ sessionId: location.state.sessionId });
+        const clerId = await getUserBySessionId({ sessionId: location.state.sessionId });
         // console.log(clerId);
         const data = await getUserByClerkId(clerId.userId);
         console.log("hehe", data.data);
@@ -66,8 +70,21 @@ export default function ValidationPage() {
   }, [user, isSignedIn, isLoaded]); // Add dependencies to re-run the effect when values change
 
   // Optional: Show a loading indicator while the user data is being loaded
-  if (!isLoaded || !isSignedIn||!sessionId) {
-    return <div>Loading...</div>;
+  if (!isLoaded || !isSignedIn || !sessionId) {
+    return <Container >
+      <Lottie
+        className="Lottie"
+        animationData={verifying}
+        loop={true}
+        style={{ width: "90%", height: "20%" }}
+      />
+      <Lottie
+        className="Lottie"
+        animationData={verifyingText}
+        loop={true}
+        style={{ width: "40%", height: "20%" }}
+      />
+    </Container>;
   }
 
   return <></>;

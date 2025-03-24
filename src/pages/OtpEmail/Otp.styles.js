@@ -130,7 +130,7 @@ export const SubmitButton = styled.button`
   padding: 11px;
   font-size: 18px;
   color: #fff;
-  background-color: ${theme.colors.bluetext}45;
+  background-color: ${theme.colors.secondary};
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -160,10 +160,10 @@ export const Section = styled.div`
   background-color: #${theme.colors.light};
   font-family: Arial, sans-serif;
   padding: 0 15px;
-  width: 25vw;
+ 
 
   @media (max-width: 480px) {
     padding: 0 10px;
-    justify-content: unset;
+    justify-content: center;
   }
 `;
