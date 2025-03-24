@@ -18,6 +18,7 @@ import MessageStatus from "../MessageStatus/MessageStatus";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
+  const [isError, setIsError] = useState(false);
   const [error, setError] = useState(null);
   const [message, setMessage] = useState("");
   const { isLoaded, signIn } = useSignIn();
@@ -25,6 +26,10 @@ const ForgotPassword = () => {
   const [messageType, setMessageType] = useState(null);
 
   const handleResetPassword = async (e) => {
+    setError(null);
+    setMessage("");
+    setMessageType(null);
+    setIsError(false);
     e.preventDefault();
     if (email.trim() && email.includes("@")) {
     }
@@ -51,25 +56,31 @@ const ForgotPassword = () => {
       //
       setMessage("Password reset email sent. Please check your inbox.");
       setMessageType("success");
-      setTimeout(() => {
-        setMessage("");
-        setMessageType(null);
-        navigate("/resetpassword");
-      }, 5000);
+      setMessage("");
+      setMessageType(null);
+      navigate("/resetpassword");
       // setError(null);
 
       // Optionally, redirect to a confirmation page
     } catch (err) {
-      console.error("Error resetting password:", err);
-
+      console.error("Error resetting password:", err.errors);
+      setIsError(true);
       if (err.errors?.[0]?.code === "invalid_identifier") {
         setMessage("Please enter a valid email address.");
         setMessageType("warning");
-      } else {
+      } else if (err.errors?.[0]?.code === "form_identifier_not_found") {
+        setMessage("Couldn't find your account.");
+        setMessageType("Error");
+      }
+      else if (err.errors?.[0]?.code === "form_param_format_invalid") {
+        setMessage("Invalid email address.");
+        setMessageType("Error");
+      }
+      else {
         setMessage("Please enter a valid email address.");
         setMessageType("warning");
       }
-      setMessage("Email is not registered.");
+      // setMessage("Email is not registered.");
       setMessageType("warning");
     }
   };
@@ -99,7 +110,7 @@ const ForgotPassword = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
           </InputContainer>
-          <MessageStatus message={message} messageType={messageType} />
+          {isError && <MessageStatus message={message} messageType={messageType} />}
           <Button message={!!message} onClick={handleResetPassword}>
             Reset Password
           </Button>

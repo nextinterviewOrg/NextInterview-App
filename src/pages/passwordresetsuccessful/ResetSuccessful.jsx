@@ -10,9 +10,8 @@ const ResetSuccessful = () => {
   const { signOut } = useClerk()
 
   const navigate = useNavigate();
-  const handleBackToLogIn = () => {
-    signOut({ redirectUrl: '/login' })
-    
+  const handleBackToLogIn = async() => {
+    await signOut({ redirectUrl: '/login' })
   };
   return (
       <div>

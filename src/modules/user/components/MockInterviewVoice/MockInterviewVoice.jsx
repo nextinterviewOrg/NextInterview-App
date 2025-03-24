@@ -79,9 +79,10 @@ const MockInterview = () => {
       setMessages(message);
       if (message.length == 1) {
         playAudioFromData(message[message.length - 1]);
-        setProcessingData(false);
+      
       }
-
+      console.log("message", message);
+      setProcessingData(false);
       // const data = await textToSpeech({
       //   inputText: "I am the terminator Help me out with the mock interview"
       // })
@@ -93,7 +94,9 @@ const MockInterview = () => {
 
   useEffect(() => {
     const apiCaller = async () => {
-      setProcessingData(true);
+      if(!runId) return
+      // setProcessingData(true);
+      console.log("runId", runId); 
       const response = await getMockInterviewResponse({
         thread_id: location.state.threadId,
         run_id: runId,
@@ -111,7 +114,7 @@ const MockInterview = () => {
       message = message.reverse();
       setMessages(message);
       playAudioFromData(message[message.length - 1]);
-      setProcessingData(false);
+      // setProcessingData(false);
     };
     apiCaller();
   }, [runId]);

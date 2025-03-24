@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
 import { RxArrowLeft } from "react-icons/rx";
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
+import PhoneInput, { getCountries ,  isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 // import { IoIosArrowRoundBack } from "react-icons/io";
 
 // import your styled components
@@ -13,11 +15,20 @@ import {
   Label,
   Button,
 } from "./Login.styles";
-import { Input } from "antd";
+import { Input,notification } from "antd";
+import MessageStatus from "../MessageStatus/MessageStatus";
 
 const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState(null); // Message to show
+  const [messageType, setMessageType] = useState(null);
+  useEffect(() => {
+    setIsError(false);
+    setMessage(null);
+    setMessageType(null);
+  }, []);
 
   // Clerk hooks
   const {
@@ -41,14 +52,20 @@ const Login = () => {
   }
 
   const handleSendOTP = async () => {
-    // Basic validation: check for 10 digits
-    if (phoneNumber.trim().length !== 10) {
-      alert("Please enter a valid 10-digit phone number.");
+    setIsError(false);
+    setMessage(null);
+    setMessageType(null);
+    console.log("phoneNumber", phoneNumber);
+    const isValidPhone = isValidPhoneNumber(phoneNumber);
+
+    if (!isValidPhone) {
+      setIsError(true);
+      setMessage("Please enter a valid phone number.");
+      setMessageType("error");
       return;
     }
-
-    // Format with +91 for India
-    const fullPhoneNumber = `+91${phoneNumber.trim()}`;
+   
+    const fullPhoneNumber = `${phoneNumber.trim()}`;
     if (location.state.flow === "SIGN_UP") {
       try {
         await signUp.create({
@@ -70,18 +87,31 @@ const Login = () => {
           },
         });
       } catch (signUpError) {
-        alert("Something went wrong while sending OTP. Please try again.");
+        notification.error({
+          message: "Error",  // Title of the notification
+          description: "Something went wrong. Please try again.",  // Error message description
+          placement: "topRight", 
+          duration: 3,  
+        });
+        // alert("Something went wrong while sending OTP. Please try again.");
       }
     } else if (location.state.flow === "SIGN_IN") {
       try {
         // 1) Try Sign In first
-        await signIn.create({
+        const result = await signIn.create({
           identifier: fullPhoneNumber,
           strategy: "phone_code",
         });
+        console.log("result", result);
+        notification.success({
+          message: "Success",  // Title of the notification
+          description: "OTP has been sent to your phone number successfully!",  // Description of the notification
+          placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+          duration: 3, 
+        });
 
         // If we're here, user is found → flow = SIGN_IN
-        alert("Sign-in OTP has been sent to your phone number.");
+        // alert(`Sign-in OTP has been sent to your phone number. ${result}`);
 
         // Navigate to /otp with state
         navigate("/otp", {
@@ -91,7 +121,12 @@ const Login = () => {
           },
         });
       } catch (error) {
-        console.log("Sign-in error:", error);
+        console.log("Sign-in error 11 :", error.errors[0]);
+        if (error.errors[0].code == "form_identifier_not_found") {
+          setMessage("Couldn't find your account.");
+          setMessageType("error");
+          setIsError(true);
+        }
       }
     }
   };
@@ -115,10 +150,17 @@ const Login = () => {
 
           <div className="Title">Login with Mobile Number</div>
           <Subtitle>OTP will be sent to your mobile number</Subtitle>
-          <div className="Form">
+          {/* <div className="Form"> */}
             <Label className="Label">Mobile Number</Label>
-
-            <Input
+            <PhoneInput
+              className="Input"
+              international
+              defaultCountry="IN" // Set the default country code (IN for India)
+              value={phoneNumber}
+              onChange={setPhoneNumber}
+              error={isError}
+            />
+            {/* <Input
               className="Input"
               type="tel"
               value={phoneNumber}
@@ -131,8 +173,13 @@ const Login = () => {
                   setPhoneNumber(e.target.value.slice(0, 10));
                 }
               }}
-            />
-          </div>
+            /> */}
+          {/* </div> */}
+          {
+            isError &&
+            <MessageStatus message={message} messageType={messageType} />
+
+          }
 
           <Button className="Button" onClick={handleSendOTP}>
             Send OTP

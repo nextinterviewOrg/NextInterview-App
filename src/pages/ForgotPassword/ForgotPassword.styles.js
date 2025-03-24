@@ -122,7 +122,7 @@ export const Button = styled.button`
   padding: ${theme.spacing(1.5)};
   font-size: 1rem;
   color: ${theme.colors.light};
-  background-color: ${theme.colors.bluetext}45;
+  background-color: ${theme.colors.info};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;

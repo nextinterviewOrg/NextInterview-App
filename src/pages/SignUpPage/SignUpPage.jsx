@@ -35,8 +35,11 @@ import {
   UserProfile,
   UserButton,
   SignIn,
+  SignUp,
 } from "@clerk/clerk-react";
 import MessageStatus from "../MessageStatus/MessageStatus";
+import PhoneInput, { getCountries, isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 
 const SignUpPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -48,6 +51,7 @@ const SignUpPage = () => {
   const [messageType, setMessageType] = useState(null);
   const navigate = useNavigate();
   const { openSignUp } = useClerk();
+  const [isError, setIsError] = useState(false);
 
   const {
     isLoaded: signUpLoaded,
@@ -66,22 +70,32 @@ const SignUpPage = () => {
   };
 
   const handleFormSubmit = async (e) => {
+    setIsError(false);
+    setMessage(null);
+    setMessageType(null);
+    setIsError(false);
     e.preventDefault();
-    const fullPhoneNumber = `+91${phoneNumber.trim()}`;
+    const fullPhoneNumber = `${phoneNumber.trim()}`;
 
     if (!email || !password || !phoneNumber) {
+      setIsError(true);
       setMessage("Please fill in all fields.");
       setMessageType("warning");
       return;
     }
 
-    if (phoneNumber.trim().length !== 10) {
-      setMessage("Please enter a valid 10-digit phone number.");
+    const isValidPhone = isValidPhoneNumber(phoneNumber);
+
+    if (!isValidPhone) {
+      setIsError(true);
+      setMessage("Please enter a valid phone number.");
       setMessageType("error");
       return;
     }
 
+
     if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setIsError(true);
       setMessage("Please enter a valid email address.");
       setMessageType("error");
       return;
@@ -90,6 +104,7 @@ const SignUpPage = () => {
     // Password strength validation
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(password)) {
+      setIsError(true);
       setMessage(
         "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character."
       );
@@ -133,22 +148,21 @@ const SignUpPage = () => {
       console.log("data2", data2);
       setMessage("Registered successfully!, Please verify your phone number.");
       setMessageType("success");
-      // setTimeout(
-      //   () =>
-      //     navigate("/verifytotp", {
-      //       state: {
-      //         flow: "SIGN_UP",
-      //         phoneNumber: fullPhoneNumber,
-      //         email: email,
-      //       },
-      //     }),
-      //   5000
-      // );
+
       navigate("/otp", {
         state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email },
       });
     } catch (err) {
       console.error("Sign-up Error:", err);
+      setIsError(true);
+      console.log("Sign-in error:", err);
+      if (err.errors[0].code == "form_param_format_invalid") {
+        setMessage("phone_number must be a valid phone number according to E.164 international standard.");
+      }
+      console.log("Sign-in error: 111 ", err.errors);
+      if (err.errors[0].code == "form_identifier_exists") {
+        setMessage("That email address is taken. Please try another.");
+      }
 
       if (err.errors) {
         const breachedPasswordError = err.errors.find(
@@ -179,9 +193,10 @@ const SignUpPage = () => {
           setMessageType("warning");
           return;
         }
+
       }
 
-      setMessage("Sign-up failed. Please try again.");
+      // setMessage("Sign-up failed. Please try again.");
       setMessageType("error");
     }
   };
@@ -193,6 +208,7 @@ const SignUpPage = () => {
         redirectUrl: window.location.origin + "/signup", // Optional
         redirectUrlComplete: window.location.origin + "/validation", // Where to go after successful sign-up
       });
+      console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
       setMessage("Google sign-up failed. Check console for details.");
@@ -218,8 +234,8 @@ const SignUpPage = () => {
   return (
     <Container>
       <HeaderWithLogo />
-      <UserButton />
-      {/* <SignIn/> */}
+      {/* <UserButton /> */}
+      {/* <SignUp/> */}
       <div
         style={{
           display: "flex",
@@ -240,20 +256,15 @@ const SignUpPage = () => {
             </Input> */}
             <Input>
               <label>Phone Number</label>
-              <input
-                type="tel"
-                inputMode="numeric"
-                pattern="\d{10}"
-                placeholder="Enter your phone number"
+              <PhoneInput
+                className="Input"
+                international
+                defaultCountry="IN" // Set the default country code (IN for India)
                 value={phoneNumber}
-                maxLength={10}
-                onChange={(e) => {
-                  const onlyNumbers = e.target.value
-                    .replace(/\D/g, "")
-                    .slice(0, 10);
-                  setPhoneNumber(onlyNumbers);
-                }}
+                onChange={setPhoneNumber}
+                error={isError}
               />
+
             </Input>
             <Input>
               <label>Email ID</label>
@@ -324,11 +335,15 @@ const SignUpPage = () => {
               </LinkedInButton>
             </AlternativeLogin>
           </Form>
+          <Footer style={{fontSize:"14px" }}>
+           Already have an account?  {" "}
+            <a href="/login">Login </a>
+          </Footer>
 
           <Footer>
             By signing in, I agree to Next Interview's{" "}
-            <a href="/privacy-policy">Privacy Policy </a>
-            and <a href="/terms">Terms of Service</a>.
+            <a href="/#">Privacy Policy </a>
+            and <a href="/#">Terms of Service</a>.
           </Footer>
         </FormSection>
 

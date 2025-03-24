@@ -67,11 +67,13 @@ export const Option = styled.div`
     width: 100%;
     height: 45px;
     padding: 8px;
+    box-sizing: border-box;
   }
 
   @media (max-width: 480px) {
     height: 40px;
     padding: 5px;
+     box-sizing: border-box;
   }
 `;
 
@@ -127,7 +129,7 @@ export const NextButton = styled.button`
   margin-top: 30px;
   width: 100%;
   height: 50px;
-  background-color: ${(props) => (props.disabled ? "#2290ac" : "##2290ac")}45;
+  background-color: ${theme.colors.info};
   color: #ffffff;
   font-size: 16px;
   font-weight: bold;
@@ -137,7 +139,7 @@ export const NextButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${(props) => (props.disabled ? "#cccccc" : "#2290AC")};
+    background-color: ${theme.colors.bluetext};
   }
 
   @media (max-width: 768px) {
@@ -196,7 +198,7 @@ export const Section = styled.div`
   padding: 0 15px;
   @media (max-width: 480px) {
     padding: 0 10px;
-    justify-content: unset;
+    justify-content: center;
   }
   /* Added padding for better responsiveness */
 `;

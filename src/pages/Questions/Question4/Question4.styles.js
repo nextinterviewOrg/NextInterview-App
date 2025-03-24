@@ -107,11 +107,13 @@ export const Option = styled.div`
     width: 100%;
     height: 45px;
     padding: 8px;
+    box-sizing: border-box;
   }
 
   @media (max-width: 480px) {
     height: 40px;
     padding: 5px;
+    box-sizing: border-box;
   }
 `;
 
@@ -168,7 +170,7 @@ export const NextButton = styled.button`
   margin-top: 30px;
   width: 100%;
   height: 50px;
-  background-color: ${(props) => (props.disabled ? "#2290ac" : "#2290ac")}45;
+  background-color: ${theme.colors.info};
   color: ${theme.colors.light};
   font-size: 16px;
   font-weight: bold;
@@ -178,7 +180,7 @@ export const NextButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${(props) => (props.disabled ? "#cccccc" : "#2290ac")};
+    background-color: ${theme.colors.bluetext};
   }
 
   @media (max-width: 768px) {
