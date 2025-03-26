@@ -142,3 +142,13 @@ export const getUserProgressBySubTopic = async (data) => {
         throw error;
     }
 };
+
+export const getcompletedModuleByUser = async (userId) => {
+    try {
+        const response = await api.get(`/userProgress/get/moduleCompleted/${userId}`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
