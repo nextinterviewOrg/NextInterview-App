@@ -130,15 +130,16 @@ export default function UserDashboard() {
                 </div>
               </div>
             </div>
-            <div className="container">
+            <div className="container-dashboard">
               <div className="continue-Learning-Header">
-                <h2 className="header">
+                <h2 className="header-dashboard">
                   Continue Learning{" "}
                   <BsFillCaretRightFill
                     size={20}
                     style={{ marginTop: "5px", marginLeft: "5px" }}
                   />
                 </h2>
+                
                 <div className="carousel-wrapper">
                   <button
                     className="arrow-button left"
@@ -156,13 +157,13 @@ export default function UserDashboard() {
                   </button>
                 </div>
               </div>
-              <div className="card-container">
+              <div className="card-container-dashboard">
                 {courses
                   .slice(startIndex, startIndex + visibleCards)
                   .map((course, index) => (
                     <Link to={`/user/learning/${course?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
                       <div
-                        className="card"
+                        className="card-dashboard"
                         key={index}
                         onClick={() => handleCardClick(index)}
                       >
