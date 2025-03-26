@@ -41,7 +41,6 @@ import Settings from "./modules/admin/pages/Settings/Settings";
 import Users from "./modules/admin/pages/Users/Users";
 import AdminDashboard from "./modules/admin/pages/AdminDashboard/AdminDashboard";
 import UserProfile from "./modules/admin/pages/UserProfile/UserProfile";
-import Ckeditor from "./modules/admin/pages/Ckeditor/Ckeditor";
 import UserDashboard from "./modules/user/pages/UserDashboard/UserDashboard";
 import QuicklyRevise from "./modules/user/pages/Quickly/QuicklyRevise/QuicklyRevise";
 import UserChallenges from "./modules/user/pages/UserChallenges/UserChallenges";
@@ -76,12 +75,12 @@ import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryI
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
-import NotFound from "./components/NotFound/NotFound";import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
+import NotFound from "./components/NotFound/NotFound";
+import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
 function App() {
-  
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -228,7 +227,6 @@ function App() {
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
-           
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

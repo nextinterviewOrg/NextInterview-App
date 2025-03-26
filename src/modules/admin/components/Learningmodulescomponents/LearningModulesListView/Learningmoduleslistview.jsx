@@ -35,7 +35,7 @@ const LearningModulesListView = () => {
       const data = response.data.map((item) => ({
         title: item.moduleName,
         topics: item.topicData.length || 0,
-        id: item.moduleId,
+        id: item._id,
         imageURL: item.imageURL || "",
       }));
       setModules(data);
@@ -80,8 +80,8 @@ const LearningModulesListView = () => {
   };
 
   const handleEditClick = (module) => {
-    navigate(`/admin/editmodel/${module._id}`, {
-      state: { moduleData: module, moduleId: module._id }, // Pass the selected module's data
+    navigate(`/admin/editmodel/${module.id}`, {
+      state: { moduleData: module, moduleId: module.id }, // Pass the selected module's data
     });
   };
 
@@ -113,14 +113,14 @@ const LearningModulesListView = () => {
         <div>
           {[...Array(5)].map((_, index) => (
             <ModuleCard key={index}>
-              <div className="module-image shimmer"></div> 
+              <div className="module-image shimmer"></div>
               <div className="module-info">
                 <div className="shimmer title"></div>
-                <div className="shimmer topic"></div> 
+                <div className="shimmer topic"></div>
               </div>
               <ModuleActions>
                 <div className="shimmer edit-btn"></div>
-                <div className="shimmer delete-btn"></div> 
+                <div className="shimmer delete-btn"></div>
               </ModuleActions>
             </ModuleCard>
           ))}
