@@ -81,6 +81,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import QuicklyDetailed from "./modules/user/pages/Quickly/QuicklyDetailed/QuicklyDetailed";
 import QuicklyReviseTopicDetails from "./modules/user/pages/Quickly/QuicklyReviseTopicDetails/QuicklyReviseTopicDetails";
+import Blog from "./modules/admin/pages/Blog/Blog";
+import AdminBlogDisplay from "./modules/admin/pages/AdminBlogDisplay/AdminBlogDisplay";
+import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
+import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
 
 function App() {
 
@@ -174,20 +178,16 @@ function App() {
             <Route path="/admin/faq" element={<Faq />} />
             <Route path="/admin/notifications" element={<Notification />} />
             <Route path="/admin/SupportQuery" element={<SupportQuery />} />
-            <Route
-              path="/admin/SupportQuery/:id"
-              element={<SupportQueryUserDetails />}
-            />
+            <Route path="/admin/SupportQuery/:id" element={<SupportQueryUserDetails />} />
             <Route path="/admin/settings" element={<Settings />} />
             <Route path="/admin/users" element={<Users />} />
-            <Route
-              path="/admin/SupportQuery/1234"
-              element={<SupportQueryUserDetails />}
-            />
+            <Route path="/admin/SupportQuery/1234" element={<SupportQueryUserDetails />} />
             <Route path="/admin/userProfile" element={<UserProfile />} />
             <Route path="/admin/profile" element={<ProfileInfo />} />
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
             <Route path="/admin/manage-mfa/add" element={<AddTOTP />} />
+            <Route path="/admin/real-world-scenario" element={<Blog/>} />
+            <Route path= "/admin/real-world-scenario/:id" element={<AdminBlogDisplay />} />
           </Route>
 
           <Route
@@ -236,6 +236,9 @@ function App() {
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
 
+            <Route path="/user/blogs" element={<UserBlog />} />
+            <Route path="/user/real-world-scenario/:id" element={<UserBlogDisplay />} />
+           
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

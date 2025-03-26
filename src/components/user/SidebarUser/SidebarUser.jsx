@@ -71,6 +71,12 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
       path: "/user/subscription",
       icon: <FaMoneyCheckAlt />,
     },
+    {
+      id: 9,
+      name: "Real world scenarios",
+      path: "/user/blogs",
+      icon: <IoSettingsOutline />,
+    }
   ];
 
   return (

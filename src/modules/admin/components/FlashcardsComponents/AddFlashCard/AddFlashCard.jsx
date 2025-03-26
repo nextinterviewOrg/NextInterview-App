@@ -26,7 +26,6 @@ const AddFlashCard = ({ onClose, onSave, flashcardCount }) => {
   const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (file && file.type.startsWith("image/")) {
-      // Create a temporary URL for image preview
       const previewUrl = URL.createObjectURL(file);
       setImagePreview(previewUrl);
 

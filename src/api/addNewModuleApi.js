@@ -21,7 +21,9 @@ export const getModule = async (data) => {
 
 export const deleteModule = async (id) => {
   try {
+    
     const response = await api.delete(`/addNewModule/${id}`);
+    
     return response.data;
   } catch (error) {
     console.log(error);

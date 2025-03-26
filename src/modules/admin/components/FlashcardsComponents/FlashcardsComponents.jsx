@@ -41,7 +41,7 @@ const FlashcardsComponents = () => {
     setLoading(true);
     const data = await getFlashcards();
     console.log("API Response:", data); // Check the full response
-    const response = data.data.map((item, index) => {
+    const response = data.map((item, index) => {
       const createdAt = new Date(item.createdAt);
       const formattedDate = createdAt.toLocaleDateString("en-GB");
 

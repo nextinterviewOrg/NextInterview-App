@@ -5,10 +5,11 @@ export const FlashcardContainer = styled.div`
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
-  gap: ${theme.spacing(1)};
+  gap: ${theme.spacing(3)};
   padding: ${theme.spacing(2)};
   justify-content: center;
   position: relative;
+ 
  
 
   @media (max-width: ${theme.breakpoints.tablet}) {

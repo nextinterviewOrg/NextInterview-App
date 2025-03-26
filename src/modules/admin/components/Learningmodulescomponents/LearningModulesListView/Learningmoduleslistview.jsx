@@ -35,7 +35,7 @@ const LearningModulesListView = () => {
       const data = response.data.map((item) => ({
         title: item.moduleName,
         topics: item.topicData.length || 0,
-        id: item.moduleId,
+        id: item._id,
         imageURL: item.imageURL || "",
       }));
       setModules(data);
@@ -46,8 +46,8 @@ const LearningModulesListView = () => {
     }
   };
 
-  const handleDeleteClick = (id) => {
-    setSelectedModuleId(id); // Store the ID of the module to be deleted
+  const handleDeleteClick = (module) => {
+    setSelectedModuleId(module.id); // Store the ID of the module to be deleted
     setIsDeleteModalOpen(true); // Open the modal
   };
 
@@ -151,7 +151,7 @@ const LearningModulesListView = () => {
                 </button>
                 <button
                   className="delete-btn"
-                  onClick={() => handleDeleteClick(module._id)}
+                  onClick={() => handleDeleteClick(module)}
                 >
                   <RiDeleteBinLine size={20} />
                 </button>
