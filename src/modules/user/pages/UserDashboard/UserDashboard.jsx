@@ -13,56 +13,7 @@ import { getUserProgress, getUserProgressByModule, getUserProgressStats } from "
 import { getModule, getModuleByModuleCode } from "../../../../api/addNewModuleApi";
 import { Link } from "react-router-dom";
 
-const courses1 = [
-  {
-    title: "Mastering JavaScript: From Beginner to Advanced",
-    topicsCompleted: 3,
-    totalTopics: 10,
-    progress: 80,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "HTML & CSS Fundamentals: Build Your First Website",
-    topicsCompleted: 5,
-    totalTopics: 10,
-    progress: 50,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "React Basics: Learn To Build Modern UI",
-    topicsCompleted: 2,
-    totalTopics: 8,
-    progress: 25,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "Node.js Essentials: Server-Side Development",
-    topicsCompleted: 4,
-    totalTopics: 12,
-    progress: 33,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "Full-Stack Web Development Bootcamp",
-    topicsCompleted: 6,
-    totalTopics: 15,
-    progress: 40,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-  {
-    title: "UI/UX Design Principles: Creating Stunning Websites",
-    topicsCompleted: 7,
-    totalTopics: 10,
-    progress: 70,
-    imgSrc:
-      "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  },
-];
+
 export default function UserDashboard() {
   const [startIndex, setStartIndex] = useState(0);
   const visibleCards = 4;
@@ -179,15 +130,16 @@ export default function UserDashboard() {
                 </div>
               </div>
             </div>
-            <div className="container">
+            <div className="container-dashboard">
               <div className="continue-Learning-Header">
-                <h2 className="header">
+                <h2 className="header-dashboard">
                   Continue Learning{" "}
                   <BsFillCaretRightFill
                     size={20}
                     style={{ marginTop: "5px", marginLeft: "5px" }}
                   />
                 </h2>
+                
                 <div className="carousel-wrapper">
                   <button
                     className="arrow-button left"
@@ -205,13 +157,13 @@ export default function UserDashboard() {
                   </button>
                 </div>
               </div>
-              <div className="card-container">
+              <div className="card-container-dashboard">
                 {courses
                   .slice(startIndex, startIndex + visibleCards)
                   .map((course, index) => (
                     <Link to={`/user/learning/${course?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
                       <div
-                        className="card"
+                        className="card-dashboard"
                         key={index}
                         onClick={() => handleCardClick(index)}
                       >

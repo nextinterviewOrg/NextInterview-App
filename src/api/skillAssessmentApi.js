@@ -37,3 +37,13 @@ export const getSkillAssessmentById = async (id) => {
     throw error;
   }
 };
+
+export const evaluateSkillAssessment = async (data) => {
+  try {
+    const response = await api.post("/skillAssessment/evaluate", data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

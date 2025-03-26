@@ -3,7 +3,12 @@ import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "./theme/GlobalStyle";
 import theme from "./theme/Theme";
 import BaseLayout from "./layout/BaseLayout";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import PersonalInfo from "./pages/PersonalInfo/PersonalInfo";
@@ -79,6 +84,12 @@ import NotFound from "./components/NotFound/NotFound";
 import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import QuicklyDetailed from "./modules/user/pages/Quickly/QuicklyDetailed/QuicklyDetailed";
+import QuicklyReviseTopicDetails from "./modules/user/pages/Quickly/QuicklyReviseTopicDetails/QuicklyReviseTopicDetails";
+import Blog from "./modules/admin/pages/Blog/Blog";
+import AdminBlogDisplay from "./modules/admin/pages/AdminBlogDisplay/AdminBlogDisplay";
+import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
+import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
 
 function App() {
   return (
@@ -103,7 +114,12 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
-          <Route path="/testing" element={<TinymceEditor />} />
+          <Route path="/testing" element={<QuicklyDetailed />}>
+            <Route
+              path="/testing/:id"
+              element={<QuicklyReviseTopicDetails />}
+            />
+          </Route>
           <Route path="/learning" element={<LearningModules />} />
           <Route path="/verifytotp" element={<VerifyTOTP />} />
           <Route path="/chatmode" element={<MockInterviewChat />} />
@@ -183,6 +199,11 @@ function App() {
             <Route path="/admin/profile" element={<ProfileInfo />} />
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
             <Route path="/admin/manage-mfa/add" element={<AddTOTP />} />
+            <Route path="/admin/real-world-scenario" element={<Blog />} />
+            <Route
+              path="/admin/real-world-scenario/:id"
+              element={<AdminBlogDisplay />}
+            />
           </Route>
 
           <Route
@@ -192,7 +213,13 @@ function App() {
             {/* <Route path="/user" element={<BaseLayout />}> */}
             <Route index element={<UserDashboard />} />
             <Route path="/user/revise" element={<QuicklyRevise />} />
-            <Route path="/user/revise/:id" element={<QuicklyByModule />} />
+            <Route path="/user/revise/:id" element={<QuicklyDetailed />}>
+              <Route index element={<Navigate to="0" />} />
+              <Route
+                path="/user/revise/:id/:topic"
+                element={<QuicklyReviseTopicDetails />}
+              />
+            </Route>
             <Route path="/user/challenges" element={<UserChallenges />} />
             <Route path="/user/home" element={<UserHome />} />
             <Route path="/user/userProfile" element={<ProfileUser />} />
