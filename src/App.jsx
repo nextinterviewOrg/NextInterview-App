@@ -3,7 +3,7 @@ import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "./theme/GlobalStyle";
 import theme from "./theme/Theme";
 import BaseLayout from "./layout/BaseLayout";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes,Navigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import PersonalInfo from "./pages/PersonalInfo/PersonalInfo";
@@ -76,12 +76,14 @@ import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryI
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
-import NotFound from "./components/NotFound/NotFound";import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
+import NotFound from "./components/NotFound/NotFound"; import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import QuicklyDetailed from "./modules/user/pages/Quickly/QuicklyDetailed/QuicklyDetailed";
+import QuicklyReviseTopicDetails from "./modules/user/pages/Quickly/QuicklyReviseTopicDetails/QuicklyReviseTopicDetails";
 
 function App() {
-  
+
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -104,7 +106,9 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
-          <Route path="/testing" element={<TinymceEditor />} />
+          <Route path="/testing" element={<QuicklyDetailed />} >
+            <Route path="/testing/:id" element={<QuicklyReviseTopicDetails />} />
+          </Route>
           <Route path="/learning" element={<LearningModules />} />
           <Route path="/verifytotp" element={<VerifyTOTP />} />
           <Route path="/chatmode" element={<MockInterviewChat />} />
@@ -193,7 +197,10 @@ function App() {
             {/* <Route path="/user" element={<BaseLayout />}> */}
             <Route index element={<UserDashboard />} />
             <Route path="/user/revise" element={<QuicklyRevise />} />
-            <Route path="/user/revise/:id" element={<QuicklyByModule />} />
+            <Route path="/user/revise/:id" element={<QuicklyDetailed />} >
+              <Route index element={<Navigate to="0" />} />
+              <Route path="/user/revise/:id/:topic" element={<QuicklyReviseTopicDetails />} />
+            </Route>
             <Route path="/user/challenges" element={<UserChallenges />} />
             <Route path="/user/home" element={<UserHome />} />
             <Route path="/user/userProfile" element={<ProfileUser />} />
@@ -228,7 +235,7 @@ function App() {
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
-           
+
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

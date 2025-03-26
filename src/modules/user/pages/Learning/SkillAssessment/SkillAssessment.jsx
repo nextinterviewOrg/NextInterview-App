@@ -11,13 +11,15 @@ import {
   TextArea,
   CloseButton
 } from "../SkillAssessment/SkillAssessment.styles";
-import { getSkillAssessment } from "../../../../../api/skillAssessmentApi";
+import { evaluateSkillAssessment, getSkillAssessment } from "../../../../../api/skillAssessmentApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { completeModule, completeSubTopic, completeTopic } from "../../../../../api/userProgressApi";
 import { getLastSubTopicByTopicCode, getLastTopicByModuleCode } from "../../../../../api/addNewModuleApi";
 import { useNavigate } from "react-router-dom";
 import { on } from "codemirror";
+import { Feedback } from "@mui/icons-material";
+import { addQuestionToUserSkillAssessmentProgress } from "../../../../../api/userSkillAssessmentProgressApi";
 
 const SkillAssessment = ({
   module_code,
@@ -37,6 +39,7 @@ const SkillAssessment = ({
   const [submitted, setSubmitted] = useState(false); // Flag to track if the form has been submitted
   const [feedback, setFeedback] = useState({}); // Store feedback for each question
   const { isLoaded, user, isSignedIn } = useUser();
+  const [showClosebtn, setShowClosebtn] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -69,9 +72,15 @@ const SkillAssessment = ({
 
     fetchQuestions();
   }, [module_code, topic_code, subtopic_code, question_type, level]);
-
-  const handleOptionChange = (questionId, option) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: option }));
+  useEffect(() => {
+    if (Object.keys(feedback).length > 0) {
+      // Log feedback after it has been updated
+      console.log("Feedback updated:", feedback);
+    }
+  }, [feedback]);
+  const handleOptionChange = (questionId, option,optionText) => {
+    console.log(questionId, option,optionText);
+    setAnswers((prev) => ({ ...prev, [questionId]: optionText }));
   };
 
   const handleTextAnswer = (questionId, value) => {
@@ -84,7 +93,7 @@ const SkillAssessment = ({
       case "1":
         UserOption = "option_a";
         break;
-      case "1":
+      case "2":
         UserOption = "option_b";
         break;
       case "3":
@@ -113,15 +122,35 @@ const SkillAssessment = ({
 
 
   const handleSubmit = async () => {
-   let finalTopicIndex = currentTopicIndex;
-   let finalSubTopicIndex = currentSubTopicIndex;
+    const userData = await getUserByClerkId(user.id);
+    let finalTopicIndex = currentTopicIndex;
+    let finalSubTopicIndex = currentSubTopicIndex;
     const newFeedback = {};
-    filteredQuestions.forEach((question) => {
-      const isCorrect = checkAnswer(question);
-      newFeedback[question._id] = isCorrect ? "Correct" : "Incorrect";
-    });
+    for (const question of filteredQuestions) {
+      const userAnswer = answers[question._id]; 
+      console.log(userAnswer);// User's input
+    
+      // const isCorrect = checkAnswer(question);
+      const isCorrect = await evaluateSkillAssessment({ id: question._id, option: userAnswer });
+      await addQuestionToUserSkillAssessmentProgress(
+        {
+          userId: userData.data.user._id,
+          moduleId: moduleId,
+          moduleCode:module_code,
+          topicCode: topic_code,
+          subtopicCode: subtopic_code,
+          questionId: question._id,
+          selectedOption: userAnswer,
+          finalResult: isCorrect.result
+        }
+      )
+      console.log(isCorrect);
+      newFeedback[question._id] = isCorrect.result ? "Correct" : "Incorrect";
+    };
+    console.log(feedback);
     setFeedback(newFeedback);
     setSubmitted(true); // Mark the form as submitted
+    setShowClosebtn(true);
     // // mark sub topic as completed
     // const userData = await getUserByClerkId(user.id);
     // const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
@@ -142,7 +171,7 @@ const SkillAssessment = ({
     //   return
     // }
     // navigate(`/user/learning/${moduleId}/topic` ,{ state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-   
+
   };
 
   if (loading) return <div>Loading questions...</div>;
@@ -151,7 +180,7 @@ const SkillAssessment = ({
 
   return (
     <AssessmentContainer>
-      <CloseButton onClick={onCloseModal}>X</CloseButton>
+      {showClosebtn ? <CloseButton onClick={onCloseModal}>X</CloseButton>: null}
       <h1>Skill Assessment</h1>
       {filteredQuestions.map((q, index) => (
         <QuestionWrapper key={q._id || index}>
@@ -165,7 +194,7 @@ const SkillAssessment = ({
                     type="radio"
                     name={`question-${q._id}`}
                     value={option}
-                    onChange={() => handleOptionChange(q._id, option)}
+                    onChange={() => handleOptionChange(q._id, option,`option_${String.fromCharCode(97 + idx)}`)}
                   />
                   {option}
                 </Option>

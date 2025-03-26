@@ -6,21 +6,37 @@ import {
   Card,
   Title,
 } from "./QuicklyRevise.styles";
-import { getModule } from "../../../../../api/addNewModuleApi";
+import { getModule, getModuleById } from "../../../../../api/addNewModuleApi";
 import { ShimmerPostItem } from "react-shimmer-effects";
 import { Link } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../../api/userApi";
+import { getcompletedModuleByUser, getUserProgress } from "../../../../../api/userProgressApi";
+import Lottie from "lottie-react";
+import  dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json"
 
 const QuicklyRevise = () => {
   const [modules, setModules] = useState([]); // Store modules
   const [loading, setLoading] = useState(true); // Global loading for API call
   const [imageLoaded, setImageLoaded] = useState({}); // Track image load state for each module
-
+  const { user } = useUser();
   useEffect(() => {
     const fetchModules = async () => {
       try {
-        const response = await getModule();
-        if (response.success && Array.isArray(response.data)) {
-          setModules(response.data);
+        console.log("user", user);
+        const userData = await getUserByClerkId(user.id);
+        const userProgress = await getcompletedModuleByUser(userData.data.user._id);
+        console.log("userProgress", userProgress);
+        const completedModules = userProgress.data.map((item) => item.moduleId);
+        let allModules = await Promise.all(completedModules.map(async (id) => {
+          const module = await getModuleById(id)
+          return module.data;
+        }))
+        console.log("allModules", allModules);
+        // const response = await getModule();
+        // if (response.success && Array.isArray(response.data)) {
+        if (Array.isArray(allModules)) {
+          setModules(allModules);
         } else {
           throw new Error("Invalid API response format.");
         }
@@ -32,7 +48,7 @@ const QuicklyRevise = () => {
     };
 
     fetchModules();
-  }, []);
+  }, [user]);
 
   // Handle image load for each module
   const handleImageLoad = (id) => {
@@ -98,7 +114,15 @@ const QuicklyRevise = () => {
           </Link>
         ))
       ) : (
-        <p>No modules found.</p>
+        <>
+          <Lottie
+            className="Lottie"
+            animationData={dataNot}
+            loop={true}
+            style={{ width: "40%", height: "20%" }}
+          />
+          {/* <p>No modules found.</p> */}
+        </>
       )}
     </Container>
   );
