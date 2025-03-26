@@ -4,6 +4,7 @@ export const UserDashboardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  margin-left: 40px;
 
   .UserDashboard-statsContainer {
     position: relative;
@@ -109,19 +110,20 @@ export const UserDashboardWrapper = styled.div`
   }
   /* ContinueLearning.css */
 
-  .container {
+  .container-dashboard {
     width: 100%;
     margin-top: 150px;
   }
 
-  .header {
+  .header-dashboard {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 15px;
     padding: 0 20px;
     font-family: "DM Sans";
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    text-align: left;
   }
 
   .carousel-wrapper {
@@ -130,30 +132,42 @@ export const UserDashboardWrapper = styled.div`
     /* position: relative; */
   }
 
-  .card-container {
+  .card-container-dashboard {
     display: flex;
-    /* overflow: hidden; */
+    // justify-content: space-between;
+    justify-content: flex-start;
+  // margin-left: 40px;
     gap: 15px;
     width: 100%;
   }
 
-  .card {
+  .card-dashboard {
     background: white;
     padding: 15px;
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 25%;
+    width: 300px;
     cursor: pointer;
+    transition: transform 0.3s ease-in-out;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+      background-color: #f0fff0;
+    }
   }
 
   .continue-Learning-Header {
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
   }
 
-  .card img {
+  .card-dashboard img {
     width: 100%;
+    height: 150px;
     border-radius: 8px;
     margin-bottom: 10px;
   }
@@ -193,3 +207,4 @@ export const UserDashboardWrapper = styled.div`
     cursor: not-allowed;
   }
 `;
+
