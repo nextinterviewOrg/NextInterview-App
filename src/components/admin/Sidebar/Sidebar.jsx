@@ -84,6 +84,13 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
       //  icon: <MdNotificationsNone />
       icon: <img className="svgicon" src={Settings} alt="Users Icon" />,
     },
+    {
+      id: 11,
+      name:"Real world scenarios",
+      path: "/admin/real-world-scenario",
+      icon: <img className="svgicon" src={challenge} alt="Users Icon"
+      />
+    }
   ];
 
   return (
