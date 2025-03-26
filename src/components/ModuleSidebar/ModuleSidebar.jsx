@@ -96,7 +96,7 @@ export default function ModuleSidebar({
       }
     };
     apiCaller();
-  }, [navigate, location.state]);
+  }, [navigate, location.state,user]);
 
   const toggleExpand = (index) => {
     setExpandedTopic(expandedTopic === index ? null : index);

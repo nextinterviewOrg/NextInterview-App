@@ -2,8 +2,10 @@ import { Container } from "@mui/material";
 import React from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import Lottie from "lottie-react";
+import notFound from "../../assets/Lottie/Animation - 404.json";
 
-const PageContainer = styled(Container)`
+const PageContainer404 = styled(Container)`
 padding: 20px;
 display: flex;
 flex-direction: column;
@@ -27,7 +29,7 @@ const Text = styled.p`
     margin-top: 20px;
     `;
 
-    const Button = styled.button`
+const Button = styled.button`
     margin-top: 20px;
     padding: 10px 20px;
     background-color: #68c184;
@@ -37,20 +39,26 @@ const Text = styled.p`
     font-size: 16px;
     cursor: pointer;
     `;
- 
+
 const NotFound = () => {
     return (
-      <PageContainer>
-        <HeadingText>
+        <PageContainer404>
+            <Lottie
+                className="Lottie"
+                animationData={notFound}
+                loop={true}
+                style={{ width: "100%", height: "80%" }}
+            />
+            {/* <HeadingText>
             404 Not Found
         </HeadingText>
-        <Text>Page you are looking for does not exist.</Text>
-        <Button>
-            <Link to="/login" 
-            style={{ textDecoration: "none", color: "white",  }}
-            >Go to Home</Link>
-        </Button>
-       </PageContainer>
+        <Text>Page you are looking for does not exist.</Text> */}
+            <Button>
+                <Link to="/login"
+                    style={{ textDecoration: "none", color: "white", }}
+                >Go to Home</Link>
+            </Button>
+        </PageContainer404>
     );
 }
 
