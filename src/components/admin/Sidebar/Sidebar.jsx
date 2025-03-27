@@ -11,6 +11,7 @@ import faq from "../../../assets/FAQ's.svg";
 import challenge from "../../../assets/Challenges.svg";
 import Settings from "../../../assets/Settings.svg";
 import Notification from "../../../assets/Notifications.svg";
+import world from "../../../modules/user/assets/world.svg";
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
   const location = useLocation();
@@ -88,7 +89,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
       id: 11,
       name:"Real world scenarios",
       path: "/admin/real-world-scenario",
-      icon: <img className="svgicon" src={challenge} alt="Users Icon"
+      icon: <img className="svgicon" src={world} alt="Users Icon"
       />
     }
   ];
