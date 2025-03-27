@@ -3,7 +3,7 @@ import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "./theme/GlobalStyle";
 import theme from "./theme/Theme";
 import BaseLayout from "./layout/BaseLayout";
-import { BrowserRouter as Router, Route, Routes,Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import PersonalInfo from "./pages/PersonalInfo/PersonalInfo";
@@ -135,13 +135,13 @@ function App() {
           {/* <Route path="/question-bank" element={<QuestionBank />} /> */}
           {/* <Route path="/challenges" element={<Challenges />} /> */}
 
-          <Route
+          {/* <Route
             path="/admin"
             element={
               <ProtectedRoute component={BaseLayout} roles={["admin"]} />
             }
-          >
-            {/* <Route path="/admin" element={<BaseLayout />}> */}
+          > */}
+          <Route path="/admin" element={<BaseLayout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="/admin/learning" element={<LearningModules />} />
             <Route
@@ -186,15 +186,15 @@ function App() {
             <Route path="/admin/profile" element={<ProfileInfo />} />
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
             <Route path="/admin/manage-mfa/add" element={<AddTOTP />} />
-            <Route path="/admin/real-world-scenario" element={<Blog/>} />
-            <Route path= "/admin/real-world-scenario/:id" element={<AdminBlogDisplay />} />
+            <Route path="/admin/real-world-scenario" element={<Blog />} />
+            <Route path="/admin/real-world-scenario/:id" element={<AdminBlogDisplay />} />
           </Route>
 
-          <Route
+          {/* <Route
             path="/user"
             element={<ProtectedRoute component={BaseLayout} roles={["user"]} />}
-          >
-            {/* <Route path="/user" element={<BaseLayout />}> */}
+          > */}
+          <Route path="/user" element={<BaseLayout />}>
             <Route index element={<UserDashboard />} />
             <Route path="/user/revise" element={<QuicklyRevise />} />
             <Route path="/user/revise/:id" element={<QuicklyDetailed />} >
@@ -238,7 +238,7 @@ function App() {
 
             <Route path="/user/blogs" element={<UserBlog />} />
             <Route path="/user/real-world-scenario/:id" element={<UserBlogDisplay />} />
-           
+
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
