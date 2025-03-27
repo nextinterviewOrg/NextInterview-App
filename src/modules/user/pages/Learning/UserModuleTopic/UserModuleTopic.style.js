@@ -6,14 +6,12 @@ export const Container = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.body};
   padding: ${({ theme }) => theme.spacing(4)};
-  //   border: 1px solid ${({ theme }) => theme.colors.borderblue};
-  //   border-radius: 8px;
   margin-left: 40px;
   transition: margin-left 0.3s ease-in-out; /* Smooth transition */
 `;
 
 export const TryItYourself = styled.div`
-  padding: 20px 0 ;
+  padding: 20px 0;
   display: flex;
   justify-content: flex-end;
   width: 100%;
@@ -29,7 +27,7 @@ export const TryButton = styled.button`
   cursor: pointer;
   margin-right: ${({ theme }) => theme.spacing(1)};
   font-size: 16px;
-  
+
   &:hover {
     background-color: ${({ theme }) => theme.colors.bluetext};
     color: ${({ theme }) => theme.colors.white};
@@ -49,11 +47,22 @@ export const ModalOverlay = styled.div`
   z-index: 1000;
 `;
 
+// export const ModalContent = styled.div`
+//   padding: 20px;
+//   width: 500px;
+//   border-radius: 10px;
+//   margin: 0 auto;
+// `;
+
 export const ModalContent = styled.div`
+  position: relative;
+  background: white;
   padding: 20px;
-  width: 500px;
   border-radius: 10px;
-  margin: 0 auto;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 export const Title = styled.h2`
@@ -72,15 +81,43 @@ export const SectionTitle = styled.h3`
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const Text = styled.p`
+// export const Text = styled.p`
+//   color: ${({ theme }) => theme.colors.text};
+//   margin-top: ${({ theme }) => theme.spacing(1)};
+//   font-size: 16px;
+//   font-style: normal;
+//   font-weight: 400;
+//   line-height: 24px; /* 150% */
+//   letter-spacing: -0.32px;
+//   overflow: hidden;
+// `;
+
+// Combined Text component with concept tooltip styles
+export const Text = styled.div`
   color: ${({ theme }) => theme.colors.text};
   margin-top: ${({ theme }) => theme.spacing(1)};
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
-  line-height: 24px; /* 150% */
+  line-height: 24px;
   letter-spacing: -0.32px;
   overflow: hidden;
+  position: relative;
+
+  .concept-tooltip {
+    color: #2390ac;
+    cursor: pointer;
+    border-bottom: 2px dotted #2390ac;
+    font-weight: 500;
+    padding: 2px 4px;
+    transition: all 0.2s ease;
+    background-color: rgba(35, 144, 172, 0.1);
+    border-radius: 4px;
+  }
+
+  .concept-tooltip:hover {
+    background-color: rgba(35, 144, 172, 0.2);
+  }
 `;
 
 export const Image = styled.img`
@@ -140,13 +177,23 @@ export const ButtonGroup = styled.div`
   // //   gap: 12px;
 `;
 
-
 export const CloseButton = styled.button`
   position: absolute;
-  top: 230px;
-  right: 510px;
+  top: 12px;
+  right: 12px;
   background: none;
   border: none;
-  font-size: 18px;
-  cursor: pointer;
+  font-size: 16px;
+  cursor: pointer;
+`;
+
+export const ConceptHighlight = styled.span`
+  background-color: ${({ theme }) => theme.colors.warningLight};
+  border-bottom: 1px dashed ${({ theme }) => theme.colors.secondary};
+  cursor: help;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.warning};
+  }
 `;
