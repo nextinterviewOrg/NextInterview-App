@@ -136,9 +136,9 @@ export const UserDashboardWrapper = styled.div`
     display: flex;
     // justify-content: space-between;
     justify-content: flex-start;
-  // margin-left: 40px;
-    gap: 15px;
-    width: 100%;
+  // margin-left: 60px;
+    gap: 30px;
+    width: auto;
   }
 
   .card-dashboard {
@@ -147,7 +147,7 @@ export const UserDashboardWrapper = styled.div`
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 300px;
+    width: 320px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
 
@@ -161,7 +161,7 @@ export const UserDashboardWrapper = styled.div`
   .continue-Learning-Header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    // align-items: center;
     flex-direction: row;
   }
 
@@ -206,5 +206,9 @@ export const UserDashboardWrapper = styled.div`
     color: #68c1844d;
     cursor: not-allowed;
   }
+    
+.card-container-dashboard .card-dashboard:hover {
+  transform: translateY(-10px);
+}
 `;
 

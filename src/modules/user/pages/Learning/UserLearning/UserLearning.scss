@@ -147,9 +147,10 @@
   /* Title centered */
   .list-card__title {
     flex: 1;
+    font-weight: 600;
     text-align: center;
     margin: 0;
-    font-size: 1.5rem; /* Adjust as needed */
+    font-size: 1.2rem; /* Adjust as needed */
     color: var(--title-color);
   }
   
@@ -158,8 +159,13 @@
     text-decoration: none;
     font-size: var(--small-font-size);
     font-weight: 500;
-    color: var(--first-color);
+    // color: var(--first-color);
     margin-left: 1rem;
+    border: 1px solid var(--first-color);
+    padding: 10px   ;
+border-radius: 10px;
+background-color: #2390ac;
+color: #fff;
   }
   
   

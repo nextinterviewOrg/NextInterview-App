@@ -22,11 +22,13 @@ const AdminBlogDisplay = () => {
   useEffect(() => {
     const fetchBlog = async () => {
       try {
+        setLoading(true);
         const response = await getBlogById(id);
         setBlog(response.data);
-        setLoading(false);
+        
       } catch (err) {
         setError(err);
+      }finally{
         setLoading(false);
       }
     };
@@ -49,15 +51,15 @@ const AdminBlogDisplay = () => {
     };
     fetchOtherBlogs();
   }, [id]);
-
+const shimmerItems = Array(4).fill(null);
   return (
     <Container>
       <div>
-        {loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error.message}</p>
-        ) : (
+       {loading ? (
+         shimmerItems.map((_, index) => (
+           <ShimmerCategoryItem key={index} line={5} gap={10} />
+         ))
+       ) : (
           <>
             <ImageContainer>
               <Image src={blog.blog_image} alt={blog.blog_title} />

@@ -23,7 +23,7 @@ import learnmod from "../../../assets/Learning_Module.svg";
 import quick from "../../../assets/quicklyrevise.svg";
 import question from "../../../assets/questionbank.svg";
 import challenge from "../../../assets/Challenges.svg";
-
+import world from "../../../modules/user/assets/world.svg";
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -75,7 +75,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
       id: 9,
       name: "Real world scenarios",
       path: "/user/blogs",
-      icon: <IoSettingsOutline />,
+     icon: <img className="svgicon" src={world} alt="Users Icon" />
     }
   ];
 
@@ -110,7 +110,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
           ))}
         </ul>
       </div>
-      <div className="mock-card">
+      {/* <div className="mock-card">
         <div className="mock-card-icon">
           <PiVideoConference />
         </div>
@@ -124,7 +124,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
         >
           Start interview
         </button>
-      </div>
+      </div> */}
     </SideBarwrapper>
   );
 };
