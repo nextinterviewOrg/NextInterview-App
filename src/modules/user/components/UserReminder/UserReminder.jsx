@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { MarqueeContainer, MarqueeTrack, Card } from "./UserReminder.styles";
 import { getFlashcards } from "../../../../api/flashcardApi"; 
+import { ShimmerPostList } from "react-shimmer-effects";
 
 const MarqueeCards = () => {
   const [flashcards, setFlashcards] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setLoading(true);
         const data = await getFlashcards();
         setFlashcards(data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching flashcards:", error);
+        setLoading(false); // ensure loading is false even on error
       }
     };
 
@@ -28,6 +33,15 @@ const MarqueeCards = () => {
     <MarqueeContainer>
       <MarqueeTrack>
         {doubleFlashcards.map((card, idx) => {
+          // If loading, apply shimmer effect on individual card
+          if (loading) {
+            return (
+              <Card key={idx}>
+                <ShimmerPostList count={1} style={{ width: '100%', height: '160px' }} />
+              </Card>
+            );
+          }
+
           // Format the createdAt date (DD-MM-YYYY)
           const dateObj = new Date(card.createdAt);
           const day = String(dateObj.getDate()).padStart(2, "0");

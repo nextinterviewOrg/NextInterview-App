@@ -12,6 +12,7 @@ import {
 } from "../../../../config/TinyMceConfig";
 import "../../../admin/pages/Blog/Blog.scss"; // Import the SCSS file here
 import { Link } from "react-router-dom";
+import { ShimmerPostItem } from "react-shimmer-effects";
 
 const BlogForm = () => {
     const [title, setTitle] = useState("");
@@ -54,6 +55,8 @@ const BlogForm = () => {
 
 
             <h2 style={{ marginLeft: "60px" }}>Blog List</h2>
+
+            
             <div className="container">
                 <div className="card__container">
                     {blogs.map((blog) => (
