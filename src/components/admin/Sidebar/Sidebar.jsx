@@ -22,6 +22,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
     {
       id: 1,
       name: "Dashboard",
+      
       path: "/admin",
       icon: <img className="svgicon" src={dboard} alt="Users Icon" />,
     },
