@@ -40,7 +40,6 @@ import {
   ShimmerButton,
 } from "react-shimmer-effects";
 import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
-ConceptTooltip;
 import { IoCloseSharp } from "react-icons/io5";
 
 // Sample Data for Dynamic Rendering
@@ -103,7 +102,6 @@ const UserModuleTopic = () => {
   const [curIndex, setCurIndex] = useState(0);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
-  // const [selectedCheatSheetURL, setSelectedCheatSheetURL] = useState("");
   const [popupContent, setPopupContent] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
@@ -314,39 +312,33 @@ const UserModuleTopic = () => {
   }, [location.state]); // Add location.state as a dependency to ensure it runs when state changes
 
   const renderConceptClarifiers = (text, clarifiers) => {
-    clarifiers.forEach(
-      ({ conceptClarifier, hoverExplanation, popupExplanation }) => {
-        text = text.replace(
-          new RegExp(`\\b${conceptClarifier}\\b`, "g"),
-          `<span class="concept-tooltip"
-           title="${hoverExplanation}"
-           onClick="window.showPopupHandler('${popupExplanation}')">
-           ${conceptClarifier}
-         </span>`
-        );
-      }
-    );
-    return text;
+    if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
+    
+    let result = text;
+    clarifiers.forEach(({ conceptClarifier, hoverExplanation, popupExplanation }) => {
+      if (!conceptClarifier) return;
+      
+      const escapedConcept = conceptClarifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedHover = hoverExplanation.replace(/"/g, '"').replace(/'/g, '&#39;');
+      const escapedPopup = popupExplanation
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '\\"')
+        .replace(/'/g, "\\'");
+      
+      result = result.replace(
+        new RegExp(`\\b${escapedConcept}\\b`, "g"),
+        `<span class="concept-tooltip" 
+          title="${escapedHover}" 
+          onClick="window.showPopupHandler('${escapedPopup}')">
+          ${conceptClarifier}
+        </span>`
+      );
+    });
+    return result;
   };
 
-  // const renderConceptClarifiers = (text, clarifiers) => {
-  //   clarifiers.forEach(
-  //     ({ conceptClarifier, hoverExplanation, popupExplanation }) => {
-  //       text = text.replace(
-  //         new RegExp(`\\b${conceptClarifier}\\b`, "g"),
-  //         `<span class="concept-tooltip"
-  //         title="${hoverExplanation}"
-  //         onClick={() => {
-  //           setPopupContent('${popupExplanation}');
-  //           setShowPopup(true);
-  //         }}>
-  //         ${conceptClarifier}
-  //       </span>`
-  //       );
-  //     }
-  //   );
-  //   return text;
-  // };
 
   const handleSummarizeClick = () => {
     setShowSummary(true); // Show summary section
@@ -579,9 +571,6 @@ const UserModuleTopic = () => {
                 <Button
                   style={{
                     border: "2px solid #2390ac",
-                    // fontWeight: "bold",
-                    // color: "#2390ac",
-                    // backgroundColor: "transparent",
                     backgroundColor: "transparent",
                     color: "#2390ac",
                     fontWeight: "bold",

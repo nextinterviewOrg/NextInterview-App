@@ -6,8 +6,6 @@ export const Container = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.body};
   padding: ${({ theme }) => theme.spacing(4)};
-  //   border: 1px solid ${({ theme }) => theme.colors.borderblue};
-  //   border-radius: 8px;
   margin-left: 40px;
   transition: margin-left 0.3s ease-in-out; /* Smooth transition */
 `;
@@ -109,8 +107,16 @@ export const Text = styled.div`
   .concept-tooltip {
     color: #2390ac;
     cursor: pointer;
-    border-bottom: 1px dotted #2390ac;
-    font-weight: bold;
+    border-bottom: 2px dotted #2390ac;
+    font-weight: 500;
+    padding: 2px 4px;
+    transition: all 0.2s ease;
+    background-color: rgba(35, 144, 172, 0.1);
+    border-radius: 4px;
+  }
+
+  .concept-tooltip:hover {
+    background-color: rgba(35, 144, 172, 0.2);
   }
 `;
 

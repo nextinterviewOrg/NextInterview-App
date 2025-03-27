@@ -195,14 +195,7 @@ function App() {
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
             <Route path="/admin/manage-mfa/add" element={<AddTOTP />} />
             <Route path="/admin/real-world-scenario" element={<Blog />} />
-<<<<<<< HEAD
-            <Route
-              path="/admin/real-world-scenario/:id"
-              element={<AdminBlogDisplay />}
-            />
-=======
             <Route path="/admin/real-world-scenario/:id" element={<AdminBlogDisplay />} />
->>>>>>> c7af5c9dc2012dbc8023fcdb9f1d2f084fda327e
           </Route>
 
           {/* <Route
@@ -253,13 +246,9 @@ function App() {
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
-<<<<<<< HEAD
-=======
-
             <Route path="/user/blogs" element={<UserBlog />} />
             <Route path="/user/real-world-scenario/:id" element={<UserBlogDisplay />} />
 
->>>>>>> c7af5c9dc2012dbc8023fcdb9f1d2f084fda327e
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

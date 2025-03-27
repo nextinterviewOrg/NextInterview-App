@@ -19,7 +19,6 @@ import {
   ClarifierHeading,
   ButtonRow,
   ActionButton,
-  // PaginationContainer,
   FormGroup,
   ModalContainer,
   ModalContent,
@@ -59,10 +58,23 @@ const DeleteIconWrapper = styled.span`
 const AddNewModule = () => {
   // ----------------------------- STATES -----------------------------
   const [modalVisible, setModalVisible] = useState(false);
-  const navigate = useNavigate();
   // 'topic', 'subtopic', 'layman', or 'clarifier'
   const [deleteType, setDeleteType] = useState(null);
-  const location = useLocation();
+const location = useLocation();
+const navigate = useNavigate();
+
+// Validate location state
+React.useEffect(() => {
+  if (!location.state?.data) {
+    // If no data is present, redirect back to the learning modules page
+    navigate("/admin/learning");
+  }
+}, [location.state, navigate]);
+
+// Guard clause for rendering
+if (!location.state?.data) {
+  return null; // or return a loading state/error message
+}
   const videoInputRef = useRef(null);
 
   // Store indices for whichever item we are deleting
@@ -210,98 +222,7 @@ const AddNewModule = () => {
     });
   };
 
-  // const handleConceptClarifierChange = (
-  //   e,
-  //   topicIndex,
-  //   subIndex,
-  //   clarifierIndex,
-  //   clarifierField
-  // ) => {
-  //   const value = e?.target?.value ?? ""; // Ensure it's always a string
 
-  //   setTopics((prevTopics) => {
-  //     // Create a deep copy of the state
-  //     const updatedTopics = JSON.parse(JSON.stringify(prevTopics));
-
-  //     // Ensure the necessary structure exists
-  //     if (
-  //       updatedTopics[topicIndex]?.subtopics?.[subIndex]?.conceptClarifiers?.[
-  //         clarifierIndex
-  //       ]
-  //     ) {
-  //       // Ensure we store only strings
-  //       updatedTopics[topicIndex].subtopics[subIndex].conceptClarifiers[
-  //         clarifierIndex
-  //       ][clarifierField] = String(value);
-  //     }
-
-  //     return updatedTopics;
-  //   });
-  // };
-
-  // const handleConceptClarifierChange = (
-  //   e,
-  //   newValue,
-  //   topicIndex,
-  //   subIndex,
-  //   clarifierIndex,
-  //   clarifierField
-  // ) => {
-  //   let value;
-  //   if (e != null) {
-  //     value = e.target.value;
-  //   } else {
-  //     value = newValue;
-  //   }
-  //   setTopics((prevTopics) => {
-  //     const updatedTopics = JSON.parse(JSON.stringify(prevTopics));
-
-  //     if (
-  //       updatedTopics[topicIndex]?.subtopics?.[subIndex]?.conceptClarifiers?.[
-  //         clarifierIndex
-  //       ]
-  //     ) {
-  //       updatedTopics[topicIndex].subtopics[subIndex].conceptClarifiers[
-  //         clarifierIndex
-  //       ][clarifierField] = value || ""; // Ensure value is always a string
-  //     }
-
-  //     return updatedTopics;
-  //   });
-  // };
-
-  // Working
-  // const handleConceptClarifierChange = (
-  //   e,
-  //   newValue,
-  //   topicIndex,
-  //   subIndex,
-  //   clarifierIndex,
-  //   clarifierField
-  // ) => {
-  //   let value;
-  //   if (e) {
-  //     value = e.target.value; // For standard input events
-  //   } else {
-  //     value = newValue; // For the selected text scenario
-  //   }
-
-  //   setTopics((prevTopics) => {
-  //     const updatedTopics = [...prevTopics];
-
-  //     if (
-  //       updatedTopics[topicIndex]?.subtopics?.[subIndex]?.conceptClarifiers?.[
-  //         clarifierIndex
-  //       ]
-  //     ) {
-  //       updatedTopics[topicIndex].subtopics[subIndex].conceptClarifiers[
-  //         clarifierIndex
-  //       ][clarifierField] = value || ""; // Ensure it's always a string
-  //     }
-
-  //     return updatedTopics;
-  //   });
-  // };
 
   const handleConceptClarifierChange = (
     e,
@@ -348,12 +269,10 @@ const AddNewModule = () => {
 
   const handleSubtopicChange = (e, newValue, topicIndex, subIndex, field) => {
     let value;
-    if (e != null) {
+    if (e?.target) {
       value = e.target.value;
-      console.log("if");
     } else {
-      value = newValue;
-      console.log("else");
+      value = newValue || "";
     }
     setTopics((prevTopics) => {
       const updated = [...prevTopics];
@@ -477,13 +396,11 @@ const AddNewModule = () => {
             revisionPoints: sub.quickRevisePoints,
             cheatSheetURL: sub.cheatSheet?.dataUrl,
             interviewFavorite: sub.isInterviewFavorite,
-            conceptClarifier: sub.conceptClarifiers.map((concept) => {
-              return {
-                conceptClarifier: concept.clarifierWordOrPhrase,
-                hoverExplanation: concept.explanationOnHover,
-                popupExplanation: concept.moreExplanation,
-              };
-            }),
+            conceptClarifier: sub.conceptClarifiers.map((concept) => ({
+              conceptClarifier: concept.clarifierWordOrPhrase,
+              hoverExplanation: concept.explanationOnHover,
+              popupExplanation: concept.moreExplanation.replace(/"/g, '\\"')
+            })),
             laymanTerms: sub.laymanExplanations.map((laymn) => {
               return {
                 topicLevel: laymn.laymanScale,
@@ -752,7 +669,6 @@ const AddNewModule = () => {
                     handleSubtopicChange(
                       e,
                       null,
-                      null,
                       topicIndex,
                       subIndex,
                       "subtopicName"
@@ -791,11 +707,10 @@ const AddNewModule = () => {
                     },
                   }}
                   value={subtopic.subtopicContent || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "subtopicContent"
@@ -823,34 +738,6 @@ const AddNewModule = () => {
                         textAlign: "center",
                       }}
                     >
-                      {/* <Button
-                        onClick={() => {
-                          const lastIdx = subtopic.conceptClarifiers.length - 1;
-                          handleConceptClarifierChange(
-                            { target: { value: selectedText.text } },
-                            topicIndex,
-                            subIndex,
-                            lastIdx,
-                            "clarifierWordOrPhrase"
-                          );
-                          setSelectedText({
-                            text: "",
-                            topicIndex: null,
-                            subIndex: null,
-                          });
-                        }}
-                        style={{
-                          backgroundColor: "#2390ac",
-                          color: "white",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: "5px",
-                          padding: "8px 16px",
-                        }}
-                      >
-                        <RiGeminiFill />
-                        Mark as Concept Clarifier
-                      </Button> */}
                       <Button
                         onClick={() => {
                           // Find the last clarifier in the subtopic
@@ -927,11 +814,10 @@ const AddNewModule = () => {
                     branding: false,
                   }}
                   value={subtopic.subtopicSummary || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "subtopicSummary"
@@ -959,11 +845,10 @@ const AddNewModule = () => {
                     branding: false,
                   }}
                   value={subtopic.quickRevisePoints || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "quickRevisePoints"
@@ -1062,6 +947,7 @@ const AddNewModule = () => {
                         onChange={(e) =>
                           handleConceptClarifierChange(
                             e,
+                            e.target.value,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
@@ -1074,19 +960,6 @@ const AddNewModule = () => {
 
                     <FormGroup>
                       <Label>Explanation on Hover</Label>
-                      {/* <TextInput
-                        value={clarifier.explanationOnHover || ""}
-                        onChange={(e) =>
-                          handleConceptClarifierChange(
-                            e,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "explanationOnHover"
-                          )
-                        }
-                        style={{ backgroundColor: theme.colors.backgray }}
-                      /> */}
                       <TextInput
                         value={clarifier.explanationOnHover}
                         onChange={(e) =>

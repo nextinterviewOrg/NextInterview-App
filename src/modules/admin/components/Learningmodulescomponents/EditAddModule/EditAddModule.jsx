@@ -23,6 +23,7 @@ import {
   ModalContainer,
   ModalContent,
   ModalButton,
+  Button
 } from "./EditAddModule.style";
 import theme from "../../../../../theme/Theme";
 import DeleteModule from "../../DeleteModule/DeleteModule";
@@ -42,7 +43,7 @@ import {
   TinyMCEplugins,
   TinyMCEToolbar,
 } from "../../../../../config/TinyMceConfig";
-TinyMCEapiKey;
+import { RiGeminiFill } from "react-icons/ri";
 
 // Styled icon/button if you want to show a delete icon
 const DeleteIconWrapper = styled.span`
@@ -163,6 +164,13 @@ const EditAddModule = () => {
       fetchModuleData();
     }
   }, [moduleId]);
+
+    // Concept Clarifier State Variables
+    const [selectedText, setSelectedText] = useState({
+      text: "",
+      topicIndex: null,
+      subIndex: null,
+    });
 
   // ----------------------------- REF FOR FILE UPLOADS -----------------------------
   const skillAssessmentRefs = useRef([]);
@@ -289,12 +297,12 @@ const EditAddModule = () => {
     });
   };
 
-  const handleSubtopicChange = (e, event, topicIndex, subIndex, field) => {
+  const handleSubtopicChange = (e, newValue, topicIndex, subIndex, field) => {
     let value;
-    if (e != null) {
+    if (e?.target) {
       value = e.target.value;
     } else {
-      value = event.getData();
+      value = newValue || "";
     }
     setTopics((prevTopics) => {
       const updated = [...prevTopics];
@@ -406,7 +414,7 @@ const EditAddModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-    const topicData = topics.map((topic) => {
+      const topicData = topics.map((topic) => {
       return {
         topicName: topic.topicName,
         skillAssessmentQuestionsURL: topic.skillAssessmentFileUrl,
@@ -445,7 +453,6 @@ const EditAddModule = () => {
     };
 
     const response = await updateModuleById(moduleId, submissionData);
-    // const response = await addNewModule(submissionData);
 
     // Reset form
     setTopics([
@@ -635,35 +642,118 @@ const EditAddModule = () => {
               {/* SUBTOPIC CONTENT */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
-                <TextArea
-                  rows="6"
-                  value={subtopic.subtopicContent}
-                  onChange={(e) =>
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                    setup: (editor) => {
+                      editor.on("mouseup", () => {
+                        const selection = editor.selection.getContent();
+                        if (selection.trim()) {
+                          setSelectedText({
+                            text: selection,
+                            topicIndex,
+                            subIndex,
+                          });
+                        }
+                      });
+                    },
+                  }}
+                  value={subtopic.subtopicContent || ""}
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
-                      e,
+                      null,
+                      newValue,
                       topicIndex,
                       subIndex,
                       "subtopicContent"
-                    )
-                  }
+                    );
+                  }}
+                  style={{
+                    border:
+                      selectedText.topicIndex === topicIndex &&
+                      selectedText.subIndex === subIndex
+                        ? "2px dashed #2390ac"
+                        : "none",
+                    borderRadius: "4px",
+                  }}
+                  initialValue=""
                 />
+
+                {/* TEXT SELECTION BUTTON*/}
+                {selectedText.text &&
+                  selectedText.topicIndex === topicIndex &&
+                  selectedText.subIndex === subIndex && (
+                    <div
+                      style={{
+                        marginTop: "-15px", // Pulls button closer to editor
+                        marginBottom: "20px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          // Find the last clarifier in the subtopic
+                          const lastIdx =
+                            topic.subtopics[subIndex].conceptClarifiers.length -
+                            1;
+
+                          // Update the concept clarifier text with the selected text
+                          handleConceptClarifierChange(
+                            { target: { value: selectedText.text } }, // Passing selected text to the handler
+                            selectedText.text, // Selected text
+                            topicIndex, // Topic index
+                            subIndex, // Subtopic index
+                            lastIdx, // Last clarifier index
+                            "clarifierWordOrPhrase" // Field to update
+                          );
+
+                          // Clear the selection
+                          setSelectedText({
+                            text: "",
+                            topicIndex: null,
+                            subIndex: null,
+                          });
+                        }}
+                        style={{
+                          backgroundColor: "#2390ac",
+                          color: "white",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          padding: "8px 16px",
+                        }}
+                      >
+                        <RiGeminiFill />
+                        Mark as Concept Clarifier
+                      </Button>
+                    </div>
+                  )}
+              </FormGroup>
+              <FormGroup
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button>
+                  {" "}
+                  <RiGeminiFill
+                    style={{
+                      fontSize: "20px",
+                      marginRight: "5px",
+                    }}
+                  />
+                  Generate with AI
+                </Button>
               </FormGroup>
 
               {/* SUBTOPIC SUMMARY */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
-                <TextArea
-                  rows="4"
-                  value={subtopic.subtopicSummary}
-                  onChange={(e) =>
-                    handleSubtopicChange(
-                      e,
-                      topicIndex,
-                      subIndex,
-                      "subtopicSummary"
-                    )
-                  }
-                />
                 <Editor
                   apiKey={TinyMCEapiKey}
                   init={{
@@ -672,11 +762,10 @@ const EditAddModule = () => {
                     branding: false,
                   }}
                   value={subtopic.subtopicSummary || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "subtopicSummary"
@@ -689,17 +778,24 @@ const EditAddModule = () => {
               {/* QUICK REVISE POINTS */}
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
-                <TextArea
-                  rows="4"
-                  value={subtopic.quickRevisePoints}
-                  onChange={(e) =>
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                  }}
+                  value={subtopic.quickRevisePoints || ""}
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
-                      e,
+                      null,
+                      newValue,
                       topicIndex,
                       subIndex,
                       "quickRevisePoints"
-                    )
-                  }
+                    );
+                  }}
+                  initialValue=""
                 />
               </FormGroup>
 
@@ -826,6 +922,7 @@ const EditAddModule = () => {
                         onChange={(e) =>
                           handleConceptClarifierChange(
                             e,
+                            null,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
@@ -844,6 +941,7 @@ const EditAddModule = () => {
                         onChange={(e) =>
                           handleConceptClarifierChange(
                             e,
+                            null,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
