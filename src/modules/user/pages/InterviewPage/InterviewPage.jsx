@@ -32,62 +32,6 @@ const InterviewPage = () => {
     apiCaller();
   }, []);
 
-  // const courses = [
-  //   {
-  //     id: 1,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "React Basics",
-  //     level: "Beginner",
-  //     difficulty: "Easy Level",
-  //     totalTime: "10h",
-  //   },
-  //   {
-  //     id: 2,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "Advanced React",
-  //     level: "Intermediate",
-  //     difficulty: "Medium Level",
-  //     totalTime: "15h",
-  //   },
-  //   {
-  //     id: 3,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "Full-Stack Development",
-  //     level: "Advanced",
-  //     difficulty: "Hard Level",
-  //     totalTime: "20h",
-  //   },
-  //   {
-  //     id: 4,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "React Basics",
-  //     level: "Beginner",
-  //     difficulty: "Easy Level",
-  //     totalTime: "10h",
-  //   },
-  //   {
-  //     id: 5,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "Advanced React",
-  //     level: "Intermediate",
-  //     difficulty: "Medium Level",
-  //     totalTime: "15h",
-  //   },
-  //   {
-  //     id: 6,
-  //     image:
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     title: "Full-Stack Development",
-  //     level: "Advanced",
-  //     difficulty: "Hard Level",
-  //     totalTime: "20h",
-  //   },
-  // ];
   const toggleLike = (id) => {
     setLikedCourses((prev) => ({
       ...prev,

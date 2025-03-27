@@ -13,13 +13,14 @@ import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { getcompletedModuleByUser, getUserProgress } from "../../../../../api/userProgressApi";
 import Lottie from "lottie-react";
-import  dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json"
+import dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json";
 
 const QuicklyRevise = () => {
   const [modules, setModules] = useState([]); // Store modules
   const [loading, setLoading] = useState(true); // Global loading for API call
   const [imageLoaded, setImageLoaded] = useState({}); // Track image load state for each module
   const { user } = useUser();
+  
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -29,12 +30,10 @@ const QuicklyRevise = () => {
         console.log("userProgress", userProgress);
         const completedModules = userProgress.data.map((item) => item.moduleId);
         let allModules = await Promise.all(completedModules.map(async (id) => {
-          const module = await getModuleById(id)
+          const module = await getModuleById(id);
           return module.data;
-        }))
+        }));
         console.log("allModules", allModules);
-        // const response = await getModule();
-        // if (response.success && Array.isArray(response.data)) {
         if (Array.isArray(allModules)) {
           setModules(allModules);
         } else {
@@ -61,24 +60,23 @@ const QuicklyRevise = () => {
   return (
     <Container>
       {loading ? (
-        <>
-          {/* ShimmerPostItem with 3 columns */}
-          {[...Array(6)].map((_, index) => (
-            <ShimmerPostItem
-              key={index}
-              card
-              title
-              cta
-              imageHeight={200}
-              contentCenter
-              style={{
-                width: "100%",
-                maxWidth: "320px",
-                height: "300px",
-              }}
-            />
-          ))}
-        </>
+        // Apply shimmer effect for cards and images
+        [...Array(6)].map((_, index) => (
+          <ShimmerPostItem
+            key={index}
+            card
+            title
+            cta
+            imageHeight={200}
+            contentCenter
+            style={{
+              width: "100%",
+              maxWidth: "320px",
+              height: "300px",
+              marginBottom: "20px", // Add space between cards
+            }}
+          />
+        ))
       ) : modules.length > 0 ? (
         modules.map((module) => (
           <Link
@@ -88,6 +86,7 @@ const QuicklyRevise = () => {
           >
             <Card>
               <ImageWrapper>
+                {/* Shimmer Effect for Image Loading */}
                 {!imageLoaded[module._id] && (
                   <ShimmerPostItem
                     card
@@ -96,6 +95,7 @@ const QuicklyRevise = () => {
                       width: "100%",
                       height: "200px",
                       borderRadius: "8px",
+                      marginBottom: "10px",
                     }}
                   />
                 )}
@@ -105,6 +105,9 @@ const QuicklyRevise = () => {
                   onLoad={() => handleImageLoad(module._id)}
                   style={{
                     display: imageLoaded[module._id] ? "block" : "none",
+                    width: "100%",
+                    height: "200px",
+                    borderRadius: "8px",
                   }}
                 />
               </ImageWrapper>
@@ -121,7 +124,6 @@ const QuicklyRevise = () => {
             loop={true}
             style={{ width: "40%", height: "20%" }}
           />
-          {/* <p>No modules found.</p> */}
         </>
       )}
     </Container>
