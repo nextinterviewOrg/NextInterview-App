@@ -36,6 +36,13 @@ import {
 } from "../../../../../api/addNewModuleApi";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+import { Editor } from "@tinymce/tinymce-react";
+import {
+  TinyMCEapiKey,
+  TinyMCEplugins,
+  TinyMCEToolbar,
+} from "../../../../../config/TinyMceConfig";
+TinyMCEapiKey;
 
 // Styled icon/button if you want to show a delete icon
 const DeleteIconWrapper = styled.span`
@@ -250,7 +257,7 @@ const EditAddModule = () => {
 
   const handleConceptClarifierChange = (
     e,
-    editor,
+    newValue,
     topicIndex,
     subIndex,
     clarifierIndex,
@@ -260,7 +267,7 @@ const EditAddModule = () => {
     if (e != null) {
       value = e.target.value;
     } else {
-      value = editor.getData();
+      value = newValue;
     }
 
     setTopics((prevTopics) => {
@@ -656,6 +663,26 @@ const EditAddModule = () => {
                       "subtopicSummary"
                     )
                   }
+                />
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                  }}
+                  value={subtopic.subtopicSummary || ""}
+                  onEditorChange={(newValue, editor) => {
+                    handleSubtopicChange(
+                      null,
+                      newValue,
+                      editor,
+                      topicIndex,
+                      subIndex,
+                      "subtopicSummary"
+                    );
+                  }}
+                  initialValue=""
                 />
               </FormGroup>
 
