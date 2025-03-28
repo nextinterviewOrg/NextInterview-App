@@ -23,6 +23,7 @@ import {
   ModalContainer,
   ModalContent,
   ModalButton,
+  Button
 } from "./EditAddModule.style";
 import theme from "../../../../../theme/Theme";
 import DeleteModule from "../../DeleteModule/DeleteModule";
@@ -34,11 +35,15 @@ import {
   updateModuleById,
   getModuleById,
 } from "../../../../../api/addNewModuleApi";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { ClassicEditor } from "ckeditor5";
-import { editorConfig } from "../../../../../config/ckEditorConfig";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
+import { Editor } from "@tinymce/tinymce-react";
+import {
+  TinyMCEapiKey,
+  TinyMCEplugins,
+  TinyMCEToolbar,
+} from "../../../../../config/TinyMceConfig";
+import { RiGeminiFill } from "react-icons/ri";
 
 // Styled icon/button if you want to show a delete icon
 const DeleteIconWrapper = styled.span`
@@ -160,6 +165,13 @@ const EditAddModule = () => {
     }
   }, [moduleId]);
 
+    // Concept Clarifier State Variables
+    const [selectedText, setSelectedText] = useState({
+      text: "",
+      topicIndex: null,
+      subIndex: null,
+    });
+
   // ----------------------------- REF FOR FILE UPLOADS -----------------------------
   const skillAssessmentRefs = useRef([]);
   const questionBankRefs = useRef([]);
@@ -253,7 +265,7 @@ const EditAddModule = () => {
 
   const handleConceptClarifierChange = (
     e,
-    editor,
+    newValue,
     topicIndex,
     subIndex,
     clarifierIndex,
@@ -263,7 +275,7 @@ const EditAddModule = () => {
     if (e != null) {
       value = e.target.value;
     } else {
-      value = editor.getData();
+      value = newValue;
     }
 
     setTopics((prevTopics) => {
@@ -285,12 +297,12 @@ const EditAddModule = () => {
     });
   };
 
-  const handleSubtopicChange = (e, event, topicIndex, subIndex, field) => {
+  const handleSubtopicChange = (e, newValue, topicIndex, subIndex, field) => {
     let value;
-    if (e != null) {
+    if (e?.target) {
       value = e.target.value;
     } else {
-      value = event.getData();
+      value = newValue || "";
     }
     setTopics((prevTopics) => {
       const updated = [...prevTopics];
@@ -402,8 +414,7 @@ const EditAddModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-
-    const topicData = topics.map((topic) => {
+      const topicData = topics.map((topic) => {
       return {
         topicName: topic.topicName,
         skillAssessmentQuestionsURL: topic.skillAssessmentFileUrl,
@@ -442,7 +453,6 @@ const EditAddModule = () => {
     };
 
     const response = await updateModuleById(moduleId, submissionData);
-    // const response = await addNewModule(submissionData);
 
     // Reset form
     setTopics([
@@ -599,86 +609,6 @@ const EditAddModule = () => {
             />
           </FormGroup>
 
-          {/* SKILL ASSESSMENT SECTION */}
-          <SectionHeader>
-            <div>
-              <SectionTitle style={{ textAlign: "left" }}>
-                Skill Assessment Questions for the Entire Topic
-              </SectionTitle>
-              <SubText>
-                By default, questions will be chosen from the question bank. If
-                you wish to upload a file, upload here.
-              </SubText>
-            </div>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "flex-start",
-              }}
-            >
-              <UploadManually
-                style={{ marginRight: "0px", cursor: "pointer" }}
-                onClick={() => {
-                  if (skillAssessmentRefs.current[topicIndex]) {
-                    skillAssessmentRefs.current[topicIndex].click();
-                  }
-                }}
-              >
-                <FiUpload style={{ paddingRight: "5px" }} />
-                Upload manually
-              </UploadManually>
-              <input
-                type="file"
-                accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                style={{ display: "none" }}
-                ref={(el) => (skillAssessmentRefs.current[topicIndex] = el)}
-                onChange={(e) => handleSkillAssessmentUpload(e, topicIndex)}
-              />
-              {topic.skillAssessmentFile && (
-                <div
-                  style={{
-                    marginTop: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                  }}
-                >
-                  Uploaded File:{" "}
-                  {topic.skillAssessmentFile.name ? (
-                    topic.skillAssessmentFile.name
-                  ) : (
-                    <a
-                      href={topic.skillAssessmentFile}
-                      style={{
-                        color: theme.colors.secondary,
-                        cursor: "pointer",
-                        gap: "10px",
-                      }}
-                      target="_blank"
-                    >
-                      {" "}
-                      Preview File
-                    </a>
-                  )}
-                  {/* {topic.skillAssessmentFile.name} */}
-                  <ActionButton
-                    variant="danger"
-                    onClick={() => handleRemoveSkillAssessment(topicIndex)}
-                    style={{
-                      marginLeft: "10px",
-                      color: theme.colors.secondary,
-                      border: "none",
-                      backgroundColor: "transparent",
-                    }}
-                  >
-                    Remove file
-                  </ActionButton>
-                </div>
-              )}
-            </div>
-          </SectionHeader>
-
           {/* SUBTOPICS */}
           {topic.subtopics.map((subtopic, subIndex) => (
             <div
@@ -712,57 +642,160 @@ const EditAddModule = () => {
               {/* SUBTOPIC CONTENT */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.subtopicContent}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                    setup: (editor) => {
+                      editor.on("mouseup", () => {
+                        const selection = editor.selection.getContent();
+                        if (selection.trim()) {
+                          setSelectedText({
+                            text: selection,
+                            topicIndex,
+                            subIndex,
+                          });
+                        }
+                      });
+                    },
+                  }}
+                  value={subtopic.subtopicContent || ""}
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
-                      editor,
+                      newValue,
                       topicIndex,
                       subIndex,
                       "subtopicContent"
                     );
                   }}
+                  style={{
+                    border:
+                      selectedText.topicIndex === topicIndex &&
+                      selectedText.subIndex === subIndex
+                        ? "2px dashed #2390ac"
+                        : "none",
+                    borderRadius: "4px",
+                  }}
+                  initialValue=""
                 />
+
+                {/* TEXT SELECTION BUTTON*/}
+                {selectedText.text &&
+                  selectedText.topicIndex === topicIndex &&
+                  selectedText.subIndex === subIndex && (
+                    <div
+                      style={{
+                        marginTop: "-15px", // Pulls button closer to editor
+                        marginBottom: "20px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          // Find the last clarifier in the subtopic
+                          const lastIdx =
+                            topic.subtopics[subIndex].conceptClarifiers.length -
+                            1;
+
+                          // Update the concept clarifier text with the selected text
+                          handleConceptClarifierChange(
+                            { target: { value: selectedText.text } }, // Passing selected text to the handler
+                            selectedText.text, // Selected text
+                            topicIndex, // Topic index
+                            subIndex, // Subtopic index
+                            lastIdx, // Last clarifier index
+                            "clarifierWordOrPhrase" // Field to update
+                          );
+
+                          // Clear the selection
+                          setSelectedText({
+                            text: "",
+                            topicIndex: null,
+                            subIndex: null,
+                          });
+                        }}
+                        style={{
+                          backgroundColor: "#2390ac",
+                          color: "white",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          padding: "8px 16px",
+                        }}
+                      >
+                        <RiGeminiFill />
+                        Mark as Concept Clarifier
+                      </Button>
+                    </div>
+                  )}
+              </FormGroup>
+              <FormGroup
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button>
+                  {" "}
+                  <RiGeminiFill
+                    style={{
+                      fontSize: "20px",
+                      marginRight: "5px",
+                    }}
+                  />
+                  Generate with AI
+                </Button>
               </FormGroup>
 
               {/* SUBTOPIC SUMMARY */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.subtopicSummary}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                  }}
+                  value={subtopic.subtopicSummary || ""}
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
-                      editor,
+                      newValue,
                       topicIndex,
                       subIndex,
                       "subtopicSummary"
                     );
                   }}
+                  initialValue=""
                 />
               </FormGroup>
 
               {/* QUICK REVISE POINTS */}
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
-                <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.quickRevisePoints}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
+                <Editor
+                  apiKey={TinyMCEapiKey}
+                  init={{
+                    plugins: TinyMCEplugins,
+                    toolbar: TinyMCEToolbar,
+                    branding: false,
+                  }}
+                  value={subtopic.quickRevisePoints || ""}
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
-                      editor,
+                      newValue,
                       topicIndex,
                       subIndex,
                       "quickRevisePoints"
                     );
                   }}
+                  initialValue=""
                 />
               </FormGroup>
 
@@ -884,39 +917,38 @@ const EditAddModule = () => {
 
                     <FormGroup>
                       <Label>Explanation on Hover</Label>
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={clarifier.explanationOnHover}
-                        config={editorConfig}
-                        onChange={(event, editor) => {
+                      <TextInput
+                        value={clarifier.explanationOnHover}
+                        onChange={(e) =>
                           handleConceptClarifierChange(
+                            e,
                             null,
-                            editor,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
                             "explanationOnHover"
-                          );
-                        }}
+                          )
+                        }
+                        style={{ backgroundColor: theme.colors.backgray }}
                       />
                     </FormGroup>
 
                     <FormGroup>
                       <Label>More Explanation on Popup</Label>
-                      <CKEditor
-                        editor={ClassicEditor}
-                        data={clarifier.moreExplanation}
-                        config={editorConfig}
-                        onChange={(event, editor) => {
+                      <TextArea
+                        rows="3"
+                        value={clarifier.moreExplanation}
+                        onChange={(e) =>
                           handleConceptClarifierChange(
+                            e,
                             null,
-                            editor,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
                             "moreExplanation"
-                          );
-                        }}
+                          )
+                        }
+                        style={{ backgroundColor: theme.colors.backgray }}
                       />
                     </FormGroup>
 
@@ -963,180 +995,6 @@ const EditAddModule = () => {
                   </ActionButton>
                 </ButtonRow>
               </ConceptClarifierContainer>
-
-              {/* QUESTION BANK */}
-              <SectionHeader>
-                <div>
-                  <SectionTitle>Question Bank</SectionTitle>
-                  {subtopic.questionBankFile && (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      Uploaded File:{" "}
-                      {subtopic.questionBankFile.name ? (
-                        subtopic.questionBankFile.name
-                      ) : (
-                        <a
-                          href={subtopic.questionBankFile.dataUrl}
-                          style={{
-                            color: theme.colors.secondary,
-                            cursor: "pointer",
-                          }}
-                          target="_blank"
-                        >
-                          {" "}
-                          Preview File
-                        </a>
-                      )}
-                      {/* {subtopic.questionBankFile.name} */}
-                      <ActionButton
-                        variant="danger"
-                        onClick={() =>
-                          handleRemoveQuestionBank(topicIndex, subIndex)
-                        }
-                        style={{
-                          marginLeft: "10px",
-                          color: theme.colors.secondary,
-                          border: "none",
-                          backgroundColor: "transparent",
-                        }}
-                      >
-                        Remove file
-                      </ActionButton>
-                    </div>
-                  )}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <UploadManually
-                    style={{ marginTop: "0px", cursor: "pointer" }}
-                    onClick={() => {
-                      if (
-                        questionBankRefs.current[topicIndex] &&
-                        questionBankRefs.current[topicIndex][subIndex]
-                      ) {
-                        questionBankRefs.current[topicIndex][subIndex].click();
-                      }
-                    }}
-                  >
-                    <FiUpload style={{ paddingRight: "5px" }} />
-                    Upload manually
-                  </UploadManually>
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    style={{ display: "none" }}
-                    ref={(el) => {
-                      if (!questionBankRefs.current[topicIndex]) {
-                        questionBankRefs.current[topicIndex] = [];
-                      }
-                      questionBankRefs.current[topicIndex][subIndex] = el;
-                    }}
-                    onChange={(e) =>
-                      handleQuestionBankUpload(e, topicIndex, subIndex)
-                    }
-                  />
-                </div>
-              </SectionHeader>
-
-              {/* TRY IT YOURSELF */}
-              <SectionHeader>
-                <div>
-                  <SectionTitle>Try It Yourself Questions</SectionTitle>
-                  <SubText>
-                    By default, questions will be chosen from the question bank.
-                    If you wish to upload a file, upload here.
-                  </SubText>
-                  {subtopic.tryItYourselfFile && (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "10px",
-                      }}
-                    >
-                      Uploaded File:{" "}
-                      {subtopic.tryItYourselfFile.name ? (
-                        subtopic.tryItYourselfFile.name
-                      ) : (
-                        <a
-                          href={subtopic.tryItYourselfFile.dataUrl}
-                          style={{
-                            color: theme.colors.secondary,
-                            cursor: "pointer",
-                          }}
-                          target="_blank"
-                        >
-                          {" "}
-                          Preview File
-                        </a>
-                      )}
-                      {/* {subtopic.tryItYourselfFile.name} */}
-                      <ActionButton
-                        variant="danger"
-                        onClick={() =>
-                          handleRemoveTryItYourself(topicIndex, subIndex)
-                        }
-                        style={{
-                          marginLeft: "10px",
-                          color: theme.colors.secondary,
-                          border: "none",
-                          backgroundColor: "transparent",
-                        }}
-                      >
-                        Remove file
-                      </ActionButton>
-                    </div>
-                  )}
-                </div>
-                <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                  }}
-                >
-                  <UploadManually
-                    style={{ marginTop: "0px", cursor: "pointer" }}
-                    onClick={() => {
-                      if (
-                        tryItYourselfRefs.current[topicIndex] &&
-                        tryItYourselfRefs.current[topicIndex][subIndex]
-                      ) {
-                        tryItYourselfRefs.current[topicIndex][subIndex].click();
-                      }
-                    }}
-                  >
-                    <FiUpload style={{ paddingRight: "5px" }} />
-                    Upload manually
-                  </UploadManually>
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    style={{ display: "none" }}
-                    ref={(el) => {
-                      if (!tryItYourselfRefs.current[topicIndex]) {
-                        tryItYourselfRefs.current[topicIndex] = [];
-                      }
-                      tryItYourselfRefs.current[topicIndex][subIndex] = el;
-                    }}
-                    onChange={(e) =>
-                      handleTryItYourselfUpload(e, topicIndex, subIndex)
-                    }
-                  />
-                </div>
-              </SectionHeader>
 
               {/* DELETE SUBTOPIC BUTTON */}
               {topics[topicIndex].subtopics.length > 1 && (

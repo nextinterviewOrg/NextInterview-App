@@ -41,7 +41,6 @@ import Settings from "./modules/admin/pages/Settings/Settings";
 import Users from "./modules/admin/pages/Users/Users";
 import AdminDashboard from "./modules/admin/pages/AdminDashboard/AdminDashboard";
 import UserProfile from "./modules/admin/pages/UserProfile/UserProfile";
-import Ckeditor from "./modules/admin/pages/Ckeditor/Ckeditor";
 import UserDashboard from "./modules/user/pages/UserDashboard/UserDashboard";
 import QuicklyRevise from "./modules/user/pages/Quickly/QuicklyRevise/QuicklyRevise";
 import UserChallenges from "./modules/user/pages/UserChallenges/UserChallenges";
@@ -76,7 +75,8 @@ import TryItYourself from "./modules/user/components/TryItYourselfComponent/TryI
 import JDoodleEditor from "./modules/user/components/JDoodleEditor/JDoodleEditor";
 import MockInterviewChat from "./modules/user/components/MockInterviewChat/MockInterviewChat";
 import MockInterviewVoice from "./modules/user/components/MockInterviewVoice/MockInterviewVoice";
-import NotFound from "./components/NotFound/NotFound"; import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
+import NotFound from "./components/NotFound/NotFound";
+import TinymceEditor from "./modules/admin/components/TinymceEditor/TinymceEditor";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import QuicklyDetailed from "./modules/user/pages/Quickly/QuicklyDetailed/QuicklyDetailed";
@@ -87,7 +87,6 @@ import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
 import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
 
 function App() {
-
   return (
     <ThemeProvider theme={theme}>
       <Router>
@@ -110,8 +109,11 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
-          <Route path="/testing" element={<QuicklyDetailed />} >
-            <Route path="/testing/:id" element={<QuicklyReviseTopicDetails />} />
+          <Route path="/testing" element={<QuicklyDetailed />}>
+            <Route
+              path="/testing/:id"
+              element={<QuicklyReviseTopicDetails />}
+            />
           </Route>
           <Route path="/learning" element={<LearningModules />} />
           <Route path="/verifytotp" element={<VerifyTOTP />} />
@@ -178,10 +180,16 @@ function App() {
             <Route path="/admin/faq" element={<Faq />} />
             <Route path="/admin/notifications" element={<Notification />} />
             <Route path="/admin/SupportQuery" element={<SupportQuery />} />
-            <Route path="/admin/SupportQuery/:id" element={<SupportQueryUserDetails />} />
+            <Route
+              path="/admin/SupportQuery/:id"
+              element={<SupportQueryUserDetails />}
+            />
             <Route path="/admin/settings" element={<Settings />} />
             <Route path="/admin/users" element={<Users />} />
-            <Route path="/admin/SupportQuery/1234" element={<SupportQueryUserDetails />} />
+            <Route
+              path="/admin/SupportQuery/1234"
+              element={<SupportQueryUserDetails />}
+            />
             <Route path="/admin/userProfile" element={<UserProfile />} />
             <Route path="/admin/profile" element={<ProfileInfo />} />
             <Route path="/admin/manage-mfa" element={<ManageMFA />} />
@@ -197,9 +205,12 @@ function App() {
           <Route path="/user" element={<BaseLayout />}>
             <Route index element={<UserDashboard />} />
             <Route path="/user/revise" element={<QuicklyRevise />} />
-            <Route path="/user/revise/:id" element={<QuicklyDetailed />} >
+            <Route path="/user/revise/:id" element={<QuicklyDetailed />}>
               <Route index element={<Navigate to="0" />} />
-              <Route path="/user/revise/:id/:topic" element={<QuicklyReviseTopicDetails />} />
+              <Route
+                path="/user/revise/:id/:topic"
+                element={<QuicklyReviseTopicDetails />}
+              />
             </Route>
             <Route path="/user/challenges" element={<UserChallenges />} />
             <Route path="/user/home" element={<UserHome />} />
@@ -235,7 +246,6 @@ function App() {
             <Route path="/user/subscription" element={<UserSubscription />} />
             <Route path="/user/interview" element={<InterviewPage />} />
             <Route path="/user/challengeInfo" element={<NewChallenge />} />
-
             <Route path="/user/blogs" element={<UserBlog />} />
             <Route path="/user/real-world-scenario/:id" element={<UserBlogDisplay />} />
 

@@ -173,6 +173,7 @@ const QuestionBank = () => {
     );
     return module ? module.module_name : "Unknown Module";
   };
+const shimmerItems = new Array(10).fill(null);
 
   return (
     <ThemeProvider theme={theme}>
@@ -251,8 +252,10 @@ const QuestionBank = () => {
               </DropdownContainer>
             )}
       {loading ? (
-          <ShimmerText line={5} gap={10} />
-        ) : (
+  shimmerItems.map((_, index) => (
+    <ShimmerCategoryItem key={index} line={5} gap={10} />
+  ))
+) : (
           <>
             {filteredQuestions.length > 0 ? (
               filteredQuestions.map((item, index) => (

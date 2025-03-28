@@ -12,6 +12,7 @@ import { getUserByClerkId } from "../../../../api/userApi";
 import { getUserProgress, getUserProgressByModule, getUserProgressStats } from "../../../../api/userProgressApi";
 import { getModule, getModuleByModuleCode } from "../../../../api/addNewModuleApi";
 import { Link } from "react-router-dom";
+import { ShimmerPostDetails, ShimmerText } from "react-shimmer-effects";
 
 
 export default function UserDashboard() {
@@ -30,8 +31,9 @@ export default function UserDashboard() {
 
   useEffect(() => {
     const apiCaller = async () => {
-      setLoader(true);
+    
       try {
+        setLoader(true);
         const moduleData = await getModule();
         setTotalModule(moduleData.data.length);
         const userData = await getUserByClerkId(user.id);
@@ -84,8 +86,8 @@ export default function UserDashboard() {
   return (
     <UserDashboardWrapper>
       {loader ?
-        (<div style={{ marginLeft: "50%" }}>
-          Loading
+        (<div>
+       <ShimmerPostDetails card cta variant="EDITOR" />
         </div>) :
         (
 

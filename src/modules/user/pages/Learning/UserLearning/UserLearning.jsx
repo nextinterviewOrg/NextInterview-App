@@ -20,6 +20,7 @@ export default function UserLearning() {
   useEffect(() => {
     const apiCaller = async () => {
       try {
+        setLoading(true);
         const response = await getModule();
 
         const data = response.data.map((item) => {
@@ -35,8 +36,8 @@ export default function UserLearning() {
         setCourses(data);
       } catch (error) {
         console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false); // Stop loading after API call
+      }finally{
+        setLoading(false);
       }
     };
     apiCaller();
@@ -76,71 +77,71 @@ export default function UserLearning() {
           }
         >
           {loading
-  ? // Shimmer for loading state remains the same
-    [...Array(6)].map((_, index) => (
-      <ShimmerPostItem
-        key={index}
-        card
-        title
-        cta
-        imageHeight={isGridView ? 200 : 100}
-        contentCenter={!isGridView}
-        style={{
-          width: isGridView ? "300px" : "100%",
-          marginBottom: "20px",
-        }}
-      />
-    ))
-  : filteredCourses.map((course, index) =>
-      isGridView ? (
-        <div key={index} className="card">
-          <div className="card__article">
-            <img
-              src={course.image}
-              alt={course.title}
-              className="card__img"
-            />
-            <div className="card__data">
-              <h3 className="card__title">{course.title}</h3>
-              <p className="card__description">
-                {course.description.split(" ").slice(0, 10).join(" ")}
-                {course.description.split(" ").length > 10 && " ..."}
-              </p>
-              <div className="card__info">
-                <span style={{ color: "#68C184" }}>
-                  Less than {course.duration} hrs
-                </span>
-                <span
+            ? // Shimmer for loading state remains the same
+              [...Array(6)].map((_, index) => (
+                <ShimmerPostItem
+                  key={index}
+                  card
+                  title
+                  cta
+                  imageHeight={isGridView ? 200 : 100}
+                  contentCenter={!isGridView}
                   style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    textDecoration: "none",
+                    width: isGridView ? "300px" : "100%",
+                    marginBottom: "20px",
                   }}
-                >
-                  <Link to={`/user/learning/${course._id}`} className="card__button">
-                    Start
-                  </Link>
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div key={index} className="card-list">
-          <img
-            src={course.image}
-            alt={course.title}
-            className="list-card__img"
-          />
-          <h3 className="list-card__title">{course.title}</h3>
-          <Link to={`/user/learning/${course._id}`} className="list-card__button">
-            Start
-          </Link>
-        </div>
-      )
-    )}
-
+                />
+              ))
+            : // Once loading is done, display filtered courses
+              filteredCourses.map((course, index) =>
+                isGridView ? (
+                  <div key={index} className="card">
+                    <div className="card__article">
+                      <img
+                        src={course.image}
+                        alt={course.title}
+                        className="card__img"
+                      />
+                      <div className="card__data">
+                        <h3 className="card__title">{course.title}</h3>
+                        <p className="card__description">
+                          {course.description.split(" ").slice(0, 10).join(" ")}
+                          {course.description.split(" ").length > 10 && " ..."}
+                        </p>
+                        <div className="card__info">
+                          <span style={{ color: "#68C184" }}>
+                            Less than {course.duration} hrs
+                          </span>
+                          <span
+                            style={{
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              textDecoration: "none",
+                            }}
+                          >
+                            <Link to={`/user/learning/${course._id}`} className="card__button">
+                              Start
+                            </Link>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div key={index} className="card-list">
+                    <img
+                      src={course.image}
+                      alt={course.title}
+                      className="list-card__img"
+                    />
+                    <h3 className="list-card__title">{course.title}</h3>
+                    <Link to={`/user/learning/${course._id}`} className="list-card__button">
+                      Start
+                    </Link>
+                  </div>
+                )
+              )}
         </div>
       </div>
     </UserLearningWrapper>

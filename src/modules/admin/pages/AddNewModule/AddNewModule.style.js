@@ -372,7 +372,6 @@ export const ModalButton = styled.button`
   font-size: 16px;
 `;
 
-
 export const Button = styled.button`
   padding: 10px 20px;
   background-color: ${theme.colors.secondary};
@@ -380,4 +379,13 @@ export const Button = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  `;
+`;
+
+// Add to your AddNewModule.style.js if needed
+export const SelectionHighlight = styled.div`
+  border: 2px dashed ${theme.colors.secondary};
+  padding: 5px;
+  margin: 5px 0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+`;
