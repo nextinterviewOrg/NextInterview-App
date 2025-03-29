@@ -41,6 +41,7 @@ import {
 } from "react-shimmer-effects";
 import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
 import { IoCloseSharp } from "react-icons/io5";
+import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 
 // Sample Data for Dynamic Rendering
 
@@ -104,6 +105,7 @@ const UserModuleTopic = () => {
   const [loading, setLoading] = useState(true);
   const [popupContent, setPopupContent] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+  const [isModuleCompleted, setIsModuleCompleted] = useState(false);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -152,7 +154,7 @@ const UserModuleTopic = () => {
       lastTopic.data.topic_code === topic_code &&
       lastSubTopic.data.subtopic_code === subtopic_code
     ) {
-      navigate(`/user/learning`);
+      setIsModuleCompleted(true);
       return;
     }
     navigate(`/user/learning/${moduleId}/topic`, {
@@ -349,16 +351,25 @@ const UserModuleTopic = () => {
 
   const [assessmentParams, setAssessmentParams] = useState({});
 
-  const handleFeedbackSubmit = (submittedFeedback) => {
-    setFeedback(submittedFeedback); // Store the submitted feedback
-    setShowFeedbackModal(true); // Show the User Feedback modal
+  const handleFeedbackSubmit = async (feedbackData) => {
+    try {
+      console.log("Feedback submitted:", feedbackData);
+      // TODO: Implement API call to save feedback
+      navigate(`/user/learning`);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
   };
 
-  const handleMarkAsCompleted = async () => {
-    setShowModal(false); // Close the Skill Assessment modal
-    setTimeout(() => {
-      setShowFeedbackModal(true); // Show the User Feedback modal after a delay
-    }, 500); // Adjust the delay as needed
+const handleMarkAsCompleted = async () => {
+    const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
+    if (allSubtopicsCompleted) {
+        setIsModuleCompleted(true); // Show feedback only after the last subtopic
+        setShowFeedbackModal(true); // Show feedback modal directly
+    } else {
+        console.log("Not all subtopics are completed.");
+    }
+
     try {
       console.log("Fetching module_code...");
 
@@ -440,6 +451,12 @@ const UserModuleTopic = () => {
   };
 
   const handleNext = async () => {
+    const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
+    if (allSubtopicsCompleted) {
+        setIsModuleCompleted(true); // Show feedback only after the last subtopic
+        // Show feedback modal directly
+        setShowFeedbackModal(true);
+    }
     const moduleResponse = await getModuleById(moduleId);
     console.log(
       "topicIndex:",
@@ -659,7 +676,7 @@ const UserModuleTopic = () => {
         </>
       )}
 
-      {markAsCompleteBtnStatus ? (
+      {markAsCompleteBtnStatus && !isModuleCompleted ? (
         <Button
           style={{
             backgroundColor: "#2390ac",
@@ -702,6 +719,17 @@ const UserModuleTopic = () => {
               currentTopicIndex={location.state.topicIndex}
               currentSubTopicIndex={location.state.subtopicIndex}
               moduleId={moduleId}
+            />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {(isModuleCompleted || showFeedbackModal) && (
+        <ModalOverlay>
+          <ModalContent>
+            <UserFeedback
+              moduleId={moduleId}
+              onFeedbackSubmit={handleFeedbackSubmit}
             />
           </ModalContent>
         </ModalOverlay>
