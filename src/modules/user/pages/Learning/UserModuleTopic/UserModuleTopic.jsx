@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 import {
   Container,
   Title,
@@ -11,38 +10,41 @@ import {
   ButtonGroup,
   ModalOverlay,
   ModalContent,
-  // CloseButton,
+  CloseButton,
   TryItYourself,
   TryButton,
 } from "./UserModuleTopic.style";
 import { SlLike } from "react-icons/sl";
 import { SlDislike } from "react-icons/sl";
-import { getLastSubTopicByTopicCode, getLastTopicByModuleCode, getModuleById } from "../../../../../api/addNewModuleApi";
+import {
+  getLastSubTopicByTopicCode,
+  getLastTopicByModuleCode,
+  getModuleById,
+} from "../../../../../api/addNewModuleApi";
 import { useLocation, useParams, useNavigate } from "react-router-dom";
 import { summariseTopic } from "../../../../../api/gptApi";
 import SkillAssessment from "../SkillAssessment/SkillAssessment";
-import { completeModule, completeSubTopic, completeTopic, getUserProgressBySubTopic, startSubTopic, startTopic } from "../../../../../api/userProgressApi";
+import {
+  completeModule,
+  completeSubTopic,
+  completeTopic,
+  getUserProgressBySubTopic,
+  startSubTopic,
+  startTopic,
+} from "../../../../../api/userProgressApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
-import { ShimmerTitle, ShimmerText, ShimmerButton} from "react-shimmer-effects";
+import {
+  ShimmerTitle,
+  ShimmerText,
+  ShimmerButton,
+} from "react-shimmer-effects";
+import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
+import { IoCloseSharp } from "react-icons/io5";
+import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 
 // Sample Data for Dynamic Rendering
-const topics = [
-  {
-    title: "",
-    description: "",
-  },
-  {
-    title: "",
-    description: "",
-  },
-  {
-    title: "",
-    description: "",
-  },
-];
 
-const summaryText = ["", "", ""];
 const courseData1 = {
   title: "",
   topicsList: [
@@ -82,8 +84,10 @@ const courseData1 = {
 };
 
 const UserModuleTopic = () => {
+  const [feedback, setFeedback] = useState(""); // State to store feedback
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
   const [showSummary, setShowSummary] = useState(false);
-  const [showMarkAsRead, setShowMarkAsRead] = useState(false);
+
   const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
   const moduleId = useParams().id;
   const location = useLocation();
@@ -97,9 +101,11 @@ const UserModuleTopic = () => {
   const [markAsCompleteBtnStatus, setMarkAsCompleteBtnStatus] = useState(false);
   const navigate = useNavigate();
   const [curIndex, setCurIndex] = useState(0);
-  const { isLoaded, user, isSignedIn } = useUser();
+  const { user } = useUser();
   const [loading, setLoading] = useState(true);
-  // const [selectedCheatSheetURL, setSelectedCheatSheetURL] = useState("");
+  const [popupContent, setPopupContent] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [isModuleCompleted, setIsModuleCompleted] = useState(false);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -118,26 +124,42 @@ const UserModuleTopic = () => {
     const userData = await getUserByClerkId(user.id);
     const moduleResponse = await getModuleById(moduleId);
     const module_code = moduleResponse.data.module_code;
-    const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
-    const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
-    const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
+    const topic_code =
+      moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
+    const subtopic_code =
+      moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[
+        location.state?.subtopicIndex
+      ].subtopic_code;
+
     finalSubTopicIndex = finalSubTopicIndex + 1;
     //checking is this last topic
-    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
-    
+    const lastTopic = await getLastTopicByModuleCode({
+      moduleCode: module_code,
+    });
+    const lastSubTopic = await getLastSubTopicByTopicCode({
+      moduleCode: module_code,
+      topicCode: topic_code,
+    });
+
     if (lastSubTopic.data.subtopic_code === subtopic_code) {
-      console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code , subtopic_code);
-      const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
+      console.log(
+        "lastSubTopic.data.subtopic_code === subtopic_code",
+        lastSubTopic.data.subtopic_code,
+        subtopic_code
+      );
       finalTopicIndex = finalTopicIndex + 1;
       finalSubTopicIndex = 0;
     }
-    if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-      const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-      navigate(`/user/learning`);
-      return
+    if (
+      lastTopic.data.topic_code === topic_code &&
+      lastSubTopic.data.subtopic_code === subtopic_code
+    ) {
+      setIsModuleCompleted(true);
+      return;
     }
-    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
+    navigate(`/user/learning/${moduleId}/topic`, {
+      state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
+    });
   };
   useEffect(() => {
     const apiCaller = async () => {
@@ -163,6 +185,7 @@ const UserModuleTopic = () => {
                       subtopicSummary: subitem.subtopicSummary,
                       gptSummary: gptSumm.data,
                       cheatSheetURL: subitem.cheatSheetURL || "#",
+                      conceptClarifiers: subitem.conceptClarifier || [],
                     };
                   })
                 ),
@@ -176,6 +199,17 @@ const UserModuleTopic = () => {
         console.log(error);
       }
     };
+
+    window.showPopupHandler = (explanation) => {
+      if (explanation) {
+        setPopupContent(explanation);
+        setShowPopup(true);
+        console.log("Works");
+      } else {
+        console.error("Explanation is undefined!");
+      }
+    };
+
     apiCaller();
   }, []);
 
@@ -186,130 +220,177 @@ const UserModuleTopic = () => {
 
     const apiCaller = async () => {
       // try {
-        // Make sure you're calling the API correctly and checking the response
-        const response = await getModuleById(moduleId);
-        console.log("", response.data);
-        let currentMooduleCode = response.data.module_code;
-        let currentModuleId = response.data.module_id;
-        let currentTopicCode = null;
-        let currentTopicId = null;
-        let currentSubtopicCode = null;
-        let currentSubtopicId = null;
-        // Ensure the response is valid before setting the state
-        const data = {
-          title: response.data.moduleName,
-          topicsList: await Promise.all(
-            response.data.topicData.map(async (item, topicIndex) => {
-              if (topicIndex === location.state.topicIndex) {
-                currentTopicCode = item.topic_code;
-                currentTopicId = item._id;
-                currentSubtopicCode = null;
-              }
-              return {
-                title: item.topicName,
-                subtopics: await Promise.all(
-                  item.subtopicData.map(async (subitem, subIndex) => {
-                    if (subIndex === location.state.subtopicIndex) {
-                      currentSubtopicCode = subitem.subtopic_code;
-                      currentSubtopicId = subitem._id;
-                    }
-                    const gptSumm = await summariseTopic({
-                      message: subitem.subtopicContent,
-                    });
-                    return {
-                      title: subitem.subtopicName,
-                      // completed: subitem.completed,
-                      subtopicContent: subitem.subtopicContent,
-                      subtopicSummary: subitem.subtopicSummary,
-                      gptSummary: gptSumm.data,
-                      cheatSheetURL: subitem.cheatSheetURL || "#",
-                    };
-                  })
-                ),
-              };
-            })
-          ),
-        };
+      // Make sure you're calling the API correctly and checking the response
+      const response = await getModuleById(moduleId);
+      console.log("", response.data);
+      let currentMooduleCode = response.data.module_code;
+      let currentModuleId = response.data.module_id;
+      let currentTopicCode = null;
+      let currentTopicId = null;
+      let currentSubtopicCode = null;
+      let currentSubtopicId = null;
+      // Ensure the response is valid before setting the state
+      const data = {
+        title: response.data.moduleName,
+        topicsList: await Promise.all(
+          response.data.topicData.map(async (item, topicIndex) => {
+            if (topicIndex === location.state.topicIndex) {
+              currentTopicCode = item.topic_code;
+              currentTopicId = item._id;
+              currentSubtopicCode = null;
+            }
+            return {
+              title: item.topicName,
+              subtopics: await Promise.all(
+                item.subtopicData.map(async (subitem, subIndex) => {
+                  if (subIndex === location.state.subtopicIndex) {
+                    currentSubtopicCode = subitem.subtopic_code;
+                    currentSubtopicId = subitem._id;
+                  }
+                  const gptSumm = await summariseTopic({
+                    message: subitem.subtopicContent,
+                  });
+                  return {
+                    title: subitem.subtopicName,
+                    // completed: subitem.completed,
+                    subtopicContent: subitem.subtopicContent,
+                    subtopicSummary: subitem.subtopicSummary,
+                    gptSummary: gptSumm.data,
+                    cheatSheetURL: subitem.cheatSheetURL || "#",
+                  };
+                })
+              ),
+            };
+          })
+        ),
+      };
 
-        // Now, after setting courseData, use location.state to update topicData
-        const topic =
-          data.topicsList?.[location.state.topicIndex]?.subtopics?.[
+      // Now, after setting courseData, use location.state to update topicData
+      const topic =
+        data.topicsList?.[location.state.topicIndex]?.subtopics?.[
           location.state.subtopicIndex
-          ];
-        if (topic) {
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          setTopicData([
-            {
-              title: topic.title,
-              description: topic.subtopicContent,
-              summary: topic.subtopicSummary,
-              gptSummary: topic.gptSummary,
-              cheatSheetURL: topic.cheatSheetURL || "#",
-            },
-          ]);
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          setGptSummaryText(topic.gptSummary);
-          const userData = await getUserByClerkId(user.id);
-          console.log("userData", userData, " ", userData.data.user._id);
-          const markingTopicOngoing = await startTopic(
-            userData.data.user._id,
-            currentTopicCode,
-            currentTopicId,
-            currentMooduleCode,
-            currentModuleId
-          );
-          console.log("markingTopicOngoing", markingTopicOngoing);
-          const markingSubTopicOngoing = await startSubTopic(
-            userData.data.user._id,
-            currentMooduleCode,
-            currentTopicCode,
-            currentTopicId,
-            currentModuleId,
-            currentSubtopicCode,
-            currentSubtopicId,
-          );
+        ];
+      if (topic) {
+        setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+        setTopicData([
+          {
+            title: topic.title,
+            description: topic.subtopicContent,
+            summary: topic.subtopicSummary,
+            gptSummary: topic.gptSummary,
+            cheatSheetURL: topic.cheatSheetURL || "#",
+          },
+        ]);
+        setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+        setGptSummaryText(topic.gptSummary);
+        const userData = await getUserByClerkId(user.id);
+        console.log("userData", userData, " ", userData.data.user._id);
+        const markingTopicOngoing = await startTopic(
+          userData.data.user._id,
+          currentTopicCode,
+          currentTopicId,
+          currentMooduleCode,
+          currentModuleId
+        );
+        console.log("markingTopicOngoing", markingTopicOngoing);
 
-          const moduleStatus = await getUserProgressBySubTopic({ userId: userData.data.user._id, moduleCode: currentMooduleCode, topicCode: currentTopicCode, subtopicCode: currentSubtopicCode });
-          console.log("moduleStatus", moduleStatus);
-          if (moduleStatus.data.status !== "ongoing") {
-            console.log("moduleStatus status", moduleStatus.data.status);
-            setMarkAsCompleteBtnStatus(true);
-          } else {
-            setMarkAsCompleteBtnStatus(false);
-          }
+        const moduleStatus = await getUserProgressBySubTopic({
+          userId: userData.data.user._id,
+          moduleCode: currentMooduleCode,
+          topicCode: currentTopicCode,
+          subtopicCode: currentSubtopicCode,
+        });
+        console.log("moduleStatus", moduleStatus);
+        if (moduleStatus.data.status !== "ongoing") {
+          console.log("moduleStatus status", moduleStatus.data.status);
+          setMarkAsCompleteBtnStatus(true);
+        } else {
+          setMarkAsCompleteBtnStatus(false);
         }
-      // } catch (error) {
-      //   console.error("Error fetching module data", error);
-      // }
+      }
     };
 
     apiCaller();
   }, [location.state]); // Add location.state as a dependency to ensure it runs when state changes
 
+  const renderConceptClarifiers = (text, clarifiers) => {
+    if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
+    
+    let result = text;
+    clarifiers.forEach(({ conceptClarifier, hoverExplanation, popupExplanation }) => {
+      if (!conceptClarifier) return;
+      
+      const escapedConcept = conceptClarifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const escapedHover = hoverExplanation.replace(/"/g, '"').replace(/'/g, '&#39;');
+      const escapedPopup = popupExplanation
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '<')
+        .replace(/>/g, '>')
+        .replace(/"/g, '\\"')
+        .replace(/'/g, "\\'");
+      
+      result = result.replace(
+        new RegExp(`\\b${escapedConcept}\\b`, "g"),
+        `<span class="concept-tooltip" 
+          title="${escapedHover}" 
+          onClick="window.showPopupHandler('${escapedPopup}')">
+          ${conceptClarifier}
+        </span>`
+      );
+    });
+    return result;
+  };
+
+
   const handleSummarizeClick = () => {
     setShowSummary(true); // Show summary section
     delayText();
-    setShowMarkAsRead(true); // Show "Mark as Read" button after summary section
+    // setShowMarkAsRead(true); // Show "Mark as Read" button after summary section
     setShowDownloadButton(false); // Hide the "Download Cheat Sheet" button after clicking "Summarize for me"
   };
 
   const [assessmentParams, setAssessmentParams] = useState({});
-  const handleMarkAsCompleted = async () => {
+
+  const handleFeedbackSubmit = async (feedbackData) => {
+    try {
+      console.log("Feedback submitted:", feedbackData);
+      // TODO: Implement API call to save feedback
+      navigate(`/user/learning`);
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+    }
+  };
+
+const handleMarkAsCompleted = async () => {
+    const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
+    if (allSubtopicsCompleted) {
+        setIsModuleCompleted(true); // Show feedback only after the last subtopic
+        setShowFeedbackModal(true); // Show feedback modal directly
+    } else {
+        console.log("Not all subtopics are completed.");
+    }
+
     try {
       console.log("Fetching module_code...");
 
       const moduleResponse = await getModuleById(moduleId);
       console.log("🛠 moduleResponse Full Data:", moduleResponse);
 
-      if (!moduleResponse || !moduleResponse.data || !moduleResponse.data.module_code) {
+      if (
+        !moduleResponse ||
+        !moduleResponse.data ||
+        !moduleResponse.data.module_code
+      ) {
         console.error(" Module data missing!", moduleResponse);
         return;
       }
       const module_code = moduleResponse.data.module_code;
       console.log("module_code fetched:", module_code);
 
-
-      if (!moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
+      if (
+        !moduleResponse.data.topicData ||
+        moduleResponse.data.topicData.length === 0
+      ) {
         console.error("No topics found for module_code:", module_code);
         return;
       }
@@ -366,263 +447,307 @@ const UserModuleTopic = () => {
   };
 
   const handleTryButton = () => {
-
     navigate(`/user/learning/${moduleName}/topic/tryityourself`);
   };
 
   const handleNext = async () => {
+    const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
+    if (allSubtopicsCompleted) {
+        setIsModuleCompleted(true); // Show feedback only after the last subtopic
+        // Show feedback modal directly
+        setShowFeedbackModal(true);
+    }
     const moduleResponse = await getModuleById(moduleId);
-    console.log("topicIndex:", location.state?.topicIndex, "subtopicIndex:", location.state?.subtopicIndex);
+    console.log(
+      "topicIndex:",
+      location.state?.topicIndex,
+      "subtopicIndex:",
+      location.state?.subtopicIndex
+    );
     console.log("🛠 moduleResponse Full Data:", moduleResponse);
     const module_code = moduleResponse.data.module_code;
 
-    console.log(moduleResponse.data.topicData[location.state?.topicIndex].topic_code);
-    const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
+    console.log(
+      moduleResponse.data.topicData[location.state?.topicIndex].topic_code
+    );
+    const topic_code =
+      moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
 
-    const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
-    console.log("module_code:", module_code, "topic_code:", topic_code, "subtopic_code:", subtopic_code);
-    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
+    const subtopic_code =
+      moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[
+        location.state?.subtopicIndex
+      ].subtopic_code;
+    console.log(
+      "module_code:",
+      module_code,
+      "topic_code:",
+      topic_code,
+      "subtopic_code:",
+      subtopic_code
+    );
+    const lastTopic = await getLastTopicByModuleCode({
+      moduleCode: module_code,
+    });
+    const lastSubTopic = await getLastSubTopicByTopicCode({
+      moduleCode: module_code,
+      topicCode: topic_code,
+    });
     let finalTopicIndex = location.state?.topicIndex;
     let finalSubTopicIndex = location.state?.subtopicIndex;
     finalSubTopicIndex = finalSubTopicIndex + 1;
-    if ((lastTopic.data.topic_code === topic_code) && (lastSubTopic.data.subtopic_code === subtopic_code)) {
+    if (
+      lastTopic.data.topic_code === topic_code &&
+      lastSubTopic.data.subtopic_code === subtopic_code
+    ) {
       console.log("Navigating to /user as last topic is reached");
       navigate(`/user/learning`);
-      return
+      return;
     }
     if (lastSubTopic.data.subtopic_code === subtopic_code) {
       finalTopicIndex = finalTopicIndex + 1;
       finalSubTopicIndex = 0;
-
     }
-    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-
+    navigate(`/user/learning/${moduleId}/topic`, {
+      state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
+    });
   };
 
-
   return (
-    
-      <Container>
-        {loading ? (
-          <>
-            <ShimmerTitle line={1} gap={10} />
-            <ShimmerText line={3} gap={15} />
-            <ShimmerButton size="md" />
-          </>
-        ) : (
-          <>
-            <TryItYourself>
-              <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
-            </TryItYourself>
-    
+    <Container>
+      {loading ? (
+        <>
+          <ShimmerTitle line={1} gap={10} />
+          <ShimmerText line={3} gap={15} />
+          <ShimmerButton size="md" />
+        </>
+      ) : (
+        <>
+          <TryItYourself>
+            <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
+          </TryItYourself>
+
+          <div>
+            {topicData && (
+              <>
+                {topicData?.map((topic, index) => (
+                  <div key={index}>
+                    <Title>{topic.title}</Title>
+
+                    <Text
+                      dangerouslySetInnerHTML={{
+                        __html: renderConceptClarifiers(
+                          topic.description,
+                          courseData?.topicsList?.[location.state?.topicIndex]
+                            ?.subtopics?.[location.state?.subtopicIndex]
+                            ?.conceptClarifiers || []
+                        ),
+                      }}
+                    />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              flexDirection: "column",
+              alignContent: "center",
+              alignItems: "center",
+              gap: "20px",
+            }}
+          >
             <div>
-              {topicData && (
-                <>
-                  {topicData?.map((topic, index) => (
-                    <div key={index}>
-                      <Title>{topic.title}</Title>
-    
-                      <Text
-                        dangerouslySetInnerHTML={{
-                          __html: parseJSONContent(topic.description),
-                        }}
-                      ></Text>
-                    </div>
-                  ))}
-                </>
+              {showDownloadButton && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
+                    style={{
+                      backgroundColor: "transparent",
+                      fontWeight: "bold",
+                      color: "#2390ac",
+                      textDecoration: "none",
+                    }}
+                    target="_blank"
+                    download={"cheatSheet.pdf"}
+                    href={selectedCheetSheetURL}
+                  >
+                    Download Cheat Sheet (pdf)
+                  </a>
+                </div>
+              )}
+
+              {!showSummary && (
+                <Button
+                  style={{
+                    border: "2px solid #2390ac",
+                    backgroundColor: "transparent",
+                    color: "#2390ac",
+                    fontWeight: "bold",
+                    margin: "auto",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginTop: "20px",
+                  }}
+                  onClick={handleSummarizeClick}
+                >
+                  Summarize for me
+                </Button>
               )}
             </div>
-    
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                flexDirection: "column",
-                alignContent: "center",
-                alignItems: "center",
-                gap: "20px",
-              }}
-            >
-              <div>
-                {showDownloadButton && (
-                  <div
+          </div>
+
+          {showSummary && (
+            <SummaryContainer>
+              <SummaryTitle>Summary</SummaryTitle>
+
+              <SummaryText>{delayedText}</SummaryText>
+
+              <ButtonGroup
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  width: "100%",
+                  alignContent: "flex-end",
+                  gap: "20px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <a
                     style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <a
-                      style={{
-                        backgroundColor: "transparent",
-                        fontWeight: "bold",
-                        color: "#2390ac",
-                        textDecoration: "none",
-                      }}
-                      target="_blank"
-                      download={"cheatSheet.pdf"}
-                      href={selectedCheetSheetURL}
-                    >
-                      Download Cheat Sheet (pdf)
-                    </a>
-                  </div>
-                )}
-    
-                {!showSummary && (
-                  <Button
-                    style={{
-                      border: "2px solid #2390ac",
-                      // fontWeight: "bold",
-                      // color: "#2390ac",
-                      // backgroundColor: "transparent",
                       backgroundColor: "transparent",
                       color: "#2390ac",
                       fontWeight: "bold",
-                      margin: "auto",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: "20px",
+                      textDecoration: "none",
                     }}
-                    onClick={handleSummarizeClick}
+                    href={selectedCheetSheetURL}
+                    target="_blank"
+                    download={"cheatSheet.pdf"}
                   >
-                    Summarize for me
-                  </Button>
-                )}
-              </div>
-            </div>
-    
-            {showSummary && (
-              <SummaryContainer>
-                <SummaryTitle>Summary</SummaryTitle>
-    
-                <SummaryText>{delayedText}</SummaryText>
-    
-                <ButtonGroup
+                    Download Cheat Sheet (pdf)
+                  </a>
+                </div>
+                <div
                   style={{
                     display: "flex",
-                    justifyContent: "space-between",
+                    justifyContent: "flex-end",
                     flexDirection: "row",
-                    width: "100%",
-                    alignContent: "flex-end",
+                    alignItems: "flex-end",
                     gap: "20px",
+                    marginRight: "20px",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <a
+                  <p>
+                    <SlLike
                       style={{
-                        backgroundColor: "transparent",
-                        color: "#2390ac",
-                        fontWeight: "bold",
-                        textDecoration: "none",
+                        paddingRight: "5px",
                       }}
-                      href={selectedCheetSheetURL}
-                      target="_blank"
-                      download={"cheatSheet.pdf"}
-                    >
-                      Download Cheat Sheet (pdf)
-                    </a>
-                  </div>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      flexDirection: "row",
-                      alignItems: "flex-end",
-                      gap: "20px",
-                      marginRight: "20px",
-                    }}
-                  >
-                    <p>
-                      <SlLike
-                        style={{
-                          paddingRight: "5px",
-                        }}
-                      />
-                      Helpful
-                    </p>
-                    <p>
-                      <SlDislike
-                        style={{
-                          paddingRight: "5px",
-                          paddingTop: "5px",
-                        }}
-                      />
-                      Not helpful
-                    </p>
-                  </div>
-                </ButtonGroup>
-              </SummaryContainer>
-            )}
-          </>
-        )}
-    
-        {markAsCompleteBtnStatus ? (
-          <Button
-            style={{
-              backgroundColor: "#2390ac",
-              color: "white",
-              fontWeight: "bold",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-            onClick={handleNext}
-          >
-            Next
-          </Button>
-        ) : (
-          <Button
-            style={{
-              backgroundColor: "#2390ac",
-              color: "white",
-              fontWeight: "bold",
-              margin: "auto",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              marginTop: "20px",
-            }}
-            onClick={handleMarkAsCompleted}
-          >
-            Mark as completed
-          </Button>
-        )}
-    
-        {showModal && (
-          <ModalOverlay>
-            <ModalContent>
-              <SkillAssessment
-                {...assessmentParams}
-                onCloseModal={handleCloseModal}
-                currentTopicIndex={location.state.topicIndex}
-                currentSubTopicIndex={location.state.subtopicIndex}
-                moduleId={moduleId}
-              />
-            </ModalContent>
-          </ModalOverlay>
-        )}
-      </Container>
-    );
-    
+                    />
+                    Helpful
+                  </p>
+                  <p>
+                    <SlDislike
+                      style={{
+                        paddingRight: "5px",
+                        paddingTop: "5px",
+                      }}
+                    />
+                    Not helpful
+                  </p>
+                </div>
+              </ButtonGroup>
+            </SummaryContainer>
+          )}
+        </>
+      )}
+
+      {markAsCompleteBtnStatus && !isModuleCompleted ? (
+        <Button
+          style={{
+            backgroundColor: "#2390ac",
+            color: "white",
+            fontWeight: "bold",
+            margin: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+          onClick={handleNext}
+        >
+          Next
+        </Button>
+      ) : (
+        <Button
+          style={{
+            backgroundColor: "#2390ac",
+            color: "white",
+            fontWeight: "bold",
+            margin: "auto",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "20px",
+          }}
+          onClick={handleMarkAsCompleted}
+        >
+          Mark as completed
+        </Button>
+      )}
+
+      {showModal && (
+        <ModalOverlay>
+          <ModalContent>
+            <SkillAssessment
+              {...assessmentParams}
+              onCloseModal={handleCloseModal}
+              currentTopicIndex={location.state.topicIndex}
+              currentSubTopicIndex={location.state.subtopicIndex}
+              moduleId={moduleId}
+            />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {(isModuleCompleted || showFeedbackModal) && (
+        <ModalOverlay>
+          <ModalContent>
+            <UserFeedback
+              moduleId={moduleId}
+              onFeedbackSubmit={handleFeedbackSubmit}
+            />
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {showPopup && (
+        <ModalOverlay onClick={() => setShowPopup(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <h2 style={{ margin: "0px 0px 30px 0px" }}>Concept Explanation</h2>
+            <div dangerouslySetInnerHTML={{ __html: popupContent }} />
+            <CloseButton onClick={() => setShowPopup(false)} className="">
+              <IoCloseSharp />
+            </CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+    </Container>
+  );
 };
 
-const parseJSONContent = (content) => {
-  try {
-    const parsedContent = JSON.parse(content);
-    return parsedContent; // Return parsed content if it's valid JSON
-  } catch (error) {
-    console.error("Error parsing JSON content:", error);
-    return content; // Return original content if parsing fails
-  }
-};
 export default UserModuleTopic;

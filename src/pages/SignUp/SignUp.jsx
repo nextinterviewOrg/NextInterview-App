@@ -137,7 +137,7 @@ const SignUp = () => {
       const data = await signIn.authenticateWithRedirect({
         strategy: "oauth_linkedin_oidc",
         redirectUrl: window.location.origin + "/login",
-        redirectUrlComplete: window.location.origin + "/verification",
+        redirectUrlComplete: window.location.origin + "/validation",
       });
     } catch (err) {
       console.error("LinkedIn Sign-Up Error:", err);

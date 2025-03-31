@@ -19,12 +19,11 @@ import {
   ClarifierHeading,
   ButtonRow,
   ActionButton,
-  // PaginationContainer,
   FormGroup,
   ModalContainer,
   ModalContent,
   ModalButton,
-  Button
+  Button,
 } from "./AddNewModule.style";
 import { RiGeminiFill } from "react-icons/ri";
 import theme from "../../../../theme/Theme";
@@ -34,17 +33,16 @@ import {
   uploadVideoToFirebase,
 } from "../../../../utils/uploadFileToFirebase";
 import { addNewModule } from "../../../../api/addNewModuleApi";
-import { CKEditor } from "@ckeditor/ckeditor5-react";
-import { ClassicEditor } from "ckeditor5";
-import { editorConfig } from "../../../../config/ckEditorConfig";
 import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import TinymceEditor from "../../components/TinymceEditor/TinymceEditor";
 import { Editor } from "@tinymce/tinymce-react";
-import { TinyMCEapiKey, TinyMCEmergetags_list, TinyMCEplugins, TinyMCEToolbar } from "../../../../config/TinyMceConfig";
-
-
-
+import {
+  TinyMCEapiKey,
+  TinyMCEmergetags_list,
+  TinyMCEplugins,
+  TinyMCEToolbar,
+} from "../../../../config/TinyMceConfig";
 
 // Styled icon/button if you want to show a delete icon
 const DeleteIconWrapper = styled.span`
@@ -60,10 +58,23 @@ const DeleteIconWrapper = styled.span`
 const AddNewModule = () => {
   // ----------------------------- STATES -----------------------------
   const [modalVisible, setModalVisible] = useState(false);
-  const navigate = useNavigate();
   // 'topic', 'subtopic', 'layman', or 'clarifier'
   const [deleteType, setDeleteType] = useState(null);
-  const location = useLocation();
+const location = useLocation();
+const navigate = useNavigate();
+
+// Validate location state
+React.useEffect(() => {
+  if (!location.state?.data) {
+    // If no data is present, redirect back to the learning modules page
+    navigate("/admin/learning");
+  }
+}, [location.state, navigate]);
+
+// Guard clause for rendering
+if (!location.state?.data) {
+  return null; // or return a loading state/error message
+}
   const videoInputRef = useRef(null);
 
   // Store indices for whichever item we are deleting
@@ -113,6 +124,12 @@ const AddNewModule = () => {
       ],
     },
   ]);
+  // Concept Clarifier State Variables
+  const [selectedText, setSelectedText] = useState({
+    text: "",
+    topicIndex: null,
+    subIndex: null,
+  });
 
   // ----------------------------- REF FOR FILE UPLOADS -----------------------------
   const skillAssessmentRefs = useRef([]);
@@ -205,28 +222,38 @@ const AddNewModule = () => {
     });
   };
 
+
+
   const handleConceptClarifierChange = (
     e,
     newValue,
-    editor,
     topicIndex,
     subIndex,
     clarifierIndex,
     clarifierField
   ) => {
     let value;
-    if (e != null) {
-      value = e.target.value;
+    if (e) {
+      value = e.target.value; // For standard input events
     } else {
-      value = newValue;
+      value = newValue; // For the selected text scenario
     }
 
     setTopics((prevTopics) => {
-      const updated = [...prevTopics];
-      updated[topicIndex].subtopics[subIndex].conceptClarifiers[clarifierIndex][
-        clarifierField
-      ] = value;
-      return updated;
+      const updatedTopics = [...prevTopics];
+
+      // Ensure only the specific clarifier field is updated
+      if (
+        updatedTopics[topicIndex]?.subtopics?.[subIndex]?.conceptClarifiers?.[
+          clarifierIndex
+        ]
+      ) {
+        updatedTopics[topicIndex].subtopics[subIndex].conceptClarifiers[
+          clarifierIndex
+        ][clarifierField] = value || ""; // Ensure it's always a string
+      }
+
+      return updatedTopics;
     });
   };
 
@@ -240,12 +267,12 @@ const AddNewModule = () => {
     });
   };
 
-  const handleSubtopicChange = (e, newValue, event, topicIndex, subIndex, field) => {
+  const handleSubtopicChange = (e, newValue, topicIndex, subIndex, field) => {
     let value;
-    if (e != null) {
+    if (e?.target) {
       value = e.target.value;
     } else {
-      value = newValue;
+      value = newValue || "";
     }
     setTopics((prevTopics) => {
       const updated = [...prevTopics];
@@ -369,13 +396,11 @@ const AddNewModule = () => {
             revisionPoints: sub.quickRevisePoints,
             cheatSheetURL: sub.cheatSheet?.dataUrl,
             interviewFavorite: sub.isInterviewFavorite,
-            conceptClarifier: sub.conceptClarifiers.map((concept) => {
-              return {
-                conceptClarifier: concept.clarifierWordOrPhrase,
-                hoverExplanation: concept.explanationOnHover,
-                popupExplanation: concept.moreExplanation,
-              };
-            }),
+            conceptClarifier: sub.conceptClarifiers.map((concept) => ({
+              conceptClarifier: concept.clarifierWordOrPhrase,
+              hoverExplanation: concept.explanationOnHover,
+              popupExplanation: concept.moreExplanation.replace(/"/g, '\\"')
+            })),
             laymanTerms: sub.laymanExplanations.map((laymn) => {
               return {
                 topicLevel: laymn.laymanScale,
@@ -644,7 +669,6 @@ const AddNewModule = () => {
                     handleSubtopicChange(
                       e,
                       null,
-                      null,
                       topicIndex,
                       subIndex,
                       "subtopicName"
@@ -661,57 +685,117 @@ const AddNewModule = () => {
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
-                    tinycomments_mode: 'embedded',
-                    tinycomments_author: 'Author name',
+                    tinycomments_mode: "embedded",
+                    tinycomments_author: "Author name",
                     mergetags_list: TinyMCEmergetags_list,
-                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    ai_request: (request, respondWith) =>
+                      respondWith.string(() =>
+                        Promise.reject("See docs to implement AI Assistant")
+                      ),
                     branding: false,
-
+                    setup: (editor) => {
+                      editor.on("mouseup", () => {
+                        const selection = editor.selection.getContent();
+                        if (selection.trim()) {
+                          setSelectedText({
+                            text: selection,
+                            topicIndex,
+                            subIndex,
+                          });
+                        }
+                      });
+                    },
                   }}
                   value={subtopic.subtopicContent || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "subtopicContent"
                     );
+                  }}
+                  style={{
+                    border:
+                      selectedText.topicIndex === topicIndex &&
+                      selectedText.subIndex === subIndex
+                        ? "2px dashed #2390ac"
+                        : "none",
+                    borderRadius: "4px",
                   }}
                   initialValue=""
                 />
-                {/* <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.subtopicContent}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
-                    handleSubtopicChange(
-                      null,
-                      editor,
-                      topicIndex,
-                      subIndex,
-                      "subtopicContent"
-                    );
-                  }}
-                /> */}
-              </FormGroup>
-<FormGroup 
-style={
-  {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent:"flex-end",
 
-  }
-}>
-  <Button> <RiGeminiFill
-  style={{
-    fontSize: "20px",
-    marginRight: "5px"
-  }}
-  />Generate with AI</Button>
-</FormGroup>
+                {/* TEXT SELECTION BUTTON*/}
+                {selectedText.text &&
+                  selectedText.topicIndex === topicIndex &&
+                  selectedText.subIndex === subIndex && (
+                    <div
+                      style={{
+                        marginTop: "-15px", // Pulls button closer to editor
+                        marginBottom: "20px",
+                        textAlign: "center",
+                      }}
+                    >
+                      <Button
+                        onClick={() => {
+                          // Find the last clarifier in the subtopic
+                          const lastIdx =
+                            topic.subtopics[subIndex].conceptClarifiers.length -
+                            1;
+
+                          // Update the concept clarifier text with the selected text
+                          handleConceptClarifierChange(
+                            { target: { value: selectedText.text } }, // Passing selected text to the handler
+                            selectedText.text, // Selected text
+                            topicIndex, // Topic index
+                            subIndex, // Subtopic index
+                            lastIdx, // Last clarifier index
+                            "clarifierWordOrPhrase" // Field to update
+                          );
+
+                          // Clear the selection
+                          setSelectedText({
+                            text: "",
+                            topicIndex: null,
+                            subIndex: null,
+                          });
+                        }}
+                        style={{
+                          backgroundColor: "#2390ac",
+                          color: "white",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "5px",
+                          padding: "8px 16px",
+                        }}
+                      >
+                        <RiGeminiFill />
+                        Mark as Concept Clarifier
+                      </Button>
+                    </div>
+                  )}
+              </FormGroup>
+              <FormGroup
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
+                <Button>
+                  {" "}
+                  <RiGeminiFill
+                    style={{
+                      fontSize: "20px",
+                      marginRight: "5px",
+                    }}
+                  />
+                  Generate with AI
+                </Button>
+              </FormGroup>
+
               {/* SUBTOPIC SUMMARY */}
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
@@ -720,19 +804,20 @@ style={
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
-                    tinycomments_mode: 'embedded',
-                    tinycomments_author: 'Author name',
+                    tinycomments_mode: "embedded",
+                    tinycomments_author: "Author name",
                     mergetags_list: TinyMCEmergetags_list,
-                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    ai_request: (request, respondWith) =>
+                      respondWith.string(() =>
+                        Promise.reject("See docs to implement AI Assistant")
+                      ),
                     branding: false,
-
                   }}
                   value={subtopic.subtopicSummary || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "subtopicSummary"
@@ -740,20 +825,6 @@ style={
                   }}
                   initialValue=""
                 />
-                {/* <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.subtopicSummary}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
-                    handleSubtopicChange(
-                      null,
-                      editor,
-                      topicIndex,
-                      subIndex,
-                      "subtopicSummary"
-                    );
-                  }}
-                /> */}
               </FormGroup>
 
               {/* QUICK REVISE POINTS */}
@@ -764,19 +835,20 @@ style={
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
-                    tinycomments_mode: 'embedded',
-                    tinycomments_author: 'Author name',
+                    tinycomments_mode: "embedded",
+                    tinycomments_author: "Author name",
                     mergetags_list: TinyMCEmergetags_list,
-                    ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                    ai_request: (request, respondWith) =>
+                      respondWith.string(() =>
+                        Promise.reject("See docs to implement AI Assistant")
+                      ),
                     branding: false,
-
                   }}
                   value={subtopic.quickRevisePoints || ""}
-                  onEditorChange={(newValue, editor) => {
+                  onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
                       newValue,
-                      editor,
                       topicIndex,
                       subIndex,
                       "quickRevisePoints"
@@ -784,20 +856,6 @@ style={
                   }}
                   initialValue=""
                 />
-                {/* <CKEditor
-                  editor={ClassicEditor}
-                  data={subtopic.quickRevisePoints}
-                  config={editorConfig}
-                  onChange={(event, editor) => {
-                    handleSubtopicChange(
-                      null,
-                      editor,
-                      topicIndex,
-                      subIndex,
-                      "quickRevisePoints"
-                    );
-                  }}
-                /> */}
               </FormGroup>
 
               {/* CHEAT SHEET VIDEO */}
@@ -889,8 +947,7 @@ style={
                         onChange={(e) =>
                           handleConceptClarifierChange(
                             e,
-                            null,
-                            null,
+                            e.target.value,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
@@ -903,17 +960,35 @@ style={
 
                     <FormGroup>
                       <Label>Explanation on Hover</Label>
-                      <Editor
+                      <TextInput
+                        value={clarifier.explanationOnHover}
+                        onChange={(e) =>
+                          handleConceptClarifierChange(
+                            e,
+                            e.target.value,
+                            topicIndex,
+                            subIndex,
+                            clarifierIndex,
+                            "explanationOnHover"
+                          )
+                        }
+                        style={{ backgroundColor: theme.colors.backgray }}
+                      />
+                      {/* <Editor
                         apiKey={TinyMCEapiKey}
                         init={{
                           plugins: TinyMCEplugins,
                           toolbar: TinyMCEToolbar,
-                          tinycomments_mode: 'embedded',
-                          tinycomments_author: 'Author name',
+                          tinycomments_mode: "embedded",
+                          tinycomments_author: "Author name",
                           mergetags_list: TinyMCEmergetags_list,
-                          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+                          ai_request: (request, respondWith) =>
+                            respondWith.string(() =>
+                              Promise.reject(
+                                "See docs to implement AI Assistant"
+                              )
+                            ),
                           branding: false,
-
                         }}
                         value={clarifier.explanationOnHover || ""}
                         onEditorChange={(newValue, editor) => {
@@ -928,66 +1003,59 @@ style={
                           );
                         }}
                         initialValue=""
-                      />
-                      {/* <CKEditor
-                        editor={ClassicEditor}
-                        data={clarifier.explanationOnHover}
-                        config={editorConfig}
-                        onChange={(event, editor) => {
-                          handleConceptClarifierChange(
-                            null,
-                            editor,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "explanationOnHover"
-                          );
-                        }}
                       /> */}
                     </FormGroup>
 
                     <FormGroup>
                       <Label>More Explanation on Popup</Label>
-                      <Editor
+                      <TextArea
+                        rows="3"
+                        value={clarifier.moreExplanation}
+                        onChange={(e) =>
+                          handleConceptClarifierChange(
+                            e,
+                            e.target.value,
+                            topicIndex,
+                            subIndex,
+                            clarifierIndex,
+                            "moreExplanation"
+                          )
+                        }
+                        style={{ backgroundColor: theme.colors.backgray }}
+                      />
+                      {/* <TextArea
+                        rows="3"
+                        value={clarifier.moreExplanation}
+                        onChange={(e) =>
+                          handleConceptClarifierChange(
+                            e,
+                            topicIndex,
+                            subIndex,
+                            clarifierIndex,
+                            "moreExplanation"
+                          )
+                        }
+                        style={{ backgroundColor: theme.colors.backgray }}
+                      /> */}
+
+                      {/* <Editor
                         apiKey={TinyMCEapiKey}
                         init={{
                           plugins: TinyMCEplugins,
                           toolbar: TinyMCEToolbar,
-                          tinycomments_mode: 'embedded',
-                          tinycomments_author: 'Author name',
-                          mergetags_list: TinyMCEmergetags_list,
-                          ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
                           branding: false,
-
+                          height: 200,
                         }}
                         value={clarifier.moreExplanation || ""}
-                        onEditorChange={(newValue, editor) => {
+                        onEditorChange={(newValue) =>
                           handleConceptClarifierChange(
-                            null,
                             newValue,
-                            editor,
                             topicIndex,
                             subIndex,
                             clarifierIndex,
                             "moreExplanation"
-                          );
-                        }}
-                        initialValue=""
-                      />
-                      {/* <CKEditor
-                        editor={ClassicEditor}
-                        data={clarifier.moreExplanation}
-                        config={editorConfig}
-                        onChange={(event, editor) => {
-                          handleConceptClarifierChange(
-                            null,
-                            editor,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "moreExplanation"
-                          );
-                        }}
+                          )
+                        }
                       /> */}
                     </FormGroup>
 
@@ -1280,10 +1348,10 @@ style={
             deleteType === "topic"
               ? "Are you sure you want to delete this entire topic?"
               : deleteType === "subtopic"
-                ? "Are you sure you want to delete this subtopic?"
-                : deleteType === "layman"
-                  ? "Are you sure you want to delete this Layman explanation?"
-                  : "Are you sure you want to delete this Concept Clarifier?"
+              ? "Are you sure you want to delete this subtopic?"
+              : deleteType === "layman"
+              ? "Are you sure you want to delete this Layman explanation?"
+              : "Are you sure you want to delete this Concept Clarifier?"
           }
         />
       )}
