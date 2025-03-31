@@ -95,7 +95,11 @@ export default function UserLearning() {
             : // Once loading is done, display filtered courses
               filteredCourses.map((course, index) =>
                 isGridView ? (
-                  <div key={index} className="card">
+                  <div key={index} className="card"
+                  style={{
+                    marginLeft: "20px",
+                  }}
+                  >
                     <div className="card__article">
                       <img
                         src={course.image}
