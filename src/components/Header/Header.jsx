@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Logo from "../../assets/Logo.png";
 import ReactDOM from "react-dom";
 import PropTypes from "prop-types";
+import { FaBars } from "react-icons/fa";
 import {
   HeaderContainer,
   Title,
@@ -122,7 +123,7 @@ const Dropdown = ({
   );
 };
 
-const Header = ({ title }) => {
+const Header = ({ title, toggleMobileSidebar}) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [avatarPosition, setAvatarPosition] = useState({ top: 0, left: 0 });
@@ -158,9 +159,13 @@ const Header = ({ title }) => {
     <>
       <HeaderWrapper>
         <HeaderContainer>
-          <div style={{ marginLeft: "60px" }}>
-            <Title>{title}</Title> {/* Dynamic title with fallback */}
-          </div>
+         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+                           {/* Add hamburger icon for mobile */}
+                           <div className="hamburger-icon" onClick={toggleMobileSidebar}>
+                             <FaBars />
+                           </div>
+                           <Title>{title}</Title>
+                         </div>
           <HeaderRight>
             <UserProfile>
               <UserDetails>

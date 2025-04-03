@@ -90,6 +90,13 @@ export const Header = styled.div`
     gap: ${theme.spacing(1)};
     align-items: flex-start;
   }
+    @media (max-width: ${theme.breakpoints.mobile}) {
+      flex-direction: column;
+      gap: ${theme.spacing(1)};
+      align-items: center;
+      justify-content: center;
+      margin:auto;
+    }
 `;
 
 export const SearchBar = styled.input`
@@ -111,6 +118,8 @@ export const SearchBar = styled.input`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 12px;
+    width: 100%;
+    padding: ${theme.spacing(0.5)};
   }
 `;
 
@@ -126,6 +135,12 @@ export const SearchBarWrapper = styled.div`
 
   @media (max-width: ${theme.breakpoints.tablet}) {
     width: 100%;
+  }
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 12px;
+    width: 100%;
+    padding: ${theme.spacing(0.5)};
   }
 `;
 
@@ -214,7 +229,11 @@ export const AddButton = styled.button`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 12px;
-    padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
+    // padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
+    padding: ${theme.spacing(1)} ${theme.spacing(2)};
+    width: 100%;
+ 
+    fl
   }
 `;
 

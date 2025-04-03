@@ -5,7 +5,6 @@ export const Header = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(2)};
-  // background: ${theme.colors.sidebarBgColor};
   background: linear-gradient(
     to bottom,
     ${(props) => props.theme.colors.bluetext},
@@ -20,16 +19,23 @@ export const Header = styled.div`
   }
 
   > div {
-    // display: flex;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: ${theme.spacing(2)};
-    // justify-content: space-between;
     flex-wrap: wrap;
 
-    @media (max-width: ${theme.breakpoints.tablet}) {
-      flex-direction: column;
+    @media (max-width: ${theme.breakpoints.mobile}) 
+    {
+      grid-template-columns: 1fr;
     }
+  }
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+  width: 90%;
+margin-left: 0px;
+}
+     
+      
   }
 `;
 
@@ -49,7 +55,8 @@ export const Stats = styled.div`
   }
 
   @media (max-width: ${theme.breakpoints.tablet}) {
-    flex-direction: column;
+    flex-direction: row;
+    width: 100%;
   }
 `;
 export const StatCard = styled.div`
@@ -65,6 +72,11 @@ export const StatCard = styled.div`
     margin: 0;
     color: ${theme.colors.textgray};
   }
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    flex-direction: row;
+    width: 100%;
+  }
 `;
 
 export const StatCard1 = styled.div`
@@ -74,7 +86,6 @@ export const StatCard1 = styled.div`
   padding: ${theme.spacing(1)};
   border-radius: 8px;
   text-align: center;
-  // margin-left: -60px;
   margin-top: 10px;
 
   h3 {
@@ -99,7 +110,6 @@ export const StatCard2 = styled.div`
   padding: ${theme.spacing(1)};
   border-radius: 8px;
   text-align: center;
-  // margin-left: -60px;
 
   .datascience {
     color: ${theme.colors.black};

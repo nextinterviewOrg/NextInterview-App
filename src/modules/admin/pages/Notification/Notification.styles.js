@@ -8,6 +8,9 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 20px;
   background-color: ${({ theme }) => theme.colors.light};
+  @media (max-width: 768px) {
+    margin-left: 0px;
+  }
 `;
  
 export const NotificationCard = styled.div`

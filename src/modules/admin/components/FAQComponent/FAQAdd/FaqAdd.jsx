@@ -50,7 +50,7 @@ const FaqAdd = ({ onClose, onSave }) => {
         {/* Close Button */}
         <CloseButton onClick={onClose}>&times;</CloseButton>
 
-        <ModalHeader>Add FAQ Question</ModalHeader>
+        <ModalHeader>Add FAQ question</ModalHeader>
 
         {/* Question Input */}
         <InputContainer>

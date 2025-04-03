@@ -4,7 +4,7 @@ import img from "../../assets/lucide_home.svg";
 import { FaArrowTrendUp } from "react-icons/fa6";
 import UserStatsOne from "../../components/UserStatsOne/UserStatsOne";
 import MockTestsStats from "../../components/MockTestsStats/MockTestsStats";
-import { BsFillCaretRightFill } from "react-icons/bs";
+import { BsFillCaretRightFill, BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useUser } from "@clerk/clerk-react";
 import { use } from "react";
@@ -18,6 +18,8 @@ import { ShimmerPostDetails, ShimmerText } from "react-shimmer-effects";
 export default function UserDashboard() {
   const [startIndex, setStartIndex] = useState(0);
   const visibleCards = 4;
+  const [showAllStats, setShowAllStats] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const { user } = useUser();
   const [moduleCompleted, setModuleCompleted] = useState(0);
@@ -30,8 +32,17 @@ export default function UserDashboard() {
   const [loader, setLoader] = useState(false);
 
   useEffect(() => {
-    const apiCaller = async () => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
     
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const apiCaller = async () => {
       try {
         setLoader(true);
         const moduleData = await getModule();
@@ -66,11 +77,9 @@ export default function UserDashboard() {
       } finally {
         setLoader(false);
       }
-
     }
     apiCaller();
   }, [user]);
-
 
   const handleNext = () => {
     if (startIndex + visibleCards < totalCourses) {
@@ -83,122 +92,126 @@ export default function UserDashboard() {
       setStartIndex((prevIndex) => prevIndex - 1);
     }
   };
+
+  const toggleShowAllStats = () => {
+    setShowAllStats(!showAllStats);
+  };
+
+  const stats = [
+    { title: "Modules completed", value: moduleCompleted },
+    { title: "Modules ongoing", value: modulteOngoing },
+    { title: "Remaining Modules", value: remainingModule },
+    { title: "Progress rate", value: `${moduleProgress}%` },
+    { title: "Challenges completed", value: "0/0" }
+  ];
+
+  const visibleStats = isMobile && !showAllStats ? stats.slice(0, 4) : stats;
+
   return (
     <UserDashboardWrapper>
-      {loader ?
-        (<div>
-       <ShimmerPostDetails card cta variant="EDITOR" />
-        </div>) :
-        (
+      {loader ? (
+        <div>
+          <ShimmerPostDetails card cta variant="EDITOR" />
+        </div>
+      ) : (
+        <div className="UserDashboard-statsContainer">
+          <div className="UserDashboard-statsContainer-row-one">
+            <div className="UserDashboard-statsContainer-img">
+              <img src={img} alt="background" />
+            </div>
 
-
-          <div className="UserDashboard-statsContainer">
-            <div className="UserDashboard-statsContainer-row-one">
-              <div className="UserDashboard-statsContainer-img">
-                <img src={img} alt="background" />
-              </div>
-              <div className="UserDashboard-stats">
-                <div className="UserDashboard-statsbox">
+            <div className="UserDashboard-stats">
+              {visibleStats.map((stat, index) => (
+                <div className="UserDashboard-statsbox" key={index}>
                   <div className="UserDashboard-statsbox-title">
-                    <p>Modules completed</p>
+                    <p>{stat.title}</p>
                   </div>
-                  <div className="UserDashboard-statsbox-value">{moduleCompleted}</div>
+                  <div className="UserDashboard-statsbox-value">{stat.value}</div>
                 </div>
-                <div className="UserDashboard-statsbox">
+              ))}
+              
+              {isMobile && !showAllStats && (
+                <div className="UserDashboard-statsbox more-button" onClick={toggleShowAllStats}>
                   <div className="UserDashboard-statsbox-title">
-                    <p>Modules ongoing</p>
-                  </div>
-                  <div className="UserDashboard-statsbox-value">{modulteOngoing}</div>
-                </div>
-                <div className="UserDashboard-statsbox">
-                  <div className="UserDashboard-statsbox-title">
-                    <p>Remaining Modules</p>
-                  </div>
-                  <div className="UserDashboard-statsbox-value">{remainingModule}</div>
-                </div>
-                <div className="UserDashboard-statsbox">
-                  <div className="UserDashboard-statsbox-title">
-                    <p>Progress rate</p>
-                  </div>
-                  <div className="UserDashboard-statsbox-value">{moduleProgress}%</div>
-                </div>
-                <div className="UserDashboard-statsbox">
-                  <div className="UserDashboard-statsbox-title">
-                    <p>Challenges completed</p>
+                    <p>More</p>
                   </div>
                   <div className="UserDashboard-statsbox-value">
-                    0<span>/0</span>
+                    <BsThreeDots size={24} />
                   </div>
                 </div>
+              )}
+            </div>
+          </div>
+
+          <div className="container-dashboard">
+            <div className="continue-Learning-Header">
+              <h2 className="header-dashboard">
+                Continue Learning{" "}
+                <BsFillCaretRightFill
+                  size={20}
+                  style={{ marginTop: "5px", marginLeft: "5px" }}
+                />
+              </h2>
+              
+              <div className="carousel-wrapper">
+                <button
+                  className="arrow-button left"
+                  onClick={handlePrev}
+                  disabled={startIndex === 0}
+                >
+                  <FaChevronLeft />
+                </button>
+                <button
+                  className="arrow-button right"
+                  onClick={handleNext}
+                  disabled={startIndex + visibleCards >= totalCourses}
+                >
+                  <FaChevronRight />
+                </button>
               </div>
             </div>
-            <div className="container-dashboard">
-              <div className="continue-Learning-Header">
-                <h2 className="header-dashboard">
-                  Continue Learning{" "}
-                  <BsFillCaretRightFill
-                    size={20}
-                    style={{ marginTop: "5px", marginLeft: "5px" }}
-                  />
-                </h2>
-                
-                <div className="carousel-wrapper">
-                  <button
-                    className="arrow-button left"
-                    onClick={handlePrev}
-                    disabled={startIndex === 0}
-                  >
-                    <FaChevronLeft />
-                  </button>
-                  <button
-                    className="arrow-button right"
-                    onClick={handleNext}
-                    disabled={startIndex + visibleCards >= totalCourses}
-                  >
-                    <FaChevronRight />
-                  </button>
-                </div>
-              </div>
-              <div className="card-container-dashboard">
-                {courses
-                  .slice(startIndex, startIndex + visibleCards)
-                  .map((course, index) => (
-                    <Link to={`/user/learning/${course?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                      <div
-                        className="card-dashboard"
-                        key={index}
-                        onClick={() => handleCardClick(index)}
-                      >
-                        <img src={course?.imgSrc} alt="Course" />
-                        <h4>{course?.title}</h4>
-                        <div className="progress">
-                          <p>{`${course?.topicsCompleted}/${course?.totalTopics} Topics completed`}</p>
-                          <div className="progress-bar">
-                            <div
-                              className="progress-fill"
-                              style={{ width: `${course?.progress}%` }}
-                            ></div>
-                          </div>
-                          <p>{course?.progress}%</p>
+
+            <div className="card-container-dashboard">
+              {courses
+                .slice(startIndex, startIndex + visibleCards)
+                .map((course, index) => (
+                  <Link to={`/user/learning/${course?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
+                    <div
+                      className="card-dashboard"
+                      key={index}
+                      onClick={() => handleCardClick(index)}
+                    >
+                      <img src={course?.imgSrc} alt="Course" />
+                      <h4>{course?.title}</h4>
+                      <div className="progress">
+                        <p>{`${course?.topicsCompleted}/${course?.totalTopics} Topics completed`}</p>
+                        <div className="progress-bar">
+                          <div
+                            className="progress-fill"
+                            style={{ width: `${course?.progress}%` }}
+                          ></div>
                         </div>
+                        <p>{course?.progress}%</p>
                       </div>
-                    </Link>
-                  ))}
-              </div>
+                    </div>
+                  </Link>
+                ))}
             </div>
-            <div className="UserDashboard-statsContainer-row-two">
-              <div className="UserDashboard-Charts-container">
-                <div className="UserDashboard-charts-title">
-                  Your Growth Trend <FaArrowTrendUp />
-                </div>
-                <div className="UserDashboard-charts">
-                  <UserStatsOne />
-                  <MockTestsStats />
-                </div>
+
+          </div>
+          <div className="UserDashboard-statsContainer-row-two">
+            <div className="UserDashboard-Charts-container">
+              <div className="UserDashboard-charts-title">
+                Your Growth Trend <FaArrowTrendUp />
+              </div>
+              <div className="UserDashboard-charts">
+                <UserStatsOne />
+                <MockTestsStats />
               </div>
             </div>
           </div>
-        )}
+        </div>
+      )}
     </UserDashboardWrapper>
   );
 }

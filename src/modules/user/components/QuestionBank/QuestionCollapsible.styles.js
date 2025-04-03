@@ -5,16 +5,82 @@ export const PageContainer = styled.div`
   // width: 100%;
   margin-left: 60px;
   // flex-direction: row;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
+    @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 export const Sidebar = styled.div`
-  width: 20%;
-  border: 1px solid #ddd;
-  height: 90vh;
-  overflow-y: scroll;
-  scrollbar-width: none;
+  position: fixed;
+  left: ${({ isOpen }) => isOpen ? '0' : '-100%'};
+  top: 0;
+  width: ${({ isMobile }) => isMobile ? '80%' : '20%'};
+  height: 100vh;
+  background: white;
+  border-right: 1px solid #ddd;
+  overflow-y: auto;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  padding-top: 20px;
+  box-shadow: ${({ isOpen }) => isOpen ? '2px 0 10px rgba(0,0,0,0.1)' : 'none'};
+
+  // @media (max-width: 768px) {
+  //   position: fixed;
+  //   left: 0;
+  //   top: 0;
+  //   height: 100vh;
+  //   z-index: 1000;
+  //   width: ${({ isCollapsed }) => isCollapsed ? '0' : '80%'};
+  //   border-right: ${({ isCollapsed }) => isCollapsed ? 'none' : '1px solid #ddd'};
+  //   overflow: ${({ isCollapsed }) => isCollapsed ? 'hidden' : 'auto'};
+  // }
 `;
 
+export const ToggleButton = styled.button`
+  position: fixed;
+  left: ${({ isOpen }) => isOpen ? 'calc(20% + 5px)' : '0'};
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 50px;
+  background: white;
+  border: 1px solid #ddd;
+  border-left: none;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  transition: left 0.3s ease;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  @media (max-width: 768px) {
+    left: ${({ isOpen }) => isOpen ? 'calc(80% + 5px)' : '0'};
+  }
+`;
+
+export const QuestionItem = styled.div`
+  padding: 12px 15px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+`;
 export const Content = styled.div`
   width: 80%;
   padding: 20px;
@@ -26,6 +92,14 @@ export const QuestionHeader = styled.div`
   padding: 10px;
   background: ${theme.colors.lightgreen};
   border-radius: 5px;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+  font-size: 14px;
+}
 `;
 
 export const Option = styled.label`
@@ -73,9 +147,18 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
   margin: auto;
+  margin-top: 20px;
 
   &:hover {
     background-color: ${theme.colors.secondary};
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
   }
 `;
 
@@ -94,6 +177,14 @@ export const FeedbackBox = styled.div`
   align-items: center;
   margin: auto;
   justify-content: center;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 export const Icon = styled.span`
@@ -115,6 +206,14 @@ export const SolutionBox = styled.div`
     background-color: #f5f5f5;
     border-radius: 5px;
     padding: 10px;
+
+    @media (max-width: 1024px) {
+      font-size: 14px;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 12px;
+    }
   }
 
   .thumbsup {
@@ -122,6 +221,14 @@ export const SolutionBox = styled.div`
     justify-content: flex-end;
     gap: 10px;
     padding: 5px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
   }
 `;
 
@@ -138,12 +245,25 @@ export const NextButton = styled(Button)`
   &:hover {
     background-color: ${theme.colors.secondary};
   }
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
 `;
 
 export const MetaInfo1 = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textgray};
   font-family: ${({ theme }) => theme.fonts.body};
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+  }
+    @media (max-width: 768px) {
+    display:flex;
+    flex-direction:column;
+  }
 `;
 
 export const Topic1 = styled.span`

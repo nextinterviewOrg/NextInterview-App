@@ -16,6 +16,7 @@ import {
   QueryLink,
   FilterModal,
   ModalOverlay,
+  TableContainer,
 } from "./SupportQueryListView.styles";
 import SupportQueryListViewFilter from "../SupportQueryListViewFilter/SupportQueryListViewFilter";
 import { getAllSupportQuery } from "../../../../../api/supportQueryApi";
@@ -163,6 +164,7 @@ const SupportQueryListView = () => {
       {loading ? (
         <ShimmerTable rows={5} columns={6} />  
       ) : (
+        <TableContainer>
         <Table>
           <thead className="theader">
             <TableRow>
@@ -243,6 +245,7 @@ const SupportQueryListView = () => {
             )}
           </tbody>
         </Table>
+        </TableContainer>
       )}
       {isFilterOpen && (
         <>

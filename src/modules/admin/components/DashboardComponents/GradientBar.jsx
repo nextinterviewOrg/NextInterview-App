@@ -11,6 +11,11 @@ const GradientBackground = styled.div`
     ${(props) => props.theme.colors.bluetext},
     ${(props) => props.theme.colors.admintop}
   );
+
+  @media (max-width: 768px) {
+    height: 80px;
+    margin-left: 0px;
+  }
 `;
 
 const WelcomeText = styled.h1`

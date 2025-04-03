@@ -19,7 +19,7 @@ export const FeedbackAnalyticsWrap = styled.div`
     width: 80%;
 
     @media (max-width: 768px) {
-      width: 100%;
+      width: 90%;
     }
   }
 

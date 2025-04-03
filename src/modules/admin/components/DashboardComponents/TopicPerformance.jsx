@@ -21,6 +21,11 @@ const Container = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    width: 90%;
+  }
 `;
 
 const Item = styled.div`

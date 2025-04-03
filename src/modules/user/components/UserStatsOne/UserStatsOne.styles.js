@@ -44,6 +44,10 @@ line-height: normal;
   flex-direction:column;
   gap:38px;
   color:${({ theme }) => theme.colors.textgray};
+
+  @media (max-width: 768px) {
+    margin:10px;
+  }
 }
   .metric-value{
   text-align: center;
@@ -64,6 +68,14 @@ color:${({ theme }) => theme.colors.black};
   align-items: center;
 }
  
-
+@media (max-width: 768px) {
+  .performance-card {
+    flex-direction: column;
+        align-items: center;
+        // margin-top: 13rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+       padding:0;
+}
+}
 
 `

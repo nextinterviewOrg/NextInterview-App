@@ -37,6 +37,7 @@ export const InputContainer = styled.div`
   display: flex;
   align-items: flex-start;
   margin-bottom: 15px;
+  width: 90%;
 `;
 
 // Label
@@ -73,6 +74,12 @@ export const ButtonGroup = styled.div`
   display: flex;
   justify-content: flex-end;
   gap: 10px;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+  }
 `;
 
 // Button

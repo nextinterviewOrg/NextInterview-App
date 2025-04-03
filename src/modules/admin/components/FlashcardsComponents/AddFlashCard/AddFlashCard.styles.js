@@ -12,6 +12,10 @@ export const ModalWrapper = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 1000;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    padding: ${theme.spacing(2)};
+  }
 `;
 
 export const Container = styled.div`
@@ -28,7 +32,7 @@ export const Container = styled.div`
   z-index: 1000;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
-    width: 90%;
+    width: 100%;
     padding: ${theme.spacing(2)};
   }
 `;
@@ -65,6 +69,10 @@ export const ContentWrapper = styled.div`
   // align-items: center;
   gap: ${theme.spacing(2)};
   width: 700px;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    width: 100%;
+  }
 `;
 
 export const FlashcardLabel = styled.div`
@@ -125,12 +133,29 @@ export const UploadButton = styled.button`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto;
   }
 `;
 
 
 export const FileInputWrapper = styled.div`
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin:auto;
+
+  .upload-button{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  }
+
 `;
 
 export const ImagePreview = styled.div`

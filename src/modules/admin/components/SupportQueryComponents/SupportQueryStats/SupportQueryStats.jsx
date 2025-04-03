@@ -57,11 +57,14 @@ const SupportQueryStats = () => {
             <StatLabel>Total Queries</StatLabel>
             <StatValue>{stats.data.totalQueries}</StatValue>
           </StatCard>
+
           <Divider />
+
           <StatCard>
             <StatLabel>Open Queries</StatLabel>
             <StatValue>{stats.data.openQueries}</StatValue>
           </StatCard>
+          
           <Divider />
           <StatCard>
             <StatLabel>Solved Queries</StatLabel>

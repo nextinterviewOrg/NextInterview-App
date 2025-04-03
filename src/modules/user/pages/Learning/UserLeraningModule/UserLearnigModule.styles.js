@@ -3,6 +3,10 @@ import styled from "styled-components";
 export const UserLearningModuleWrapper = styled.div`
   /* General Container */
   margin-left: 60px;
+
+  @media ( max-width: 768px) {
+    margin-left: 0;
+  }
   .learning-module-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -11,7 +15,7 @@ export const UserLearningModuleWrapper = styled.div`
   }
 
   /* Image and Course Details Section */
-  .course-header {
+  .course-header1 {
     display: flex;
     align-items: center;
     margin-bottom: 40px;
@@ -337,6 +341,12 @@ export const UserLearningModuleWrapper = styled.div`
       flex-direction: column;
       align-items: left;
       justify-content: left;
+      @media ( max-width: 830px) {
+      display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-left: 30px;
+      }
     }
     .course-action-btns {
       flex-direction: column;

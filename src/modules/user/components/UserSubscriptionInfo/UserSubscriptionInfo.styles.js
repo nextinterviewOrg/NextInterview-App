@@ -1,15 +1,19 @@
 import styled from "styled-components";
 
-export const UserSubscriptionInfoWrapper = styled.div`
-   
-
-    .subscription-container {
+export const UserSubscriptionInfoWrapper1 = styled.div`
+   @media (max-width: 768px) {
+       margin-left: 0px;
+   }
+    .subscription-container2 {
     background: #fff;
     border-radius: 8px;
     padding: 24px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
    max-width:100%;
    margin-top: 20px;
+    @media (max-width: 768px) {
+       margin-left: 0px;
+   }
 }
 
 .subscription-title {

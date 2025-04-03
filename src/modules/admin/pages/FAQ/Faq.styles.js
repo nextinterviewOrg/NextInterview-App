@@ -8,6 +8,10 @@ export const FAQContainer = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-left: 30px;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    margin-left: 0px;
+  }
 `;
 
 export const Question = styled.div`

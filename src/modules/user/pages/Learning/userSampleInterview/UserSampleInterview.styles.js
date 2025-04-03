@@ -5,6 +5,10 @@ export const UserSampleInterviewWrapper = styled.div`
 margin-left: 60px;
 margin-bottom:10px;
 
+@media ( max-width: 768px)
+{
+margin-left: 0px;}
+
 /* Container for the video */
 .video-page {
   display: flex;

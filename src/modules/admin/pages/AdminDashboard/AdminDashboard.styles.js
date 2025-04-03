@@ -20,6 +20,10 @@ export const DashboardContainer = styled.div`
     }
   }
 
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
+
   .user-activity {
     display: grid;
     grid-template-columns: 1fr 1fr;

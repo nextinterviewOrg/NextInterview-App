@@ -10,6 +10,7 @@ import {
 } from "../../../admin/pages/AdminBlogDisplay/AdminBlogDisplay.styles";
 // Import your SCSS file for the card animations
 import "../Blog/Blog.scss"; // Adjust the path as needed
+import { ShimmerCategoryItem } from "react-shimmer-effects";
 
 const AdminBlogDisplay = () => {
   const { id } = useParams();

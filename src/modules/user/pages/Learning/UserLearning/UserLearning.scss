@@ -7,17 +7,57 @@
   }
   
   /* Container and Card Styling */
-  .card__container {
+  .card__containers {
     display: grid;
     grid-template-columns: repeat(4, 1fr); /* 4 columns in grid view */
     gap: 3.5rem;
     row-gap: 3.5rem;
     padding: 0 1.5rem;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      row-gap: 2rem;
+      padding: 0;
+      }
+
+    @media (max-width: 768px) {
+      margin-left: 0px;
+      padding: 30px;
+
+  
+    }
+
+    @media (max-width: 480px) {
+      grid-template-columns: repeat(1, 1fr);
+      gap: 1rem;
+      row-gap: 2rem;
+      padding: 0;
+      } 
+    
+
+
+
+   
+  }
+
+  .card{
+    margin-left: 20px;
+
+    @media (max-width: 1024px) {
+      margin-left: 0px;
+      }
   }
   
   .card__article {
     position: relative;
     overflow: hidden;
+
+
+    
+    @media (max-width: 480px) {
+      margin-left: 20px;
+    } 
   }
   
   .card__img {
@@ -27,7 +67,7 @@
     border-radius: 1.5rem;
   }
   
-  .card__data {
+  .card__datas {
     width: 240px;
     background-color: var(--container-color);
     padding: 1.5rem 2rem;
@@ -36,12 +76,30 @@
     position: absolute;
     bottom: -9rem;
     left: 0;
-    right: 0;
+    right: 50px;
     margin-inline: auto;
     opacity: 0;
+    // height: 200px;
     transition: opacity 1s 1s;
+
+    @media (max-width: 1024px) {
+      width: 220px;
+      right: 10px;
+      }
+
+      @media (max-width: 768px) {
+        width: 60%;
+        right: 40px;
+      }
+
+      @media (max-width: 480px) {
+        width: 60%;
+        right: 15px;
+      }
   }
-  a
+  // a
+
+
   .card__description {
     display: block;
     font-size: var(--small-font-size);
@@ -67,7 +125,7 @@
   }
   
   /* Animation Effects */
-  .card__article:hover .card__data {
+  .card__article:hover .card__datas {
     animation: show-data 1s forwards;
     opacity: 1;
     transition: opacity .3s;
@@ -77,7 +135,7 @@
     animation: remove-overflow 2s forwards;
   }
   
-  .card__article:not(:hover) .card__data {
+  .card__article:not(:hover) .card__datas {
     animation: remove-data 1s forwards;
   }
   
@@ -171,13 +229,6 @@ color: #fff;
   
   /* Media Query for smaller screens */
   @media (max-width: 768px) {
-    .card__container {
-      grid-template-columns: 1fr 1fr;
-    }
-  
-    .card__data {
-      width: 100%;
-    }
   
     .card__img {
       height: 150px;

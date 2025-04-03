@@ -8,7 +8,13 @@ export const PageWrapper = styled.div`
 
 export const ContentWrapper = styled.div`
   flex: 1;
-  margin-left: 200px;
-
+  margin-left: ${(props) => (props.isExpanded ? "200px" : "40px")};
+  transition: margin-left 0.3s ease, width 0.3s ease;
   overflow-y: auto;
+  width: calc(100% - ${(props) => (props.isExpanded ? "200px" : "40px")});
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 100%;
+  }
 `;

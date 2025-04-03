@@ -1,21 +1,31 @@
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 
-
 export const MarqueeContainer = styled.div`
   width: 100%;
   overflow: hidden;
-  // border: 1px solid #ddd;
   border-radius: 10px;
   background: #fff;
   padding: 10px;
+
+  @media (max-width: 1024px) {
+    padding: 8px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px;
+  }
 `;
 
 // The track that actually moves
 export const MarqueeTrack = styled.div`
   display: flex;
   animation: scroll 15s linear infinite;
-  border:none;
+  border: none;
 
   /* Pause animation on hover */
   &:hover {
@@ -32,6 +42,18 @@ export const MarqueeTrack = styled.div`
       transform: translateX(-50%);
     }
   }
+
+  @media (max-width: 1024px) {
+    animation: scroll 20s linear infinite;
+  }
+
+  @media (max-width: 768px) {
+    animation: scroll 25s linear infinite;
+  }
+
+  @media (max-width: 480px) {
+    animation: scroll 30s linear infinite;
+  }
 `;
 
 export const Card = styled.div`
@@ -42,6 +64,19 @@ export const Card = styled.div`
   background-color: #f8f8f8;
   padding: 1rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  max-height: 300px;
+
+  @media (max-width: 1024px) {
+    flex: 0 0 33.33%; /* 3 cards per row on medium screens */
+  }
+
+  @media (max-width: 768px) {
+    flex: 0 0 50%; /* 2 cards per row on smaller screens */
+  }
+
+  @media (max-width: 480px) {
+    flex: 0 0 100%; /* 1 card per row on extra small screens */
+  }
 
   /* Basic styling */
   text-align: left;
@@ -49,8 +84,8 @@ export const Card = styled.div`
   /* On hover, slightly scale up and add shadow */
   &:hover {
     transform: scale(1.05);
-    background-color:rgb(209, 250, 248);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    background-color: rgb(209, 250, 248);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
   }
 
   h2 {
@@ -61,10 +96,8 @@ export const Card = styled.div`
 
   p {
     margin: 20px;
-    display:flex;
+    display: flex;
     justify-content: center;
-
     font-size: 0.9rem;
   }
-  
 `;

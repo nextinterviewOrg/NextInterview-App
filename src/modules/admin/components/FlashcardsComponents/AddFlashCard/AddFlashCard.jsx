@@ -97,7 +97,7 @@ const AddFlashCard = ({ onClose, onSave, flashcardCount }) => {
 
           <FileInputWrapper>
             <label htmlFor="image-upload" style={{ cursor: "pointer" }}>
-              <div style={{ padding: "10px", backgroundColor: "#f1f1f1", borderRadius: "5px", textAlign: "center" }}>
+              <div className="upload-button" style={{ padding: "10px", backgroundColor: "#f1f1f1", borderRadius: "5px", textAlign: "center" }}>
                 Choose an image
               </div>
             </label>

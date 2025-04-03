@@ -17,7 +17,11 @@ z-index: 12;
   box-shadow: 0 4px 6px ${(props) => props.theme.colors.borderblue};
 
   @media (max-width: 768px) {
-  width: 70%;
+display:none;
+}
+@media (max-width: 1024px) {
+margin: 60px 40px 70px 80px;
+}
 `;
 
 const MetricCard = styled.div`
@@ -26,6 +30,10 @@ const MetricCard = styled.div`
   padding: ${(props) => props.theme.spacing(2)};
   &:not(:last-child) {
     border-right: 1px solid ${(props) => props.theme.colors.backgray};
+  }
+
+  @media (max-width: 768px) {
+    padding: ${(props) => props.theme.spacing(1)};
   }
 `;
 

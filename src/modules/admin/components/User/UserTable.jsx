@@ -9,12 +9,25 @@ const TableContainer = styled.div`
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   margin-left: 60px;
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+  }
+`;
+
+const ScrollableTableWrapper = styled.div`
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch; // Enables smooth scrolling on mobile
 `;
 
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   background-color: ${({ theme }) => theme.colors.white};
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Th = styled.th`
@@ -150,75 +163,77 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
     <div>
       <TableContainer>
         {loading ? (
-          <ShimmerTable row={8} col={7} /> // shimmer effect when loading
+          <ShimmerTable row={8} col={7} />
         ) : (
-          <Table>
-            <thead>
-              <tr>
-                <Th></Th>
-                <Th>Name</Th>
-                <Th>Topics Completed</Th>
-                <Th>Avg. Active Hours</Th>
-                <Th>Last Active</Th>
-                <Th></Th>
-                <Th></Th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentUsers.map((user, index) => (
-                <Tr
-                  key={index}
-                  isSelected={selectedRows.includes(user.clerkId)}
-                  onClick={() => onRowSelectionChange(user.clerkId)}
-                >
-                  <Td>
-                    <Checkbox
-                      checked={selectedRows.includes(user.clerkId)}
-                      onChange={(e) => e.stopPropagation()}
-                    />
-                  </Td>
-                  <Td>
-                    <UserCell>
-                      <Avatar>
-                        <img
-                          style={{
-                            borderRadius: "50%",
-                            width: "40px",
-                            height: "40px",
-                          }}
-                          src={user.profilePic}
-                          alt={user.name}
-                        />
-                      </Avatar>
-                      <UserInfo>
-                        <Name>{user.name}</Name>
-                        <Email>{user.email}</Email>
-                      </UserInfo>
-                    </UserCell>
-                  </Td>
-                  <Td>{user.topicsCompleted}</Td>
-                  <Td>
-                    <ActiveHours
-                      color={user.activeHours.includes("18h") ? "success" : "warning"}
-                    >
-                      {user.activeHours}
-                    </ActiveHours>
-                  </Td>
-                  <Td>{user.lastActive}</Td>
-                  <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
-                  <Td>
-                    <Link
-                      to={`/admin/userProfile`}
-                      state={{ clerkId: user.clerkId }}
-                      style={{ textDecoration: "none" }}
-                    >
-                      <FaEye />
-                    </Link>
-                  </Td>
-                </Tr>
-              ))}
-            </tbody>
-          </Table>
+          <ScrollableTableWrapper>
+            <Table>
+              <thead>
+                <tr>
+                  <Th></Th>
+                  <Th>Name</Th>
+                  <Th>Topics Completed</Th>
+                  <Th>Avg. Active Hours</Th>
+                  <Th>Last Active</Th>
+                  <Th></Th>
+                  <Th></Th>
+                </tr>
+              </thead>
+              <tbody>
+                {currentUsers.map((user, index) => (
+                  <Tr
+                    key={index}
+                    isSelected={selectedRows.includes(user.clerkId)}
+                    onClick={() => onRowSelectionChange(user.clerkId)}
+                  >
+                    <Td>
+                      <Checkbox
+                        checked={selectedRows.includes(user.clerkId)}
+                        onChange={(e) => e.stopPropagation()}
+                      />
+                    </Td>
+                    <Td>
+                      <UserCell>
+                        <Avatar>
+                          <img
+                            style={{
+                              borderRadius: "50%",
+                              width: "40px",
+                              height: "40px",
+                            }}
+                            src={user.profilePic}
+                            alt={user.name}
+                          />
+                        </Avatar>
+                        <UserInfo>
+                          <Name>{user.name}</Name>
+                          <Email>{user.email}</Email>
+                        </UserInfo>
+                      </UserCell>
+                    </Td>
+                    <Td>{user.topicsCompleted}</Td>
+                    <Td>
+                      <ActiveHours
+                        color={user.activeHours.includes("18h") ? "success" : "warning"}
+                      >
+                        {user.activeHours}
+                      </ActiveHours>
+                    </Td>
+                    <Td>{user.lastActive}</Td>
+                    <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
+                    <Td>
+                      <Link
+                        to={`/admin/userProfile`}
+                        state={{ clerkId: user.clerkId }}
+                        style={{ textDecoration: "none" }}
+                      >
+                        <FaEye />
+                      </Link>
+                    </Td>
+                  </Tr>
+                ))}
+              </tbody>
+            </Table>
+          </ScrollableTableWrapper>
         )}
       </TableContainer>
 

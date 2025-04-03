@@ -10,10 +10,12 @@ export const Container = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, 1fr); /* Two cards per row on tablets */
-  }
+ margin-left: 0px;
+    }
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     grid-template-columns: repeat(1, 1fr); /* One card per row on mobile */
+    margin-left: 0px;
   }
 `;
 

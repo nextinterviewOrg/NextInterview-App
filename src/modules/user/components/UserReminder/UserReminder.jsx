@@ -65,6 +65,7 @@ const MarqueeCards = () => {
               <p>{card.cardContent}</p>
 
               <div
+                className="card-footer"
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -87,7 +88,7 @@ const MarqueeCards = () => {
                   I know this
                 </button>
 
-                <p
+                <p className="date"
                   style={{
                     margin: "0 12px", // Just a little space around date
                     fontWeight: "normal",

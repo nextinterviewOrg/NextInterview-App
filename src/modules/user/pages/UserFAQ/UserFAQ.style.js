@@ -7,6 +7,10 @@ export const FAQContainer = styled.div`
   border-radius: 8px;
   // max-width: 1000px;
   margin-left: 40px;
+
+  @media (max-width: 800px) {
+    margin-left: 0px;
+  }
 `;
 
 export const FAQTitle = styled.h2`
@@ -16,6 +20,10 @@ export const FAQTitle = styled.h2`
   line-height: 44px;
   color: ${theme.colors.text};
   font-family: ${theme.fonts.body};
+
+  @media (max-width: 800px) {
+    font-size: 24px;
+  }
 `;
 
 export const FAQSubtitle = styled.p`
@@ -25,11 +33,18 @@ export const FAQSubtitle = styled.p`
   font-weight: 400;
   font-family: ${theme.fonts.body};
   color: ${theme.colors.textgray};
+
+  @media (max-width: 800px) {
+    font-size: 16px;
+  }
 `;
 
 export const FAQItem = styled.div`
   border-bottom: 1px solid ${theme.colors.backgray};
   padding: 15px 0;
+  @media (max-width: 800px) {
+    padding: 10px 0;
+  }
 `;
 
 export const FAQQuestion = styled.div`
@@ -46,6 +61,10 @@ export const FAQQuestion = styled.div`
   background-color:  ${({ theme }) => theme.colors.sidebarBgColor};;
   color: ${theme.colors.text};
   font-family: ${theme.fonts.body};
+
+  @media (max-width: 800px) {
+    font-size: 16px;
+  }
 `;
 
 export const FAQAnswer = styled.p`
@@ -56,6 +75,10 @@ export const FAQAnswer = styled.p`
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
+
+  @media (max-width: 800px) {
+    font-size: 14px;  
+  }
 `;
 
 export const ToggleButton = styled.span`

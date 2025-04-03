@@ -86,11 +86,12 @@ export const UploadButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   font-family: ${theme.fonts.body};
-display: flex;
-  align-items: center;
-  flex-direction: row;
-  marging: 0;
+
+
+  display: flex;
   justify-content: center;
+  align-items: center;
+  margin: auto;
   &:hover {
     background: ${theme.colors.secondary};
   }

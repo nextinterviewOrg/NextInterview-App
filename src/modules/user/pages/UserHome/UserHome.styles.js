@@ -10,11 +10,11 @@ export const UserHomeWrapper = styled.div`
   }
 
   @media (max-width: 1024px) {
-    margin-left: 30px;
+    margin-left: 0;
   }
 
   @media (max-width: 768px) {
-    margin-left: 10px;
+    margin-left: 0;
     padding: 5px;
   }
 
