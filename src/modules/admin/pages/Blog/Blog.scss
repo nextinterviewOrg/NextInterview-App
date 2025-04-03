@@ -1,43 +1,67 @@
 :root {
-    --container-color: #fff;
-    --small-font-size: 0.875rem;
-    --h2-font-size: 1.5rem;
-    --title-color: #333;
-    --first-color: #007BFF;
-  }
-  /*=============== CARD ===============*/
-.container{
-    display: grid;
-    place-items: center;
-    margin-inline: 1.5rem;
-    padding-block: 5rem;
-    grid-template-columns: repeat( 1fr,2);
+   --container-color: #fff;
+   --small-font-size: 0.875rem;
+   --h2-font-size: 1.5rem;
+   --title-color: #333;
+   --first-color: #007BFF;
+}
 
- }
+/*=============== CARD ===============*/
+.container {
+   display: grid;
+   place-items: center;
+   margin-inline: 1.5rem;
+   padding-block: 5rem;
+   grid-template-columns: repeat(1, 1fr);
 
- .card__container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr); // Three equal columns
-    gap: 3.5rem; // Optional: adjusts spacing between cards
-    row-gap: 3.5rem; // Keep your existing row gap if needed
+   @media (max-width: 768px) {
+     margin-left: 0px;
   }
+  @media (max-width: 1024px) {
+     margin-left: 0px;
+  }
+}
+
+.card__container {
+   display: grid;
+   grid-template-columns: repeat(4, 1fr);
+   gap: 3.5rem; 
+   row-gap: 3.5rem; 
+
   
- 
- .card{
-    &__container{
+   @media (max-width: 768px) {
+       grid-template-columns: 1fr; 
+ margin-left: 0px;
+      }
+
+      @media (max-width: 1024px) {
+       grid-template-columns: 2fr; 
+ margin-left: 0px;
+      }
+
+      @media (max-width: 1280px) {
+         grid-template-columns: 3fr; 
+ margin-left: 0px;
+      }
+}
+
+.card {
+   &__container {
        display: grid;
-    //    row-gap: 3.5rem;
-    }
-    &__article{
+   }
+
+   &__article {
        position: relative;
        overflow: hidden;
-    }
-    &__img{
+   }
+
+   &__img {
        width: 328px;
        height: 300px;
        border-radius: 1.5rem;
-    }
-    &__data{
+   }
+
+   &__data {
        width: 240px;
        background-color: var(--container-color);
        padding: 1.5rem 2rem;
@@ -50,79 +74,90 @@
        margin-inline: auto;
        opacity: 0;
        transition: opacity 1s 1s;
-    }
-    &__description{
+   }
+
+   &__description {
        display: block;
        font-size: var(--small-font-size);
        margin-bottom: .25rem;
-    }
-    &__title{
+   }
+
+   &__title {
        font-size: var(--h2-font-size);
        font-weight: 500;
        color: var(--title-color);
        margin-bottom: .75rem;
-    }
-    &__button{
+   }
+
+   &__button {
        text-decoration: none;
        font-size: var(--small-font-size);
        font-weight: 500;
        color: var(--first-color);
- 
-       &:hover{
-          text-decoration: underline;
+
+       &:hover {
+           text-decoration: underline;
        }
-    }
-    // Naming animations in hover
-    &__article:hover &__data{
+   }
+
+   /* Hover effects and animations */
+   &__article:hover &__data {
        animation: show-data 1s forwards;
        opacity: 1;
        transition: opacity .3s;
-    }
-    &__article:hover{
+   }
+
+   &__article:hover {
        animation: remove-overflow 2s forwards;
-    }
-    &__article:not(:hover){
+   }
+
+   &__article:not(:hover) {
        animation: show-overflow 2s forwards;
-    }
-    &__article:not(:hover) &__data{
+   }
+
+   &__article:not(:hover) &__data {
        animation: remove-data 1s forwards;
-    }
- }
- 
- /* Card animation */
- @keyframes show-data{
-    50%{
+   }
+}
+
+/* Card animation */
+@keyframes show-data {
+   50% {
        transform: translateY(-10rem);
-    }
-    100%{
+   }
+
+   100% {
        transform: translateY(-7rem);
-    }
- }
- 
- @keyframes remove-overflow{
-    to{
+   }
+}
+
+@keyframes remove-overflow {
+   to {
        overflow: initial;
-    }
- }
- 
- @keyframes remove-data{
-    0%{
+   }
+}
+
+@keyframes remove-data {
+   0% {
        transform: translateY(-7rem);
-    }
-    50%{
+   }
+
+   50% {
        transform: translateY(-10rem);
-    }
-    100%{
+   }
+
+   100% {
        transform: translateY(.5rem);
-    }
- }
- 
- @keyframes show-overflow{
-    0%{
+   }
+}
+
+@keyframes show-overflow {
+   0% {
        overflow: initial;
        pointer-events: none;
-    }
-    50%{
+   }
+
+   50% {
        overflow: hidden;
-    }
- }
+   }
+}

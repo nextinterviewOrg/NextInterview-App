@@ -4,6 +4,10 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin-left: 60px;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 export const ImageContainer = styled.div`

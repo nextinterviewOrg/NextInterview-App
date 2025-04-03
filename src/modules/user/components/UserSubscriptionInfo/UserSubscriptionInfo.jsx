@@ -1,6 +1,6 @@
 // UserSubscriptionInfo.js
 import React from 'react';
-import { UserSubscriptionInfoWrapper } from './UserSubscriptionInfo.styles';
+import { UserSubscriptionInfoWrapper1 } from './UserSubscriptionInfo.styles';
 
 const UserSubscriptionInfo = () => {
     const subscription = {
@@ -12,8 +12,8 @@ const UserSubscriptionInfo = () => {
     };
 
     return (
-        <UserSubscriptionInfoWrapper>
-            <div className="subscription-container">
+        <UserSubscriptionInfoWrapper1>
+            <div className="subscription-container2">
                 <h2 className="subscription-title">Subscription info</h2>
                 <div className="subscription-details">
                     <div className="detail-item"><span className='detail-item-title'>Subscription Type</span> <span className='detail-item-value'>{subscription.type}</span></div>
@@ -26,7 +26,7 @@ const UserSubscriptionInfo = () => {
                     {/* <button className="upgrade-button">Upgrade</button> */}
                 </div>
             </div>
-        </UserSubscriptionInfoWrapper>
+        </UserSubscriptionInfoWrapper1>
     );
 };
 

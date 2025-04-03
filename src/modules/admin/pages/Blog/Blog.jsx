@@ -200,6 +200,8 @@ const BlogForm = () => {
         alignItems: "center",
         justifyContent: "center",
         zIndex: 9999,
+        scrollBehavior: "smooth",
+        overflow: "auto",
     };
 
     const modalContentStyle = {
@@ -270,6 +272,7 @@ const BlogForm = () => {
                                 style={{
                                     fontWeight: "600",
                                     fontFamily: "DM Sans",
+                                    
                                 }}
                             >
                                 Title:

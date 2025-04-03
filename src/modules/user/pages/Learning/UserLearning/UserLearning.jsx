@@ -50,7 +50,7 @@ export default function UserLearning() {
 
   return (
     <UserLearningWrapper>
-      <div className="courses-container">
+      <div className="courses-container2">
         <div className="header">
           <h1 className="header-title">Data Science Lite Modules</h1>
           <div className="header-actions">
@@ -73,7 +73,7 @@ export default function UserLearning() {
         {/* Course Cards Layout with Shimmer Effect */}
         <div
           className={
-            isGridView ? "card__container grid-view" : "card__container list-view"
+            isGridView ? "card__containers grid-view" : "card__containers list-view"
           }
         >
           {loading
@@ -96,9 +96,6 @@ export default function UserLearning() {
               filteredCourses.map((course, index) =>
                 isGridView ? (
                   <div key={index} className="card"
-                  style={{
-                    marginLeft: "20px",
-                  }}
                   >
                     <div className="card__article">
                       <img
@@ -106,7 +103,7 @@ export default function UserLearning() {
                         alt={course.title}
                         className="card__img"
                       />
-                      <div className="card__data">
+                      <div className="card__datas">
                         <h3 className="card__title">{course.title}</h3>
                         <p className="card__description">
                           {course.description.split(" ").slice(0, 10).join(" ")}

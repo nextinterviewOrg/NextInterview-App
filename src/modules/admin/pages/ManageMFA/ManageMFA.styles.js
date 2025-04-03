@@ -6,7 +6,9 @@ import theme from "../../../../theme/Theme";
 export const MainContainer = styled.div`
    width: auto;
    padding-left: 60px;
-    
+
+   @media (max-width: 768px) {
+    padding-left: 0px;
     `
 export const Container = styled.div`
 //   width: 100%;
@@ -28,6 +30,12 @@ export const Header = styled.div`
     margin: 0;
     font-size: 1.3rem;
   }
+
+  @media (max-width: 768px) {
+    h2 {
+      font-size: 1rem;
+    }
+  }
 `;
 
 // Status Message
@@ -36,11 +44,19 @@ export const StatusMessage = styled.p`
   margin-top: 8px;
   color: ${theme.colors.textgray};
   margin-top: 80px;
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 export const InstraMessage = styled.p`
   font-size: 1rem;
   margin-top: 8px;
   color: ${theme.colors.textgray};
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 // Button for Add/Disable 2FA
@@ -54,6 +70,10 @@ export const ActionButton = styled.button`
 
   &:hover {
     background-color:${theme.colors.bluetext};
+  }
+
+  @media (max-width: 768px) {
+    padding: 6px 10px;
   }
 `;
 
@@ -105,11 +125,19 @@ export const InstraHeading = styled.p`
   color: ${theme.colors.black};
   font-weight: bold;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 0.9rem;
+  }
 `;
 export const InstraPara = styled.p`
   margin-top: 10px;
   font-size: 0.9rem;
   color: ${theme.colors.textgray};
+
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 export const InstraBtn = styled.div`
 display: flex;

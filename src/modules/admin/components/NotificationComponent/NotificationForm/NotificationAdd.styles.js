@@ -50,6 +50,10 @@ export const ModalHeader = styled.h2`
   font-family: ${({ theme }) => theme.fonts.body};
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 1rem; /* Adjust font size for smaller screens */
+  }
 `;
  
 export const CloseButton = styled.button`
@@ -107,6 +111,9 @@ export const Label = styled.label`
   font-size: 0.8rem;
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.body};
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
 `;
  
 export const RadioGroup = styled.div`
@@ -131,11 +138,19 @@ export const RadioLabel = styled.label`
   font-size: 0.8rem;
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.fonts.body};
+  @media (max-width: 768px) {
+    font-size: 0.7rem;
+  }
 `;
 export const Input = styled.input`
   width: 100%;
   font-family: ${({ theme }) => theme.fonts.body};
   height: 20px; /* Add a fixed height */
+  @media (max-width: 768px) {
+    height: 18px; /* Adjust the height for smaller screens */
+    font-size: 0.8rem;
+    width: 90%;
+  }
 `;
  
 export const TextArea = styled.textarea`
@@ -143,12 +158,24 @@ export const TextArea = styled.textarea`
   resize: none;
   font-family: ${({ theme }) => theme.fonts.body};
   height: 40px; /* Add a fixed height */
+
+  @media (max-width: 768px) {
+    height: 30px; /* Adjust the height for smaller screens */
+    font-size: 0.8rem;
+    width: 90%;
+  }
 `;
  
 export const Select = styled.select`
   width: 100%;
   font-family: ${({ theme }) => theme.fonts.body};
   height: 40px; /* Add a fixed height */
+
+  @media (max-width: 768px) {
+  height: 40px; /* Adjust the height for smaller screens */
+  font-size: 0.8rem;
+  width: 95%;
+  }
 `;
  
 export const ButtonGroup = styled.div`
@@ -172,6 +199,12 @@ export const Button = styled.button`
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};
   }
+    @media (max-width: 768px) {
+    font-size: 0.8rem;
+    justify-content: center;
+    flex-direction: column;
+    margin: auto;
+  }
 `;
  
 export const TimePickerStyled = styled(TimePicker)`
@@ -185,6 +218,12 @@ export const TimePickerStyled = styled(TimePicker)`
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary};
     outline: none;
+  }
+
+  @media (max-width: 768px) {
+    height: 40px; /* Adjust the height for smaller screens */
+    font-size: 0.8rem;
+    width: 95%;
   }
 `;
  

@@ -15,6 +15,10 @@ export const Card = styled.div`
     width: 100%;
     margin: 20px;
   }
+
+  @media (max-width: 1024px) {
+    width: 100%;
+  }
 `;
 
 export const Header = styled.div`
@@ -36,6 +40,13 @@ export const Title = styled.h2`
   font-size: 22px;
   color: #333;
   margin-bottom: 10px;
+
+  @media (max-width: 1024px) {
+    font-size: 18px;
+  }
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
 `;
 
 export const Description = styled.p`

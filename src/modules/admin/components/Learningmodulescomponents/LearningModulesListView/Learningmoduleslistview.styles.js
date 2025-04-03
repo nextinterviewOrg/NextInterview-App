@@ -4,6 +4,8 @@ import theme from "../../../../../theme/Theme";
 export const ModulesSection = styled.div`
   margin-top: ${theme.spacing(3)};
 
+ 
+
   .module-header {
     display: flex;
     justify-content: space-between;
@@ -13,6 +15,18 @@ export const ModulesSection = styled.div`
     h3 {
       font-family: ${theme.fonts.heading};
     }
+      @media (max-width: ${theme.breakpoints.tablet}) {
+        h3 {
+          font-size: 1.2rem;
+        }
+      }
+      @media (max-width: ${theme.breakpoints.mobile}) {
+      display: flex;
+      flex-direction: column;
+        h3 {
+          font-size: 1rem;
+        }
+      }
   }
 `;
 
@@ -90,31 +104,7 @@ export const ModuleActions = styled.div`
   }
 `;
 
-// export const SearchBar = styled.input`
-//   padding: 8px;
-//   border: 1px solid ${theme.colors.sidebarHoverBgColor};
-//   border-radius: 4px;
-//   width: 200px;
-//   margin-right: ${theme.spacing(2)};
 
-//   @media (max-width: ${theme.breakpoints.tablet}) {
-//     width: 100%;
-//   }
-// `;
-
-// export const NewUploadButton = styled.button`
-//   background: ${theme.colors.primary};
-//   color: white;
-//   padding: 8px 16px;
-//   border: none;
-//   border-radius: 4px;
-//   cursor: pointer;
-
-//   &:hover {
-//     background: ${theme.colors.sidebarHoverBgColor};
-//     color: ${theme.colors.text};
-//   }
-// `;
 
 export const NewUploadButton = styled.button`
   background: ${theme.colors.bluetext};

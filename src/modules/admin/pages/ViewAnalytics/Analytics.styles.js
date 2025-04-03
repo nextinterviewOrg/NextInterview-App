@@ -9,6 +9,10 @@ export const Container = styled.div`
   padding: ${theme.spacing(2)};
   background-color: ${theme.colors.light};
   font-family: ${theme.fonts.body};
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    margin-left: 0px;
+  }
 `;
 
 export const Card = styled.div`
@@ -67,6 +71,12 @@ export const Stats = styled.div`
   display: flex;
   gap: 16px;
   margin-top: ${theme.spacing(5)};
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+  }
 `;
 
 export const Stat = styled.div`
@@ -77,6 +87,12 @@ export const Stat = styled.div`
   border-radius: 14px;
   gap: 8px;
   font-size: 12px;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: row;
+    justify-content: center;
+    text-align: center;
+  }
 `;
 
 export const StatLabel = styled.div`

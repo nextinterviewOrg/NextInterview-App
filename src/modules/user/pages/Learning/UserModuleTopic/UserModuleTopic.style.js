@@ -8,6 +8,10 @@ export const Container = styled.div`
   padding: ${({ theme }) => theme.spacing(4)};
   margin-left: 40px;
   transition: margin-left 0.3s ease-in-out; /* Smooth transition */
+
+  @media (max-width:768px) {
+    margin-left: 0px;
+  }
 `;
 
 export const TryItYourself = styled.div`

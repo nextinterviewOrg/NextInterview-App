@@ -1,11 +1,23 @@
 import styled from "styled-components";
+
 export const SideBarwrapper = styled.div`
   background-color: ${(props) => props.theme.colors.sidebarBgColor};
-  width: 250px;
+  width: ${(props) => (props.isExpanded ? "250px" : "80px")};
   height: 100vh;
   position: fixed;
   display: flex;
   flex-direction: column;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+  z-index: 999;
+
+  @media (max-width: 768px) {
+   width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
+    position: fixed;
+    height: 100vh;
+    z-index: 1000;
+    transition: width 0.3s ease-in-out;
+  }
 
   .logo {
     display: flex;
@@ -13,14 +25,14 @@ export const SideBarwrapper = styled.div`
     align-items: center;
     padding: 20px;
     img {
-      width: 80%;
+      width: ${(props) => (props.isExpanded ? "80%" : "50%")};
     }
   }
 
   .menu-list {
     display: flex;
     flex-direction: column;
-    padding: 0;
+    padding: 0; 
     margin: 0;
     list-style: none;
     align-items: flex-start;
@@ -34,23 +46,25 @@ export const SideBarwrapper = styled.div`
 
   .menu-link {
     display: grid;
-    grid-template-columns: 1fr 4fr;
+    grid-template-columns: ${(props) =>
+      props.isExpanded ? "1fr 4fr" : "1fr"};
     align-items: center;
-    padding: 0 10px 0 10px;
+    padding: 0 10px;
     color: ${(props) => props.theme.colors.sidebarTextColor || "grey"};
     text-decoration: none;
-    margin: 0 15px 0 15px;
+    margin: 0 15px;
     height: 35px;
     border: none;
+    transition: background-color 0.3s;
 
     &:hover {
       background-color: ${(props) =>
         props.theme.colors.sidebarHoverBgColor || "#e0e0e0"};
     }
 
-    .menu-link-icon .svgicon {
-      filter: invert(9%) sepia(5%) saturate(800%) hue-rotate(180deg)
-        brightness(0%) contrast(0%);
+    .menu-link-icon {
+      margin-right: ${(props) => (props.isExpanded ? "10px" : "0px")};
+      font-size: 20px;
     }
 
     &.active {
@@ -60,28 +74,36 @@ export const SideBarwrapper = styled.div`
       border: none;
       outline: none;
       border-radius: 5px;
-
-      .menu-link-icon .svgicon {
-        filter: invert(87%) sepia(60%) saturate(1129%) hue-rotate(85deg)
-          brightness(96%) contrast(100%);
-      }
-    }
-
-    .menu-link-icon {
-      margin-right: 10px;
-      font-size: 20px;
     }
 
     .menu-link-text {
-      display: inline-block;
+      display: ${(props) => (props.isExpanded ? "inline-block" : "none")};
       font-size: 14px;
+    }
+  }
+
+  /* Hamburger icon for mobile view */
+  .hamburger-icon {
+    display: none;
+    cursor: pointer;
+    padding: 20px;
+    font-size: 30px;
+    color: ${(props) => props.theme.colors.text};
+
+    @media (max-width: 768px) {
+      display: block;
     }
   }
 `;
 
 export const ContentWrapper = styled.div`
-  margin-left: 50px;
+  margin-left: ${(props) => (props.isExpanded ? "250px" : "80px")};
   padding: 20px;
-  width: calc(100% - 200px);
+  width: calc(100% - ${(props) => (props.isExpanded ? "250px" : "80px")});
   transition: margin-left 0.3s ease, width 0.3s ease;
+
+  @media (max-width: 768px) {
+  margin-left: 0px;
+  padding: 20px;
+  width: 100%;
 `;

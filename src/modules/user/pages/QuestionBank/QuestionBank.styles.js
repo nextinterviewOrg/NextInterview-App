@@ -7,8 +7,11 @@ export const Container = styled.div`
   padding: ${({ theme }) => theme.spacing(3)};
 //   background-color: ${({ theme }) => theme.colors.lightblue};
   border-radius: 8px;
-//   max-width: 800px;
   margin-left: 40px;
+
+  @media (max-width: 1024px) {
+    margin-left: 0;
+  }
 `;
 
 export const QuestionCard = styled.div`
@@ -33,7 +36,18 @@ export const MetaInfo = styled.div`
   font-family: ${({ theme }) => theme.fonts.body};
 //   display: flex;
 //   flex-direction: row;
+
+@media (max-width: 768px) {
+  font-size: 12px;
+  display: flex;
+  flex-direction: row;
+  // text-align: center;
+  gap: 4px;
+  width: 100%;
+}
 `;
+
+
 
 export const Topic = styled.span`
   font-weight:600;

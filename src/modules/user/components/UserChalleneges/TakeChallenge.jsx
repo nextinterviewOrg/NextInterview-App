@@ -13,6 +13,10 @@ const Card = styled.div`
   box-shadow: 0 8px 12px #7090b018;
   font-family: ${(props) => props.theme.fonts.body};
   // margin-left: 60px;
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 const ChallengeTitle = styled.h2`
@@ -20,6 +24,10 @@ const ChallengeTitle = styled.h2`
   color: ${(props) => props.theme.colors.text};
   font-size: 32px;
   margin: ${(props) => props.theme.spacing(1)} 0;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
 `;
 
 const ChallengeSubtitle = styled.p`
@@ -27,12 +35,18 @@ const ChallengeSubtitle = styled.p`
   color: ${(props) => props.theme.colors.textgray};
   line-height: 1;
   margin-bottom: ${(props) => props.theme.spacing(3)};
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 const Tags = styled.div`
   display: flex;
   gap: ${(props) => props.theme.spacing(1)};
   margin-bottom: ${(props) => props.theme.spacing(3)};
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
 `;
 
 const Tag = styled.span`
@@ -42,6 +56,9 @@ const Tag = styled.span`
     ${(props) => props.theme.spacing(1)};
   border-radius: 4px;
   font-size: 11px;
+  @media (max-width: 768px) {
+    font-size: 9px;
+  }
 `;
 
 const Buttons = styled.div`
@@ -63,6 +80,10 @@ const Button = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+  }
 `;
 
 export const Icons = styled.div`
@@ -95,7 +116,11 @@ export const MarginButton = styled.div`
   /* margin-bottom: ${(props) => props.theme.spacing(3)}; */
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: center;  
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 const PreviouslyAsked = styled.div`

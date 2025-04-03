@@ -24,24 +24,6 @@ import { GrFormPrevious } from "react-icons/gr";
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import { getModuleById } from '../../../../../api/addNewModuleApi';
 
-// const topics = [
-//     { id: 'topic1', name: 'Topic 1', content: 'Content for Topic 1' },
-//     { id: 'topic2', name: 'Topic 2', content: 'Content for Topic 2' },
-//     { id: 'topic3', name: 'Topic 3', content: 'Content for Topic 3' },
-//     { id: 'topic4', name: 'Topic 4', content: 'Content for Topic 4' },
-//     { id: 'topic5', name: 'Topic 5', content: 'Content for Topic 5' },
-//     { id: 'topic6', name: 'Topic 6', content: 'Content for Topic 1' },
-//     { id: 'topic7', name: 'Topic 7', content: 'Content for Topic 2' },
-//     { id: 'topic8', name: 'Topic 8', content: 'Content for Topic 3' },
-//     { id: 'topic9', name: 'Topic 9', content: 'Content for Topic 4' },
-//     { id: 'topic10', name: 'Topic 10', content: 'Content for Topic 5' },
-//     { id: 'topic11', name: 'Topic 11', content: 'Content for Topic 5' },
-//     { id: 'topic12', name: 'Topic 12', content: 'Content for Topic 1' },
-//     { id: 'topic13', name: 'Topic 13', content: 'Content for Topic 2' },
-//     { id: 'topic14', name: 'Topic 14', content: 'Content for Topic 3' },
-//     { id: 'topic15', name: 'Topic 15', content: 'Content for Topic 4' },
-//     { id: 'topic16', name: 'Topic 16', content: 'Content for Topic 5' },
-// ];
 
 const QuicklyDetailed = () => {
     

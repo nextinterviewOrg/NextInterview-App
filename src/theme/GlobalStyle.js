@@ -26,6 +26,7 @@ const GlobalStyle = createGlobalStyle`
         min-height: 100vh;
         display: flex;
         width: 100%;
+        transition: margin-left 0.3s ease-in-out;
     }
 
     .content-wrapper{

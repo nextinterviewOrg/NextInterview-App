@@ -16,6 +16,16 @@ const ModalContainer = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 1000;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    justify-content: center;
+  }
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    justify-content: center;
+  }
+  @media (max-width: ${theme.breakpoints.desktop}) {
+    justify-content: center;
+  }
 `;
 
 const Modal = styled.div`
@@ -31,6 +41,14 @@ const ModalContent = styled.div`
   padding: 30px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   position: relative; /* Ensure proper positioning of the button */
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    width: 85%; /* Full width for mobile */
+  }
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    width: 85%; /* Full width for tablet */
+  }
 `;
 
 const ModalHeader = styled.div`
@@ -39,11 +57,17 @@ const ModalHeader = styled.div`
     props.showSuccess ? "flex-end" : "space-between"};
   align-items: center;
   margin-bottom: 20px;
+
+
 `;
 
 const Title = styled.h3`
   font-size: 20px;
   margin: 0;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 16px;
+  }
 `;
 
 const CloseButton = styled.button`
@@ -66,6 +90,10 @@ const Label = styled.label`
   width: 150px; /* Fixed width for labels to align inputs consistently */
   margin-right: 10px;
   font-family: ${theme.fonts.body};
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 12px;
+  }
 `;
 
 const Select = styled.select`
@@ -91,6 +119,8 @@ const InputGroup = styled.div`
   align-items: center;
   gap: 8px;
   font-family: ${theme.fonts.body};
+
+  
 `;
 
 const Input = styled.input`
@@ -100,12 +130,20 @@ const Input = styled.input`
   //   border: 1px solid ${theme.colors.light};
   border-radius: 4px;
   font-size: 14px;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 12px;
+    width: 100%;
+  }
 `;
 
 const ButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-top: 20px; /* Add spacing from the form elements */
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    justify-content: center;
 `;
 
 const Button = styled.button`

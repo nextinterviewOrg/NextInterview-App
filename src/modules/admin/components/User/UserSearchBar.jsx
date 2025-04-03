@@ -9,6 +9,10 @@ const SearchBarContainer = styled.div`
   padding: 10px;
   background-color: ${({ theme }) => theme.colors.lightgreen};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+  }
 `;
 
 const SearchInput = styled.input`
@@ -23,6 +27,11 @@ const SearchInput = styled.input`
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary};
+  }
+
+  @media (max-width: 768px) {
+    width: 80%;
+    font-size: 12px;
   }
 `;
 const SearchIcon = styled(IoSearch)`

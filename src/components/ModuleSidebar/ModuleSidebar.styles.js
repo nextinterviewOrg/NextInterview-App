@@ -1,23 +1,40 @@
 import styled from "styled-components";
 
+
 export const ModuleSidebarContainer = styled.div`
   background-color: ${(props) => props.theme.colors.sidebarBgColor};
-  width: ${(props) => (props.isExpanded ? "200px" : "60px")};
+  width: ${(props) => {
+    if (props.isMobile) {
+      return props.sidebarOpen ? "250px" : "0";
+    }
+    return props.isExpanded ? "200px" : "60px";
+  }};
   height: 100vh;
-  transition: width 0.3s ease;
+  transition: all 0.3s ease;
   position: fixed;
   display: flex;
   flex-direction: column;
+  z-index: 1000;
+  overflow: hidden;
+  box-shadow: ${props => props.isMobile && props.sidebarOpen ? "2px 0 10px rgba(0,0,0,0.1)" : "none"};
+  left: ${props => props.isMobile && !props.sidebarOpen ? "-250px" : "0"};
+  @media (max-width: 768px) {
+    left: ${props => props.sidebarOpen ? "0" : "-250px"};
+    width: 250px;
+    transition: left 0.3s ease;
+  }
 
   .logo {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: ${(props) => (props.isExpanded ? "20px" : "10px")};
+    padding: ${(props) => (props.isExpanded || props.isMobile) ? "20px" : "10px"};
+    min-height: 60px;
 
     img {
-      width: ${(props) => (props.isExpanded ? "80%" : "50%")};
+      width: ${(props) => (props.isExpanded || props.isMobile) ? "80%" : "50%"};
       transition: width 0.3s ease;
+      min-width: 100px;
     }
   }
 
@@ -245,4 +262,34 @@ export const ModuleSidebarContainer = styled.div`
     color: ${({ theme }) => theme.colors.secondary};
     margin-top: 20px;
   }
+`;
+
+export const MobileToggleButton = styled.button`
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+
+  background: ${props => props.theme.colors.lightgreen};
+  color: ${props => props.theme.colors.primary};
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  cursor: pointer;
+  display: none;
+  
+  @media (max-width: 768px) {
+    display: block;
+  }
+`;
+
+export const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: ${props => props.visible ? 'block' : 'none'};
 `;

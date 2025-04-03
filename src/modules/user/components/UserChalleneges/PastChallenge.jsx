@@ -8,17 +8,27 @@ const Container = styled.div`
   justify-content: center;
 //   height: 100vh; /* Full screen height */
   background-color: ${(props) => props.theme.colors.light}; /* Using theme color */
+
+  @media (max-width: 768px) {
+    margin-left: 0;
+  }
 `;
 
 const Image = styled.img`
 //   max-width: 400px;
   margin-bottom: ${(props) => props.theme.spacing(3)};
+  @media (max-width: 768px) {
+    max-width: 300px;
+  }
 `;
 
 const Text = styled.p`
   font-family: ${(props) => props.theme.fonts.body};
   font-size: 1rem;
   color: ${(props) => props.theme.colors.textgray};
+  @media (max-width: 768px) {
+    font-size: 0.8rem;
+  }
 `;
 
 const Title = styled.h2`
@@ -26,13 +36,18 @@ const Title = styled.h2`
   color: ${(props) => props.theme.colors.text};
   font-size: 1.2rem;
   margin: ${(props) => props.theme.spacing(1)} 0;
-  margin-left: 60px;
+  margin-left: 10px;
   text-align: left;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   justify-content: flex-start;
   margin-top:${(props) => props.theme.spacing(3)};
+
+  @media (max-width: 768px) {
+    font-size: 1.2rem;
+    margin-left: 10px;
+  }
 `;
 
 const PastChallenge = () => {

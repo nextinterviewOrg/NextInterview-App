@@ -24,7 +24,7 @@ const FaqEdit = ({ faq, onSave, onCancel }) => {
     <ModalOverlay>
       <ModalContainer>
         <ModalHeader>
-          <ModalTitle>Edit FAQ Question</ModalTitle>
+          <ModalTitle>Edit FAQ question</ModalTitle>
           <CloseButton onClick={onCancel}>×</CloseButton>
         </ModalHeader>
         <InputContainer>
@@ -45,6 +45,7 @@ const FaqEdit = ({ faq, onSave, onCancel }) => {
             placeholder="Answer"
           />
         </InputContainer>
+
         <UploadButton onClick={handleSave}>Save</UploadButton>
       </ModalContainer>
     </ModalOverlay>

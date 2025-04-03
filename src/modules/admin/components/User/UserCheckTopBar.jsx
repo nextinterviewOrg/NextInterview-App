@@ -7,6 +7,10 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   padding: ${({ theme }) => theme.spacing(1)};
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+  }
 `;
 
 const CheckboxContainer = styled.div`
@@ -53,6 +57,10 @@ const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
   margin-left: auto;
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+  }
 `;
 
 const ActionButton = styled.button`
@@ -70,6 +78,10 @@ const ActionButton = styled.button`
 
   svg {
     margin-right: ${({ theme }) => theme.spacing(0.5)};
+  }
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
   }
 `;
 

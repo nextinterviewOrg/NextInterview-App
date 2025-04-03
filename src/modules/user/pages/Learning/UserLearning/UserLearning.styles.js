@@ -3,6 +3,14 @@ import styled from "styled-components";
 export const UserLearningWrapper = styled.div`
 margin-left: 60px;
 
+@media (max-width: 1024px) {
+margin-left: 50px;
+}
+
+@media (max-width: 768px) {
+margin-left: 0px;
+}
+
 /* General Page Styling */
 .courses-container {
   padding: 40px;

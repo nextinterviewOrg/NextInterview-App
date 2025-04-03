@@ -212,6 +212,17 @@ export const HeaderWrapper = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  
+.hamburger-icon {
+    display: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: ${theme.colors.text};
+
+    @media (max-width: 768px) {
+      display: block;
+    }
+ 
 }
 
 /* Modal Content */

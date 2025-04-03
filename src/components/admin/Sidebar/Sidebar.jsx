@@ -12,19 +12,18 @@ import challenge from "../../../assets/Challenges.svg";
 import Settings from "../../../assets/Settings.svg";
 import Notification from "../../../assets/Notifications.svg";
 import world from "../../../modules/user/assets/world.svg";
+import { useState } from "react";
+import { useEffect } from "react";
+// import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
-const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
+const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
   const location = useLocation();
-
-
-
   const SidebarItem = [
     {
       id: 1,
       name: "Dashboard",
-      
       path: "/admin",
-      icon: <img className="svgicon" src={dboard} alt="Users Icon" />,
+      icon: <img className="svgicon" src={dboard} alt="Dashboard Icon" />,
     },
     {
       id: 2,
@@ -32,102 +31,133 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle }) => {
       path: "/admin/users",
       icon: <img className="svgicon" src={users} alt="Users Icon" />,
     },
-    // { id: 2, name: "Home", path: "/admin/dashboard", icon: <FiHome /> },
     {
       id: 3,
       name: "Learning Module",
       path: "/admin/learning",
-      icon: <img className="svgicon" src={learnmod} alt="Users Icon" />,
+      icon: (
+        <img className="svgicon" src={learnmod} alt="Learning Module Icon" />
+      ),
     },
     {
       id: 4,
       name: "Support Query",
       path: "/admin/SupportQuery",
-      icon: <img className="svgicon" src={squerry} alt="Users Icon" />,
+      icon: <img className="svgicon" src={squerry} alt="Support Query Icon" />,
     },
     {
       id: 5,
       name: "Flashcards",
       path: "/admin/flashcards",
-      icon: <img className="svgicon" src={fcard} alt="Users Icon" />,
+      icon: <img className="svgicon" src={fcard} alt="Flashcards Icon" />,
     },
     {
       id: 6,
       name: "FAQ's",
       path: "/admin/faq",
-      icon: <img className="svgicon" src={faq} alt="Users Icon" />,
+      icon: <img className="svgicon" src={faq} alt="FAQ's Icon" />,
     },
     {
       id: 7,
       name: "Challenges",
       path: "/admin/challenges",
-      icon: <img className="svgicon" src={challenge} alt="Users Icon" />,
+      icon: <img className="svgicon" src={challenge} alt="Challenges Icon" />,
     },
-
     {
       id: 8,
       name: "Notifications",
       path: "/admin/notifications",
-      //  icon: <MdNotificationsNone />
-      icon: <img className="svgicon" src={Notification} alt="Users Icon" />,
+      icon: (
+        <img className="svgicon" src={Notification} alt="Notifications Icon" />
+      ),
     },
-
-    // {
-    //   id: 9,
-    //   name: "Settings",
-    //   path: "/admin/settings",
-    //   //  icon: <IoSettingsOutline />
-    //   icon: <img className="svgicon" src={Settings} alt="Users Icon" />,
-    // },
     {
-      id: 10,
+      id: 9,
       name: "Multi Factor Authentication",
       path: "/admin/manage-mfa",
-      //  icon: <MdNotificationsNone />
-      icon: <img className="svgicon" src={Settings} alt="Users Icon" />,
+      icon: <img className="svgicon" src={Settings} alt="MFA Icon" />,
     },
     {
-      id: 11,
-      name:"Real world scenarios",
+      id: 10,
+      name: "Real world scenarios",
       path: "/admin/real-world-scenario",
-      icon: <img className="svgicon" src={world} alt="Users Icon"
-      />
-    }
+      icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
+    },
   ];
 
+  // useEffect(() => {
+   
+  //   if (window.innerWidth <= 768) {
+  //     setIsSidebarOpen(false);
+  //   }
+  // }, [location.pathname]);
+
+ 
+   useEffect(() => {
+     if (window.innerWidth <= 768) {
+       setIsSidebarOpen(false);
+     }
+   }, [location.pathname]);
+ 
+   const sidebarRef = useRef(null); // Create a ref for the sidebar
+ 
+   useEffect(() => {
+     const handleClickOutside = (event) => {
+       if (window.innerWidth <= 768 && 
+           isSidebarOpen && 
+           sidebarRef.current && 
+           !sidebarRef.current.contains(event.target)) {
+         setIsSidebarOpen(false);
+       }
+     };
+ 
+     // Add event listener when sidebar is open in mobile view
+     if (isSidebarOpen && window.innerWidth <= 768) {
+       document.addEventListener('mousedown', handleClickOutside);
+     }
+ 
+     return () => {
+       // Clean up the event listener
+       document.removeEventListener('mousedown', handleClickOutside);
+     };
+   }, [isSidebarOpen, setIsSidebarOpen]);
   return (
     <SideBarwrapper
-      onMouseEnter={() => setIsExpanded(true)}
-      onMouseLeave={() => setIsExpanded(false)}
-      isExpanded={isExpanded}
-    >
-      <div className="logo">
-        <img src={Logo} alt="logo" />
-      </div>
-      <div className="menu">
-        <ul className="menu-list">
-          {SidebarItem.map((item) => (
-            <li className="menu-item" key={item.id}>
-              <NavLink
-                to={item.path}
-                className={({ isActive }) =>
-                  isActive ? "menu-link active" : "menu-link"
-                }
-                onClick={() => {
-                  setTitle(item.name),
-                    localStorage.setItem("title", JSON.stringify(item.name));
-                }}
-                end
-              >
-                <span className="menu-link-icon">{item.icon}</span>
-                <span className="menu-link-text">{item.name}</span>
-              </NavLink>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </SideBarwrapper>
-  );
-};
+    ref={sidebarRef}
+          onMouseEnter={() => setIsExpanded(true)}
+          onMouseLeave={() => setIsExpanded(false)}
+          isExpanded={isExpanded}
+          isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
+        >
+          <div className="logo">
+            <img src={Logo} alt="logo" />
+          </div>
+          <div className="menu">
+            <ul className="menu-list">
+              {SidebarItem.map((item) => (
+                <li className="menu-item" key={item.id}>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      isActive ? "menu-link active" : "menu-link"
+                    }
+                    onClick={() => {
+                      setTitle(item.name);
+                      localStorage.setItem("title", JSON.stringify(item.name));
+                    }}
+                    end
+                  >
+                    <span className="menu-link-icon">{item.icon}</span>
+                    <span className="menu-link-text">{item.name}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+    
+         
+        </SideBarwrapper>
+      );
+    };
 
 export default Sidebar;

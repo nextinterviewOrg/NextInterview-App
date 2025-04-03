@@ -17,17 +17,21 @@ import {
   Topic1,
   Difficulty1,
   Type1,
+  QuestionItem,
+  ToggleButton
+
 } from "./QuestionCollapsible.styles";
 import MainWindow from "../CodeEditorWindow/MainWindow"; // Importing the code editor component
 import { FcOk } from "react-icons/fc";
 import { GoThumbsup, GoThumbsdown, GoX } from "react-icons/go";
-
+import {FiChevronLeft, FiChevronRight} from "react-icons/fi";
+import { useRef } from "react";
 import {
   getQuestionBank,
   getQuestionBankById,
 } from "../../../../api/questionBankApi";
 import { ShimmerSectionHeader, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
-
+import {getModuleByModuleCode} from "../../../../api/addNewModuleApi";
 const QuestionCollapsible = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -38,17 +42,48 @@ const QuestionCollapsible = () => {
   const [userAnswer, setUserAnswer] = useState(""); // To store answer for single-line, multi-line, approach questions
   const [showSolution, setShowSolution] = useState(false);
 const [loading, setLoading] = useState(true);
+const [ moduleName, setModuleName] = useState("");
+
+const fetchModuleName = async (moduleCode) => {
+  try {
+    const response = await getModuleByModuleCode(moduleCode);
+    console.log("response for module name", response);
+    if (response && response.data) {
+      setModuleName(response.data.moduleName); // Assuming the response has a moduleName field
+    }
+  } catch (error) {
+    console.error("Error fetching module name:", error);
+    setModuleName("Module Not Found"); // Fallback if there's an error
+  }
+};
+
   useEffect(() => {
     // Fetch all questions to display in the sidebar
     const fetchAllQuestions = async () => {
       try {
         setLoading(true);
         const response = await getQuestionBank(); // API call to get all questions
+   console.log("response234", response);
         if (response && response.data) {
           setAllQuestions(response.data); // Set the all questions data for sidebar
+          // console.log("Selected question", selectedQuestion);
           if (!selectedQuestion && response.data.length > 0) {
             setSelectedQuestion(response.data[0]); // Set the first question as the default selected question
             navigate(`/user/questionBank/${response.data[0]._id}`); // Redirect to the first question
+     
+            console.log("selectedQuestion", selectedQuestion);
+
+            // if (selectedQuestion?.module_code) {
+              console.log("selectedQuestion module code", selectedQuestion?.module_code);
+              fetchModuleName(selectedQuestion.module_code);
+              console.log("moduleName", module_code);
+            // }
+          }
+         
+          console.log("selectedsvsfvdfQuestion module codecvsdffdd", selectedQuestion?.module_code);
+
+          if (selectedQuestion?.module_code) {
+            fetchModuleName(selectedQuestion.module_code);
           }
        setLoading(false);
         } else {
@@ -66,7 +101,9 @@ const [loading, setLoading] = useState(true);
     // Fetch the question by ID when it changes
     const fetchQuestion = async () => {
       try {
+        
         const response = await getQuestionBankById(id); // API call to get question by ID
+      console.log("response", response);
         if (response && response.data) {
           setSelectedQuestion(response.data); // Set the selected question data
         } else {
@@ -94,31 +131,77 @@ const [loading, setLoading] = useState(true);
       navigate(`/user/questionBank/${nextQuestion._id}`);
     }
   };
+  const [isOpen, setIsOpen] = useState(false);
+  const sidebarRef = useRef(null);
+  const isMobile = window.innerWidth <= 768;
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
+        // Check if we're not clicking the toggle button
+        if (!event.target.closest('.toggle-button')) {
+          setIsOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  // Auto-close when route changes (question clicked)
+  useEffect(() => {
+    setIsOpen(false);
+  }, [window.location.pathname]);
+
+  // Auto-close on mobile when resizing to larger screen
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 768 && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isOpen]);
 
   return (
     <PageContainer>
-      <Sidebar>
+       <ToggleButton 
+        className="toggle-button"
+        onClick={() => setIsOpen(!isOpen)}
+        isOpen={isOpen}
+      >
+        {isOpen ? <FiChevronLeft /> : <FiChevronRight />}
+      </ToggleButton>
+
+      {/* Sidebar */}
+      <Sidebar 
+        ref={sidebarRef}
+        isOpen={isOpen}
+        isMobile={isMobile}
+      >
         <h3 style={{ paddingLeft: "10px" }}>Questions</h3>
-        {/* Render the questions list */}
         {allQuestions.map((question, index) => (
           <Link
             key={index}
-            to={`/user/questionBank/${question._id}`} // Navigate to child page with the selected question ID
+            to={`/user/questionBank/${question._id}`}
             style={{ textDecoration: "none", color: "black" }}
+            onClick={() => isMobile && setIsOpen(false)}
           >
-            <div style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
+            <QuestionItem>
               {index + 1}. {question.question}
-            </div>
+            </QuestionItem>
           </Link>
         ))}
       </Sidebar>
-
       <Content>
         {selectedQuestion ? (
           <>
         
             <MetaInfo1>
-              <Topic1>Module: {selectedQuestion.topic}</Topic1>
+              <Topic1>Module: {moduleName || selectedQuestion.topic}</Topic1>
               <Difficulty1>Difficulty: {selectedQuestion.level}</Difficulty1>
               <Type1>Type: {selectedQuestion.question_type}</Type1>
             </MetaInfo1>

@@ -7,8 +7,9 @@ export const Container = styled.div`
   font-family: ${theme.fonts.body};
   gap: 30px;
 
-  @media (max-width: ${theme.breakpoints.mobile}) {
-    padding: ${theme.spacing(2)};
+ @media (max-width: ${theme.breakpoints.mobile}) {
+    padding: ${theme.spacing(0)};
+    margin-left: 0;
   }
 `;
 
@@ -30,11 +31,17 @@ export const SearchBar = styled.div`
     align-items: center;
     width: 30%;
     gap: 10px;
+
+    @media (max-width: ${theme.breakpoints.mobile}) {
+      width: 95%;
+      margin-left: 0;
+    }
   }
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex-direction: column;
-    gap: ${theme.spacing(2)};
+    gap: ${theme.spacing(1)};
+    width: 100%;
   }
 `;
 
@@ -199,4 +206,14 @@ export const ModalOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
+`;
+
+export const TableContainer = styled.div`
+  width: 100%;
+  overflow-x: auto; // Always shows horizontal scroll when needed
+  -webkit-overflow-scrolling: touch; // Enables smoother scrolling on iOS devices
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    overflow-x: scroll; // Ensure it's scrollable on mobile
+  }
 `;

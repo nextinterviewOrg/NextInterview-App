@@ -169,7 +169,7 @@ const UserLearningModule = () => {
         <ShimmerPostItem card title text cta />
       ) : (
      
-      <div className="course-header">
+      <div className="course-header1">
         <img src={courseData.imageUrl} alt="Course" className="course-image" />
         <div className="course-info">
           <h1 className="course-info-title">{courseData.title}</h1>
