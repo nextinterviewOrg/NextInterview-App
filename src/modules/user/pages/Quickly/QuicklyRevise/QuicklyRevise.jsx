@@ -7,7 +7,7 @@ import {
   Title,
 } from "./QuicklyRevise.styles";
 import { getModule, getModuleById } from "../../../../../api/addNewModuleApi";
-import { ShimmerPostItem } from "react-shimmer-effects";
+import { ShimmerThumbnail } from "react-shimmer-effects";
 import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
@@ -16,9 +16,9 @@ import Lottie from "lottie-react";
 import dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json";
 
 const QuicklyRevise = () => {
-  const [modules, setModules] = useState([]); // Store modules
-  const [loading, setLoading] = useState(true); // Global loading for API call
-  const [imageLoaded, setImageLoaded] = useState({}); // Track image load state for each module
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState({});
   const { user } = useUser();
   
   useEffect(() => {
@@ -49,33 +49,48 @@ const QuicklyRevise = () => {
     fetchModules();
   }, [user]);
 
-  // Handle image load for each module
   const handleImageLoad = (id) => {
     setImageLoaded((prev) => ({
       ...prev,
-      [id]: true, // Set true when image is loaded
+      [id]: true,
     }));
   };
 
   return (
     <Container>
       {loading ? (
-        // Apply shimmer effect for cards and images
+        // ShimmerThumbnail loading state
         [...Array(6)].map((_, index) => (
-          <ShimmerPostItem
-            key={index}
-            card
-            title
-            cta
-            imageHeight={200}
-            contentCenter
-            style={{
-              width: "100%",
-              maxWidth: "320px",
-              height: "300px",
-              marginBottom: "20px", // Add space between cards
-            }}
-          />
+          <Card key={index} style={{ padding: 0 }}>
+            <ShimmerThumbnail
+              height={200}
+              width="100%"
+              rounded
+              style={{
+                width: "100%",
+                maxWidth: "320px",
+                height: "200px",
+                borderRadius: "8px 8px 0 0"
+              }}
+            />
+            <div style={{ padding: "16px" }}>
+              <ShimmerThumbnail
+                height={24}
+                width="80%"
+                style={{
+                  marginBottom: "8px",
+                  borderRadius: "4px"
+                }}
+              />
+              <ShimmerThumbnail
+                height={16}
+                width="60%"
+                style={{
+                  borderRadius: "4px"
+                }}
+              />
+            </div>
+          </Card>
         ))
       ) : modules.length > 0 ? (
         modules.map((module) => (
@@ -86,16 +101,15 @@ const QuicklyRevise = () => {
           >
             <Card>
               <ImageWrapper>
-                {/* Shimmer Effect for Image Loading */}
                 {!imageLoaded[module._id] && (
-                  <ShimmerPostItem
-                    card
-                    imageHeight={200}
+                  <ShimmerThumbnail
+                    height={200}
+                    width="100%"
+                    rounded
                     style={{
                       width: "100%",
                       height: "200px",
-                      borderRadius: "8px",
-                      marginBottom: "10px",
+                      borderRadius: "8px"
                     }}
                   />
                 )}
