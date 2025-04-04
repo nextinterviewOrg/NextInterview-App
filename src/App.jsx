@@ -85,6 +85,7 @@ import Blog from "./modules/admin/pages/Blog/Blog";
 import AdminBlogDisplay from "./modules/admin/pages/AdminBlogDisplay/AdminBlogDisplay";
 import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
 import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
+import OAuthCallbackPage from "./pages/OAuthCallback/OAuthCallback";
 
 function App() {
   return (
@@ -109,6 +110,7 @@ function App() {
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />
+          <Route path="/oauth-callback" element={<OAuthCallbackPage />} />
           <Route path="/testing" element={<QuicklyDetailed />}>
             <Route
               path="/testing/:id"

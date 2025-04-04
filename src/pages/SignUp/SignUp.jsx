@@ -15,8 +15,8 @@ import signup from "../../assets/login&signupimage.svg";
 import google from "../../assets/google.png";
 import { Link, useLocation, useNavigate } from "react-router";
 import { FaLinkedin } from "react-icons/fa";
-import { SignIn, SignUpButton, useSignIn, useSignUp, useUser } from "@clerk/clerk-react";
-
+import { SignIn, SignUpButton, useSignIn, useSignUp, useUser,useClerk  } from "@clerk/clerk-react";
+import { Clerk } from '@clerk/clerk-js'
 import { PiEyeLight } from "react-icons/pi";
 import { IoEyeOffOutline } from "react-icons/io5";
 import { CiMobile1 } from "react-icons/ci";
@@ -34,9 +34,29 @@ const SignUp = () => {
   const { isLoaded: signInLoaded, signIn, setActive } = useSignIn();
   const [isError, setIsError] = useState(false);
   const location = useLocation();
+ 
   useEffect(() => {
     console.log("location", location);
-  },[])
+    
+    if (location.state?.errorMessage) {
+      setIsError(true);
+      setMessage(location.state.errorMessage);
+      setMessageType("error");
+      
+      // Clear state after displaying the message
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
+
+// useEffect(() => {
+//   if (location.state?.errorMessage) {
+//     setIsError(true);
+//     setMessage(location.state.errorMessage);
+//     setMessageType("error");
+//     // Clear state after displaying
+//     // window.history.replaceState({}, document.title);
+//   }
+// }, [location.state]);
   const {
     isLoaded: signUpLoaded,
     signUp,
@@ -75,30 +95,34 @@ const SignUp = () => {
         strategy: "password",
         password: password,
       });
+      console.log("data", data);
+
       if (data.status === "complete") {
+        const data2 = await setActive({ session: data.createdSessionId })
         setMessage("Login successful! Redirecting...");
         setMessageType("success");
-            navigate("/validation", {
-              state: { sessionId: data.createdSessionId },
-            })
+        navigate("/validation", {
+          state: { sessionId: data.createdSessionId },
+        })
       } else if (data.status === "needs_second_factor") {
         navigate("/verifytotp");
       }
     } catch (error) {
+      console.log("error", error)
       setIsError(true);
-      
-      if (error.errors[0].code == "form_identifier_not_found") {
+
+      if (error?.errors[0]?.code == "form_identifier_not_found") {
         setMessage("Couldn't find your account.");
       }
-      else if (error.errors[0].code == "session_exists") {
+      else if (error?.errors[0]?.code == "session_exists") {
         setMessage("You're currently in single session mode. You can only be signed into one account at a time.");
       }
-      else if (error.errors[0].code == "form_param_format_invalid") {
+      else if (error?.errors[0]?.code == "form_param_format_invalid") {
         setMessage("Invalid Email ");
       }
-      else if (error.errors[0].code == "form_password_incorrect") {
+      else if (error?.errors[0]?.code == "form_password_incorrect") {
         setMessage("Password is incorrect. Try again, or use another method. ");
-      }else if (error.errors[0].code == "user_locked") {
+      } else if (error?.errors[0]?.code == "user_locked") {
         setMessage("Your account has been Restricted. For more information, please contact support.");
       }
       setMessageType("error");
@@ -107,15 +131,15 @@ const SignUp = () => {
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     try {
-     const data= await signIn.authenticateWithRedirect({
+      const data = await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
-        redirectUrl: "/login", // Optional
-        redirectUrlComplete: window.location.origin + "/validation",// Where to go after successful sign-up
+        redirectUrl: "/oauth-callback", // Optional
+        redirectUrlComplete: "/validation",// Where to go after successful sign-up
       });
       console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
-      
+
       // Check if the error indicates that the account does not exist
       if (err.errors && err.errors.some(error => error.message.includes("Account not found"))) {
         setMessage("Account does not exist. Please sign up first.");
@@ -129,7 +153,7 @@ const SignUp = () => {
       }
     }
   };
-  
+
 
   const handleLinkedInSignIn = async (e) => {
     e.preventDefault();
@@ -149,14 +173,14 @@ const SignUp = () => {
   return (
     <Container>
       <HeaderWithLogo />
-       {/* <UserButton /> */}
+      {/* <UserButton /> */}
       {/* <UserProfile /> */}
       <div
         style={{
           display: "flex",
           flexDirection: "row",
         }}
-      > 
+      >
         <FormSection>
           <Heading>Welcome to Next Interview</Heading>
           <Form onSubmit={handleFormSubmit}>
@@ -261,8 +285,8 @@ const SignUp = () => {
               </button>
             </LinkedInButton>
           </Form>
-          <Footer style={{fontSize:"14px" }}>
-           Don't have an account? Sign up now. {" "}
+          <Footer style={{ fontSize: "14px" }}>
+            Don't have an account? Sign up now. {" "}
             <a href="/signup">Signup </a>
           </Footer>
 

@@ -77,24 +77,46 @@ const Otp = () => {
   const handleResend = async () => {
     if (canResend) {
       try {
-        // Resend the OTP using Clerk's signUp object
-        const result = await signIn.create({
-          identifier: location.state.phoneNumber, // Phone number of the user
-          strategy: "phone_code", // Phone OTP verification strategy
-        });
+        if (location.state.flow === "SIGN_UP") {
+          const result = await signUp.create({
+            identifier: location.state.phoneNumber, // Phone number of the user
+            strategy: "phone_code", // Phone OTP verification strategy
+          });
 
-        console.log("OTP Resent: ", result);
+          console.log("OTP Resent: ", result);
 
-        setCountdown(300);  // Set countdown to 5 minutes (300 seconds)
-        setCanResend(false); // Prevent further resend requests until the countdown ends
+          setCountdown(300);  // Set countdown to 5 minutes (300 seconds)
+          setCanResend(false); // Prevent further resend requests until the countdown ends
 
-        // alert("OTP has been resent successfully!");
-        notification.success({
-          message: "Success",  // Title of the notification
-          description: "OTP has been resent successfully!",  // Description of the notification
-          placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
-          duration: 3,
-        })
+          // alert("OTP has been resent successfully!");
+          notification.success({
+            message: "Success",  // Title of the notification
+            description: "OTP has been resent successfully!",  // Description of the notification
+            placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+            duration: 3,
+          })
+        } else {
+
+
+          // Resend the OTP using Clerk's signUp object
+          const result = await signIn.create({
+            identifier: location.state.phoneNumber, // Phone number of the user
+            strategy: "phone_code", // Phone OTP verification strategy
+          });
+
+          console.log("OTP Resent: ", result);
+
+          setCountdown(300);  // Set countdown to 5 minutes (300 seconds)
+          setCanResend(false); // Prevent further resend requests until the countdown ends
+
+          // alert("OTP has been resent successfully!");
+          notification.success({
+            message: "Success",  // Title of the notification
+            description: "OTP has been resent successfully!",  // Description of the notification
+            placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+            duration: 3,
+          })
+        }
       } catch (error) {
         console.log("Error resending OTP: ", error);
         notification.error({
@@ -129,6 +151,7 @@ const Otp = () => {
     signIn,
     setActive: setSignInActive,
   } = useSignIn();
+  const setActiveSignIn = useSignIn().setActive;
   const {
     isLoaded: signUpLoaded,
     signUp,
@@ -183,6 +206,15 @@ const Otp = () => {
 
     try {
       if (flow === "SIGN_IN") {
+        if (countdown === 0) {
+          notification.error({
+            message: "Error",  // Title of the notification
+            description: "OTP has expired. Please request a new one.",  // Error message description
+            placement: "topRight",
+            duration: 3,
+          });
+          return
+        }
         // Attempt signIn
         const result = await signIn.attemptFirstFactor({
           strategy: "phone_code",
@@ -192,7 +224,7 @@ const Otp = () => {
         localStorage.setItem("session", result.createdSessionId);
         if (result.status === "complete") {
           // Successfully signed in
-          await setSignInActive({ session: result.createdSessionId });
+          await setActiveSignIn({ session: result.createdSessionId });
           notification.success({
             message: "Success",  // Title of the notification
             description: "You have successfully signed in!",  // Description of the notification
@@ -216,6 +248,15 @@ const Otp = () => {
         }
       } else if (flow === "SIGN_UP") {
         // Attempt signUp phone verification
+        if (countdown === 0) {
+          notification.error({
+            message: "Error",  // Title of the notification
+            description: "OTP has expired. Please request a new one.",  // Error message description
+            placement: "topRight",
+            duration: 3,
+          });
+          return
+        }
         const attempt = await signUp.attemptPhoneNumberVerification({
           code: otpCode,
         });

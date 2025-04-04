@@ -21,7 +21,7 @@ export default function UserDashboard() {
   const [showAllStats, setShowAllStats] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { user } = useUser();
+  const { user, isLoaded,sessionId,isSignedIn } = useUser();
   const [moduleCompleted, setModuleCompleted] = useState(0);
   const [modulteOngoing, setModuleOngoing] = useState(0);
   const [remainingModule, setRemainingModule] = useState(0);
@@ -44,7 +44,10 @@ export default function UserDashboard() {
   useEffect(() => {
     const apiCaller = async () => {
       try {
+
         setLoader(true);
+        console.log("user", user, "isLoaded", isLoaded,"sessionId", sessionId,"isSignedIn", isSignedIn);
+        if (!isLoaded || !user) {  return};
         const moduleData = await getModule();
         setTotalModule(moduleData.data.length);
         const userData = await getUserByClerkId(user.id);
@@ -79,7 +82,7 @@ export default function UserDashboard() {
       }
     }
     apiCaller();
-  }, [user]);
+  }, [user,isLoaded]);
 
   const handleNext = () => {
     if (startIndex + visibleCards < totalCourses) {

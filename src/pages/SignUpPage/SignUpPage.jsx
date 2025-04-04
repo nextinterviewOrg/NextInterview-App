@@ -211,7 +211,14 @@ const SignUpPage = () => {
       console.log("data", data);
     } catch (err) {
       console.error("Google Sign-Up Error:", err);
-      setMessage("Google sign-up failed. Check console for details.");
+      if (err.code === 'authentication_failed') {
+        setMessage("Authentication with Google failed. Please try again.");
+      } else if (err.code === 'form_identifier_exists') {
+        setMessage("An account with this Google email already exists. Please sign in instead.");
+      } else {
+        setMessage(err.errors[0]?.message || "An error occurred during Google sign-up. Please try again.");
+      }
+      // setMessage("Google sign-up failed. Check console for details.");
       setMessageType("error");
     }
   };
