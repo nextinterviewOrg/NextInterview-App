@@ -51,6 +51,7 @@ const FlashcardsComponents = () => {
         backgroundImage: item.backgroundImage,
         createdAt: formattedDate,
         know: item.cardKnown || 0,
+        
         dontKnow: item.cardUnknown || 0,
         sharedCount: item.sharedCount || 0,
         peopleInteractionCount: item.peopleInteractionCount,
@@ -182,7 +183,7 @@ const FlashcardsComponents = () => {
                 <p>{card.text}</p>
                 <p>{card.createdAt}</p>
                 <InteractionStats>
-                  <span>Shared with - {card.sharedCount} people</span>
+                  {/* <span>Shared with - {card.sharedCount} people</span> */}
                   <span>No. of people interacted - {card.peopleInteractionCount}</span>
                   <div>
                     <span>I know - {card.know}%</span>

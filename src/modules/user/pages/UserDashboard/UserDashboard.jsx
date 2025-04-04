@@ -7,13 +7,11 @@ import MockTestsStats from "../../components/MockTestsStats/MockTestsStats";
 import { BsFillCaretRightFill, BsThreeDots } from "react-icons/bs";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { useUser } from "@clerk/clerk-react";
-import { use } from "react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { getUserProgress, getUserProgressByModule, getUserProgressStats } from "../../../../api/userProgressApi";
 import { getModule, getModuleByModuleCode } from "../../../../api/addNewModuleApi";
 import { Link } from "react-router-dom";
 import { ShimmerPostDetails, ShimmerText } from "react-shimmer-effects";
-
 
 export default function UserDashboard() {
   const [startIndex, setStartIndex] = useState(0);
@@ -23,13 +21,16 @@ export default function UserDashboard() {
 
   const { user, isLoaded,sessionId,isSignedIn } = useUser();
   const [moduleCompleted, setModuleCompleted] = useState(0);
-  const [modulteOngoing, setModuleOngoing] = useState(0);
+  const [moduleOngoing, setModuleOngoing] = useState(0);
   const [remainingModule, setRemainingModule] = useState(0);
   const [totalModule, setTotalModule] = useState(0);
   const [moduleProgress, setModuleProgress] = useState(0);
   const [courses, setCourses] = useState([]);
+  const [allModules, setAllModules] = useState([]);
   const [totalCourses, setTotalCourses] = useState(0);
   const [loader, setLoader] = useState(false);
+  const [hasStartedModules, setHasStartedModules] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -50,49 +51,103 @@ export default function UserDashboard() {
         if (!isLoaded || !user) {  return};
         const moduleData = await getModule();
         setTotalModule(moduleData.data.length);
+        setAllModules(moduleData.data);
+        
+        // Get user data
         const userData = await getUserByClerkId(user.id);
-        const userProgressData = await getUserProgressStats(userData.data.user._id);
-        setModuleCompleted(userProgressData.moduleStats.completed);
-        setModuleOngoing(userProgressData.moduleStats.ongoing);
-        setRemainingModule(moduleData.data.length - userProgressData.moduleStats.completed);
-        setModuleProgress(Number.parseFloat((userProgressData.moduleStats.completed / moduleData.data.length) * 100).toFixed(2));
-        let data = await Promise.all(userProgressData.ModuleProgress.map(async (item) => {
-          const moduleData = await getModuleByModuleCode(item.moduleCode);
-          const moduleProgress = await getUserProgressByModule({ userId: userData.data.user._id, moduleCode: item.moduleCode });
-          if (moduleProgress.data.completed === false) {
-            return ({
-              title: moduleData.data.moduleName,
-              topicsCompleted: item.topicStats.completed,
-              totalTopics: moduleData.data.topicData.length,
-              progress: Number.parseFloat((item.topicStats.completed / moduleData.data.topicData.length) * 100).toFixed(2),
-              imgSrc: moduleData.data.imageURL,
-              _id: moduleData.data._id
+        const userId = userData.data.user._id;
+        
+        // Get user progress stats
+        const userProgressData = await getUserProgressStats(userId);
+        
+        // Set basic stats
+      // Set basic stats
+setModuleCompleted(userProgressData.moduleStats?.completed || 0);
+setModuleOngoing(userProgressData.moduleStats?.ongoing || 0);
+setRemainingModule(moduleData.data.length - (userProgressData.moduleStats?.completed || 0));
+
+// Calculate progress percentage
+const completedModules = userProgressData.moduleStats?.completed || 0;
+const totalModules = moduleData.data.length;
+const progressPercentage = (completedModules / totalModules) * 100;
+setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
+        // Check if user has started any modules
+        const hasStarted = userProgressData.ModuleProgress?.length > 0;
+        setHasStartedModules(hasStarted);
+        
+        if (hasStarted) {
+          // If user has started modules, show only ongoing modules
+          const ongoingModules = await Promise.all(
+            userProgressData.ModuleProgress.map(async (item) => {
+              try {
+                const moduleData = await getModuleByModuleCode(item.moduleCode);
+                const moduleProgress = await getUserProgressByModule({ 
+                  userId, 
+                  moduleCode: item.moduleCode 
+                });
+                
+                // Only include modules that aren't completed
+                if (!moduleProgress.data?.completed) {
+                  return {
+                    title: moduleData.data.moduleName,
+                    topicsCompleted: item.topicStats?.completed || 0,
+                    totalTopics: moduleData.data.topicData?.length || 0,
+                    progress: Number.parseFloat(
+                      ((item.topicStats?.completed || 0) / 
+                      (moduleData.data.topicData?.length || 1) * 100)
+                    ).toFixed(2),
+                    imgSrc: moduleData.data.imageURL,
+                    _id: moduleData.data._id
+                  };
+                }
+                return null;
+              } catch (err) {
+                console.error(`Error processing module ${item.moduleCode}:`, err);
+                return null;
+              }
             })
-          } else {
-            return null;
-          }
-        }));
-        data = data.filter(item => item !== null && item !== undefined);
-        setCourses(data);
-        setTotalCourses(data.length);
+          );
+          
+          // Filter out null values and set courses
+          const filteredModules = ongoingModules.filter(Boolean);
+          setCourses(filteredModules);
+          setTotalCourses(filteredModules.length);
+        } else {
+          // If user hasn't started any modules, show all available modules
+          const allModulesData = moduleData.data.map(module => ({
+            title: module.moduleName,
+            topicsCompleted: 0,
+            totalTopics: module.topicData?.length || 0,
+            progress: 0,
+            imgSrc: module.imageURL,
+            _id: module._id
+          }));
+          setCourses(allModulesData);
+          setTotalCourses(allModulesData.length);
+        }
       } catch (error) {
-        console.error(error);
+        console.error("Error in apiCaller:", error);
+        setError("Failed to load dashboard data. Please try again later.");
       } finally {
         setLoader(false);
       }
+    };
+    
+    if (user?.id) {
+      apiCaller();
     }
     apiCaller();
-  }, [user,isLoaded]);
+  }, [user]);
 
   const handleNext = () => {
     if (startIndex + visibleCards < totalCourses) {
-      setStartIndex((prevIndex) => prevIndex + 1);
+      setStartIndex(prevIndex => prevIndex + 1);
     }
   };
 
   const handlePrev = () => {
     if (startIndex > 0) {
-      setStartIndex((prevIndex) => prevIndex - 1);
+      setStartIndex(prevIndex => prevIndex - 1);
     }
   };
 
@@ -102,13 +157,24 @@ export default function UserDashboard() {
 
   const stats = [
     { title: "Modules completed", value: moduleCompleted },
-    { title: "Modules ongoing", value: modulteOngoing },
+    { title: "Modules ongoing", value: moduleOngoing },
     { title: "Remaining Modules", value: remainingModule },
     { title: "Progress rate", value: `${moduleProgress}%` },
     { title: "Challenges completed", value: "0/0" }
   ];
 
   const visibleStats = isMobile && !showAllStats ? stats.slice(0, 4) : stats;
+
+  if (error) {
+    return (
+      <UserDashboardWrapper>
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>Retry</button>
+        </div>
+      </UserDashboardWrapper>
+    );
+  }
 
   return (
     <UserDashboardWrapper>
@@ -149,59 +215,67 @@ export default function UserDashboard() {
           <div className="container-dashboard">
             <div className="continue-Learning-Header">
               <h2 className="header-dashboard">
-                Continue Learning{" "}
+                {hasStartedModules ? "Continue Learning" : "Start Learning"}{" "}
                 <BsFillCaretRightFill
                   size={20}
                   style={{ marginTop: "5px", marginLeft: "5px" }}
                 />
               </h2>
               
-              <div className="carousel-wrapper">
-                <button
-                  className="arrow-button left"
-                  onClick={handlePrev}
-                  disabled={startIndex === 0}
-                >
-                  <FaChevronLeft />
-                </button>
-                <button
-                  className="arrow-button right"
-                  onClick={handleNext}
-                  disabled={startIndex + visibleCards >= totalCourses}
-                >
-                  <FaChevronRight />
-                </button>
-              </div>
+              {totalCourses > visibleCards && (
+                <div className="carousel-wrapper">
+                  <button
+                    className="arrow-button left"
+                    onClick={handlePrev}
+                    disabled={startIndex === 0}
+                  >
+                    <FaChevronLeft />
+                  </button>
+                  <button
+                    className="arrow-button right"
+                    onClick={handleNext}
+                    disabled={startIndex + visibleCards >= totalCourses}
+                  >
+                    <FaChevronRight />
+                  </button>
+                </div>
+              )}
             </div>
 
             <div className="card-container-dashboard">
-              {courses
-                .slice(startIndex, startIndex + visibleCards)
-                .map((course, index) => (
-                  <Link to={`/user/learning/${course?._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-                    <div
-                      className="card-dashboard"
+              {courses.length > 0 ? (
+                courses
+                  .slice(startIndex, startIndex + visibleCards)
+                  .map((course, index) => (
+                    <Link 
+                      to={`/user/learning/${course?._id}`} 
+                      style={{ textDecoration: "none", color: "inherit" }}
                       key={index}
-                      onClick={() => handleCardClick(index)}
                     >
-                      <img src={course?.imgSrc} alt="Course" />
-                      <h4>{course?.title}</h4>
-                      <div className="progress">
-                        <p>{`${course?.topicsCompleted}/${course?.totalTopics} Topics completed`}</p>
-                        <div className="progress-bar">
-                          <div
-                            className="progress-fill"
-                            style={{ width: `${course?.progress}%` }}
-                          ></div>
+                      <div className="card-dashboard">
+                        <img src={course?.imgSrc} alt="Course" />
+                        <h4>{course?.title}</h4>
+                        <div className="progress">
+                          <p>{`${course?.topicsCompleted}/${course?.totalTopics} Topics completed`}</p>
+                          <div className="progress-bar">
+                            <div
+                              className="progress-fill"
+                              style={{ width: `${course?.progress}%` }}
+                            ></div>
+                          </div>
+                          <p>{course?.progress}%</p>
                         </div>
-                        <p>{course?.progress}%</p>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))
+              ) : (
+                <div className="no-courses-message">
+                  <p>No courses available to display.</p>
+                </div>
+              )}
             </div>
-
           </div>
+          
           <div className="UserDashboard-statsContainer-row-two">
             <div className="UserDashboard-Charts-container">
               <div className="UserDashboard-charts-title">
