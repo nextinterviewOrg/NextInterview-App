@@ -14,6 +14,7 @@ import Notification from "../../../assets/Notifications.svg";
 import world from "../../../modules/user/assets/world.svg";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useRef } from "react";
 // import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
