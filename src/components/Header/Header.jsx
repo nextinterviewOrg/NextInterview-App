@@ -147,6 +147,7 @@ const Header = ({ title, toggleMobileSidebar}) => {
 
   useEffect(() => {
     const apiCaller = async () => {
+      if (!isSignedIn || !isLoaded || !user) return;
       const userData = await getUserByClerkId(user?.id);
       setUserAvatar(userData.data.clerkUserData.imageUrl);
       setUserName(userData.data.user.user_name);

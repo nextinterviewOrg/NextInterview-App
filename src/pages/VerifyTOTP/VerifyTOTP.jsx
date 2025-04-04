@@ -25,7 +25,7 @@ const VerifyTOTP = () => {
   const {
     isLoaded: signInLoaded,
     signIn,
-    setActive: setSignInActive,
+    setActive,
   } = useSignIn();
   const handleGoBack = () => {
     // If user wants to change phone number, navigate back
@@ -82,6 +82,7 @@ const VerifyTOTP = () => {
         code: otpCode,
       });
       if (verificationResponse.status === "complete") {
+        await setActive({ session: verificationResponse.createdSessionId });
         navigate("/validation", {
           state: {
             sessionId: verificationResponse.createdSessionId,

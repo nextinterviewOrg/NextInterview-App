@@ -19,7 +19,7 @@ export default function UserDashboard() {
   const [showAllStats, setShowAllStats] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
-  const { user } = useUser();
+  const { user, isLoaded,sessionId,isSignedIn } = useUser();
   const [moduleCompleted, setModuleCompleted] = useState(0);
   const [moduleOngoing, setModuleOngoing] = useState(0);
   const [remainingModule, setRemainingModule] = useState(0);
@@ -45,10 +45,10 @@ export default function UserDashboard() {
   useEffect(() => {
     const apiCaller = async () => {
       try {
+
         setLoader(true);
-        setError(null);
-        
-        // Get all available modules
+        console.log("user", user, "isLoaded", isLoaded,"sessionId", sessionId,"isSignedIn", isSignedIn);
+        if (!isLoaded || !user) {  return};
         const moduleData = await getModule();
         setTotalModule(moduleData.data.length);
         setAllModules(moduleData.data);
@@ -136,6 +136,7 @@ setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
     if (user?.id) {
       apiCaller();
     }
+    apiCaller();
   }, [user]);
 
   const handleNext = () => {

@@ -83,14 +83,15 @@ const OtpEmail = () => {
   const {
     isLoaded: signInLoaded,
     signIn,
-    setActive: setSignInActive,
+
   } = useSignIn();
+  const setActiveSignIn = useSignIn().setActive;
   const {
     isLoaded: signUpLoaded,
     signUp,
-    setActive: setSignUpActive,
+    setActive,
   } = useSignUp();
-
+  const setActiveSignUp = useSignUp().setActive;
   const [otpCode, setOtpCode] = useState("");
   const [flow, setFlow] = useState(""); // "SIGN_IN" or "SIGN_UP"
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -170,6 +171,15 @@ const OtpEmail = () => {
 
   // Verify OTP
   const handleVerifyOTP = async () => {
+    if (countdown === 0) {
+      notification.error({
+        message: "Error",  // Title of the notification
+        description: "OTP has expired. Please request a new one.",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      });
+      return
+    }
     const otpCode = otp.join("");
     if (otpCode.trim().length === 0) {
       notification.error({
@@ -183,6 +193,7 @@ const OtpEmail = () => {
 
     try {
       if (flow === "SIGN_IN") {
+
         // Attempt signIn
         const result = await signIn.attemptFirstFactor({
           strategy: "email_code",
@@ -191,7 +202,7 @@ const OtpEmail = () => {
 
         if (result.status === "complete") {
           // Successfully signed in
-          await setSignInActive({ session: result.createdSessionId });
+          await setActiveSignIn({ session: result.createdSessionId });
           alert("You have successfully signed in!");
           navigate("/signup");
         } else {
@@ -211,7 +222,7 @@ const OtpEmail = () => {
           // && status === "complete"
         ) {
           // Successfully signed up & automatically signed in
-          await setSignUpActive({ session: createdSessionId });
+          await setActiveSignUp({ session: createdSessionId });
           notification.success({
             message: "Success",  // Title of the notification
             description: "You have successfully signed in!",  // Description of the notification
