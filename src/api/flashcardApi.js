@@ -42,3 +42,31 @@ export const deleteFlashcard = async (id) => {
         throw error;
     }
 };   
+
+//for updating stat i need to pass card id , userid and cardknow in body
+
+// In your flashcardApi.js
+export const updateStats = async (cardId, userId, cardKnow) => {
+    try {
+        console.log("cardId",cardId,userId,cardKnow)
+      const response = await api.put(`/flashCards/update/stats`, {
+        cardId,
+        userId,
+        cardKnow
+      });
+      return response.data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error; // Make sure errors are properly propagated
+    }
+  };
+
+  export const getCardByUserId = async (userId) => {
+    try {
+      const response = await api.get(`/flashCards/get/user/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error("API Error:", error);
+      throw error; // Make sure errors are properly propagated
+    }
+  };

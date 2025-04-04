@@ -30,6 +30,7 @@ export const createUserProfile = async (data) => {
     throw error;
   }
 };
+
 export const getUserByClerkId = async (clerkId) => {
   try {
     const response = await api.get(`/users/getUserByClerk/${clerkId}`);
@@ -39,6 +40,7 @@ export const getUserByClerkId = async (clerkId) => {
     throw error;
   }
 };
+
 export const getUsers = async () => {
   try {
     const response = await api.get("/users/getUsers");

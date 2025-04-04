@@ -37,22 +37,20 @@ export const MarqueeTrack = styled.div`
       transform: translateX(0);
     }
     100% {
-      /* Because we are duplicating the array once, 
-         moving -50% horizontally loops the set seamlessly */
       transform: translateX(-50%);
     }
   }
 
   @media (max-width: 1024px) {
-    animation: scroll 20s linear infinite;
+    animation: scroll 12s linear infinite; /* Faster than desktop */
   }
 
   @media (max-width: 768px) {
-    animation: scroll 25s linear infinite;
+    animation: scroll 10s linear infinite; /* Even faster */
   }
 
   @media (max-width: 480px) {
-    animation: scroll 30s linear infinite;
+    animation: scroll 8s linear infinite; /* Fastest on mobile */
   }
 `;
 
@@ -75,7 +73,8 @@ export const Card = styled.div`
   }
 
   @media (max-width: 480px) {
-    flex: 0 0 100%; /* 1 card per row on extra small screens */
+   flex: 0 0 80%; /* Wider cards on mobile (shows 1.25 cards at a time) */
+    min-width: 80%; /* Ensures consistent width */
   }
 
   /* Basic styling */
@@ -99,5 +98,21 @@ export const Card = styled.div`
     display: flex;
     justify-content: center;
     font-size: 0.9rem;
+  }
+`;
+
+export const KnowButton = styled.button`
+  color: black;
+  background-color: #68c184;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: normal;
+  padding: 6px 12px;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   }
 `;
