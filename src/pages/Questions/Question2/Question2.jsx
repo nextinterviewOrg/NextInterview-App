@@ -8,6 +8,7 @@ import {
   CirclePointer,
   BackIcon,
   Section,
+  SkipButton
 } from "../../Questions/Question2/Question2.styles";
 import { useNavigate } from "react-router";
 import { RxArrowLeft } from "react-icons/rx";
@@ -105,6 +106,7 @@ const QuestionPage2 = () => {
           <NextButton disabled={!selectedOption} onClick={handleClick}>
             Next
           </NextButton>
+          <SkipButton onClick={() => navigate("/question3")}>Skip</SkipButton>
         </Section>
       </Container>
     </div>

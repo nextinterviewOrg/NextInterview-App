@@ -88,6 +88,7 @@ const QuestionPage4 = () => {
           <NextButton disabled={!selectedOption} onClick={handleOnlClick}>
             Next
           </NextButton>
+          <SkipButton onClick={() => navigate("/question6")}>Skip</SkipButton>
         </Section>
       </Container>
     </div>
