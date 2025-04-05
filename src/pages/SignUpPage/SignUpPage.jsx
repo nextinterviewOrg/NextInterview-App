@@ -125,6 +125,14 @@ const SignUpPage = () => {
         // username: username,
         email_address: email,
       });
+      const userSignupData={
+        phoneNumber: fullPhoneNumber,
+        password: password,
+        emailAddress: email,
+        phone_number: fullPhoneNumber,
+        // username: username,
+        email_address: email,
+      };
       console.log("datas", datas);
       if (datas.errors) {
         const breachedPasswordError = datas.errors.find(
@@ -150,7 +158,7 @@ const SignUpPage = () => {
       setMessageType("success");
 
       navigate("/otp", {
-        state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email },
+        state: { flow: "SIGN_UP", phoneNumber: fullPhoneNumber, email: email,data:userSignupData },
       });
     } catch (err) {
       console.error("Sign-up Error:", err);

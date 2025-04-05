@@ -61,7 +61,7 @@ const OtpEmail = () => {
     }
   };
 
-  const [countdown, setCountdown] = useState(15);
+  const [countdown, setCountdown] = useState(300);
   const [canResend, setCanResend] = useState(false);
 
   useEffect(() => {
