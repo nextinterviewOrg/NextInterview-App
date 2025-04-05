@@ -78,9 +78,10 @@ const Otp = () => {
     if (canResend) {
       try {
         if (location.state.flow === "SIGN_UP") {
-          const result = await signUp.create({
-            identifier: location.state.phoneNumber, // Phone number of the user
-            strategy: "phone_code", // Phone OTP verification strategy
+          console.log("Phone number: ", location.state.phoneNumber);
+          const result = await signUp.create(location.state.data);
+          await signUp.preparePhoneNumberVerification({
+            strategy: "phone_code",
           });
 
           console.log("OTP Resent: ", result);
@@ -178,8 +179,15 @@ const Otp = () => {
   }
 
   const handleGoBack = () => {
+    if (flow === "SIGN_UP") {
+      // If user wants to change phone number, navigate back
+      navigate("/signup", { state: { flow: location.state.flow } });
+    }else if(flow === "SIGN_IN"){
+      navigate("/loginPhone", { state: { flow: location.state.flow } });
+    }
+   
     // If user wants to change phone number, navigate back
-    navigate("/loginPhone", { state: { flow: location.state.flow } });
+   
   };
 
   // Only allow digits in the OTP field
@@ -367,7 +375,7 @@ const Otp = () => {
             </div>
           </OTPInputContainer>
 
-          <ResendMessage onClick={handleResend} disabled={!canResend}>
+          <ResendMessage onClick={handleResend} disabled={!canResend} style={{ cursor: canResend ? "pointer" : "not-allowed" }}>
             {canResend ? (
               <a className="resendotp">Resend OTP</a>
             ) : (
