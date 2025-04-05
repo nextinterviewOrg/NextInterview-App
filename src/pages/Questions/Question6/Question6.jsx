@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
-import { Question6Wrapper } from "./Question6.Styles";
+import { Question6Wrapper,SkipButton } from "./Question6.Styles";
 import { useNavigate } from "react-router";
 import { RxArrowLeft } from "react-icons/rx";
 import { useUser } from "@clerk/clerk-react";
@@ -161,6 +161,7 @@ function Question6() {
           >
             Not sure yet
           </button>
+          <SkipButton onClick={() => navigate("/question8")}>Skip</SkipButton>
         </div>
       </div>
     </Question6Wrapper>
