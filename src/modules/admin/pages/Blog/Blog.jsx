@@ -18,9 +18,10 @@ import {
     TinyMCEplugins,
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
-import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule"; // <-- Adjust the import path if needed
-import "../../../admin/pages/Blog/Blog.scss"; // Import the SCSS file here
+import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
+import "../../../admin/pages/Blog/Blog.scss";
 import { Link } from "react-router-dom";
+import { ShimmerThumbnail } from "react-shimmer-effects";
 
 const BlogForm = () => {
     const [title, setTitle] = useState("");
@@ -30,23 +31,13 @@ const BlogForm = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [loading, setLoading] = useState(false);
-
-    // Controls create/edit modal
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    // Controls delete confirmation modal
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
-    // Track which blog we are deleting
     const [deleteBlogId, setDeleteBlogId] = useState(null);
-
-    // For editing
     const [isEditMode, setIsEditMode] = useState(false);
     const [editBlogId, setEditBlogId] = useState(null);
-
     const [imagePreview, setImagePreview] = useState(null);
 
-    // Fetch blogs on component mount
     useEffect(() => {
         const fetchBlogs = async () => {
             try {
@@ -66,7 +57,6 @@ const BlogForm = () => {
         fetchBlogs();
     }, []);
 
-    // Handle image upload
     const handleImageUpload = async (e) => {
         const file = e.target.files[0];
         if (file && file.type.startsWith("image/")) {
@@ -85,7 +75,6 @@ const BlogForm = () => {
         }
     };
 
-    // Create blog
     const handleCreateBlog = async (event) => {
         event.preventDefault();
         try {
@@ -93,7 +82,6 @@ const BlogForm = () => {
             await createBlog({ title, content, image });
             resetForm();
             setIsModalOpen(false);
-            // Re-fetch or re-pull blogs
             const response = await getAllBlogs();
             if (Array.isArray(response.data)) {
                 setBlogs(response.data);
@@ -105,7 +93,6 @@ const BlogForm = () => {
         setLoading(false);
     };
 
-    // Update blog
     const handleUpdateBlog = async (blogId) => {
         try {
             setLoading(true);
@@ -114,12 +101,9 @@ const BlogForm = () => {
                 content,
                 image,
             });
-
-            // Update local state to reflect changes
             setBlogs((prevBlogs) =>
                 prevBlogs.map((b) => (b._id === blogId ? updatedBlog : b))
             );
-
             setIsModalOpen(false);
             message.success("Blog updated successfully!");
             resetForm();
@@ -130,7 +114,6 @@ const BlogForm = () => {
         setLoading(false);
     };
 
-    // Delete blog
     const handleDeleteBlog = async () => {
         if (!deleteBlogId) return;
         try {
@@ -148,7 +131,6 @@ const BlogForm = () => {
         }
     };
 
-    // Reset form fields
     const resetForm = () => {
         setTitle("");
         setContent("");
@@ -158,15 +140,12 @@ const BlogForm = () => {
         setEditBlogId(null);
     };
 
-    // When user clicks "Delete" icon on a card
     const handleDeleteClick = (blogId) => {
         setDeleteBlogId(blogId);
         setIsDeleteModalOpen(true);
     };
 
-    // When user clicks "Edit" icon on a card
     const handleEditClick = (blog) => {
-        // Populate modal fields with existing blog data
         setTitle(blog.blog_title);
         setContent(blog.blog_description);
         setImage(blog.blog_image);
@@ -176,19 +155,15 @@ const BlogForm = () => {
         setIsModalOpen(true);
     };
 
-    // Single form submit handler for both create & edit
     const handleSubmitForm = (e) => {
         e.preventDefault();
         if (isEditMode && editBlogId) {
-            // If in edit mode, update
             handleUpdateBlog(editBlogId);
         } else {
-            // Else create
             handleCreateBlog(e);
         }
     };
 
-    // Inline styles for the modal overlay and content
     const modalOverlayStyle = {
         position: "fixed",
         top: 0,
@@ -237,7 +212,6 @@ const BlogForm = () => {
             {success && <p>{success}</p>}
             {error && <p>{error}</p>}
 
-            {/* Modal for Creating/Editing Blog */}
             {isModalOpen && (
                 <div
                     style={modalOverlayStyle}
@@ -248,7 +222,7 @@ const BlogForm = () => {
                 >
                     <div
                         style={modalContentStyle}
-                        onClick={(e) => e.stopPropagation()} // stops click from closing modal
+                        onClick={(e) => e.stopPropagation()}
                     >
                         <CloseOutlined
                             onClick={() => {
@@ -265,16 +239,8 @@ const BlogForm = () => {
                             }}
                         />
                         <h2>{isEditMode ? "Edit Blog" : "Create Blog"}</h2>
-
-                        {/* The same form is used for both create and edit */}
                         <form onSubmit={handleSubmitForm}>
-                            <label
-                                style={{
-                                    fontWeight: "600",
-                                    fontFamily: "DM Sans",
-                                    
-                                }}
-                            >
+                            <label style={{ fontWeight: "600", fontFamily: "DM Sans" }}>
                                 Title:
                                 <input
                                     type="text"
@@ -291,12 +257,7 @@ const BlogForm = () => {
                                     }}
                                 />
                             </label>
-                            <label
-                                style={{
-                                    fontWeight: "600",
-                                    fontFamily: "DM Sans",
-                                }}
-                            >
+                            <label style={{ fontWeight: "600", fontFamily: "DM Sans" }}>
                                 Content:
                                 <Editor
                                     apiKey={TinyMCEapiKey}
@@ -309,22 +270,17 @@ const BlogForm = () => {
                                     onEditorChange={(newValue) => setContent(newValue)}
                                 />
                             </label>
-                            <label
-                                style={{
-                                    display: "block",
-                                    margin: "10px 0",
-                                    fontWeight: "600",
-                                    fontFamily: "DM Sans",
-                                }}
-                            >
+                            <label style={{
+                                display: "block",
+                                margin: "10px 0",
+                                fontWeight: "600",
+                                fontFamily: "DM Sans",
+                            }}>
                                 Image:
                                 <input
                                     type="file"
                                     onChange={handleImageUpload}
-                                    style={{
-                                        display: "block",
-                                        margin: "10px 0",
-                                    }}
+                                    style={{ display: "block", margin: "10px 0" }}
                                 />
                                 {imagePreview && (
                                     <img
@@ -381,7 +337,6 @@ const BlogForm = () => {
                 </div>
             )}
 
-            {/* Delete confirmation modal */}
             {isDeleteModalOpen && (
                 <DeleteModule
                     onDelete={handleDeleteBlog}
@@ -390,72 +345,114 @@ const BlogForm = () => {
             )}
 
             <h2 style={{ marginLeft: "60px" }}>Blog List</h2>
-            {/* Use the CSS classes from the BlogCard.scss for each card */}
             <div className="container">
                 <div className="card__container">
-                    {blogs.map((blog) => (
-                        <article
-                            key={blog?._id || Math.random()}
-                            className="card__article"
-                            style={{
-                                borderRadius: "24px",
-                                position: "relative",
-                            }}
-                        >
-                            {/* Icon Container in top-right corner of the image */}
-                            <div
+                    {loading ? (
+                        [...Array(8)].map((_, index) => (
+                            <article 
+                                key={index} 
+                                className="card__article shimmer-article"
                                 style={{
-                                    position: "absolute",
-                                    top: "10px",
-                                    right: "10px",
-                                    display: "flex",
-                                    gap: "8px",
-                                    color: "#fff",
+                                    borderRadius: "24px",
+                                    position: "relative",
                                 }}
                             >
-                                {/* Edit Icon */}
-                                <EditOutlined
+                                <ShimmerThumbnail
+                                    height={300}
+                                    width={328}
+                                    rounded
                                     style={{
-                                        cursor: "pointer",
-                                        fontSize: "18px",
-                                        textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
-                                        color: "#2390ac",
+                                        borderRadius: "24px",
+                                        width: "328px",
+                                        height: "300px"
                                     }}
-                                    onClick={() => handleEditClick(blog)}
                                 />
-
-                                {/* Delete Icon */}
-                                <DeleteOutlined
+                                <div className="card__data">
+                                    <ShimmerThumbnail
+                                        height={24}
+                                        width="80%"
+                                        style={{
+                                            marginBottom: "0.75rem",
+                                            borderRadius: "4px"
+                                        }}
+                                    />
+                                    <ShimmerThumbnail
+                                        height={16}
+                                        width="90%"
+                                        style={{
+                                            marginBottom: "1rem",
+                                            borderRadius: "4px"
+                                        }}
+                                    />
+                                    <ShimmerThumbnail
+                                        height={16}
+                                        width="30%"
+                                        style={{
+                                            borderRadius: "4px"
+                                        }}
+                                    />
+                                </div>
+                            </article>
+                        ))
+                    ) : (
+                        blogs.map((blog) => (
+                            <article
+                                key={blog?._id || Math.random()}
+                                className="card__article"
+                                style={{
+                                    borderRadius: "24px",
+                                    position: "relative",
+                                }}
+                            >
+                                <div
                                     style={{
-                                        cursor: "pointer",
-                                        fontSize: "18px",
-                                        textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
-                                        color: "red",
+                                        position: "absolute",
+                                        top: "10px",
+                                        right: "10px",
+                                        display: "flex",
+                                        gap: "8px",
+                                        color: "#fff",
                                     }}
-                                    onClick={() => handleDeleteClick(blog._id)}
+                                >
+                                    <EditOutlined
+                                        style={{
+                                            cursor: "pointer",
+                                            fontSize: "18px",
+                                            textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
+                                            color: "#2390ac",
+                                        }}
+                                        onClick={() => handleEditClick(blog)}
+                                    />
+                                    <DeleteOutlined
+                                        style={{
+                                            cursor: "pointer",
+                                            fontSize: "18px",
+                                            textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
+                                            color: "red",
+                                        }}
+                                        onClick={() => handleDeleteClick(blog._id)}
+                                    />
+                                </div>
+                                <img
+                                    src={blog.blog_image || "/placeholder.jpg"}
+                                    alt={blog?.blog_title || "Blog Image"}
+                                    className="card__img"
                                 />
-                            </div>
-
-                            <img
-                                src={blog.blog_image || "/placeholder.jpg"}
-                                alt={blog?.blog_title || "Blog Image"}
-                                className="card__img"
-                            />
-                            <div className="card__data">
-                                <h3 className="card__title">{blog?.blog_title}</h3>
-                                <span
-                                    className="card__description"
-                                    dangerouslySetInnerHTML={{
-                                        __html: parseJSONContent(blog.blog_description).slice(0, 35),
-                                    }}
-                                ></span>
-
-                                <Link to={`/admin/real-world-scenario/${blog?._id}`} className="card__button">
-                                    Read More
-                                </Link>
-                            </div>
-                        </article>
-                    ))}
+                                <div className="card__data">
+                                    <h3 className="card__title">{blog?.blog_title}</h3>
+                                    <span
+                                        className="card__description"
+                                        dangerouslySetInnerHTML={{
+                                            __html: parseJSONContent(blog.blog_description).slice(0, 35),
+                                        }}
+                                    ></span>
+                                    <Link to={`/admin/real-world-scenario/${blog?._id}`} className="card__button">
+                                        Read More
+                                    </Link>
+                                </div>
+                            </article>
+                        ))
+                    )}
                 </div>
             </div>
         </div>
@@ -463,11 +460,10 @@ const BlogForm = () => {
 };
 
 const parseJSONContent = (content) => {
-    if (!content) return ""; // return an empty string if content is undefined or null
+    if (!content) return "";
     try {
         if (typeof content === "string" && (content.trim().startsWith("{") || content.trim().startsWith("["))) {
             const parsedContent = JSON.parse(content);
-            // If parsed content is not a string, convert it to a string
             return typeof parsedContent === "string"
                 ? parsedContent
                 : JSON.stringify(parsedContent);
@@ -478,6 +474,5 @@ const parseJSONContent = (content) => {
         return "";
     }
 };
-
 
 export default BlogForm;

@@ -182,11 +182,14 @@ export default function ModuleSidebar({
           </div>
           <div className="progress-details">
             <div className="progress-details-count">
-              <span>{totalCompletedTopics} /{courseData.topicsList.length} Topics</span>
-              <span>completed</span>
+              <span>{totalCompletedTopics} /{courseData.topicsList.length} Topics completed</span>
+              <span></span>
             </div>
 
-            <div className="progress-details-percentage" >
+            <div className="progress-details-percentage"
+            style={{
+              fontSize: "16px",
+            }} >
               <span>{moduleProgressPercentage}%</span>
             </div>
           </div>
@@ -206,8 +209,9 @@ export default function ModuleSidebar({
             <div key={index} className="topic">
               <div className="topic-title" onClick={() => toggleExpand(index)}>
                 <span className="topic-name">{topic.title}</span>
-                <span>
-                  {expandedTopic === index ? <MdExpandLess /> : <MdExpandMore />}
+                <span 
+                >
+                  {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
                 </span>
               </div>
               {expandedTopic === index && (
@@ -235,7 +239,7 @@ export default function ModuleSidebar({
                               <div
                                 style={{
                                   display: "flex",
-                                  alignItems: "flex-start",
+                                  alignItems: "center",
                                   gap: "5px",
                                 }}
                               >
