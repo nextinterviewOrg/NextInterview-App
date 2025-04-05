@@ -9,6 +9,9 @@ export const HeaderContainer = styled.header`
   color: ${theme.colors.primary};
   padding: ${theme.spacing(2)};
   font-family: ${theme.fonts.body};
+  margin-left: 20px;
+ 
+
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     
@@ -29,7 +32,7 @@ export const HeaderContainer = styled.header`
 
 export const Title = styled.h1`
   font-size: 24px;
-  margin: 0;
+  margin: 20px;
   color: ${theme.colors.text};
   font-family: ${theme.fonts.display};
 
@@ -212,13 +215,14 @@ export const HeaderWrapper = styled.div`
   justify-content: center;
   align-items: center;
   z-index: 9999;
+}
   
-.hamburger-icon {
+ .hamburger-icon {
     display: none;
     cursor: pointer;
     font-size: 20px;
     color: ${theme.colors.text};
-
+    
     @media (max-width: 768px) {
       display: block;
     }

@@ -140,7 +140,7 @@ const Dropdown = ({
 };
 
 // **Main Header Component**
-const UserHeader = ({ title, toggleMobileSidebar  }) => {
+const UserHeader = ({  toggleMobileSidebar  }) => {
   const [issopen, setIssopen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
@@ -158,6 +158,34 @@ const UserHeader = ({ title, toggleMobileSidebar  }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notify = [];
   const { userId } = useParams();
+
+
+
+
+  const getTitleFromPath = (pathname) => {
+      const path = pathname.toLowerCase();
+      if (path.includes("dashboard")) return "Dashboard";
+      if (path.includes("faq")) return "FAQ's";
+      if (path.includes("learning")) return "Learning Module";
+      if (path.includes("profile")) return "Profile info";
+      if (path.includes("home")) return "Home";
+      if(path.includes("revise")) return "Quickly revise";
+      if(path.includes("notification")) return "Notifications";
+      if(path.includes("blogs")) return "Real World Scenarios";
+      if(path.includes("challenges")) return "Challenges";
+      if(path.includes("subscription")) return "Subscription";
+      if (path.includes("questionbank")) return "Question Bank"; // Add this line
+      // Add more routes as needed
+      return "Dashboard"; // Default title
+    };
+  
+    // State for title with proper initial value
+    const [title, setTitle] = useState(() => getTitleFromPath(location.pathname));
+  
+    // Reset title when location changes
+    useEffect(() => {
+      setTitle(getTitleFromPath(location.pathname));
+    }, [location.pathname]);
   const handleNotifyClick = async () => {
     setLoading(true);
     const cleanedUserId = user.id.replace(/^user_/, ""); // Remove 'user_' prefix
