@@ -77,13 +77,13 @@ const AddFlashCard = ({ onClose, onSave, flashcardCount }) => {
             <FlashcardNumber>Flash Card - {flashcardCount + 1}</FlashcardNumber>
           </FlashcardLabel>
           <TextArea
-            placeholder="Type here"
+            placeholder="Type here (Maximum of 75 characters)"
             value={content}
             onChange={(e) => {
               setContent(e.target.value);
               setError(false);
             }}
-            maxLength={50}
+            maxLength={75}
             style={{
               borderColor: error ? "red" : "#ccc",
               outline: error ? "1px solid red" : "none",
@@ -91,7 +91,7 @@ const AddFlashCard = ({ onClose, onSave, flashcardCount }) => {
           />
           {error && (
             <div style={{ color: "red", marginTop: "5px" }}>
-              Please fill the above field.
+              Please fill the above field. 
             </div>
           )}
 

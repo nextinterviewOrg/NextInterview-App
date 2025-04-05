@@ -42,10 +42,10 @@ const EditFlashCard = ({ card, onClose, onSave }) => {
           placeholder="Edit flash card content"
           value={text}
           onChange={(e) => setText(e.target.value)}
-          maxLength={50}
+          maxLength={75}
         />
       </ContentWrapper>
-        <div style={{ textAlign: "right" }}>{text.length}/50</div>
+        <div style={{ textAlign: "right" }}>{text.length}/75</div>
       <Footer>
         <SaveButton onClick={handleSave}>Save</SaveButton>
       </Footer>
