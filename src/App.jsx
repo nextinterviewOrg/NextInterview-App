@@ -223,9 +223,9 @@ function App() {
               path="/user/learning/:id/topic"
               element={<UserModuleTopic />}
             />
-            <Route path="/user/questionBank" element={<QuestionBank />} />
+            <Route path="/user/questionbank" element={<QuestionBank />} />
             <Route
-              path="/user/questionBank/:id"
+              path="/user/questionbank/:id"
               element={<QuestionCollapsible />}
             />
             <Route path="/user/home" element={<UserHome />} />
