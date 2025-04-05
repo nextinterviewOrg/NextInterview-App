@@ -7,8 +7,6 @@ import {
   HeaderContainer,
   Title,
   HeaderRight,
-  IconWrapper,
-  Icon,
   UserProfile,
   UserDetails,
   UserName,
@@ -16,52 +14,27 @@ import {
   Avatar,
   HeaderWrapper,
 } from "./Header.styles";
-import { PiLineVertical } from "react-icons/pi";
-import { BsBell } from "react-icons/bs";
-import { MdOutlineInfo } from "react-icons/md";
-import { UserButton } from "@clerk/clerk-react";
-import ProfileInfo from "../../../src/modules/admin/components/ProfileComponents/ProfileInfo";
-import { useNavigate } from "react-router-dom";
-import theme from "../../theme/Theme";
 import { CgProfile } from "react-icons/cg";
-import { MdOutlineSupportAgent } from "react-icons/md";
 import { RiLogoutBoxLine } from "react-icons/ri";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../api/userApi";
-import { useClerk } from "@clerk/clerk-react";
-import noti from "../../assets/Notifications.svg";
-import settings from "../../assets/Settings.svg";
+import { useNavigate, useLocation } from "react-router-dom";
+import theme from "../../theme/Theme";
 
-// **Dropdown Component**
+// Dropdown Component
 const Dropdown = ({
   isOpen,
   onClose,
   position,
-  onOpenQueryModal,
   onLogoutClick,
 }) => {
   const dropdownRef = useRef();
   const navigate = useNavigate();
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [avatarPosition, setAvatarPosition] = useState({ top: 0, left: 0 });
-  const [isRaiseQueryOpen, setIsRaiseQueryOpen] = useState(false); // State for RaiseQuery modal
-
-  const handleAvatarClick = (event) => {
-    const rect = event.target.getBoundingClientRect();
-    setAvatarPosition({ top: rect.top + window.scrollY, left: rect.left });
-    setIsProfileOpen((prevState) => !prevState); // Toggle the dropdown menu
-  };
-
-  const handleLogout = () => {
-    // Perform logout actions here (e.g., clearing session, redirecting)
-    setIsLogoutModalOpen(false);
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose(); // Close dropdown if clicking outside
+        onClose();
       }
     };
 
@@ -78,7 +51,7 @@ const Dropdown = ({
 
   const dropdownStyles = {
     position: "absolute",
-    top: position.top + 50, // Adjust position below the avatar
+    top: position.top + 50,
     left: position.left - 140,
     background: "white",
     border: "1px solid #ddd",
@@ -89,32 +62,40 @@ const Dropdown = ({
     padding: "10px 0",
     cursor: "pointer",
   };
-  const listyles = {
-    FontFace: "DM Sans",
+
+  const listStyles = {
+    fontFamily: "DM Sans",
     fontSize: "16px",
     fontWeight: "500",
     color: theme.colors.textgray,
     listStyle: "none",
     padding: "0 20px",
   };
-  const listLIStyles = {
+
+  const listItemStyles = {
     marginBottom: "10px",
+    display: "flex",
+    alignItems: "center",
+    gap: "8px",
+    padding: "8px 0",
+    "&:hover": {
+      color: theme.colors.primary,
+    },
   };
 
   return ReactDOM.createPortal(
     <div ref={dropdownRef} style={dropdownStyles}>
-      <ul style={listyles}>
+      <ul style={listStyles}>
         <li
-          style={listLIStyles}
+          style={listItemStyles}
           onClick={() => {
             navigate("/admin/profile");
             onClose();
           }}
         >
-          {" "}
           <CgProfile /> My Profile
         </li>
-          <li style={listLIStyles} onClick={onLogoutClick}>
+        <li style={listItemStyles} onClick={onLogoutClick}>
           <RiLogoutBoxLine /> Logout
         </li>
       </ul>
@@ -123,112 +104,131 @@ const Dropdown = ({
   );
 };
 
-const Header = ({ title, toggleMobileSidebar}) => {
+const Header = ({ toggleMobileSidebar }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [avatarPosition, setAvatarPosition] = useState({ top: 0, left: 0 });
-  const [isRaiseQueryOpen, setIsRaiseQueryOpen] = useState(false); // State for RaiseQuery modal
   const { isSignedIn, user, isLoaded } = useUser();
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
   const { signOut } = useClerk();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Function to determine title based on current path
+  const getTitleFromPath = (pathname) => {
+    const path = pathname.toLowerCase();
+    if (path.includes("dashboard")) return "Dashboard";
+    if (path.includes("faq")) return "FAQ's";
+    if (path.includes("learning")) return "Learning Module";
+    if (path.includes("profile")) return "Profile info";
+    if (path.includes("users")) return "Users";
+    if(path.includes("supportquery")) return "Support Query";
+    if(path.includes("flashcard")) return "Flashcard";
+    if(path.includes("notification")) return "Notifications";
+    if(path.includes("manage-mfa")) return "Manage MFA";
+    if(path.includes("real-world-scenario")) return "Real World Scenarios";
+    if(path.includes("challenges")) return "Challenges";
+    if(path.includes("userProfile")) return "User Profile";
+    // Add more routes as needed
+    return "Dashboard"; // Default title
+  };
+
+  // State for title with proper initial value
+  const [title, setTitle] = useState(() => getTitleFromPath(location.pathname));
+
+  // Reset title when location changes
+  useEffect(() => {
+    setTitle(getTitleFromPath(location.pathname));
+  }, [location.pathname]);
+
   const handleAvatarClick = (event) => {
     const rect = event.target.getBoundingClientRect();
     setAvatarPosition({ top: rect.top + window.scrollY, left: rect.left });
-    setIsProfileOpen((prevState) => !prevState); // Toggle the dropdown menu
+    setIsProfileOpen((prevState) => !prevState);
   };
 
-  const handleLogout = () => {
-    // Perform logout actions here (e.g., clearing session, redirecting)
-    setIsLogoutModalOpen(false);
+  // Complete logout handler
+  const handleCompleteLogout = async () => {
+    await signOut();
+    setTitle("Dashboard"); // Explicitly reset title
+    navigate("/sign-in");
   };
 
+  // Fetch user data
   useEffect(() => {
-    const apiCaller = async () => {
+    const fetchUserData = async () => {
       if (!isSignedIn || !isLoaded || !user) return;
-      const userData = await getUserByClerkId(user?.id);
-      setUserAvatar(userData.data.clerkUserData.imageUrl);
-      setUserName(userData.data.user.user_name);
-      setUserEmail(userData.data.user.user_email);
+      try {
+        const userData = await getUserByClerkId(user?.id);
+        setUserAvatar(userData.data.clerkUserData.imageUrl);
+        setUserName(userData.data.user.user_name);
+        setUserEmail(userData.data.user.user_email);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     };
-    apiCaller();
-  }, [navigate, isSignedIn, isLoaded, user]);
+    fetchUserData();
+  }, [isSignedIn, isLoaded, user]);
 
   return (
-    <>
-      <HeaderWrapper>
-        <HeaderContainer>
-         <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
-                           {/* Add hamburger icon for mobile */}
-                           <div className="hamburger-icon" onClick={toggleMobileSidebar}>
-                             <FaBars />
-                           </div>
-                           <Title>{title}</Title>
-                         </div>
-          <HeaderRight>
-            <UserProfile>
-              <UserDetails>
-                <UserName>{userName}</UserName>
-                <UserEmail>{userEmail}</UserEmail>
-              </UserDetails>
-              <div
-                style={{ position: "relative" }}
-                className="dropdown-container"
-              >
-                <Avatar
-                  src={userAvatar ? userAvatar : Logo}
-                  alt="Profile"
-                  onClick={handleAvatarClick}
-                />
-                <Dropdown
-                  isOpen={isProfileOpen}
-                  position={avatarPosition}
-                  onClose={() => setIsProfileOpen(false)}
-                  onLogoutClick={() => {
-                    setIsLogoutModalOpen(true);
-                    // setIsProfileOpen(false);
-                  }}
-                  onOpenQueryModal={() => setIsRaiseQueryOpen(true)} // Open RaiseQuery modal
-                />
-              </div>
-            </UserProfile>
-          </HeaderRight>
-        </HeaderContainer>
+    <HeaderWrapper>
+      <HeaderContainer>
+        <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+          <div className="hamburger-icon" onClick={toggleMobileSidebar}>
+            <FaBars />
+          </div>
+          <Title>{title}</Title>
+        </div>
+        
+        <HeaderRight>
+          <UserProfile>
+            <UserDetails>
+              <UserName>{userName}</UserName>
+              <UserEmail>{userEmail}</UserEmail>
+            </UserDetails>
+            <div style={{ position: "relative" }} className="dropdown-container">
+              <Avatar
+                src={userAvatar || Logo}
+                alt="Profile"
+                onClick={handleAvatarClick}
+              />
+              <Dropdown
+                isOpen={isProfileOpen}
+                position={avatarPosition}
+                onClose={() => setIsProfileOpen(false)}
+                onLogoutClick={() => setIsLogoutModalOpen(true)}
+              />
+            </div>
+          </UserProfile>
+        </HeaderRight>
+      </HeaderContainer>
 
-        {isLogoutModalOpen && (
-          <div className="User-Header-modal-overlay">
-            <div className="User-Header-modal-content">
-              <h3>Are you sure, you want to Logout?</h3>
-              <div className="User-Header-modal-buttons">
-                <button
-                  className="User-Header-cancel-btn"
-                  onClick={() => setIsLogoutModalOpen(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  className="User-Header-logout-btn"
-                  onClick={() => {
-                    signOut();
-                    handleLogout();
-                  }}
-                >
-                  Logout
-                </button>
-              </div>
+      {/* Logout Confirmation Modal */}
+      {isLogoutModalOpen && (
+        <div className="User-Header-modal-overlay">
+          <div className="User-Header-modal-content">
+            <h3>Are you sure you want to Logout?</h3>
+            <div className="User-Header-modal-buttons">
+              <button
+                className="User-Header-cancel-btn"
+                onClick={() => setIsLogoutModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="User-Header-logout-btn"
+                onClick={handleCompleteLogout}
+              >
+                Logout
+              </button>
             </div>
           </div>
-        )}
-        {/* {isProfileOpen && <ProfileInfo onClose={handleAvatarClick} />} */}
-      </HeaderWrapper>
-    </>
+        </div>
+      )}
+    </HeaderWrapper>
   );
-};
-
-Header.propTypes = {
-  title: PropTypes.string.isRequired, // Enforces a dynamic title
 };
 
 export default Header;

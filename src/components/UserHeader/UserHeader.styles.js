@@ -272,6 +272,7 @@ export const UserHeaderWrapper = styled.div`
     justify-content: center;
     align-items: center;
     z-index: 9999;
+}
 
     .hamburger-icon {
   // display: none !important;

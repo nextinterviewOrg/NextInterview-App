@@ -86,14 +86,6 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     },
   ];
 
-  // useEffect(() => {
-   
-  //   if (window.innerWidth <= 768) {
-  //     setIsSidebarOpen(false);
-  //   }
-  // }, [location.pathname]);
-
- 
    useEffect(() => {
      if (window.innerWidth <= 768) {
        setIsSidebarOpen(false);

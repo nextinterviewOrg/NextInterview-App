@@ -7,7 +7,7 @@ export const ModuleSidebarContainer = styled.div`
     if (props.isMobile) {
       return props.sidebarOpen ? "250px" : "0";
     }
-    return props.isExpanded ? "200px" : "60px";
+    return props.isExpanded ? "250px" : "60px";
   }};
   height: 100vh;
   transition: all 0.3s ease;
@@ -121,7 +121,7 @@ export const ModuleSidebarContainer = styled.div`
   .course-topics-title {
     text-overflow: ellipsis;
     font-family: "DM Sans";
-    font-size: 16px;
+    font-size: 24px;
     font-style: normal;
     font-weight: 600;
     overflow: hidden;
@@ -158,6 +158,7 @@ export const ModuleSidebarContainer = styled.div`
     -webkit-box-orient: vertical;
     overflow: hidden;
     width: 90%;
+    font-size: 18px;
   }
 
   .subtopics {
@@ -166,7 +167,7 @@ export const ModuleSidebarContainer = styled.div`
     overflow: hidden;
     color: ${({ theme }) => theme.colors.black};
     font-family: "DM Sans";
-    font-size: 10px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 600;
     line-height: 20px;
@@ -203,7 +204,7 @@ export const ModuleSidebarContainer = styled.div`
     overflow: hidden;
     color: ${({ theme }) => theme.colors.black};
     font-family: "DM Sans";
-    font-size: 10px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 400;
     display: -webkit-box;
@@ -211,11 +212,12 @@ export const ModuleSidebarContainer = styled.div`
     -webkit-box-orient: vertical;
     overflow: hidden;
     width: 100%;
+    padding: 10px;
   }
 
   .module-sidebar-topic-title {
     font-family: "DM Sans";
-    font-size: 15px;
+    font-size: 24px;
     font-style: normal;
     font-weight: 500;
     color: ${({ theme }) => theme.colors.black};
@@ -236,10 +238,13 @@ export const ModuleSidebarContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: "DM Sans";
+    font-size: 16px;
   }
   .subtopic-link {
     text-decoration: none;
     color: inherit;
+    
   }
   .subtopic-link:visited .subtopic-title {
     font-weight: 600;
