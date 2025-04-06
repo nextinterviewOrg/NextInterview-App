@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import {
   UserLearningWrapper
 } from "./UserLearning.styles";
 import { CiBoxList } from "react-icons/ci";
 import { CiGrid41 } from "react-icons/ci";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { getModule } from "../../../../../api/addNewModuleApi";
 import { ShimmerThumbnail } from "react-shimmer-effects"; // Changed to ShimmerThumbnail
 import { IoSearchOutline } from "react-icons/io5";
@@ -16,32 +16,55 @@ export default function UserLearning() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const location = useLocation();
 
+  const fetchModules = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getModule();
+      const data = response.data.map((item) => {
+        return {
+          _id: item._id,
+          title: item.moduleName,
+          description: item.description,
+          topics: item.topicData.length,
+          duration: item.approxTimeTaken,
+          image: item.imageURL,
+        };
+      });
+      setCourses(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Fetch modules when component mounts
   useEffect(() => {
-    const apiCaller = async () => {
-      try {
-        setLoading(true);
-        const response = await getModule();
+    fetchModules();
+  }, [fetchModules]);
 
-        const data = response.data.map((item) => {
-          return {
-            _id: item._id,
-            title: item.moduleName,
-            description: item.description,
-            topics: item.topicData.length,
-            duration: item.approxTimeTaken,
-            image: item.imageURL,
-          };
-        });
-        setCourses(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
+  // Refresh data when user returns to this page
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchModules();
       }
     };
-    apiCaller();
-  }, []);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [fetchModules]);
+
+  // Refresh data when location changes (user navigates back to this page)
+  useEffect(() => {
+    if (location.pathname === '/user/learning') {
+      fetchModules();
+    }
+  }, [location.pathname, fetchModules]);
 
   const filteredCourses = courses.filter((course) =>
     course.title.toLowerCase().includes(searchQuery.toLowerCase())

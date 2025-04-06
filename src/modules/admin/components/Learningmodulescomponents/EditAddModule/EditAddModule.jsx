@@ -111,64 +111,81 @@ const EditAddModule = () => {
     },
   ]);
   const moduleId = useParams().id; // Get the moduleId passed from the previous page
+  const [moduleData, setModuleData] = useState(null); // Add state for module data
 
-  // ----------------------------- FETCH MODULE DATA -----------------------------
+  // Fetch module data when component mounts or moduleId changes
   useEffect(() => {
-    if (moduleId) {
-      const fetchModuleData = async () => {
-        const data = await getModuleById(moduleId);
-        // setModuleData(data);
-        // setTopics(data.data.topicData);
-        const moduleTopicData = data.data.topicData.map((topic) => {
-          return {
-            topicName: topic.topicName,
-            skillAssessmentFile: topic.skillAssessmentQuestionsURL,
-            skillAssessmentFileUrl: topic.skillAssessmentQuestionsURL,
-            subtopics: topic.subtopicData.map((subtopic) => {
+    const fetchModuleData = async () => {
+      if (moduleId) {
+        try {
+          console.log("Fetching module data for ID:", moduleId);
+          const response = await getModuleById(moduleId);
+          
+          if (response && response.data) {
+            console.log("Module data fetched successfully:", response.data);
+            setModuleData(response.data);
+            
+            // Transform the data to match the component's state structure
+            const moduleTopicData = response.data.topicData.map((topic) => {
               return {
-                subtopicName: subtopic.subtopicName,
-                subtopicContent: subtopic.subtopicContent,
-                subtopicSummary: subtopic.subtopicSummary,
-                quickRevisePoints: subtopic.revisionPoints,
-                cheatSheet: { dataUrl: subtopic.cheatSheetURL },
-                cheatSheetUrl: subtopic.cheatSheetURL,
-                isInterviewFavorite: subtopic.interviewFavorite,
-                conceptClarifiers: subtopic.conceptClarifier.map(
-                  (clarifier) => {
-                    return {
-                      clarifierWordOrPhrase: clarifier.conceptClarifier,
-                      explanationOnHover: clarifier.hoverExplanation,
-                      moreExplanation: clarifier.popupExplanation,
-                    };
-                  }
-                ),
-                laymanExplanations: subtopic.laymanTerms.map((layman) => {
+                topicName: topic.topicName,
+                skillAssessmentFile: topic.skillAssessmentQuestionsURL,
+                skillAssessmentFileUrl: topic.skillAssessmentQuestionsURL,
+                topic_code: topic.topic_code,
+                subtopics: topic.subtopicData.map((subtopic) => {
                   return {
-                    laymanScale: layman.topicLevel,
-                    laymanTitle: layman.topicTitle,
-                    laymanInfo: layman.topicInfo,
+                    subtopicName: subtopic.subtopicName,
+                    subtopicContent: subtopic.subtopicContent,
+                    subtopicSummary: subtopic.subtopicSummary,
+                    quickRevisePoints: subtopic.revisionPoints,
+                    cheatSheet: { dataUrl: subtopic.cheatSheetURL },
+                    cheatSheetUrl: subtopic.cheatSheetURL,
+                    isInterviewFavorite: subtopic.interviewFavorite,
+                    subtopic_code: subtopic.subtopic_code,
+                    conceptClarifiers: subtopic.conceptClarifier.map(
+                      (clarifier) => {
+                        return {
+                          clarifierWordOrPhrase: clarifier.conceptClarifier,
+                          explanationOnHover: clarifier.hoverExplanation,
+                          moreExplanation: clarifier.popupExplanation,
+                        };
+                      }
+                    ),
+                    laymanExplanations: subtopic.laymanTerms.map((layman) => {
+                      return {
+                        laymanScale: layman.topicLevel,
+                        laymanTitle: layman.topicTitle,
+                        laymanInfo: layman.topicInfo,
+                      };
+                    }),
+                    questionBankFile: { dataUrl: subtopic.questionBankURL },
+                    questionBankFileUrl: subtopic.questionBankURL,
+                    tryItYourselfFile: { dataUrl: subtopic.tiyQuestionsURL },
+                    tryItYourselfFileUrl: subtopic.tiyQuestionsURL,
                   };
                 }),
-                questionBankFile: { dataUrl: subtopic.questionBankURL },
-                questionBankFileUrl: subtopic.questionBankURL,
-                tryItYourselfFile: { dataUrl: subtopic.tiyQuestionsURL },
-                tryItYourselfFileUrl: subtopic.tiyQuestionsURL,
               };
-            }),
-          };
-        });
-        setTopics(moduleTopicData);
-      };
-      fetchModuleData();
-    }
+            });
+            
+            setTopics(moduleTopicData);
+          } else {
+            console.error("Failed to fetch module data:", response);
+          }
+        } catch (error) {
+          console.error("Error fetching module data:", error);
+        }
+      }
+    };
+    
+    fetchModuleData();
   }, [moduleId]);
 
-    // Concept Clarifier State Variables
-    const [selectedText, setSelectedText] = useState({
-      text: "",
-      topicIndex: null,
-      subIndex: null,
-    });
+  // Concept Clarifier State Variables
+  const [selectedText, setSelectedText] = useState({
+    text: "",
+    topicIndex: null,
+    subIndex: null,
+  });
 
   // ----------------------------- REF FOR FILE UPLOADS -----------------------------
   const skillAssessmentRefs = useRef([]);
@@ -183,6 +200,7 @@ const EditAddModule = () => {
         topicName: "",
         skillAssessmentFile: null,
         skillAssessmentFileUrl: null,
+        topic_code: "", // Initialize with empty code, will be generated by backend
         subtopics: [
           {
             subtopicName: "",
@@ -191,6 +209,7 @@ const EditAddModule = () => {
             quickRevisePoints: "",
             cheatSheet: null,
             isInterviewFavorite: false,
+            subtopic_code: "", // Initialize with empty code, will be generated by backend
             conceptClarifiers: [
               {
                 clarifierWordOrPhrase: "",
@@ -198,6 +217,7 @@ const EditAddModule = () => {
                 moreExplanation: "",
               },
             ],
+            // Start again with 1 layman explanation
             laymanExplanations: [
               {
                 laymanScale: 1,
@@ -206,9 +226,7 @@ const EditAddModule = () => {
               },
             ],
             questionBankFile: null,
-            questionBankFileUrl: null,
             tryItYourselfFile: null,
-            tryItYourselfFileUrl: null,
           },
         ],
       },
@@ -225,6 +243,7 @@ const EditAddModule = () => {
         quickRevisePoints: "",
         cheatSheet: null,
         isInterviewFavorite: false,
+        subtopic_code: "", // Initialize with empty code, will be generated by backend
         conceptClarifiers: [
           {
             clarifierWordOrPhrase: "",
@@ -240,9 +259,7 @@ const EditAddModule = () => {
           },
         ],
         questionBankFile: null,
-        questionBankFileUrl: null,
         tryItYourselfFile: null,
-        tryItYourselfFileUrl: null,
       });
       return updated;
     });
@@ -412,82 +429,85 @@ const EditAddModule = () => {
 
   // ----------------------------- DONE BUTTON -----------------------------
   const handleDone = async () => {
-      const topicData = topics.map((topic) => {
-      return {
+    try {
+      // Validate required fields
+      const hasEmptyFields = topics.some(topic => {
+        if (!topic.topicName.trim()) return true;
+        return topic.subtopics.some(subtopic => !subtopic.subtopicName.trim() || !subtopic.subtopicContent.trim());
+      });
+
+      if (hasEmptyFields) {
+        alert("Please fill in all required fields (topic name, subtopic name, and subtopic content) before saving.");
+        return;
+      }
+
+      // Transform the data to match backend's expected structure
+      const topicData = topics.map((topic) => ({
         topicName: topic.topicName,
-        skillAssessmentQuestionsURL: topic.skillAssessmentFileUrl,
-        subtopicData: topic.subtopics.map((sub) => {
-          return {
-            subtopicName: sub.subtopicName,
-            subtopicContent: sub.subtopicContent,
-            subtopicSummary: sub.subtopicSummary,
-            revisionPoints: sub.quickRevisePoints,
-            cheatSheetURL: sub.cheatSheet?.dataUrl,
-            interviewFavorite: sub.isInterviewFavorite,
-            conceptClarifier: sub.conceptClarifiers.map((concept) => {
-              return {
-                conceptClarifier: concept.clarifierWordOrPhrase,
-                hoverExplanation: concept.explanationOnHover,
-                popupExplanation: concept.moreExplanation,
-              };
-            }),
-            laymanTerms: sub.laymanExplanations.map((laymn) => {
-              return {
-                topicLevel: laymn.laymanScale,
-                topicTitle: laymn.laymanTitle,
-                topicInfo: laymn.laymanInfo,
-              };
-            }),
-            questionBankURL: sub.questionBankFile.dataUrl,
-            tiyQuestionsURL: sub.tryItYourselfFile.dataUrl,
-          };
-        }),
+        skillAssessmentQuestionsURL: topic.skillAssessmentFileUrl || "",
+        topic_code: topic.topic_code || "", // Preserve existing topic_code
+        subtopicData: topic.subtopics.map((subtopic) => ({
+          subtopicName: subtopic.subtopicName,
+          subtopicContent: subtopic.subtopicContent,
+          subtopicSummary: subtopic.subtopicSummary || "",
+          revisionPoints: subtopic.quickRevisePoints || "",
+          cheatSheetURL: subtopic.cheatSheet?.dataUrl || subtopic.cheatSheetUrl || "",
+          interviewFavorite: subtopic.isInterviewFavorite || false,
+          subtopic_code: subtopic.subtopic_code || "", // Preserve existing subtopic_code
+          conceptClarifier: subtopic.conceptClarifiers.map((concept) => ({
+            conceptClarifier: concept.clarifierWordOrPhrase,
+            hoverExplanation: concept.explanationOnHover,
+            popupExplanation: concept.moreExplanation,
+          })),
+          laymanTerms: subtopic.laymanExplanations.map((laymn) => ({
+            topicLevel: laymn.laymanScale,
+            topicTitle: laymn.laymanTitle,
+            topicInfo: laymn.laymanInfo,
+          })),
+          questionBankURL: subtopic.questionBankFile?.dataUrl || subtopic.questionBankFileUrl || "",
+          tiyQuestionsURL: subtopic.tryItYourselfFile?.dataUrl || subtopic.tryItYourselfFileUrl || "",
+        })),
+      }));
+
+      // Get the current module data from the API
+      const currentModuleData = await getModuleById(moduleId);
+      
+      if (!currentModuleData || !currentModuleData.data) {
+        throw new Error("Failed to fetch current module data");
+      }
+      
+      // Prepare the complete module data
+      const updatedModuleData = {
+        moduleName: currentModuleData.data.moduleName || "",
+        description: currentModuleData.data.description || "",
+        approxTimeTaken: currentModuleData.data.approxTimeTaken || "",
+        interviewSampleURL: currentModuleData.data.interviewSampleURL || "",
+        courseOverview: currentModuleData.data.courseOverview || "",
+        module_code: currentModuleData.data.module_code || "",
+        topicData: topicData,
       };
-    });
 
-    // Prepare final submission payload
-    const submissionData = {
-      topicData: topicData,
-    };
+      console.log("Sending module data to backend:", updatedModuleData);
+      
+      const response = await updateModuleById(moduleId, updatedModuleData);
+      
+      if (!response || !response.success) {
+        throw new Error("Failed to update module");
+      }
 
-    const response = await updateModuleById(moduleId, submissionData);
-
-    // Reset form
-    setTopics([
-      {
-        topicName: "",
-        skillAssessmentFile: null,
-        subtopics: [
-          {
-            subtopicName: "",
-            subtopicContent: "",
-            subtopicSummary: "",
-            quickRevisePoints: "",
-            cheatSheet: null,
-            isInterviewFavorite: false,
-            conceptClarifiers: [
-              {
-                clarifierWordOrPhrase: "",
-                explanationOnHover: "",
-                moreExplanation: "",
-              },
-            ],
-            // Start again with 1 layman explanation
-            laymanExplanations: [
-              {
-                laymanScale: 1,
-                laymanTitle: "",
-                laymanInfo: "",
-              },
-            ],
-            questionBankFile: null,
-            tryItYourselfFile: null,
-          },
-        ],
-      },
-    ]);
-    setModalVisible(true); // show success modal
-    navigate("/admin/learning");
+      console.log("Module updated successfully:", response);
+      
+      // Show success message
+      setModalVisible(true);
+      
+      // Navigate back to the learning modules page
+      setTimeout(() => {
+        navigate("/admin/learning");
+      }, 1500); // Give user time to see the success message
+    } catch (error) {
+      console.error("Error updating module:", error);
+      alert("Failed to update module. Please try again.");
+    }
   };
 
   // ----------------------------- DELETE HANDLING -----------------------------
@@ -642,6 +662,7 @@ const EditAddModule = () => {
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
                   tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
+                  license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -754,6 +775,7 @@ const EditAddModule = () => {
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
                   tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
+                                    license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -778,6 +800,7 @@ const EditAddModule = () => {
                 <Label>Quickly Revise Points</Label>
                 <Editor
                   tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
+                                    license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,

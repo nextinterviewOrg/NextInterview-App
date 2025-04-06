@@ -260,6 +260,7 @@ const BlogForm = () => {
                                 Content:
                                 <Editor
                                     tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
+                                                      license_key='gpl'
                                     init={{
                                         plugins: TinyMCEplugins,
                                         toolbar: TinyMCEToolbar,

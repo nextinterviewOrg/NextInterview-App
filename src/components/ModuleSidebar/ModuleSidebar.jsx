@@ -1,41 +1,26 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   Link,
-  Navigate,
-  NavLink,
   useLocation,
   useNavigate,
   useParams,
 } from "react-router-dom";
-import { FiHome } from "react-icons/fi";
-import { MdOutlineMenuBook } from "react-icons/md";
-import { BsFileEarmarkLock } from "react-icons/bs";
-import { TbDeviceIpadQuestion } from "react-icons/tb";
-import { IoIosRepeat } from "react-icons/io";
-import { RxDashboard } from "react-icons/rx";
-import { CiMobile1 } from "react-icons/ci";
-import { MdOutlineLockClock } from "react-icons/md";
-import { IoIosInformationCircleOutline } from "react-icons/io";
-import { MdNotificationsNone } from "react-icons/md";
-import { TfiHeadphoneAlt } from "react-icons/tfi";
-import { IoSettingsOutline } from "react-icons/io5";
-import { ModuleSidebarContainer, MobileToggleButton,Overlay  } from "./ModuleSidebar.styles";
-import Logo from "../../assets/Logo.png";
-import { MdExpandCircleDown } from "react-icons/md";
-import { FaCheckCircle } from "react-icons/fa";
 import { MdExpandLess } from "react-icons/md";
 import { MdExpandMore } from "react-icons/md";
-import { getModuleById } from "../../api/addNewModuleApi";
+import { FaCheckCircle } from "react-icons/fa";
 import { RiGeminiLine } from "react-icons/ri";
+import { GiHamburgerMenu } from "react-icons/gi";
+import { ModuleSidebarContainer, MobileToggleButton, Overlay } from "./ModuleSidebar.styles";
+import Logo from "../../assets/Logo.png";
+import { getModuleById } from "../../api/addNewModuleApi";
 import { getUserProgressByModule, getUserProgressBySubTopic, getUserProgressStats } from "../../api/userProgressApi";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../api/userApi";
+
 const courseData1 = {
   title: "",
   topicsList: [],
 };
-import { useUser } from "@clerk/clerk-react";
-import { getUserByClerkId } from "../../api/userApi";
-import { use } from "react";
-import { GiHamburgerMenu } from "react-icons/gi";
 
 export default function ModuleSidebar({
   isExpanded,
@@ -55,6 +40,92 @@ export default function ModuleSidebar({
   const { isLoaded, user, isSignedIn } = useUser();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 800);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+
+  const fetchModuleData = useCallback(async () => {
+    try {
+      const response = await getModuleById(moduleId);
+      console.log("Module data:", response.data);
+      
+      if (!response.data || !response.data.topicData || response.data.topicData.length === 0) {
+        console.error("No topic data found in module response");
+        return;
+      }
+      
+      const responseUser = await getUserByClerkId(user.id);
+      const userModuleProgress = await getUserProgressByModule({ userId: responseUser.data.user._id, moduleCode: response.data.module_code });
+      const userModuleProgressStats = await getUserProgressStats(responseUser.data.user._id);
+      
+      setExpandedTopic(location.state?.topicIndex || 0);
+      setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
+
+      userModuleProgressStats.ModuleProgress.map((item) => {
+        if (item.moduleCode === response.data.module_code) {
+          setTotalCompletedTopics(item.topicStats.completed);
+          setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length) * 100).toFixed(0));
+        }
+      });
+      
+      setTotalTopics(response.data.topicData.length);
+      
+      const data = {
+        title: response.data.moduleName,
+        topicsList: await Promise.all(response.data.topicData.map(async (item) => {
+          return {
+            title: item.topicName,
+            topic_code: item.topic_code,
+            subtopics: await Promise.all(item.subtopicData.map(async (subitem) => {
+              console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
+              const subTopicProgress = await getUserProgressBySubTopic({ 
+                userId: responseUser.data.user._id, 
+                moduleCode: response.data.module_code, 
+                topicCode: item.topic_code, 
+                subtopicCode: subitem.subtopic_code 
+              });
+              
+              return {
+                title: subitem.subtopicName,
+                subtopic_code: subitem.subtopic_code,
+                completed: subTopicProgress?.data?.status === "completed" ? true : false,
+              };
+            })),
+          };
+        })),
+      };
+      
+      console.log("Final course data structure:", data);
+      setCourseData(data);
+    } catch (error) {
+      console.error("Error in ModuleSidebar apiCaller:", error);
+    }
+  }, [moduleId, user, location.state]);
+
+  useEffect(() => {
+    fetchModuleData();
+  }, [fetchModuleData, lastUpdate]);
+
+  // Add event listener for module updates
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setLastUpdate(Date.now());
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Also refresh when navigating back to the page
+    const handleFocus = () => {
+      setLastUpdate(Date.now());
+    };
+
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -73,49 +144,6 @@ export default function ModuleSidebar({
       setIsExpanded(true);
     }
   }, [isMobile]);
-
-  useEffect(() => {
-    const apiCaller = async () => {
-      try {
-        const response = await getModuleById(moduleId);
-        console.log("jjsjs", response.data);
-        const responseUser = await getUserByClerkId(user.id);
-        const userModuleProgress = await getUserProgressByModule({ userId: responseUser.data.user._id, moduleCode: response.data.module_code });
-        const userModuleProgressStats = await getUserProgressStats(responseUser.data.user._id);
-        setExpandedTopic(location.state?.topicIndex || 0);
-        setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
-
-        userModuleProgressStats.ModuleProgress.map((item) => {
-          if (item.moduleCode === response.data.module_code) {
-            setTotalCompletedTopics(item.topicStats.completed);
-            setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length ) * 100).toFixed(0));
-          }
-        })
-        setTotalTopics(response.data.topicData.length + 1);
-        const data = {
-          title: response.data.moduleName,
-          topicsList: await Promise.all(response.data.topicData.map(async (item) => {
-            return {
-              title: item.topicName,
-              subtopics: await Promise.all(item.subtopicData.map(async (subitem) => {
-                console.log("subitem", subitem);
-                const subTopicProgress = await getUserProgressBySubTopic({ userId: responseUser.data.user._id, moduleCode: response.data.module_code, topicCode: item.topic_code, subtopicCode: subitem.subtopic_code });
-                return {
-                  title: subitem.subtopicName,
-                  completed: subTopicProgress?.data?.status === "completed" ? true : false||false,
-                };
-              })),
-            };
-          })),
-        };
-        console.log("returned Data=>", data);
-        setCourseData(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    apiCaller();
-  }, [navigate, location.state, user]);
 
   const toggleExpand = (index) => {
     setExpandedTopic(expandedTopic === index ? null : index);
@@ -221,6 +249,7 @@ export default function ModuleSidebar({
                   ) : (
                     topic.subtopics?.map((subtopic, subIndex) => (
                       <Link
+                        key={`${index}-${subIndex}`}
                         className="subtopic-link"
                         to={`/user/learning/${moduleId}/topic`}
                         state={{

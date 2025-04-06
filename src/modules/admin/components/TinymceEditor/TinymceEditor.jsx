@@ -7,6 +7,7 @@ export default function TinymceEditor(setEditorContent, editorContent) {
   return (
     <Editor
       apiKey='sv3o3ld048xiotsz9v7ssuj0shb5spyjqh9d313yb361e4s3'
+                        license_key='gpl'
       init={{
         plugins: [
           // Core editing features
