@@ -16,6 +16,7 @@ import { message } from "antd";
 import {
     TinyMCEplugins,
     TinyMCEToolbar,
+    TinyMCEapiKey,
 } from "../../../../config/TinyMceConfig";
 import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
 import "../../../admin/pages/Blog/Blog.scss";
@@ -259,8 +260,7 @@ const BlogForm = () => {
                             <label style={{ fontWeight: "600", fontFamily: "DM Sans" }}>
                                 Content:
                                 <Editor
-                                    tinymceScriptSrc="/tinymce/tinymce.min.js"
-                                    license_key='gpl'
+                                    apiKey={TinyMCEapiKey}
                                     init={{
                                         plugins: TinyMCEplugins,
                                         toolbar: TinyMCEToolbar,

@@ -38,6 +38,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { Editor } from "@tinymce/tinymce-react";
 import {
+  TinyMCEapiKey,
   TinyMCEplugins,
   TinyMCEToolbar,
 } from "../../../../../config/TinyMceConfig";
@@ -661,8 +662,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                  license_key='gpl'
+                  apiKey={TinyMCEapiKey}
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -774,8 +774,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                  license_key='gpl'
+                  apiKey={TinyMCEapiKey}
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -799,8 +798,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  tinymceScriptSrc="/tinymce/tinymce.min.js"
-                  license_key='gpl'
+                  apiKey={TinyMCEapiKey}
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
