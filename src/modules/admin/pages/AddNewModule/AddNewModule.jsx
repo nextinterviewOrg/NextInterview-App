@@ -679,8 +679,8 @@ const AddNewModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
-                                    license_key='gpl'
+                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -799,8 +799,8 @@ const AddNewModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
-                                    license_key='gpl'
+                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -831,8 +831,8 @@ const AddNewModule = () => {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
-                                    license_key='gpl'
+                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
