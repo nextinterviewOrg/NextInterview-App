@@ -661,7 +661,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.7.2/tinymce.min.js"
                   license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
@@ -774,7 +774,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.7.2/tinymce.min.js"
                   license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,
@@ -799,7 +799,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                  tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.7.2/tinymce.min.js"
                   license_key='gpl'
                   init={{
                     plugins: TinyMCEplugins,

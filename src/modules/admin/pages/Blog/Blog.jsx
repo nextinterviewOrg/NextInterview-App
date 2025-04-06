@@ -259,7 +259,7 @@ const BlogForm = () => {
                             <label style={{ fontWeight: "600", fontFamily: "DM Sans" }}>
                                 Content:
                                 <Editor
-                                    tinymceScriptSrc="/node_modules/tinymce/tinymce.min.js"
+                                    tinymceScriptSrc="https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.7.2/tinymce.min.js"
                                     license_key='gpl'
                                     init={{
                                         plugins: TinyMCEplugins,

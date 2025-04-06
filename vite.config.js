@@ -18,7 +18,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          tinymce: ['tinymce']
+          tinymce: ['tinymce', '@tinymce/tinymce-react']
         }
       }
     }
@@ -29,6 +29,11 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['tinymce']
+    include: ['tinymce', '@tinymce/tinymce-react']
+  },
+  server: {
+    fs: {
+      strict: false
+    }
   }
 });
