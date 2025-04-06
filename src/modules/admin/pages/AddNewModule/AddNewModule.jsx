@@ -60,21 +60,21 @@ const AddNewModule = () => {
   const [modalVisible, setModalVisible] = useState(false);
   // 'topic', 'subtopic', 'layman', or 'clarifier'
   const [deleteType, setDeleteType] = useState(null);
-const location = useLocation();
-const navigate = useNavigate();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-// Validate location state
-React.useEffect(() => {
+  // Validate location state
+  React.useEffect(() => {
+    if (!location.state?.data) {
+      // If no data is present, redirect back to the learning modules page
+      navigate("/admin/learning");
+    }
+  }, [location.state, navigate]);
+
+  // Guard clause for rendering
   if (!location.state?.data) {
-    // If no data is present, redirect back to the learning modules page
-    navigate("/admin/learning");
+    return null; // or return a loading state/error message
   }
-}, [location.state, navigate]);
-
-// Guard clause for rendering
-if (!location.state?.data) {
-  return null; // or return a loading state/error message
-}
   const videoInputRef = useRef(null);
 
   // Store indices for whichever item we are deleting
@@ -221,8 +221,6 @@ if (!location.state?.data) {
       return updated;
     });
   };
-
-
 
   const handleConceptClarifierChange = (
     e,
@@ -399,7 +397,7 @@ if (!location.state?.data) {
             conceptClarifier: sub.conceptClarifiers.map((concept) => ({
               conceptClarifier: concept.clarifierWordOrPhrase,
               hoverExplanation: concept.explanationOnHover,
-              popupExplanation: concept.moreExplanation.replace(/"/g, '\\"')
+              popupExplanation: concept.moreExplanation.replace(/"/g, '\\"'),
             })),
             laymanTerms: sub.laymanExplanations.map((laymn) => {
               return {
@@ -681,7 +679,7 @@ if (!location.state?.data) {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -800,7 +798,7 @@ if (!location.state?.data) {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -831,7 +829,7 @@ if (!location.state?.data) {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="../../../node_modules/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -974,36 +972,7 @@ if (!location.state?.data) {
                         }
                         style={{ backgroundColor: theme.colors.backgray }}
                       />
-                      {/* <Editor
-                        apiKey={TinyMCEapiKey}
-                        init={{
-                          plugins: TinyMCEplugins,
-                          toolbar: TinyMCEToolbar,
-                          tinycomments_mode: "embedded",
-                          tinycomments_author: "Author name",
-                          mergetags_list: TinyMCEmergetags_list,
-                          ai_request: (request, respondWith) =>
-                            respondWith.string(() =>
-                              Promise.reject(
-                                "See docs to implement AI Assistant"
-                              )
-                            ),
-                          branding: false,
-                        }}
-                        value={clarifier.explanationOnHover || ""}
-                        onEditorChange={(newValue, editor) => {
-                          handleConceptClarifierChange(
-                            null,
-                            newValue,
-                            editor,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "explanationOnHover"
-                          );
-                        }}
-                        initialValue=""
-                      /> */}
+
                     </FormGroup>
 
                     <FormGroup>

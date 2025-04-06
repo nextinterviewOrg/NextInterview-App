@@ -22,7 +22,7 @@
     "@mui/icons-material": "^6.4.1",
     "@mui/material": "^6.4.1",
     "@mui/styled-engine": "^6.4.0",
-    "@tinymce/tinymce-react": "^6.0.0",
+    "@tinymce/tinymce-react": "^6.1.0",
     "antd": "^5.24.4",
     "axios": "^1.7.9",
     "chart.js": "^4.4.7",
@@ -34,6 +34,7 @@
     "extendable-media-recorder": "^9.2.20",
     "extendable-media-recorder-wav-encoder": "^7.0.124",
     "firebase": "^11.2.0",
+    "fs-extra": "^11.3.0",
     "lamejs": "^1.2.1",
     "lottie": "^0.0.1",
     "lottie-react": "^2.4.0",
@@ -59,6 +60,7 @@
     "slick-carousel": "^1.8.1",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.14",
+    "tinymce": "^7.7.2",
     "uuid": "^11.0.5"
   },
   "devDependencies": {

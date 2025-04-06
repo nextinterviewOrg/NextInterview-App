@@ -14,7 +14,6 @@ import { Editor } from "@tinymce/tinymce-react";
 import { uploadFileToFirebase } from "../../../../utils/uploadFileToFirebase";
 import { message } from "antd";
 import {
-    TinyMCEapiKey,
     TinyMCEplugins,
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
@@ -260,7 +259,7 @@ const BlogForm = () => {
                             <label style={{ fontWeight: "600", fontFamily: "DM Sans" }}>
                                 Content:
                                 <Editor
-                                    apiKey={TinyMCEapiKey}
+                                    tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
                                     init={{
                                         plugins: TinyMCEplugins,
                                         toolbar: TinyMCEToolbar,

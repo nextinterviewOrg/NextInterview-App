@@ -29,7 +29,6 @@ import theme from "../../../../../theme/Theme";
 import DeleteModule from "../../DeleteModule/DeleteModule";
 import {
   uploadFileToFirebase,
-  uploadVideoToFirebase,
 } from "../../../../../utils/uploadFileToFirebase";
 import {
   updateModuleById,
@@ -39,7 +38,6 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaArrowRight } from "react-icons/fa";
 import { Editor } from "@tinymce/tinymce-react";
 import {
-  TinyMCEapiKey,
   TinyMCEplugins,
   TinyMCEToolbar,
 } from "../../../../../config/TinyMceConfig";
@@ -643,7 +641,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -755,7 +753,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -779,7 +777,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc='../../../node_modules/tinymce/tinymce.min.js'
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
