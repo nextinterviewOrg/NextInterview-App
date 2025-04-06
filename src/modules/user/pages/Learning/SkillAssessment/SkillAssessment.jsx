@@ -151,27 +151,9 @@ const SkillAssessment = ({
     setFeedback(newFeedback);
     setSubmitted(true); // Mark the form as submitted
     setShowClosebtn(true);
-    // // mark sub topic as completed
-    // const userData = await getUserByClerkId(user.id);
-    // const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
-    // finalSubTopicIndex = finalSubTopicIndex + 1;
-    // //checking is this last topic
-    // const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-
-    // const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
-    // if (lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
-    //   finalTopicIndex = finalTopicIndex + 1;
-    //   finalSubTopicIndex = 0;
-    // }
-    // if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-    //   onCloseModal();
-    //    navigate(`/user/learning`);
-    //   return
-    // }
-    // navigate(`/user/learning/${moduleId}/topic` ,{ state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-
+    
+    // Don't automatically close the modal - let the user close it manually
+    // The feedback modal will be shown after the user closes this modal
   };
 
   if (loading) return <div>Loading questions...</div>;

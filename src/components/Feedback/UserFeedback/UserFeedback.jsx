@@ -1,99 +1,241 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { FaTimes, FaStar } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import api from "../../../config/axiosconfig";
+import { getUserBySessionId, getUserByClerkId } from "../../../api/userApi";
+import { useUser } from "@clerk/clerk-react";
 import "./UserFeedback.css";
 
-const UserFeedback = ({ onFeedbackSubmit, moduleId }) => {
-  UserFeedback.propTypes = {
-    onFeedbackSubmit: PropTypes.func.isRequired,
-    moduleId: PropTypes.string.isRequired,
-  };
-  const [isOpen, setIsOpen] = useState(false);
-  const [feedback, setFeedback] = useState("");
+const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
+  const { user, sessionId } = useUser();
+  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(autoOpen);
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
+  const [feedback, setFeedback] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mongoUserId, setMongoUserId] = useState(null);
 
-  const handleRatingClick = (selectedRating) => {
-    setRating(selectedRating);
+  // Get user ID when component mounts
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        // Get session ID
+        const sessions = await user?.getSessions();
+        const sessionVar = sessionId || 
+          (sessions && sessions.length > 0 ? sessions[0].id : null) || 
+          JSON.parse(localStorage.getItem("sessionId"));
+
+        if (!sessionVar) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Get user ID from session
+        const sessionResponse = await getUserBySessionId({ sessionId: sessionVar });
+        const clerkUserId = sessionResponse.userId;
+
+        if (!clerkUserId) {
+          setIsLoading(false);
+          return;
+        }
+
+        // Get the MongoDB user ID
+        const userResponse = await getUserByClerkId(clerkUserId);
+        if (!userResponse || !userResponse.data || !userResponse.data.user) {
+          setIsLoading(false);
+          return;
+        }
+
+        const userId = userResponse.data.user._id;
+        setMongoUserId(userId);
+        
+        // Check if feedback exists for this user and module
+        if (userId && moduleId) {
+          try {
+            const response = await api.get(`/feedback/user/${userId}/module/${moduleId}`);
+            
+            if (response.data && response.data.data && response.data.data.length > 0) {
+              setHasSubmitted(true);
+              setSuccessMessage("You have already submitted feedback for this module.");
+            }
+          } catch (err) {
+            console.error("Error checking previous feedback:", err);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching user ID:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (moduleId) {
+      fetchUserId();
+    }
+  }, [moduleId, user, sessionId]);
+
+  const handleRatingClick = (value) => {
+    setRating(value);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (rating === 0) {
-      alert("Please provide a rating");
+    setIsSubmitting(true);
+    setError(null);
+
+    if (hasSubmitted) {
+      setError("Feedback has already been submitted for this module.");
+      setIsSubmitting(false);
       return;
     }
-    onFeedbackSubmit({
-      feedback,
-      rating,
-      moduleId,
-      timestamp: new Date().toISOString()
-    });
-    setFeedback("");
-    setRating(0);
-    toggleModal();
+
+    if (!mongoUserId) {
+      setError("User ID not found. Please log in again.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    try {
+      // Submit feedback
+      await api.post("/feedback", {
+        userId: mongoUserId,
+        moduleId,
+        rating,
+        feedback,
+      });
+
+      // Show success message and mark as submitted
+      setSuccessMessage("Feedback submitted successfully!");
+      setHasSubmitted(true);
+      setRating(0);
+      setFeedback("");
+      if (onFeedbackSubmitted) onFeedbackSubmitted();
+
+    } catch (err) {
+      console.error("Error submitting feedback:", err);
+      if (err.response && err.response.status === 400 && 
+          err.response.data && err.response.data.message === "Feedback has already been submitted for this module") {
+        setHasSubmitted(true);
+        setSuccessMessage("You have already submitted feedback for this module.");
+      } else {
+        setError(err.response?.data?.message || err.message || "Error submitting feedback");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const toggleModal = () => {
-    setIsOpen(!isOpen);
+    setIsModalOpen(!isModalOpen);
+    if (!isModalOpen) {
+      setRating(0);
+      setFeedback("");
+      setError(null);
+    }
   };
 
+  const dismissSuccessMessage = () => {
+    setSuccessMessage("");
+    setHasSubmitted(false);
+    setIsModalOpen(false); // Close the entire modal when dismissed
+    
+    // Navigate back to the lesson
+    navigate("/user/learning");
+  };
+
+  useEffect(() => {
+    if (autoOpen) {
+      setIsModalOpen(true);
+    }
+  }, [autoOpen]);
+
   return (
-    <div className="user-feedback">
-      <button 
-        onClick={toggleModal}
-        className="feedback-button"
-      >
-        Give Feedback
+    <div className="feedback-container">
+      <button className="feedback-button" onClick={toggleModal}>
+        Provide Feedback
       </button>
-      
-      {isOpen && (
+
+      {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <button onClick={toggleModal} className="close-button">
-                <FaTimes />
-              </button>
+              <h2>Module Feedback</h2>
+              <button className="close-button" onClick={dismissSuccessMessage}>×</button>
             </div>
             
-            <p className="feedback-question">How would you rate this module?</p>
-            
-            <div className="star-rating">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <FaStar
-                  key={star}
-                  className={`star ${star <= (hoverRating || rating) ? "active" : ""}`}
-                  onClick={() => handleRatingClick(star)}
-                  onMouseEnter={() => setHoverRating(star)}
-                  onMouseLeave={() => setHoverRating(0)}
-                />
-              ))}
-            </div>
+            {isLoading ? (
+              <div className="loading-message">Loading...</div>
+            ) : hasSubmitted ? (
+              <div className="success-message-container">
+                <div className="success-icon">✓</div>
+                <p className="success-text">{successMessage || "Feedback has already been submitted."}</p>
+                <button className="dismiss-button" onClick={dismissSuccessMessage}>
+                  Return to Lessons
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="feedback-form">
+                <div className="star-rating">
+                  {[1, 2, 3, 4, 5].map((value) => (
+                    <span
+                      key={value}
+                      className={`star ${rating >= value ? "active" : ""}`}
+                      onClick={() => handleRatingClick(value)}
+                    >
+                      ★
+                    </span>
+                  ))}
+                </div>
 
-            <p className="feedback-question">Any additional feedback?</p>
-            
-            <form onSubmit={handleSubmit}>
-              <textarea
-                value={feedback}
-                onChange={(e) => setFeedback(e.target.value)}
-                className="feedback-textarea"
-                rows="4"
-                placeholder="Your feedback..."
-                required
-              />
-              
-              <button 
-                type="submit" 
-                className="submit-button"
-              >
-                Submit Feedback
-              </button>
-            </form>
+                <textarea
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder="Share your thoughts about this module..."
+                  required
+                  className="feedback-textarea"
+                  maxLength={500}
+                />
+
+                {error && <div className="error-message">{error}</div>}
+
+                <div className="button-group">
+                  <button
+                    type="button"
+                    className="cancel-button"
+                    onClick={toggleModal}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="submit-button"
+                    disabled={isSubmitting || rating === 0}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit Feedback"}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
     </div>
   );
+};
+
+UserFeedback.propTypes = {
+  moduleId: PropTypes.string.isRequired,
+  onFeedbackSubmitted: PropTypes.func,
+  autoOpen: PropTypes.bool,
+};
+
+UserFeedback.defaultProps = {
+  autoOpen: false,
 };
 
 export default UserFeedback;

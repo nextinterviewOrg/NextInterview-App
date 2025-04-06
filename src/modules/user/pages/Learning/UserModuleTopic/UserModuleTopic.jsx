@@ -13,9 +13,18 @@ import {
   CloseButton,
   TryItYourself,
   TryButton,
+  FeedbackPopup,
+  FeedbackIcon,
+  FeedbackContent,
+  FeedbackTitle,
+  FeedbackMessage,
+  FeedbackCloseButton,
+  FeedbackButton,
+  FeedbackIconWrapper,
 } from "./UserModuleTopic.style";
 import { SlLike } from "react-icons/sl";
 import { SlDislike } from "react-icons/sl";
+import { BsHandThumbsUpFill, BsHandThumbsDownFill } from "react-icons/bs";
 import {
   getLastSubTopicByTopicCode,
   getLastTopicByModuleCode,
@@ -87,6 +96,13 @@ const UserModuleTopic = () => {
   const [feedback, setFeedback] = useState(""); // State to store feedback
   const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
   const [showSummary, setShowSummary] = useState(false);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // State for feedback popup
+  const [feedbackMessage, setFeedbackMessage] = useState(""); // Message to show in feedback popup
+  const [isHelpful, setIsHelpful] = useState(null); // Track if feedback was helpful
+  const [likeAnimation, setLikeAnimation] = useState(false); // Animation state for like icon
+  const [dislikeAnimation, setDislikeAnimation] = useState(false); // Animation state for dislike icon
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // Track if feedback has been submitted
+  const [selectedFeedback, setSelectedFeedback] = useState(null); // Track which feedback option was selected
 
   const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
   const moduleId = useParams().id;
@@ -119,6 +135,10 @@ const UserModuleTopic = () => {
   };
   const handleCloseModal = async () => {
     setShowModal(false);
+    
+    // Show the feedback modal after the user manually closes the skill assessment
+    setShowFeedbackModal(true);
+    
     let finalTopicIndex = location.state?.topicIndex;
     let finalSubTopicIndex = location.state?.subtopicIndex;
     const userData = await getUserByClerkId(user.id);
@@ -217,6 +237,13 @@ const UserModuleTopic = () => {
     setDelayedText([]);
     setShowSummary(false);
     if (!location.state) return; // Ensure location.state is defined
+
+    // Reset feedback state when subtopic changes
+    setFeedbackSubmitted(false);
+    setSelectedFeedback(null);
+    setLikeAnimation(false);
+    setDislikeAnimation(false);
+    setShowFeedbackPopup(false);
 
     const apiCaller = async () => {
       // try {
@@ -358,6 +385,45 @@ const UserModuleTopic = () => {
       navigate(`/user/learning`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
+    }
+  };
+
+  const handleSummaryFeedback = (isHelpful) => {
+    try {
+      console.log(`Summary feedback: ${isHelpful ? 'Helpful' : 'Not helpful'}`);
+      // Here you could implement an API call to save the summary feedback
+      // For example:
+      // saveSummaryFeedback({
+      //   moduleId,
+      //   topicIndex: location.state?.topicIndex,
+      //   subtopicIndex: location.state?.subtopicIndex,
+      //   isHelpful
+      // });
+      
+      // Set animation state
+      if (isHelpful) {
+        setLikeAnimation(true);
+        setTimeout(() => setLikeAnimation(false), 1000);
+      } else {
+        setDislikeAnimation(true);
+        setTimeout(() => setDislikeAnimation(false), 1000);
+      }
+      
+      // Save the selected feedback state
+      setSelectedFeedback(isHelpful);
+      setFeedbackSubmitted(true);
+      
+      // Show feedback popup
+      setIsHelpful(isHelpful);
+      setFeedbackMessage(`Thank you for your feedback! The summary was ${isHelpful ? 'helpful' : 'not helpful'}.`);
+      setShowFeedbackPopup(true);
+      
+      // Auto-hide popup after 3 seconds
+      setTimeout(() => {
+        setShowFeedbackPopup(false);
+      }, 3000);
+    } catch (error) {
+      console.error("Error submitting summary feedback:", error);
     }
   };
 
@@ -652,23 +718,26 @@ const handleMarkAsCompleted = async () => {
                     marginRight: "20px",
                   }}
                 >
-                  <p>
-                    <SlLike
-                      style={{
-                        paddingRight: "5px",
-                      }}
-                    />
+                  <FeedbackButton 
+                    onClick={() => handleSummaryFeedback(true)} 
+                    isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}
+                    style={{ opacity: feedbackSubmitted && selectedFeedback !== true ? 0.5 : 1 }}
+                  >
+                    <FeedbackIconWrapper isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}>
+                      {feedbackSubmitted && selectedFeedback === true ? <BsHandThumbsUpFill /> : <SlLike />}
+                    </FeedbackIconWrapper>
                     Helpful
-                  </p>
-                  <p>
-                    <SlDislike
-                      style={{
-                        paddingRight: "5px",
-                        paddingTop: "5px",
-                      }}
-                    />
+                  </FeedbackButton>
+                  <FeedbackButton 
+                    onClick={() => handleSummaryFeedback(false)} 
+                    isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}
+                    style={{ opacity: feedbackSubmitted && selectedFeedback !== false ? 0.5 : 1 }}
+                  >
+                    <FeedbackIconWrapper isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}>
+                      {feedbackSubmitted && selectedFeedback === false ? <BsHandThumbsDownFill /> : <SlDislike />}
+                    </FeedbackIconWrapper>
                     Not helpful
-                  </p>
+                  </FeedbackButton>
                 </div>
               </ButtonGroup>
             </SummaryContainer>
@@ -730,6 +799,7 @@ const handleMarkAsCompleted = async () => {
             <UserFeedback
               moduleId={moduleId}
               onFeedbackSubmit={handleFeedbackSubmit}
+              autoOpen={true}
             />
           </ModalContent>
         </ModalOverlay>
@@ -745,6 +815,22 @@ const handleMarkAsCompleted = async () => {
             </CloseButton>
           </ModalContent>
         </ModalOverlay>
+      )}
+
+      {/* Feedback Popup */}
+      {showFeedbackPopup && (
+        <FeedbackPopup>
+          <FeedbackIcon isHelpful={isHelpful}>
+            {isHelpful ? '✓' : '✕'}
+          </FeedbackIcon>
+          <FeedbackContent>
+            <FeedbackTitle>Feedback Received</FeedbackTitle>
+            <FeedbackMessage>{feedbackMessage}</FeedbackMessage>
+          </FeedbackContent>
+          <FeedbackCloseButton onClick={() => setShowFeedbackPopup(false)}>
+            <IoCloseSharp />
+          </FeedbackCloseButton>
+        </FeedbackPopup>
       )}
     </Container>
   );
