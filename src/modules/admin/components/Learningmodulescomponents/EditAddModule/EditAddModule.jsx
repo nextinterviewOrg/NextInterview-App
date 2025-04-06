@@ -662,7 +662,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Content</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -690,15 +690,6 @@ const EditAddModule = () => {
                       "subtopicContent"
                     );
                   }}
-                  style={{
-                    border:
-                      selectedText.topicIndex === topicIndex &&
-                      selectedText.subIndex === subIndex
-                        ? "2px dashed #2390ac"
-                        : "none",
-                    borderRadius: "4px",
-                  }}
-                  initialValue=""
                 />
 
                 {/* TEXT SELECTION BUTTON*/}
@@ -774,7 +765,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Subtopic {subIndex + 1} Summary</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
@@ -798,7 +789,7 @@ const EditAddModule = () => {
               <FormGroup>
                 <Label>Quickly Revise Points</Label>
                 <Editor
-                  apiKey={TinyMCEapiKey}
+                  tinymceScriptSrc="/tinymce/tinymce.min.js"
                   init={{
                     plugins: TinyMCEplugins,
                     toolbar: TinyMCEToolbar,
