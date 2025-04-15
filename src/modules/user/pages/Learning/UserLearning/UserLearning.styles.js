@@ -4,7 +4,7 @@ export const UserLearningWrapper = styled.div`
 margin-left: 60px;
 
 @media (max-width: 1024px) {
-margin-left: 50px;
+margin-left: 60px;
 }
 
 @media (max-width: 768px) {

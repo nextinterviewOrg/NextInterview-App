@@ -10,7 +10,7 @@ export const Container = styled.div`
   margin-left: 40px;
 
   @media (max-width: 1024px) {
-    margin-left: 0;
+    margin-left: 40px;
   }
 `;
 

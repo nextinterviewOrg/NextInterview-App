@@ -1,25 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import {
-  PageContainer,
-  Sidebar,
-  Content,
-  QuestionHeader,
-  Option,
-  QuestionContainer,
-  FeedbackBox,
-  SolutionBox,
-  Icon,
-  Button,
-  NextButton,
-  MetaInfo1,
-  Topic1,
-  Difficulty1,
-  Type1,
-  QuestionItem,
-  ToggleButton
-
+import {PageContainer,Sidebar, Content,QuestionHeader, Option,QuestionContainer,FeedbackBox,
+  SolutionBox, Icon, Button, NextButton, MetaInfo1, Topic1, Difficulty1,Type1,SidebarToggle
 } from "./QuestionCollapsible.styles";
 import MainWindow from "../CodeEditorWindow/MainWindow"; // Importing the code editor component
 import { FcOk } from "react-icons/fc";
@@ -32,6 +15,9 @@ import {
 } from "../../../../api/questionBankApi";
 import { ShimmerSectionHeader, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 import {getModuleByModuleCode} from "../../../../api/addNewModuleApi";
+
+import { IoIosArrowDropright } from "react-icons/io";
+import { IoIosArrowDropleft } from "react-icons/io";
 const QuestionCollapsible = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -41,51 +27,25 @@ const QuestionCollapsible = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [userAnswer, setUserAnswer] = useState(""); // To store answer for single-line, multi-line, approach questions
   const [showSolution, setShowSolution] = useState(false);
-const [loading, setLoading] = useState(true);
-const [ moduleName, setModuleName] = useState("");
 
-const fetchModuleName = async (moduleCode) => {
-  try {
-    const response = await getModuleByModuleCode(moduleCode);
-    console.log("response for module name", response);
-    if (response && response.data) {
-      setModuleName(response.data.moduleName); // Assuming the response has a moduleName field
-    }
-  } catch (error) {
-    console.error("Error fetching module name:", error);
-    setModuleName("Module Not Found"); // Fallback if there's an error
-  }
-};
 
   useEffect(() => {
     // Fetch all questions to display in the sidebar
     const fetchAllQuestions = async () => {
       try {
-        setLoading(true);
+       
         const response = await getQuestionBank(); // API call to get all questions
-   console.log("response234", response);
+
         if (response && response.data) {
           setAllQuestions(response.data); // Set the all questions data for sidebar
-          // console.log("Selected question", selectedQuestion);
+    
           if (!selectedQuestion && response.data.length > 0) {
             setSelectedQuestion(response.data[0]); // Set the first question as the default selected question
             navigate(`/user/questionBank/${response.data[0]._id}`); // Redirect to the first question
      
-            console.log("selectedQuestion", selectedQuestion);
-
-            // if (selectedQuestion?.module_code) {
-              console.log("selectedQuestion module code", selectedQuestion?.module_code);
-              fetchModuleName(selectedQuestion.module_code);
-              console.log("moduleName", module_code);
-            // }
+            
           }
-         
-          console.log("selectedsvsfvdfQuestion module codecvsdffdd", selectedQuestion?.module_code);
-
-          if (selectedQuestion?.module_code) {
-            fetchModuleName(selectedQuestion.module_code);
-          }
-       setLoading(false);
+      
         } else {
           console.error("No questions found");
         }
@@ -101,11 +61,9 @@ const fetchModuleName = async (moduleCode) => {
     // Fetch the question by ID when it changes
     const fetchQuestion = async () => {
       try {
-        
-        const response = await getQuestionBankById(id); // API call to get question by ID
-      console.log("response", response);
+        const response = await getQuestionBankById(id); 
         if (response && response.data) {
-          setSelectedQuestion(response.data); // Set the selected question data
+          setSelectedQuestion(response.data); 
         } else {
           console.error("No data found for this question");
         }
@@ -131,68 +89,33 @@ const fetchModuleName = async (moduleCode) => {
       navigate(`/user/questionBank/${nextQuestion._id}`);
     }
   };
-  const [isOpen, setIsOpen] = useState(false);
-  const sidebarRef = useRef(null);
-  const isMobile = window.innerWidth <= 768;
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (isOpen && sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-        // Check if we're not clicking the toggle button
-        if (!event.target.closest('.toggle-button')) {
-          setIsOpen(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isOpen]);
-
-  // Auto-close when route changes (question clicked)
-  useEffect(() => {
-    setIsOpen(false);
-  }, [window.location.pathname]);
+  const [sidebarOpen, setSidebarOpen] = useState(false); // State for sidebar visibility
 
   // Auto-close on mobile when resizing to larger screen
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth > 768 && isOpen) {
-        setIsOpen(false);
-      }
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [isOpen]);
 
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
   return (
     <PageContainer>
-       <ToggleButton 
-        className="toggle-button"
-        onClick={() => setIsOpen(!isOpen)}
-        isOpen={isOpen}
-      >
-        {isOpen ? <FiChevronLeft /> : <FiChevronRight />}
-      </ToggleButton>
+        <SidebarToggle onClick={toggleSidebar}>
+         {sidebarOpen ? <IoIosArrowDropleft /> : <IoIosArrowDropright />}
+       </SidebarToggle>
 
       {/* Sidebar */}
-      <Sidebar 
-        ref={sidebarRef}
-        isOpen={isOpen}
-        isMobile={isMobile}
-      >
+      <Sidebar className="sidebar" $isOpen={sidebarOpen}>
         <h3 style={{ paddingLeft: "10px" }}>Questions</h3>
         {allQuestions.map((question, index) => (
           <Link
             key={index}
             to={`/user/questionBank/${question._id}`}
             style={{ textDecoration: "none", color: "black" }}
-            onClick={() => isMobile && setIsOpen(false)}
+            onClick={() => window.innerWidth <= 860 && setSidebarOpen(false)}
           >
-            <QuestionItem>
+           
+            <div style={{ padding: "10px", borderBottom: "1px solid #ccc" }}>
               {index + 1}. {question.question}
-            </QuestionItem>
+              </div>
           </Link>
         ))}
       </Sidebar>
@@ -201,7 +124,7 @@ const fetchModuleName = async (moduleCode) => {
           <>
         
             <MetaInfo1>
-              <Topic1>Module: {moduleName || selectedQuestion.topic}</Topic1>
+            <Topic1>Module: {selectedQuestion.topic}</Topic1>
               <Difficulty1>Difficulty: {selectedQuestion.level}</Difficulty1>
               <Type1>Type: {selectedQuestion.question_type}</Type1>
             </MetaInfo1>
@@ -554,7 +477,7 @@ const fetchModuleName = async (moduleCode) => {
             </QuestionContainer>
           </>
         ) : (
-       <ShimmerSectionHeader  />
+          <p>Loading ...</p>
         )}
       </Content>
     </PageContainer>

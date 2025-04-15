@@ -167,7 +167,9 @@ export const UserLearningModuleWrapper = styled.div`
     gap: 10px;
     padding: 0 20px;
   }
-
+@media (max-width: 900px) {
+       padding: 10px;
+     }
   .view-sample-btn:hover {
     background-color: #ddd;
   }
@@ -175,6 +177,9 @@ export const UserLearningModuleWrapper = styled.div`
   .start-learning-btn {
     background-color: ${({ theme }) => theme.colors.secondary};
     color: white;
+       @media (max-width: 900px) {
+     width: 100%;
+     }
   }
 
   .start-learning-btn:hover {

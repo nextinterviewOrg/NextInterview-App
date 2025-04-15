@@ -107,6 +107,15 @@ export const UserDashboardWrapper = styled.div`
       width: 100%;
     }
 
+
+       
+    }
+    @media (max-width: 1024px) {
+ &:nth-child(5) { // 5th child is the Challenges completed card
+   display: none;
+ }
+}
+
     &.more-button {
       display: flex;
       // align-items: center;
@@ -117,6 +126,9 @@ export const UserDashboardWrapper = styled.div`
       &:hover {
         background: ${({ theme }) => theme.colors.primary}30;
       }
+         @media (max-width:1024px)
+       {
+       display: none;}
 
       .UserDashboard-statsbox-value {
         color: ${({ theme }) => theme.colors.primary};

@@ -128,7 +128,7 @@ const BlogForm = () => {
                                         }}
                                     ></span>
 
-                                    <Link to={`/user/real-world-scenario/${blog?._id}`} className="card__button">
+                                    <Link to={`/user/blogs/${blog?._id}`} className="card__button">
                                         Read More
                                     </Link>
                                 </div>

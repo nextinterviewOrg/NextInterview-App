@@ -160,8 +160,10 @@ setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
     { title: "Modules ongoing", value: moduleOngoing },
     { title: "Remaining Modules", value: remainingModule },
     { title: "Progress rate", value: `${moduleProgress}%` },
-    { title: "Challenges completed", value: "0/0" }
-  ];
+    ...(window.innerWidth > 1024 ? [{ title: "Progress rate", value: `${moduleProgress}%` }] : []),
+     // { title: "Progress rate", value: `${moduleProgress}%` },
+     ...(window.innerWidth > 1024 ? [{ title: "Challenges completed", value: "0/0" }] : [])
+   ];
 
   const visibleStats = isMobile && !showAllStats ? stats.slice(0, 4) : stats;
 

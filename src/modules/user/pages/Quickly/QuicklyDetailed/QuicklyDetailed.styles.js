@@ -9,7 +9,7 @@ margin-left: 60px;
   padding: 20px ;
 
   @media (max-width: 1024px) {
-    margin-left: 0px;
+    margin-left: 40px;
   }
 
   @media (max-width: 768px) {

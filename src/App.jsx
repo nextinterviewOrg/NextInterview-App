@@ -177,6 +177,8 @@ function App() {
             <Route path="subscription" element={<UserSubscription />} />
             <Route path="interview" element={<InterviewPage />} />
             <Route path="challengeInfo" element={<NewChallenge />} />
+            <Route path="blogs" element={<UserBlog />} />
+            <Route path="blogs/:id" element={<UserBlogDisplay />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>
