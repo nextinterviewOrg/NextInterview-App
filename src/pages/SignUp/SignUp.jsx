@@ -123,7 +123,7 @@ const SignUp = () => {
       else if (error?.errors[0]?.code == "form_password_incorrect") {
         setMessage("Password is incorrect. Try again, or use another method. ");
       } else if (error?.errors[0]?.code == "user_locked") {
-        setMessage("Your account has been Restricted. For more information, please contact support:-");
+        setMessage("Your account has been Restricted. For more information, please contact support:- support@nextinterview.ai");
       }
       setMessageType("error");
     }
