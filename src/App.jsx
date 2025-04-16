@@ -139,7 +139,7 @@ function App() {
               <Route path="uploadmodule" element={<UploadModule />} />
               <Route path="editmodel/:id" element={<Editupload />} />
               <Route path="editmodel/:id/:topic" element={<EditAddModule />} />
-<Route path="editaddmodule/:id" element={<EditAddModule />} />
+              <Route path="editaddmodule/:id" element={<EditAddModule />} />
               <Route path="flashcards" element={<Flashcards />} />
               <Route path="challenges" element={<Challenges />} />
               <Route path="analytics" element={<Analytics />} />
