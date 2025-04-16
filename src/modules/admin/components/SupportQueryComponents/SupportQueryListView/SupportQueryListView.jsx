@@ -43,6 +43,19 @@ const SupportQueryListView = () => {
     dateRange: { Today: false, "Last 7 days": false, "Last 30 days": false },
   });
 
+  // Create default filters object to reuse when clearing
+  const defaultFilters = {
+    status: "All",
+    categories: {
+      Technical: false,
+      Content: false,
+      Billing: false,
+      General: false,
+      Support: false,
+    },
+    dateRange: { Today: false, "Last 7 days": false, "Last 30 days": false },
+  };
+
   useEffect(() => {
     const fetchQueries = async () => {
       setLoading(true);  // Set loading to true while fetching data
@@ -118,6 +131,11 @@ const SupportQueryListView = () => {
 
     setFilteredQueries(filtered);
     setStoredFilters(filters);
+  };
+
+  const handleClearAllFilters = () => {
+    setStoredFilters(defaultFilters);
+    applyFilters(defaultFilters);
   };
 
   const isDateInRange = (date, range) => {
@@ -252,12 +270,13 @@ const SupportQueryListView = () => {
           <ModalOverlay>
             <FilterModal>
               <SupportQueryListViewFilter
-                defaultFilters={storedFilters}
+                defaultFilters={defaultFilters}
                 storedFilters={storedFilters}
                 onApplyFilters={(filters) => {
                   applyFilters(filters);
                   setIsFilterOpen(false);
                 }}
+                onClearAll={handleClearAllFilters}
                 onClose={() => setIsFilterOpen(false)}
               />
             </FilterModal>

@@ -37,34 +37,37 @@ const FlashcardsComponents = () => {
   const [currentCard, setCurrentCard] = useState(null);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 
-  const apiCaller = async () => {
+  const fetchFlashcards = async () => {
     setLoading(true);
-    const data = await getFlashcards();
-    console.log("API Response:", data); // Check the full response
-    const response = data.map((item, index) => {
-      const createdAt = new Date(item.createdAt);
-      const formattedDate = createdAt.toLocaleDateString("en-GB");
+    try {
+      const data = await getFlashcards();
+      const response = data.map((item, index) => {
+        const createdAt = new Date(item.createdAt);
+        const formattedDate = createdAt.toLocaleDateString("en-GB");
 
-      return {
-        id: index + 1,
-        text: item.cardContent,
-        backgroundImage: item.backgroundImage,
-        createdAt: formattedDate,
-        know: item.cardKnown || 0,
-        
-        dontKnow: item.cardUnknown || 0,
-        sharedCount: item.sharedCount || 0,
-        peopleInteractionCount: item.peopleInteractionCount,
-        _id: item._id,
-      };
-    });
-    console.log("Flashcard image response", response); // Debugging response
-    setFlashcards(response);
-    setLoading(false);
+        return {
+          id: index + 1,
+          text: item.cardContent,
+          backgroundImage: item.backgroundImage,
+          createdAt: formattedDate,
+          know: item.cardKnown || 0,
+          dontKnow: item.cardUnknown || 0,
+          sharedCount: item.sharedCount || 0,
+          peopleInteractionCount: item.peopleInteractionCount,
+          _id: item._id,
+        };
+      });
+      setFlashcards(response);
+    } catch (error) {
+      console.error("Error fetching flashcards:", error);
+      message.error("Failed to load flashcards");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    apiCaller();
+    fetchFlashcards();
   }, []);
 
   const handleEdit = (id) => {
@@ -78,51 +81,79 @@ const FlashcardsComponents = () => {
     setDeleteModalVisible(true);
   };
 
-  const handleConfirmDelete = async (id) => {
-    const response = await deleteFlashcard(currentCard);
-    message.success("Flashcard deleted successfully!");
-    setFlashcards(flashcards.filter(card => card._id !== currentCard)); // Update the state directly
-    setDeleteModalVisible(false);
-    setCurrentCard(null);
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteFlashcard(currentCard);
+      message.success("Flashcard deleted successfully!");
+      setFlashcards(flashcards.filter(card => card._id !== currentCard));
+    } catch (error) {
+      console.error("Error deleting flashcard:", error);
+      message.error("Failed to delete flashcard");
+    } finally {
+      setDeleteModalVisible(false);
+      setCurrentCard(null);
+    }
   };
 
   const handleCancelDelete = () => {
-    message.error("Flashcard deletion canceled!");
     setDeleteModalVisible(false);
     setCurrentCard(null);
   };
 
   const handleAddFlashcard = async (newFlashcard) => {
-    
-    const submissionData = {
-      cardContent: newFlashcard.text,
-      sharedCount: 0,
-      peopleInteractionCount: 0,
-      cardKnown: newFlashcard.know,
-      cardUnknown: newFlashcard.know,
-      date: "",
-      backgroundImage: newFlashcard.backgroundImage
-    };
-    const response = await addFlashcard(submissionData);
-    message.success("Flashcard added successfully!");
-    const newCard = {
-      ...submissionData,
-      id: flashcards.length + 1, // Adjust to maintain the correct card count
-    };
-    setFlashcards([newCard, ...flashcards]); // Update the flashcards state directly
-    setIsAdding(false);
+    try {
+      const submissionData = {
+        cardContent: newFlashcard.text,
+        sharedCount: 0,
+        peopleInteractionCount: 0,
+        cardKnown: newFlashcard.know,
+        cardUnknown: newFlashcard.know,
+        date: "",
+        backgroundImage: newFlashcard.backgroundImage
+      };
+      
+      const response = await addFlashcard(submissionData);
+      
+      // Create the new card with the response data from the server
+      const newCard = {
+        id: flashcards.length + 1,
+        text: response.data.cardContent,
+        backgroundImage: response.data.backgroundImage,
+        createdAt: new Date(response.data.createdAt).toLocaleDateString("en-GB"),
+        know: response.data.cardKnown || 0,
+        dontKnow: response.data.cardUnknown || 0,
+        sharedCount: response.data.sharedCount || 0,
+        peopleInteractionCount: response.data.peopleInteractionCount,
+        _id: response.data._id
+      };
+      
+      // Add the new card to the beginning of the flashcards array
+      setFlashcards([newCard, ...flashcards]);
+      message.success("Flashcard added successfully!");
+      setIsAdding(false);
+    } catch (error) {
+      console.error("Error adding flashcard:", error);
+      message.error("Failed to add flashcard");
+    }
   };
 
   const handleSaveEdit = async (updatedCard) => {
-    const response = await updateFlashcard(updatedCard._id, {
-      cardContent: updatedCard.text,
-    });
-    message.success("Flashcard updated successfully!");
-    setFlashcards(flashcards.map(card =>
-      card._id === updatedCard._id ? { ...card, text: updatedCard.text } : card
-    ));
-    setIsEditing(false);
-    setCurrentCard(null);
+    try {
+      const response = await updateFlashcard(updatedCard._id, {
+        cardContent: updatedCard.text,
+      });
+      
+      setFlashcards(flashcards.map(card =>
+        card._id === updatedCard._id ? { ...card, text: updatedCard.text } : card
+      ));
+      message.success("Flashcard updated successfully!");
+    } catch (error) {
+      console.error("Error updating flashcard:", error);
+      message.error("Failed to update flashcard");
+    } finally {
+      setIsEditing(false);
+      setCurrentCard(null);
+    }
   };
 
   const handleSearch = (e) => {
@@ -176,14 +207,13 @@ const FlashcardsComponents = () => {
       ) : (
         <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
           {filteredFlashcards.map((card) => (
-            <FlashContainer key={card.id}>
+            <FlashContainer key={card._id}>
               <Flashcard>
                 <h4>Flash Card - {card.id}</h4>
                 <Image src={card.backgroundImage} />
                 <p>{card.text}</p>
                 <p>{card.createdAt}</p>
                 <InteractionStats>
-                  {/* <span>Shared with - {card.sharedCount} people</span> */}
                   <span>No. of people interacted - {card.peopleInteractionCount}</span>
                   <div>
                     <span>I know - {card.know}%</span>

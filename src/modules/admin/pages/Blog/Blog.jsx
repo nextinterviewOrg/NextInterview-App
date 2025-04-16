@@ -52,6 +52,7 @@ const BlogForm = () => {
             } catch (error) {
                 console.error("Error fetching blogs:", error);
                 setError(error.message);
+                setLoading(false);
             }
         };
         fetchBlogs();
@@ -79,39 +80,46 @@ const BlogForm = () => {
         event.preventDefault();
         try {
             setLoading(true);
-            await createBlog({ title, content, image });
+            const response = await createBlog({ title, content, image });
+            if (response.data) {
+                setBlogs(prev => [...prev, response.data]);
+                message.success("Blog created successfully!");
+            }
             resetForm();
             setIsModalOpen(false);
-            const response = await getAllBlogs();
-            if (Array.isArray(response.data)) {
-                setBlogs(response.data);
-            }
         } catch (error) {
             console.error("Error creating blog:", error.message);
             setError(error.message);
+            message.error("Failed to create blog");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleUpdateBlog = async (blogId) => {
         try {
             setLoading(true);
-            const updatedBlog = await updateBlogById(blogId, {
+            const response = await updateBlogById(blogId, {
                 title,
                 content,
-                image,
+                image: image || blogs.find(b => b._id === blogId)?.blog_image,
             });
-            setBlogs((prevBlogs) =>
-                prevBlogs.map((b) => (b._id === blogId ? updatedBlog : b))
-            );
-            setIsModalOpen(false);
-            message.success("Blog updated successfully!");
-            resetForm();
+            
+            if (response.data) {
+                setBlogs(prevBlogs =>
+                    prevBlogs.map(b => b._id === blogId ? response.data : b)
+                );
+                message.success("Blog updated successfully!");
+                setIsModalOpen(false);
+                resetForm();
+            }
         } catch (error) {
             console.error("Error updating blog:", error.message);
             setError(error.message);
+            message.error("Failed to update blog");
+        } finally {
+            setLoading(false);
         }
-        setLoading(false);
     };
 
     const handleDeleteBlog = async () => {
@@ -119,11 +127,12 @@ const BlogForm = () => {
         try {
             setLoading(true);
             await deleteBlogById(deleteBlogId);
-            setBlogs((prevBlogs) => prevBlogs.filter((b) => b._id !== deleteBlogId));
+            setBlogs(prevBlogs => prevBlogs.filter(b => b._id !== deleteBlogId));
             message.success("Blog deleted successfully!");
         } catch (error) {
             console.error("Error deleting blog:", error.message);
             setError(error.message);
+            message.error("Failed to delete blog");
         } finally {
             setIsDeleteModalOpen(false);
             setDeleteBlogId(null);
@@ -347,7 +356,7 @@ const BlogForm = () => {
             <h2 style={{ marginLeft: "60px" }}>Blog List</h2>
             <div className="container">
                 <div className="card__container">
-                    {loading ? (
+                    {loading && blogs.length === 0 ? (
                         [...Array(8)].map((_, index) => (
                             <article 
                                 key={index} 
@@ -397,7 +406,7 @@ const BlogForm = () => {
                     ) : (
                         blogs.map((blog) => (
                             <article
-                                key={blog?._id || Math.random()}
+                                key={blog._id}
                                 className="card__article"
                                 style={{
                                     borderRadius: "24px",
@@ -435,18 +444,18 @@ const BlogForm = () => {
                                 </div>
                                 <img
                                     src={blog.blog_image || "/placeholder.jpg"}
-                                    alt={blog?.blog_title || "Blog Image"}
+                                    alt={blog.blog_title || "Blog Image"}
                                     className="card__img"
                                 />
                                 <div className="card__data">
-                                    <h3 className="card__title">{blog?.blog_title}</h3>
+                                    <h3 className="card__title">{blog.blog_title}</h3>
                                     <span
                                         className="card__description"
                                         dangerouslySetInnerHTML={{
-                                            __html: parseJSONContent(blog.blog_description).slice(0, 35),
+                                            __html: parseJSONContent(blog.blog_description)?.slice(0, 35) + '...',
                                         }}
                                     ></span>
-                                    <Link to={`/admin/real-world-scenario/${blog?._id}`} className="card__button">
+                                    <Link to={`/admin/real-world-scenario/${blog._id}`} className="card__button">
                                         Read More
                                     </Link>
                                 </div>
@@ -471,7 +480,7 @@ const parseJSONContent = (content) => {
         return content;
     } catch (error) {
         console.error("Error parsing JSON content:", error);
-        return "";
+        return content || "";
     }
 };
 

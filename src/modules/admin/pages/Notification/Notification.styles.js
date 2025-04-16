@@ -83,7 +83,17 @@ export const NotificationBody = styled.div`
   gap: 10px;
   width: 60%;
   height: 170px;
- 
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 250px;
+  }
+
+  @media (max-width: 1300px) {
+    width: 100%;
+    height: 250px;
+  }
+
   h3 {
     margin: 0;
     font-size: 18px;
@@ -150,9 +160,10 @@ export const AddButton = styled.button`
  
 export const Actions = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 `;
- 
+
 export const NotificationContainer = styled.div`
   font-family: ${({ theme }) => theme.fonts.body};
   display: flex;

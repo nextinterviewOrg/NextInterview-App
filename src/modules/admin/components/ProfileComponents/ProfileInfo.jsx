@@ -19,6 +19,7 @@ import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId, updateUser } from "../../../../api/userApi";
 import { useClerk } from "@clerk/clerk-react";
 import { message } from "antd";
+import { Spin } from "antd";
 
 const ProfileInfo = () => {
   const [profilePhoto, setProfilePhoto] = useState("");
@@ -29,17 +30,31 @@ const ProfileInfo = () => {
   const { isSignedIn, user, isLoaded } = useUser();
   const [profileFile, setProfileFile] = useState(null);
   const { signOut } = useClerk();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const apiCaller = async () => {
-      const response = await getUserByClerkId(user.id);
-      setProfilePhoto(response.data.clerkUserData.imageUrl);
-      setUserName(response.data.user.user_name);
-      setEmail(response.data.user.user_email);
-      setPhone(response.data.user.user_phone_number);
+    const fetchUserData = async () => {
+      if (!isLoaded || !user) return;
+      
+      try {
+        setLoading(true);
+        const response = await getUserByClerkId(user.id);
+        if (response.data) {
+          setProfilePhoto(response.data.clerkUserData?.imageUrl || "");
+          setUserName(response.data.user?.user_name || "");
+          setEmail(response.data.user?.user_email || "");
+          setPhone(response.data.user?.user_phone_number || "");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        message.error("Failed to load profile data");
+      } finally {
+        setLoading(false);
+      }
     };
-    apiCaller();
-  }, []);
+
+    fetchUserData();
+  }, [isLoaded, user]); // Add dependencies here
 
   const handlePhotoUpload = async (event) => {
     const file = event.target.files[0];
@@ -52,22 +67,33 @@ const ProfileInfo = () => {
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
-    formData.append("clerk_id", user.id);
-    formData.append("user_name", userName);
-    if (profileFile) {
-      formData.append("user_profile_pic", profileFile);
-    }
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const formData = new FormData();
+      formData.append("clerk_id", user.id);
+      formData.append("user_name", userName);
+      if (profileFile) {
+        formData.append("user_profile_pic", profileFile);
+      }
+      formData.append("user_Phone_number", phone);
+      formData.append("user_email", email);
 
-    formData.append("user_Phone_number", phone);
-    formData.append("user_email", email);
-
-    // Debug the contents of FormData by logging each entry
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
+      await updateUser(formData);
+      message.success("Profile updated successfully!");
+      
+      // Refresh the data after update
+      const response = await getUserByClerkId(user.id);
+      if (response.data) {
+        setProfilePhoto(response.data.clerkUserData?.imageUrl || "");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      message.error("Failed to update profile");
+    } finally {
+      setLoading(false);
     }
-    const data = await updateUser(formData);
-   message.success("Profile updated successfully!");
   };
 
   const handleResetPasswordClick = () => {
@@ -81,6 +107,14 @@ const ProfileInfo = () => {
   const handleLogout = () => {
     // Perform logout actions here (e.g., clearing session, redirecting)
   };
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -122,6 +156,7 @@ const ProfileInfo = () => {
                 type="file"
                 accept="image/*"
                 onChange={handlePhotoUpload}
+                disabled={loading}
               />
             </label>
           </UploadButton>
@@ -132,6 +167,7 @@ const ProfileInfo = () => {
             type="text"
             value={userName}
             onChange={(e) => setUserName(e.target.value)}
+            disabled={loading}
           />
         </FormGroup>
         <FormGroup>
@@ -140,6 +176,7 @@ const ProfileInfo = () => {
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
         </FormGroup>
         <FormGroup>
@@ -153,13 +190,16 @@ const ProfileInfo = () => {
               }
             }}
             maxLength={10}
+            disabled={loading}
           />
         </FormGroup>
         <ResetButtonWrapper>
-          <ResetButton onClick={handleResetPasswordClick}>
+          <ResetButton onClick={handleResetPasswordClick} disabled={loading}>
             Reset password
           </ResetButton>
-          <SaveButton onClick={handleSave}>Save</SaveButton>
+          <SaveButton onClick={handleSave} disabled={loading}>
+            {loading ? "Saving..." : "Save"}
+          </SaveButton>
         </ResetButtonWrapper>
       </ProfileContainer>
       {showResetPassword && (
