@@ -12,6 +12,7 @@ import {
 } from "../Notification/Notification.styles";
 import { MdEdit, MdDelete } from "react-icons/md";
 import NotificationAdd from "../../components/NotificationComponent/NotificationForm/NotificationAdd";
+import NotificationEdit from "../../components/NotificationComponent/NotificationEdit/NotificationEdit";
 import DeleteModule from "../../components/DeleteModule/DeleteModule";
 import bellicon from "../../../../assets/BellIcon.svg";
 import {
@@ -27,6 +28,8 @@ const Notifications = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedNotificationIndex, setSelectedNotificationIndex] = useState(null);
   const [editData, setEditData] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -71,11 +74,14 @@ const Notifications = () => {
   };
 
   const handleEditNotification = (index) => {
+    console.log(index);
+    console.log(notifications[index]);
     const notificationToEdit = notifications[index];
     setSelectedNotificationIndex(index);
     
     // Prepare the edit data with all required fields
     setEditData({
+      _id: notificationToEdit._id,
       headingText: notificationToEdit.headingText,
       subText: notificationToEdit.subText,
       Trigger: notificationToEdit.Trigger,
@@ -90,7 +96,7 @@ const Notifications = () => {
       })
     });
     
-    setIsModalOpen(true);
+    setIsEditModalOpen(true);
   };
 
   const handleDeleteNotification = async () => {
@@ -227,6 +233,17 @@ const Notifications = () => {
         }}
         initialValues={editData}
       />
+
+      <NotificationEdit
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSave={(formData) => {
+          handleSaveNotification(formData);
+          setIsEditModalOpen(false);  
+
+        }}
+        notificationData={editData}
+        />
     </Container>
   );
 };
