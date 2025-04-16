@@ -161,7 +161,7 @@ function Question6() {
           >
             Not sure yet
           </button>
-          <SkipButton onClick={() => navigate("/question8")}>Skip</SkipButton>
+          <SkipButton onClick={() => navigate("/question7")}>Skip</SkipButton>
         </div>
       </div>
     </Question6Wrapper>

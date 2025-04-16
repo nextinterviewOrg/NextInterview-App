@@ -105,7 +105,7 @@ function App() {
           <Route path="/question5" element={<CompaniesPlan />} />
           <Route path="/question6" element={<Question6 />} />
           <Route path="/question7" element={<Question7 />} />
-          <Route path="/question8" element={<FinalQuestion />} />
+          {/* <Route path="/question8" element={<FinalQuestion />} /> */}
           <Route path="/profileComplete" element={<AccountCreated />} />
           <Route path="/otpEmail" element={<OtpEmail />} />
           <Route path="/validation" element={<ValidationPage />} />

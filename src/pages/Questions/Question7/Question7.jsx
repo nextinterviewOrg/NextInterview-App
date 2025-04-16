@@ -116,7 +116,7 @@ function Question7() {
     };
 
     const responseData = await createUserProfile(submissionData);
-    navigate("/question8", { state: { backLink: "/question7" } });
+    navigate("/profileComplete", { state: { backLink: "/question7" } });
   };
 
   return (
