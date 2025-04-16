@@ -680,7 +680,7 @@ const EditAddModule = () => {
                       });
                     },
                   }}
-                  value={subtopic.subtopicContent || ""}
+                  value={subtopic.subtopicContent}
                   onEditorChange={(newValue) => {
                     handleSubtopicChange(
                       null,
@@ -698,7 +698,6 @@ const EditAddModule = () => {
                         : "none",
                     borderRadius: "4px",
                   }}
-                  initialValue=""
                 />
 
                 {/* TEXT SELECTION BUTTON*/}
@@ -790,7 +789,6 @@ const EditAddModule = () => {
                       "subtopicSummary"
                     );
                   }}
-                  initialValue=""
                 />
               </FormGroup>
 
@@ -814,7 +812,6 @@ const EditAddModule = () => {
                       "quickRevisePoints"
                     );
                   }}
-                  initialValue=""
                 />
               </FormGroup>
 
@@ -1093,8 +1090,13 @@ const EditAddModule = () => {
       {/* PAGINATION (OPTIONAL) */}
       <PaginationContainer>
         <Link
-          to={`/admin/uploadmodule/${moduleId}`}
-          style={{ textDecoration: "none" }}
+          to={`/admin/editmodel/${moduleId}`}
+          state={{ data: location.state.data }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
         >
           <ActionButton>
             <FaArrowLeft size={16} /> Previous{" "}
