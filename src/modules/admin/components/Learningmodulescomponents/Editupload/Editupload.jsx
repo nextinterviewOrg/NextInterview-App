@@ -230,7 +230,7 @@ const Editupload = () => {
           submissionData
         ); // Use the ID from moduleData
         navigate(`/admin/editaddmodule/${moduleDataId}`, {
-          state: { data: updatedModule },
+          state: { data: updatedModule, moduleId: moduleDataId },
         });
       } catch (error) {
         console.error("Error updating module:", error);
