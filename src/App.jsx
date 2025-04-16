@@ -130,7 +130,16 @@ function App() {
           <Route path="/backtosignIn" element={<BacktoSignIn />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/resetsuccessful" element={<ResetSuccessful />} />
-          <Route path="/admin" element={<ProtectedRoute roles={["admin"]} />}>
+          <Route path="/admin" element={
+            <>
+              <SignedIn>
+                <ProtectedRoute roles={["admin"]} />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" replace />
+              </SignedOut>
+            </>
+          }>
             <Route element={<BaseLayout />}>
               <Route index element={<AdminDashboard />} />
               <Route path="learning" element={<LearningModules />} />
@@ -157,7 +166,16 @@ function App() {
               <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
             </Route>
           </Route>
-          <Route path="/user" element={<ProtectedRoute roles={["user"]} />}>
+          <Route path="/user" element={
+            <>
+              <SignedIn>
+                <ProtectedRoute roles={["user"]} />
+              </SignedIn>
+              <SignedOut>
+                <Navigate to="/login" replace />
+              </SignedOut>
+            </>
+          }>
             <Route element={<BaseLayout />}>
               <Route index element={<UserDashboard />} />
               <Route path="revise" element={<QuicklyRevise />} />
@@ -190,7 +208,6 @@ function App() {
             <Route path="blogs/:id" element={<UserBlogDisplay />} />
           </Route>
           <Route path="*" element={<NotFound />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>
