@@ -1,98 +1,57 @@
-import { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { Navigate, useLocation } from "react-router-dom";
-import { getUserByClerkId, getUserBySessionId } from "../api/userApi";
+import { Navigate, useLocation, Outlet } from "react-router-dom";
+import Unauthorized from "../components/Unauthorized/Unauthorized";
 import PropTypes from 'prop-types';
+import { useEffect, useState } from "react";
+import { getUserByClerkId } from "../api/userApi";
 
-const ProtectedRoute = ({ component: Component, roles = [] }) => {
-  const { isSignedIn, user, isLoaded, sessionId } = useUser();
-  const [loading, setLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
+// Usage: <Route element={<ProtectedRoute roles={["admin"]} />}>
+//           <Route path="..." element={<... />} />
+//        </Route>
+
+const ProtectedRoute = ({ roles = [] }) => {
+  const { isSignedIn, isLoaded, user } = useUser();
   const location = useLocation();
+  const [userRole, setUserRole] = useState(null);
+  const [checked, setChecked] = useState(false);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if (!isLoaded) {
-          return; // Wait for Clerk to load
-        }
-
-        if (!isSignedIn) {
-          setError("Not signed in");
-          return;
-        }
-
-        const sessions = await user?.getSessions();
-        const sessionVar = sessionId || 
-          (sessions && sessions.length > 0 ? sessions[0].id : null) || 
-          JSON.parse(localStorage.getItem("sessionId"));
-
-        if (!sessionVar) {
-          setError("No session found");
-          return;
-        }
-
-        // Fetch user ID based on session ID
-        const userId = await getUserBySessionId({ sessionId: sessionVar });
-        if (!userId?.userId) {
-          setError("Invalid user data");
-          return;
-        }
-
-        // Fetch user data based on user ID
-        const userResponse = await getUserByClerkId(userId.userId);
-        if (!userResponse || !userResponse.data) {
-          setError("User not found");
-          return;
-        }
-
-        // Extract user data from the response
-        const userData = userResponse.data.user;
-        setUserData(userData);
-
-        // Check role-based access
-        if (roles.length > 0) {
-          // Check if the user has the required role
-          const userRole = userData.user_role || "user";
-          if (!roles.includes(userRole)) {
-            setError("Unauthorized access");
-            return;
-          }
-        }
-
-        setError(null);
-      } catch (err) {
-        console.error("Error in ProtectedRoute:", err);
-        setError(err.message || "An error occurred");
-      } finally {
-        setLoading(false);
+    const fetchRole = async () => {
+      if (!isLoaded || !isSignedIn || !user) return;
+      let role = user?.publicMetadata?.user_role || user?.unsafeMetadata?.user_role;
+      if (role) {
+        setUserRole(role);
+        setChecked(true);
+        return;
       }
+      try {
+        const backendUser = await getUserByClerkId(user.id);
+        role = backendUser?.data?.user?.user_role;
+        setUserRole(role);
+      } catch {
+        setUserRole(null);
+      }
+      setChecked(true);
     };
+    fetchRole();
+  }, [isLoaded, isSignedIn, user]);
 
-    fetchData();
-  }, [isLoaded, isSignedIn, user, sessionId, roles]);
+  if (!isLoaded || !checked) return null;
 
-  if (loading) {
-    return <div>Loading...</div>; // You can replace this with a proper loading component
-  }
-
-  if (error) {
-    // Store the attempted URL for redirect after login
+  if (!isSignedIn) {
     localStorage.setItem("redirectUrl", location.pathname);
-    
-    if (error === "Unauthorized access") {
-      return <Navigate to="/unauthorized" replace />;
-    }
-    
     return <Navigate to="/login" replace />;
   }
 
-  return <Component userData={userData} />;
+  if (roles.length > 0) {
+    if (!userRole) return <Unauthorized />;
+    if (!roles.includes(userRole)) return <Unauthorized />;
+  }
+
+  return <Outlet />;
 };
 
 ProtectedRoute.propTypes = {
-  component: PropTypes.elementType.isRequired,
   roles: PropTypes.arrayOf(PropTypes.string)
 };
 

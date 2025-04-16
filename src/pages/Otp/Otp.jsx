@@ -175,7 +175,7 @@ const Otp = () => {
 
   // Wait until Clerk is loaded
   if (!signInLoaded || !signUpLoaded) {
-    return <div>Loading...</div>;
+    return <div className="otp-loading-spinner"><span className="spinner" /></div>;
   }
 
   const handleGoBack = () => {

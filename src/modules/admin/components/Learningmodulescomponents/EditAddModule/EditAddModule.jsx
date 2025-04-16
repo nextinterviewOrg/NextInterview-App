@@ -1091,7 +1091,7 @@ const EditAddModule = () => {
       <PaginationContainer>
         <Link
           to={`/admin/editmodel/${moduleId}`}
-          state={{ data: location.state.data }}
+          state={{ moduleData: moduleData, moduleId: moduleId }}
           style={{
             display: "flex",
             alignItems: "center",

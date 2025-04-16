@@ -130,49 +130,56 @@ function App() {
           <Route path="/backtosignIn" element={<BacktoSignIn />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/resetsuccessful" element={<ResetSuccessful />} />
-          <Route path="/admin" element={<ProtectedRoute component={BaseLayout} roles={["admin"]} />}>
-            <Route index element={<AdminDashboard />} />
-            <Route path="learning" element={<LearningModules />} />
-            <Route path="Diagnosing-and-Investigating-Metrics" element={<Userdetails />} />
-            <Route path="skill-assessment" element={<SkillAssessment />} />
-            <Route path="uploadmodule" element={<UploadModule />} />
-            <Route path="editmodel/:id" element={<Editupload />} />
-            <Route path="editaddmodule/:id" element={<EditAddModule />} />
-            <Route path="addnewmodule" element={<AddNewModule />} />
-            <Route path="moduleFileUpload" element={<ModuleFileUpload />} />
-            <Route path="challenges" element={<Challenges />} />
-            <Route path="viewanalytics" element={<Analytics />} />
-            <Route path="SupportQuery" element={<SupportQuery />} />
-            <Route path="SupportQuery/:id" element={<SupportQueryUserDetails />} />
-            <Route path="Flashcards" element={<Flashcards />} />
-            <Route path="faq" element={<Faq />} />
-            <Route path="notifications" element={<Notification />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="users" element={<Users />} />
-            <Route path="userProfile" element={<UserProfile />} />
-            <Route path="profile" element={<ProfileInfo />} />
-            <Route path="manage-mfa" element={<ManageMFA />} />
-            <Route path="manage-mfa/add" element={<AddTOTP />} />
-            <Route path="real-world-scenario" element={<Blog />} />
-            <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
-          </Route>
-          <Route path="/user" element={<ProtectedRoute component={BaseLayout} roles={["user"]} />}>
-            <Route index element={<UserDashboard />} />
-            <Route path="revise" element={<QuicklyRevise />} />
-            <Route path="revise/:id" element={<QuicklyDetailed />}>
-              <Route index element={<Navigate to="0" />} />
-              <Route path=":topic" element={<QuicklyReviseTopicDetails />} />
+          <Route path="/admin" element={<ProtectedRoute roles={["admin"]} />}>
+            <Route element={<BaseLayout />}>
+              <Route index element={<AdminDashboard />} />
+              <Route path="learning" element={<LearningModules />} />
+              <Route path="Diagnosing-and-Investigating-Metrics" element={<Userdetails />} />
+              <Route path="skill-assessment" element={<SkillAssessment />} />
+              <Route path="uploadmodule" element={<UploadModule />} />
+              <Route path="editmodel/:id" element={<Editupload />} />
+              <Route path="flashcards" element={<Flashcards />} />
+              <Route path="challenges" element={<Challenges />} />
+              <Route path="analytics" element={<Analytics />} />
+              <Route path="faq" element={<Faq />} />
+              <Route path="notifications" element={<Notification />} />
+              <Route path="supportquery" element={<SupportQuery />} />
+              <Route path="supportquery/:id" element={<SupportQueryUserDetails />} />
+              <Route path="settings" element={<Settings />} />
+              <Route path="users" element={<Users />} />
+              <Route path="profile" element={<ProfileInfo />} />
+              <Route path="modulefileupload" element={<ModuleFileUpload />} />
+              <Route path="manage-mfa" element={<ManageMFA />} />
+              <Route path="manage-mfa/add" element={<AddTOTP />} />
+              <Route path="real-world-scenario" element={<Blog />} />
+              <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
             </Route>
-            <Route path="challenges" element={<UserChallenges />} />
-            <Route path="home" element={<UserHome />} />
-            <Route path="userProfile" element={<ProfileUser />} />
-            <Route path="learning" element={<UserLearning />} />
-            <Route path="learning/:id" element={<UserLearningModule />} />
-            <Route path="learning/:id/topic" element={<UserModuleTopic />} />
-            <Route path="learning/:id/topic/sampleInterview" element={<UserSampleInterview />} />
-            <Route path="learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
-            <Route path="questionbank" element={<QuestionBank />} />
-            <Route path="questionbank/:id" element={<QuestionCollapsible />} />
+          </Route>
+          <Route path="/user" element={<ProtectedRoute roles={["user"]} />}>
+            <Route element={<BaseLayout />}>
+              <Route index element={<UserDashboard />} />
+              <Route path="revise" element={<QuicklyRevise />} />
+              <Route path="revise/:id" element={<QuicklyDetailed />}>
+                <Route index element={<Navigate to="0" />} />
+                <Route path=":topic" element={<QuicklyReviseTopicDetails />} />
+              </Route>
+              <Route path="challenges" element={<UserChallenges />} />
+              <Route path="home" element={<UserHome />} />
+              <Route path="userProfile" element={<ProfileUser />} />
+              <Route path="learning" element={<UserLearning />} />
+              <Route path="learning/:id" element={<UserLearningModule />} />
+              <Route path="learning/:id/topic" element={<UserModuleTopic />} />
+              <Route path="learning/:id/topic/sampleInterview" element={<UserSampleInterview />} />
+              <Route path="learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
+              <Route path="questionbank" element={<QuestionBank />} />
+              <Route path="questionbank/:id" element={<QuestionCollapsible />} />
+              <Route path="userfaq" element={<UserFAQ />} />
+              <Route path="subscription" element={<UserSubscription />} />
+              <Route path="interview" element={<InterviewPage />} />
+              <Route path="challengeInfo" element={<NewChallenge />} />
+              <Route path="blogs" element={<UserBlog />} />
+              <Route path="blogs/:id" element={<UserBlogDisplay />} />
+            </Route>
             <Route path="userfaq" element={<UserFAQ />} />
             <Route path="subscription" element={<UserSubscription />} />
             <Route path="interview" element={<InterviewPage />} />
