@@ -190,6 +190,7 @@ function App() {
             <Route path="blogs/:id" element={<UserBlogDisplay />} />
           </Route>
           <Route path="*" element={<NotFound />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>
