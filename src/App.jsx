@@ -159,6 +159,7 @@ function App() {
               <Route path="supportquery/:id" element={<SupportQueryUserDetails />} />
               <Route path="settings" element={<Settings />} />
               <Route path="users" element={<Users />} />
+              <Route path="userProfile" element={<ProfileUser />} />
               <Route path="profile" element={<ProfileInfo />} />
               <Route path="modulefileupload" element={<ModuleFileUpload />} />
               <Route path="manage-mfa" element={<ManageMFA />} />
