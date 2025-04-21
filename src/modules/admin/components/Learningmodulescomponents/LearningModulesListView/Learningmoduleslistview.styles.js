@@ -4,6 +4,7 @@ import theme from "../../../../../theme/Theme";
 export const ModulesSection = styled.div`
   margin-top: ${theme.spacing(3)};
 
+
  
 
   .module-header {
@@ -28,6 +29,14 @@ export const ModulesSection = styled.div`
         }
       }
   }
+
+  .module-actions{
+display: flex;
+gap: 30px;
+
+@media (max-width: ${theme.breakpoints.mobile}) {
+gap: 10px;
+}
 `;
 
 export const ModuleCard = styled.div`

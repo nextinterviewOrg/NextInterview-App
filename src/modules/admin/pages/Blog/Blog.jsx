@@ -14,9 +14,9 @@ import { Editor } from "@tinymce/tinymce-react";
 import { uploadFileToFirebase } from "../../../../utils/uploadFileToFirebase";
 import { message } from "antd";
 import {
+    TinyMCEapiKey,
     TinyMCEplugins,
     TinyMCEToolbar,
-    TinyMCEapiKey,
 } from "../../../../config/TinyMceConfig";
 import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
 import "../../../admin/pages/Blog/Blog.scss";
@@ -37,24 +37,27 @@ const BlogForm = () => {
     const [isEditMode, setIsEditMode] = useState(false);
     const [editBlogId, setEditBlogId] = useState(null);
     const [imagePreview, setImagePreview] = useState(null);
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
+
+    // Create a separate function to fetch blogs
+    const fetchBlogs = async () => {
+        try {
+            setLoading(true);
+            const response = await getAllBlogs();
+            if (Array.isArray(response.data)) {
+                setBlogs(response.data);
+            } else {
+                setError("Unexpected response format.");
+            }
+        } catch (error) {
+            console.error("Error fetching blogs:", error);
+            setError(error.message);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     useEffect(() => {
-        const fetchBlogs = async () => {
-            try {
-                setLoading(true);
-                const response = await getAllBlogs();
-                if (Array.isArray(response.data)) {
-                    setBlogs(response.data);
-                } else {
-                    setError("Unexpected response format.");
-                }
-                setLoading(false);
-            } catch (error) {
-                console.error("Error fetching blogs:", error);
-                setError(error.message);
-                setLoading(false);
-            }
-        };
         fetchBlogs();
     }, []);
 
@@ -66,12 +69,15 @@ const BlogForm = () => {
             try {
                 const imageURL = await uploadFileToFirebase(file, "flashcard");
                 setImage(imageURL);
+                setIsImageUploaded(true);
                 message.success("Image uploaded successfully!");
             } catch (error) {
                 console.error("Error uploading image:", error);
+                setIsImageUploaded(false);
                 message.error("Failed to upload image.");
             }
         } else {
+            setIsImageUploaded(false);
             message.error("Please upload a valid image file.");
         }
     };
@@ -80,17 +86,15 @@ const BlogForm = () => {
         event.preventDefault();
         try {
             setLoading(true);
-            const response = await createBlog({ title, content, image });
-            if (response.data) {
-                setBlogs(prev => [...prev, response.data]);
-                message.success("Blog created successfully!");
-            }
+            await createBlog({ title, content, image });
+            message.success("Blog created successfully!");
             resetForm();
             setIsModalOpen(false);
+            // Fetch blogs again after creation
+            await fetchBlogs();
         } catch (error) {
             console.error("Error creating blog:", error.message);
             setError(error.message);
-            message.error("Failed to create blog");
         } finally {
             setLoading(false);
         }
@@ -99,24 +103,19 @@ const BlogForm = () => {
     const handleUpdateBlog = async (blogId) => {
         try {
             setLoading(true);
-            const response = await updateBlogById(blogId, {
+            await updateBlogById(blogId, {
                 title,
                 content,
-                image: image || blogs.find(b => b._id === blogId)?.blog_image,
+                image,
             });
-            
-            if (response.data) {
-                setBlogs(prevBlogs =>
-                    prevBlogs.map(b => b._id === blogId ? response.data : b)
-                );
-                message.success("Blog updated successfully!");
-                setIsModalOpen(false);
-                resetForm();
-            }
+            message.success("Blog updated successfully!");
+            resetForm();
+            setIsModalOpen(false);
+            // Fetch blogs again after update
+            await fetchBlogs();
         } catch (error) {
             console.error("Error updating blog:", error.message);
             setError(error.message);
-            message.error("Failed to update blog");
         } finally {
             setLoading(false);
         }
@@ -127,12 +126,12 @@ const BlogForm = () => {
         try {
             setLoading(true);
             await deleteBlogById(deleteBlogId);
-            setBlogs(prevBlogs => prevBlogs.filter(b => b._id !== deleteBlogId));
             message.success("Blog deleted successfully!");
+            // Fetch blogs again after deletion
+            await fetchBlogs();
         } catch (error) {
             console.error("Error deleting blog:", error.message);
             setError(error.message);
-            message.error("Failed to delete blog");
         } finally {
             setIsDeleteModalOpen(false);
             setDeleteBlogId(null);
@@ -147,6 +146,7 @@ const BlogForm = () => {
         setImagePreview(null);
         setIsEditMode(false);
         setEditBlogId(null);
+        setIsImageUploaded(false);
     };
 
     const handleDeleteClick = (blogId) => {
@@ -161,6 +161,7 @@ const BlogForm = () => {
         setImagePreview(blog.blog_image || null);
         setEditBlogId(blog._id);
         setIsEditMode(true);
+        setIsImageUploaded(!!blog.blog_image);
         setIsModalOpen(true);
     };
 
@@ -303,44 +304,57 @@ const BlogForm = () => {
                                     />
                                 )}
                             </label>
-                            <button
-                                type="submit"
-                                disabled={loading}
-                                style={{
-                                    marginRight: "10px",
-                                    padding: "8px 16px",
-                                    cursor: "pointer",
-                                    backgroundColor: "#2390ac",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                }}
-                            >
-                                {loading
-                                    ? isEditMode
-                                        ? "Updating..."
-                                        : "Creating..."
-                                    : isEditMode
-                                        ? "Update"
-                                        : "Create"}
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setIsModalOpen(false);
-                                    resetForm();
-                                }}
-                                style={{
-                                    padding: "8px 16px",
-                                    cursor: "pointer",
-                                    backgroundColor: "#2390ac",
-                                    color: "#fff",
-                                    border: "none",
-                                    borderRadius: "5px",
-                                }}
-                            >
-                                Cancel
-                            </button>
+                            {!isImageUploaded && (
+                                <p style={{ color: 'red', marginBottom: '10px' }}>
+                                    Please upload an image to enable {isEditMode ? 'update' : 'create'}.
+                                </p>
+                            )}
+                            {isImageUploaded && (
+                                <>
+                                    <button
+                                        type="submit"
+                                        disabled={
+                                            loading ||
+                                            !title.trim() ||
+                                            !content.trim()
+                                        }
+                                        style={{
+                                            marginRight: "10px",
+                                            padding: "8px 16px",
+                                            cursor: loading || !title.trim() || !content.trim() ? 'not-allowed' : 'pointer',
+                                            backgroundColor: "#2390ac",
+                                            color: "#fff",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                        }}
+                                    >
+                                        {loading
+                                            ? isEditMode
+                                                ? "Updating..."
+                                                : "Creating..."
+                                            : isEditMode
+                                                ? "Update"
+                                                : "Create"}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            setIsModalOpen(false);
+                                            resetForm();
+                                        }}
+                                        style={{
+                                            padding: "8px 16px",
+                                            cursor: "pointer",
+                                            backgroundColor: "#2390ac",
+                                            color: "#fff",
+                                            border: "none",
+                                            borderRadius: "5px",
+                                        }}
+                                    >
+                                        Cancel
+                                    </button>
+                                </>
+                            )}
                         </form>
                     </div>
                 </div>
@@ -356,7 +370,7 @@ const BlogForm = () => {
             <h2 style={{ marginLeft: "60px" }}>Blog List</h2>
             <div className="container">
                 <div className="card__container">
-                    {loading && blogs.length === 0 ? (
+                    {loading ? (
                         [...Array(8)].map((_, index) => (
                             <article 
                                 key={index} 
@@ -406,7 +420,7 @@ const BlogForm = () => {
                     ) : (
                         blogs.map((blog) => (
                             <article
-                                key={blog._id}
+                                key={blog?._id || Math.random()}
                                 className="card__article"
                                 style={{
                                     borderRadius: "24px",
@@ -444,18 +458,18 @@ const BlogForm = () => {
                                 </div>
                                 <img
                                     src={blog.blog_image || "/placeholder.jpg"}
-                                    alt={blog.blog_title || "Blog Image"}
+                                    alt={blog?.blog_title || "Blog Image"}
                                     className="card__img"
                                 />
                                 <div className="card__data">
-                                    <h3 className="card__title">{blog.blog_title}</h3>
+                                    <h3 className="card__title">{blog?.blog_title}</h3>
                                     <span
                                         className="card__description"
                                         dangerouslySetInnerHTML={{
-                                            __html: parseJSONContent(blog.blog_description)?.slice(0, 35) + '...',
+                                            __html: parseJSONContent(blog.blog_description).slice(0, 35),
                                         }}
                                     ></span>
-                                    <Link to={`/admin/real-world-scenario/${blog._id}`} className="card__button">
+                                    <Link to={`/admin/real-world-scenario/${blog?._id}`} className="card__button">
                                         Read More
                                     </Link>
                                 </div>
@@ -480,7 +494,7 @@ const parseJSONContent = (content) => {
         return content;
     } catch (error) {
         console.error("Error parsing JSON content:", error);
-        return content || "";
+        return "";
     }
 };
 

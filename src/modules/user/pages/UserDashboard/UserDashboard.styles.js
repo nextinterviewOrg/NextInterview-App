@@ -4,7 +4,7 @@ export const UserDashboardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  margin-left: 40px;
+  margin-left: 20px;
 
   @media (max-width: 1024px) {
     margin-left: 0;
@@ -31,23 +31,26 @@ export const UserDashboardWrapper = styled.div`
     }
   }
   
-  .UserDashboard-statsContainer-row-one {
-    position: absolute;
-    width: 100%;
-    background: linear-gradient(
-      180deg,
-      ${({ theme }) => theme.colors.secondary} -96.67%,
-      ${({ theme }) => theme.colors.primary} 182.78%
-    );
-    height: 90px;
+ .UserDashboard-statsContainer-row-one {
+  position: absolute;
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    ${({ theme }) => theme.colors.secondary} -96.67%,
+    ${({ theme }) => theme.colors.primary} 182.78%
+  );
+  height: 90px;
 
-    @media (max-width: 768px) {
-      height: auto;
-      position: relative;
-      padding-bottom: 20px;
-    }
+  @media (max-width: 1100px) {
+    position: relative;
+    height: auto;
+    padding-bottom: 80px; /* Add space for the stats container */
   }
-  
+
+  @media (max-width: 768px) {
+    padding-bottom: 60px;
+  }
+}
   .UserDashboard-statsContainer-img {
     position: absolute;
     right: 0;
@@ -56,33 +59,41 @@ export const UserDashboardWrapper = styled.div`
       display: none;
     }
   }
-  
   .UserDashboard-stats {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    top: 25px;
-    margin-left: 70px;
-    margin-right: 60px;
-    background: ${({ theme }) => theme.colors.light};
-    border-radius: 8px;
-    padding: 12px 24px;
-    gap: 24px;
-    flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  top: 25px;
+  margin-left: 30px;
+  margin-right: 60px;
+  background: ${({ theme }) => theme.colors.light};
+  border-radius: 8px;
+  padding: 12px 24px;
+  gap: 24px;
+  flex-wrap: wrap;
 
-    @media (max-width: 768px) {
-      top: 30px;
-      margin-left: 4px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
-      width: calc(100% - 40px);
-      padding: 16px !important;
-    }
+  @media (max-width: 1100px) {
+    position: absolute;
+    top: 20px; /* Adjust this value as needed */
+    // left: 10px;
+    // right: 20px;
+    // margin: 0;
   }
-  
+
+  @media (max-width: 76px) {
+    position: relative;
+    top: 30px;
+    margin: 0 6px;
+    // margin-left: 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: calc(100% - 40px);
+    padding: 16px !important;
+  }
+}
   .UserDashboard-statsbox {
     display: flex;
     flex-direction: column;
@@ -107,14 +118,17 @@ export const UserDashboardWrapper = styled.div`
       width: 100%;
     }
 
-
-       
-    }
     @media (max-width: 1024px) {
- &:nth-child(5) { // 5th child is the Challenges completed card
-   display: none;
- }
-}
+      margin-left: 40px;
+
+   
+      
+    }
+       @media (max-width: 1024px) {
+    &:nth-child(5) { // 5th child is the Challenges completed card
+      display: none;
+    }
+  }
 
     &.more-button {
       display: flex;
@@ -126,9 +140,10 @@ export const UserDashboardWrapper = styled.div`
       &:hover {
         background: ${({ theme }) => theme.colors.primary}30;
       }
-         @media (max-width:1024px)
-       {
-       display: none;}
+
+      @media (max-width:1024px)
+      {
+      display: none;}
 
       .UserDashboard-statsbox-value {
         color: ${({ theme }) => theme.colors.primary};
@@ -167,20 +182,28 @@ export const UserDashboardWrapper = styled.div`
   }
   
   /* Rest of your existing styles remain the same */
-  .UserDashboard-statsContainer-row-two {
-    width: 100%;
-    margin-top: 100px;
-    
-    @media (max-width: 768px) {
-      margin-top: 60px;
-    }
+ .UserDashboard-statsContainer-row-two {
+  width: 100%;
+  margin-top: 100px;
+  
+  @media (max-width: 1100px) {
+    margin-top: 70px; /* Increase this if there's still overlap */
   }
+  
+  @media (max-width: 768px) {
+    margin-top: 60px;
+  }
+}
   
   .UserDashboard-Charts-container {
     padding: 24px;
     
     @media (max-width: 768px) {
       padding: 16px;
+
+    }
+      @media (max-width: 1024px) {
+      margin-left: 20px;
     }
   }
   
@@ -194,6 +217,9 @@ export const UserDashboardWrapper = styled.div`
     @media (max-width: 768px) {
       font-size: 20px;
     }
+      @media (max-width: 1024px) {
+      margin-left: 20px;
+    }
   }
   
   .UserDashboard-charts {
@@ -203,21 +229,33 @@ export const UserDashboardWrapper = styled.div`
     justify-content: space-between;
     gap: 90px;
     
-    @media (max-width: 980px) {
+    @media (max-width: 1024px) {
       flex-direction: column;
       gap: 40px;
     }
   }
 
   /* ContinueLearning.css */
-  .container-dashboard {
-    width: 100%;
-    margin-top: 150px;
-    
-    @media (max-width: 768px) {
-      margin-top: 0;
-    }
+.container-dashboard {
+  width: 100%;
+  margin-top: 150px;
+  
+  @media (max-width: 1100px) {
+    margin-top: 200px; /* Adjust this value as needed */
   }
+
+  @media (max-width: 868px) {
+  margin-top: 250px;
+  }
+  
+  @media (max-width: 768px) {
+    margin-top: 150px;
+  }
+
+  @media (max-width: 576px) {
+    margin-top: 350px;
+  }
+}
 
   .header-dashboard {
     font-size: 24px;
@@ -228,6 +266,11 @@ export const UserDashboardWrapper = styled.div`
     display: flex;
     align-items: flex-start;
     text-align: left;
+
+    @media (max-width: 860px) {
+      margin-left: 40px;
+    }
+  }
     
     @media (max-width: 768px) {
       font-size: 20px;
@@ -261,9 +304,12 @@ export const UserDashboardWrapper = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    
+    margin-left: 60px;
     @media (max-width: 768px) {
       padding: 0 16px;
+    }
+      @media (max-width: 1024) {
+      margin-left: 60px;
     }
   }
 

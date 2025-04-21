@@ -47,7 +47,7 @@ const LearningModulesStats = () => {
         <div
           style={{
             background: "#f5f5f5",
-            padding: "0 20px ",
+            // padding: "0 20px ",
             borderRadius: "8px",
           }}
         >

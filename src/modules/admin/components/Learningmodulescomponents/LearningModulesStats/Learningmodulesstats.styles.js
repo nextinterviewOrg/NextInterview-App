@@ -12,7 +12,6 @@ export const Header = styled.div`
   );
   padding: ${theme.spacing(2)};
   border-radius: 8px;
-
   h2 {
     font-family: ${theme.fonts.heading};
     color: ${theme.colors.sidebarTextColor};

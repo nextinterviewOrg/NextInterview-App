@@ -110,11 +110,11 @@ const QuestionBank = () => {
       question_type: "",
       subtopic_code: "",
     };
-
+  
     if (selectedFilters.easy) filters.level.push("easy");
     if (selectedFilters.medium) filters.level.push("medium");
     if (selectedFilters.hard) filters.level.push("hard");
-
+  
     if (selectedFilters.topic) {
       const selectedModule = moduleCodes.find(
         (module) => module.module_name === selectedFilters.topic
@@ -123,31 +123,29 @@ const QuestionBank = () => {
         filters.module_code = selectedModule.module_code;
       }
     }
-
-    if (selectedFilters.topic_code)
-      filters.topic_code = selectedFilters.topic_code;
-    if (selectedFilters.subtopic_code)
-      filters.subtopic_code = selectedFilters.subtopic_code;
-    if (selectedFilters.question_type)
-      filters.question_type = selectedFilters.question_type;
-
-    const levelFilter = filters.level.length ? filters.level.join(",") : "";
-
+  
     try {
       const response = await getQuestionBank(
         filters.module_code,
         filters.topic_code,
         filters.subtopic_code,
         filters.question_type,
-        levelFilter
+        filters.level.join(",")
       );
-
-      setFilteredQuestions(response.data);
+  
+      // Always set the filtered questions, even if empty array
+      setFilteredQuestions(response.data || []);
       setIsDropdownOpen(false);
     } catch (error) {
       console.error("Error applying filters:", error);
+      // Set empty array on error too
+      setFilteredQuestions([]);
     }
   };
+
+  const noQuestionsMessage = selectedFilters.topic
+  ? `No questions available for module "${selectedFilters.topic}".`
+  : "No questions found.";
 
   const clearFilters = async () => {
     setSelectedFilters({
@@ -287,7 +285,7 @@ const shimmerItems = new Array(10).fill(null);
                 </Link>
               ))
             ) : (
-              <p>No questions found.</p>
+              <p>{noQuestionsMessage}</p>
             )}
           </>
         )}

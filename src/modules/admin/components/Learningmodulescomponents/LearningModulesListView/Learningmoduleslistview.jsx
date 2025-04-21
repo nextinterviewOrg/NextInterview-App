@@ -89,7 +89,7 @@ const LearningModulesListView = () => {
     <ModulesSection>
       <div className="module-header">
         <h3>Data Science Lite Modules</h3>
-        <div style={{ display: "flex", gap: "30px" }}>
+        <div className="module-actions">
           <SearchBarWrapper>
             <IoSearch size={20} />
             <SearchBar
