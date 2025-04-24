@@ -11,6 +11,7 @@ import {
   RaiseQueryButton,
 } from "../UserFAQ/UserFAQ.style";
 import { CiCirclePlus, CiCircleMinus } from "react-icons/ci";
+import SupportQuery from "../../components/SupportQuery/SupportQuery";
 import theme from "../../../../theme/Theme";
 import { getFaq } from "../../../../api/faqApi";
 
@@ -56,9 +57,9 @@ const UserFAQ = () => {
         }}
       >
         <FAQTitle>Frequently asked questions</FAQTitle>
-        {/* <RaiseQueryButton onClick={() => setIsModalOpen(true)}>
+        <RaiseQueryButton onClick={() => setIsModalOpen(true)}>
           Raise Query
-        </RaiseQueryButton> */}
+        </RaiseQueryButton>
       </div>
       <div
         style={{
@@ -93,7 +94,7 @@ const UserFAQ = () => {
         ))}
       </div>
       {isModalOpen && (
-        <RaiseQuery
+        <SupportQuery
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />

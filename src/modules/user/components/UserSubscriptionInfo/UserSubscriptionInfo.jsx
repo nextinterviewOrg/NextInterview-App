@@ -23,7 +23,7 @@ const UserSubscriptionInfo = () => {
                     <div className="detail-item"><span className='detail-item-title'>Frequency</span> <span className='detail-item-value'>{subscription.frequency}</span></div>
                 </div>
                 <div className="subscription-upgrade-btn">
-                    {/* <button className="upgrade-button">Upgrade</button> */}
+                    <button className="upgrade-button">Upgrade</button>
                 </div>
             </div>
         </UserSubscriptionInfoWrapper1>

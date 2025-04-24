@@ -9,7 +9,8 @@ import {
   SubmitButton,
   AnswerFeedback,
   TextArea,
-  CloseButton
+  CloseButton,
+  CorrectAnswer
 } from "../SkillAssessment/SkillAssessment.styles";
 import { evaluateSkillAssessment, getSkillAssessment } from "../../../../../api/skillAssessmentApi";
 import { useUser } from "@clerk/clerk-react";
@@ -145,7 +146,10 @@ const SkillAssessment = ({
         }
       )
       console.log(isCorrect);
-      newFeedback[question._id] = isCorrect.result ? "Correct" : "Incorrect";
+      newFeedback[question._id] = {
+        text: isCorrect.result ? "Correct" : "Incorrect",
+        isCorrect: isCorrect.result
+      };
     };
     console.log(feedback);
     setFeedback(newFeedback);
@@ -193,14 +197,20 @@ const SkillAssessment = ({
           )}
 
           {submitted && feedback[q._id] && (
-            <AnswerFeedback>{feedback[q._id]}</AnswerFeedback>
+            <>
+              <AnswerFeedback isCorrect={feedback[q._id].isCorrect}>
+                {feedback[q._id].text}
+              </AnswerFeedback>
+              <CorrectAnswer>
+                <strong>Correct Answer:</strong> {q.answer}
+              </CorrectAnswer>
+            </>
           )}
         </QuestionWrapper>
       ))}
 
       {!submitted && (
         <ButtonWrapper>
-          {/* <SkipButton onClick={onCloseModal}>Skip</SkipButton> */}
           <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
         </ButtonWrapper>
       )}

@@ -60,11 +60,11 @@ export const ModalOverlay = styled.div`
 
 export const ModalContent = styled.div`
   position: relative;
-  background: white;
+  // background: white;
   padding: 20px;
   border-radius: 10px;
   text-align: center;
-  max-width: 400px;
+  // max-width: 400px;
   width: 90%;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;

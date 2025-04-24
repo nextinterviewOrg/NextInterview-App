@@ -129,6 +129,7 @@ export const ModalContainer = styled.div`
   position: absolute; /* Changed from fixed */
   top: 25%;
   left: 85%;
+  // right: 0;
   transform: translate(-50%, -50%);
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   display: flex;

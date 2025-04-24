@@ -165,7 +165,30 @@ const UploadModule = () => {
 
   // ------------------ WHAT USERS LEARN ------------------
   const handleWhatUsersLearnChange = (e) => {
-    const data = e.target.value.split("\n");
+    const caretPosition = e.target.selectionStart;
+    const value = e.target.value;
+    const lines = value.split("\n");
+    const currentLineIndex = value.substring(0, caretPosition).split("\n").length - 1;
+
+    if (e.nativeEvent.inputType === 'deleteContentBackward' && caretPosition > 0) {
+      const currentLine = lines[currentLineIndex];
+
+      // If the caret is at the beginning of a bulleted line, remove the line
+      if (caretPosition === value.lastIndexOf(currentLine) && currentLine.startsWith("•")) {
+        const updatedLines = [
+          ...lines.slice(0, currentLineIndex),
+          ...lines.slice(currentLineIndex + 1),
+        ];
+        setWhatUsersLearn(updatedLines.map((item) => item.replace(/•/g, "")));
+        e.target.value = updatedLines.join("\n"); // Update the textarea value directly
+        e.target.selectionStart = e.target.selectionEnd = caretPosition - (currentLine.length > 0 ? 1 : 0); // Adjust caret position
+        setWhatUsersLearnError("");
+        return; // Prevent further processing
+      }
+    }
+
+    // Standard handling for adding/modifying points
+    const data = value.split("\n");
     const cleanedData = data.map((item) => item.replace(/•/g, ""));
     setWhatUsersLearn(cleanedData);
     setWhatUsersLearnError("");

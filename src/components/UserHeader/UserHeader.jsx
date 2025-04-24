@@ -75,7 +75,7 @@ const Dropdown = ({
   const dropdownStyles = {
     position: "absolute",
     top: position.top + 50, // Adjust position below the avatar
-    left: position.left - 140,
+    right:"2%",
     background: "white",
     border: "1px solid #ddd",
     borderRadius: "8px",
@@ -167,7 +167,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if (path.includes("dashboard")) return "Dashboard";
       if (path.includes("faq")) return "FAQ's";
       if (path.includes("learning")) return "Learning Module";
-      if (path.includes("profile")) return "Profile info";
+      if (path.includes("profile")) return "Profile";
       if (path.includes("home")) return "Home";
       if(path.includes("revise")) return "Quickly revise";
       if(path.includes("notification")) return "Notifications";
@@ -433,7 +433,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
                 />
               </Icon>
             </IconWrapper>
-            <UserProfile>
+            {/* <UserProfile>
               <UserDetails>
                 <UserName>{userName}</UserName>
                 <UserEmail>{userEmail}</UserEmail>
@@ -459,6 +459,36 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
                 />
               </div>
               {/* <UserButton afterSignOutUrl="/" /> */}
+            {/* </UserProfile> */} 
+
+ 
+  
+          {/* wrap the entire profile section in one click zone */}
+            <UserProfile
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                setAvatarPosition({ top: rect.top + window.scrollY, left: rect.left });
+                setIsProfileOpen(open => !open);
+              }}
+              style={{ cursor: "pointer", position: "relative" }}
+            >
+              <UserDetails>
+                <UserName>{userName}</UserName>
+                <UserEmail>{userEmail}</UserEmail>
+              </UserDetails>
+              <Avatar
+                src={userAvatar || Logo}
+                alt="Profile"
+              />
+              <Dropdown
+                isOpen={isProfileOpen}
+                position={avatarPosition}
+               onClose={() => setIsProfileOpen(false)}
+                onLogoutClick={() => {
+                  setIsLogoutModalOpen(true);
+               }}
+                onOpenQueryModal={() => setIsRaiseQueryOpen(true)}
+              />
             </UserProfile>
           </HeaderRight>
         </HeaderContainer>

@@ -106,9 +106,16 @@ export const SkipButton = styled.button`
 export const AnswerFeedback = styled.div`
   margin-top: 10px;
   font-weight: bold;
-  color: green; /* Change color based on correct/incorrect */
+  color: ${({ isCorrect }) => (isCorrect ? "green" : "red")};
 `;
 
+export const CorrectAnswer = styled.div`
+  margin-top: 8px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-left: 3px solid #2290AC;
+  font-size: 16px;
+`;
 export const TextArea = styled.textarea`
   width: 100%;
   height: 100px;

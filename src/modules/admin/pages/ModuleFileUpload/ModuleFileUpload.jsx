@@ -123,7 +123,7 @@ const ModuleFileUpload = () => {
           >
             <StyledSelect
               placeholder="Select Module Code"
-              onChange={handleModuleChange} // Call handler to reset states
+              onChange={handleModuleChange} 
             >
               {moduleOptions.map((option) => (
                 <Option key={option.module_code} value={option.module_code}>

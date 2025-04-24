@@ -122,7 +122,7 @@ const Header = ({ toggleMobileSidebar }) => {
     if (path.includes("dashboard")) return "Dashboard";
     if (path.includes("faq")) return "FAQ's";
     if (path.includes("learning")) return "Learning Module";
-    if (path.includes("profile")) return "Profile info";
+    if (path.includes("profile")) return "Profile ";
     if (path.includes("users")) return "Users";
     if(path.includes("supportquery")) return "Support Query";
     if(path.includes("flashcard")) return "Flashcard";
