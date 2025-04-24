@@ -118,7 +118,7 @@ const UserBlogDisplay = () => {
                         }}
                       ></span>
                       <Link 
-                        to={`/user/real-world-scenario/${otherBlog?._id}`}
+                        to={`/user/blogs/${otherBlog?._id}`}
                         className="card__button"
                       >
                         Read More
