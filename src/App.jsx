@@ -200,7 +200,7 @@ function App() {
               <Route path="interview" element={<InterviewPage />} />
               <Route path="challengeInfo" element={<NewChallenge />} />
               <Route path="blogs" element={<UserBlog />} />
-              <Route path="real-world-scenario/:id" element={<UserBlogDisplay />} />
+              <Route path="blogs/:id" element={<UserBlogDisplay />} />
             </Route>
             {/* <Route path="userfaq" element={<UserFAQ />} /> */}
             {/* <Route path="subscription" element={<UserSubscription />} /> */}
