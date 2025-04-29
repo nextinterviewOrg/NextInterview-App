@@ -46,16 +46,16 @@ export default function ModuleSidebar({
     try {
       const response = await getModuleById(moduleId);
       console.log("Module data:", response.data);
-      
+
       if (!response.data || !response.data.topicData || response.data.topicData.length === 0) {
         console.error("No topic data found in module response");
         return;
       }
-      
+
       const responseUser = await getUserByClerkId(user.id);
       const userModuleProgress = await getUserProgressByModule({ userId: responseUser.data.user._id, moduleCode: response.data.module_code });
       const userModuleProgressStats = await getUserProgressStats(responseUser.data.user._id);
-      
+
       setExpandedTopic(location.state?.topicIndex || 0);
       setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
 
@@ -65,24 +65,25 @@ export default function ModuleSidebar({
           setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length) * 100).toFixed(0));
         }
       });
-      
+
       setTotalTopics(response.data.topicData.length);
-      
+
       const data = {
         title: response.data.moduleName,
         topicsList: await Promise.all(response.data.topicData.map(async (item) => {
+          console.log("Processing topic:", item);
           return {
             title: item.topicName,
             topic_code: item.topic_code,
             subtopics: await Promise.all(item.subtopicData.map(async (subitem) => {
               console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
-              const subTopicProgress = await getUserProgressBySubTopic({ 
-                userId: responseUser.data.user._id, 
-                moduleCode: response.data.module_code, 
-                topicCode: item.topic_code, 
-                subtopicCode: subitem.subtopic_code 
+              const subTopicProgress = await getUserProgressBySubTopic({
+                userId: responseUser.data.user._id,
+                moduleCode: response.data.module_code,
+                topicCode: item.topic_code,
+                subtopicCode: subitem.subtopic_code
               });
-              
+
               return {
                 title: subitem.subtopicName,
                 subtopic_code: subitem.subtopic_code,
@@ -92,7 +93,7 @@ export default function ModuleSidebar({
           };
         })),
       };
-      
+
       console.log("Final course data structure:", data);
       setCourseData(data);
     } catch (error) {
@@ -155,15 +156,15 @@ export default function ModuleSidebar({
       setIsExpanded(!isExpanded);
     }
   };
-  
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       const sidebar = document.querySelector('.module-sidebar');
       const toggleButton = document.querySelector('.mobile-toggle-button');
-      
-      if (isMobile && sidebarOpen && 
-          !sidebar.contains(event.target) && 
-          !toggleButton.contains(event.target)) {
+
+      if (isMobile && sidebarOpen &&
+        !sidebar.contains(event.target) &&
+        !toggleButton.contains(event.target)) {
         setSidebarOpen(false);
       }
     };
@@ -183,12 +184,12 @@ export default function ModuleSidebar({
           <GiHamburgerMenu size={24} />
         </MobileToggleButton>
       )}
-      
-      <Overlay 
-        visible={isMobile && sidebarOpen} 
+
+      <Overlay
+        visible={isMobile && sidebarOpen}
         onClick={() => setSidebarOpen(false)}
       />
-      
+
       <ModuleSidebarContainer
         className="module-sidebar"
         isExpanded={isExpanded}
@@ -205,7 +206,7 @@ export default function ModuleSidebar({
           <div className="progress-bar-container">
             <div
               className="progress-bar"
-              style={{ width: `${moduleProgressPercentage}%`, backgroundColor: moduleProgressPercentage>=35? moduleProgressPercentage>=75?"green" :  "orange":"red" }}
+              style={{ width: `${moduleProgressPercentage}%`, backgroundColor: moduleProgressPercentage >= 35 ? moduleProgressPercentage >= 75 ? "green" : "orange" : "red" }}
             ></div>
           </div>
           <div className="progress-details">
@@ -215,9 +216,9 @@ export default function ModuleSidebar({
             </div>
 
             <div className="progress-details-percentage"
-            style={{
-              fontSize: "16px",
-            }} >
+              style={{
+                fontSize: "16px",
+              }} >
               <span>{moduleProgressPercentage}%</span>
             </div>
           </div>
@@ -237,7 +238,7 @@ export default function ModuleSidebar({
             <div key={index} className="topic">
               <div className="topic-title" onClick={() => toggleExpand(index)}>
                 <span className="topic-name">{topic.title}</span>
-                <span 
+                <span
                 >
                   {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
                 </span>
@@ -270,6 +271,8 @@ export default function ModuleSidebar({
                                   display: "flex",
                                   alignItems: "center",
                                   gap: "5px",
+                                  minHeight: "fit-content",
+                                  height: "auto",
                                 }}
                               >
                                 <span>

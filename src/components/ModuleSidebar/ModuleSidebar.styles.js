@@ -61,13 +61,13 @@ export const ModuleSidebarContainer = styled.div`
 
     &:hover {
       background-color: ${(props) =>
-        props.theme.colors.sidebarHoverBgColor || "#e0e0e0"};
+    props.theme.colors.sidebarHoverBgColor || "#e0e0e0"};
     }
 
     &.active {
       color: ${(props) => props.theme.colors.primary};
       background-color: ${(props) =>
-        props.theme.colors.sidebarActiveBgColor || "#f0f0f0"};
+    props.theme.colors.sidebarActiveBgColor || "#f0f0f0"};
       font-weight: bold;
     }
 
@@ -171,6 +171,8 @@ export const ModuleSidebarContainer = styled.div`
     font-style: normal;
     font-weight: 600;
     line-height: 20px;
+      min-height: fit-content!important;
+       height: auto!important;
   }
 
   .subtopic-info {
@@ -178,6 +180,8 @@ export const ModuleSidebarContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     margin: 5px 0;
+     min-height: fit-content!important;
+       height: auto!important;
   }
 
   .subtopic-info .completed {
@@ -198,6 +202,8 @@ export const ModuleSidebarContainer = styled.div`
 
   .subtopic-info span {
     margin-right: 10px;
+     min-height: fit-content!important;
+       height: auto!important;
   }
 
   .subtopic-title {
@@ -207,12 +213,14 @@ export const ModuleSidebarContainer = styled.div`
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    // display: -webkit-box;
+    // -webkit-line-clamp: 2;
+    // -webkit-box-orient: vertical;
     overflow: hidden;
     width: 100%;
     padding: 10px;
+      //  min-height: fit-content!important;
+      //  height: auto!important;
   }
 
   .module-sidebar-topic-title {
