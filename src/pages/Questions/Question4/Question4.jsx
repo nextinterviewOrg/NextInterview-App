@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Title,
@@ -16,12 +16,28 @@ import { RxArrowLeft } from "react-icons/rx";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
 import { useUser } from "@clerk/clerk-react";
 import { getJobById, getJobs } from "../../../api/jobApi";
-import { createUserProfile, getUserByClerkId } from "../../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../../api/userApi";
 
 const QuestionPage4 = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const navigate = useNavigate();
   const { isSignedIn, user, isLoaded } = useUser();
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) {
+        return;
+      }
+      const userData = await getUserByClerkId(user.id);
+      const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
+      console.log("questionaries Data qq ", questionariesData)
+      if (questionariesData.data[0]?.data_scheduled_interview_response!==null) {
+        console.log("questionaries Data jjj ", questionariesData.data[0].data_scheduled_interview_response?"true":"false")
+       setSelectedOption(questionariesData.data[0].data_scheduled_interview_response?"true":"false");
+      }
+
+    };
+    apiCaller();
+  }, [user]);
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);
@@ -88,7 +104,7 @@ const QuestionPage4 = () => {
           <NextButton disabled={!selectedOption} onClick={handleOnlClick}>
             Next
           </NextButton>
-          <SkipButton onClick={() => navigate("/question6")}>Skip</SkipButton>
+          {/* <SkipButton onClick={() => navigate("/question6")}>Skip</SkipButton> */}
         </Section>
       </Container>
     </div>

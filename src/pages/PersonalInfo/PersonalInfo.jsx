@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   FormContainer,
@@ -14,7 +14,7 @@ import {
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
 import { IoMdArrowBack } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
-import { createUserProfile, getUserByClerkId } from "../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../api/userApi";
 import { useNavigate } from "react-router-dom";
 
 const PersonalInfo = () => {
@@ -31,6 +31,24 @@ const PersonalInfo = () => {
   });
   const { isSignedIn, user, isLoaded } = useUser();
   const navigate = useNavigate();
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) {
+        return;
+      }
+      const userData = await getUserByClerkId(user.id);
+
+      if ((userData.data.user.user_name!=="Anonymous") && (userData.data.user.user_linkedin_profile_link!=="") ) {
+        setFormValues((prev) => ({
+          ...prev,
+          userName: userData.data.user.user_name,
+          linkedIn: userData.data.user.user_linkedin_profile_link,
+        }));
+      }
+
+    };
+    apiCaller();
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +92,6 @@ const PersonalInfo = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (validateForm()) {
       const data = await getUserByClerkId(user.id);
       const submissionData = {
@@ -138,9 +155,9 @@ const PersonalInfo = () => {
                 value={formValues.linkedIn}
                 onChange={handleInputChange}
               />
-              {/* {errors.linkedIn && (
+              {errors.linkedIn && (
                 <ErrorMessage>{errors.linkedIn}</ErrorMessage>
-              )} */}
+              )}
             </InputGroup>
             <SubmitButton type="submit">Next</SubmitButton>
           </form>

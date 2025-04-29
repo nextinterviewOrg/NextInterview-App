@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
-import { Question6Wrapper,SkipButton } from "./Question6.Styles";
+import { Question6Wrapper, SkipButton } from "./Question6.Styles";
 import { useNavigate } from "react-router";
 import { RxArrowLeft } from "react-icons/rx";
 import { useUser } from "@clerk/clerk-react";
 import { getJobById, getJobs } from "../../../api/jobApi";
-import { createUserProfile, getUserByClerkId } from "../../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../../api/userApi";
 import { getCompanies } from "../../../api/comapniesApi";
 import { getDesignations } from "../../../api/designationApi";
 import { getInterviewRounds } from "../../../api/interviewRoundApi";
@@ -19,6 +19,24 @@ function Question6() {
   const [selectedDesignation, setSelectedDesignation] = useState("");
   const [companyImageList, setCompanyImageList] = useState([]);
   const { isSignedIn, user, isLoaded } = useUser();
+
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) {
+        return;
+      }
+      const userData = await getUserByClerkId(user.id);
+      const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
+      console.log("questionaries Data qq ", questionariesData)
+      if (questionariesData.data[0]?.data_planned_interview_response) {
+        console.log(" lala ",questionariesData.data[0].data_planned_interview_response.designations);
+       setSelectedCompany(questionariesData.data[0].data_planned_interview_response.companies);
+       setSelectedDesignation(questionariesData.data[0].data_planned_interview_response.designations);
+      }
+
+    };
+    apiCaller();
+  }, [user]);
 
   useEffect(() => {
     const apiCaller = async () => {
@@ -99,7 +117,7 @@ function Question6() {
       },
     };
     const responseData = await createUserProfile(submissionData);
-    navigate("/question7");
+    navigate("/question7",{state:{backLink:"/question6"}});
   };
 
   return (
@@ -116,8 +134,8 @@ function Question6() {
             options={companyOptions}
             onChange={handleCompanySelect}
             placeholder="Select Company Name"
-            value={companyOptions.find(
-              (option) => option.value === selectedCompany
+            value={companyOptions.filter(
+              (option) =>  selectedCompany.includes(option.value)
             )}
             styles={customStyles}
             isMulti
@@ -129,6 +147,9 @@ function Question6() {
             onChange={handleDesignationSelect}
             placeholder="Select Role"
             styles={customStyles}
+            value={designationOptions.find(
+              (option) => option.value === selectedDesignation
+            )}
           />
 
           <div className="Selected">
@@ -161,7 +182,7 @@ function Question6() {
           >
             Not sure yet
           </button>
-          <SkipButton onClick={() => navigate("/question7")}>Skip</SkipButton>
+          {/* <SkipButton onClick={() => navigate("/question7")}>Skip</SkipButton> */}
         </div>
       </div>
     </Question6Wrapper>

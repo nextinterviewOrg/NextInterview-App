@@ -281,6 +281,9 @@ const Otp = () => {
             placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
             duration: 3,
           });
+          const data2 = await signUp.prepareEmailAddressVerification({
+            strategy: "email_code",
+          });
           // alert("You Phone Number has been successfully verified!");
           navigate("/otpEmail", {
             state: {

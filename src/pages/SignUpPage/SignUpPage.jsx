@@ -150,10 +150,10 @@ const SignUpPage = () => {
         strategy: "phone_code",
       });
       console.log("data", data);
-      const data2 = await signUp.prepareEmailAddressVerification({
-        strategy: "email_code",
-      });
-      console.log("data2", data2);
+      // const data2 = await signUp.prepareEmailAddressVerification({
+      //   strategy: "email_code",
+      // });
+      // console.log("data2", data2);
       setMessage("Registered successfully!, Please verify your phone number.");
       setMessageType("success");
 

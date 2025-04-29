@@ -14,7 +14,7 @@ export const Question7Wrapper = styled.div`
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding: 20px 40px;
+    // padding: 20px 40px;
     max-width: 600px;
     margin: 0 auto;
   }
@@ -43,6 +43,10 @@ export const Question7Wrapper = styled.div`
 
   .Form {
     width: 100%;
+    border: 1px solid #c2c3c4;
+    border-radius: 4px;
+    padding: 16px;
+    margin-bottom: 16px;
   }
 
   .Label {
@@ -57,6 +61,7 @@ export const Question7Wrapper = styled.div`
     line-height: 20px; /* 153.846% */
     margin-top: 24px;
   }
+    
 
   .Dropdown {
     width: 100%;
@@ -110,6 +115,8 @@ export const Question7Wrapper = styled.div`
     cursor: pointer;
     margin-bottom: 12px;
     margin-top: 12px;
+    box-sizing: border-box!important;
+    margin-left: 20px;
   }
 
   .NextButton:hover {
@@ -166,9 +173,68 @@ export const Question7Wrapper = styled.div`
     line-height: 24px; /* 160% */
     border: none;
     text-align: center !important;
+        margin-left: 20px;
   }
 
   .anotherCompany:hover {
     background-color: ${(props) => props.theme.colors.secondary}!important;
+  }
+
+ 
+
+  .DeleteButton {
+   
+    width: 100%;
+    // background-color: #fff;
+    background-color: transparent;
+    margin-top: 12px;
+    color: red;
+    border-radius: 4px;
+
+    font-family: "DM Sans";
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 160% */
+    border: none;
+    text-align: center !important;
+    &:hover {
+    color: ${(props) => props.theme.colors.white};
+      background-color: red !important;
+    }
+  }
+`;
+export const SkipButton = styled.button`
+  margin-top: 30px;
+  width: 100%;
+  height: 50px;
+  background-color: ${(props) =>
+    props.disabled
+      ? `${theme.colors.primary}`
+      : `${theme.colors.light}`} !important;
+  // background-color:${theme.colors.light}!important;
+  color: ${theme.colors.black};
+  border: 1px solid ${theme.colors.black} !important;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
+  transition: background-color 0.3s ease;
+  margin-left: 20px;
+
+  &:hover {
+    background-color: ${(props) => (props.disabled ? "#cccccc" : "#28a745")};
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 45px;
+    margin-top: 20px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    height: 40px;
+    font-size: 12px;
   }
 `;

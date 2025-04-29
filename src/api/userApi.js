@@ -124,3 +124,12 @@ export const getUserBySessionId = async (data) => {
     throw error;
   }
 };
+export const getQuestionariesByUserId=async(id)=>{
+  try{
+  const response = await api.get(`/questionnaire/user/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

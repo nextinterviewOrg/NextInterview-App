@@ -19,7 +19,7 @@ import { getInterviewRounds } from "../../../api/interviewRoundApi";
 import Select from "react-select";
 import { useUser } from "@clerk/clerk-react";
 import { getJobById, getJobs } from "../../../api/jobApi";
-import { createUserProfile, getUserByClerkId } from "../../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../../api/userApi";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
 
 const CompaniesPlan = () => {
@@ -29,7 +29,7 @@ const CompaniesPlan = () => {
   const [comapnyData, setCompanyData] = useState([]);
   const [designationData, setDesignationData] = useState([]);
   const [interviewData, setInterviewData] = useState([]);
-  const [interviewDate, setInterviewDate] = useState([]);
+  const [interviewDate, setInterviewDate] = useState(null);
   const navigate = useNavigate();
   const { isSignedIn, user, isLoaded } = useUser();
 
@@ -44,11 +44,35 @@ const CompaniesPlan = () => {
     };
     apiCaller();
   }, []);
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) {
+        return;
+      }
+      const userData = await getUserByClerkId(user.id);
+      const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
+      console.log("questionaries Data qq ", questionariesData)
+      if (questionariesData.data[0]?.data_interview_scheduled_response) {
+        console.log("questionaries Data ", questionariesData.data[0].data_interview_scheduled_response);
+        setSelectedCompany(questionariesData.data[0].data_interview_scheduled_response.company._id);
+        setSelectedDesignation(questionariesData.data[0].data_interview_scheduled_response.designation._id);
+        setSelectedInterview(questionariesData.data[0].data_interview_scheduled_response.interviewRound || null);
+        setInterviewDate(
+          questionariesData.data[0].data_interview_scheduled_response
+            ? questionariesData.data[0].data_interview_scheduled_response.interviewDate.split('T')[0]
+            : ''
+        );
+      }
+
+    };
+    apiCaller();
+  }, [user]);
 
   const handleCompanySelect = (company) => {
     setSelectedCompany(company.value);
   };
   const handleDesignationSelect = (designation) => {
+    console.log("designation", designation);
     setSelectedDesignation(designation.value);
   };
 
@@ -62,21 +86,23 @@ const CompaniesPlan = () => {
     e.preventDefault();
     const data = await getUserByClerkId(user.id);
 
-    const subisstionData = {
+    const submitionData = {
       company: selectedCompany,
       designation: selectedDesignation,
       interviewRound: selectedInterview,
       interviewDate: interviewDate,
     };
+    console.log("submitionData", submitionData);
     const submissionData = {
       user_id: data.data.user._id,
-      data_interview_scheduled_response: subisstionData,
+      data_interview_scheduled_response: submitionData,
       // profile_status:true
     };
     await createUserProfile(submissionData);
 
-    navigate("/question7");
+    navigate("/question7", { state: { backLink: "/question5" } });
   };
+
 
   const companyOptions = comapnyData.map((company) => ({
     value: company._id,
@@ -124,7 +150,11 @@ const CompaniesPlan = () => {
       zIndex: 9999, // Ensure the dropdown is above other elements
     }),
   };
-
+const handleSkip=async(e)=>{
+  e.preventDefault();
+  console.log("handleSkip");
+  navigate("/question7", { state: { backLink: "/question5" } });
+}
   return (
     <>
       <HeaderWithLogo />
@@ -156,7 +186,7 @@ const CompaniesPlan = () => {
               <Input
                 type="date"
                 value={interviewDate}
-                onChange={(e) => setInterviewDate(e.target.value)}
+                onChange={(e) =>{console.log("sfgshjk",e.target.value); setInterviewDate(e.target.value)}}
               />
             </FormField>
 
@@ -166,6 +196,9 @@ const CompaniesPlan = () => {
                 options={designationOptions}
                 onChange={handleDesignationSelect}
                 placeholder="Select Role"
+                value={designationOptions.find(
+                  (option) => option.value === selectedDesignation
+                )}
                 styles={customStyles}
               />
             </FormField>
@@ -177,6 +210,9 @@ const CompaniesPlan = () => {
                 onChange={handleInterviewSelect}
                 placeholder="Select Round"
                 styles={customStyles}
+                value={interviewRoundOptions.find(
+                  (option) => option.value === selectedInterview
+                )}
               />
             </FormField>
 
@@ -185,9 +221,8 @@ const CompaniesPlan = () => {
             </Button>
             <Button
               secondary
-              onClick={() => {
-                navigate("/question7");
-              }}
+              onClick={(e)=>{ e.preventDefault();handleSkip(e)}}
+              type="button" 
             >
               Not scheduled yet
             </Button>

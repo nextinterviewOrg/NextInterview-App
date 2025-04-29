@@ -1,29 +1,56 @@
 import React, { useEffect, useState } from "react";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
-import { Question7Wrapper } from "./Question7.styles";
-import { useNavigate } from "react-router";
+import { Question7Wrapper,SkipButton } from "./Question7.styles";
+import { useLocation, useNavigate } from "react-router";
 import { RxArrowLeft } from "react-icons/rx";
 import { useUser } from "@clerk/clerk-react";
 import { getCompanies } from "../../../api/comapniesApi";
 import { getDesignations } from "../../../api/designationApi";
 import { getTopics } from "../../../api/topicApi";
-import { createUserProfile, getUserByClerkId } from "../../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../../api/userApi";
 import Select from "react-select";
+import { useLocale } from "antd/es/locale";
 
 function Question7() {
   const [companyData, setCompanyData] = useState([]);
   const [designationData, setDesignationData] = useState([]);
   const [topicData, setTopicData] = useState([]);
-  const [companiesDetails, setCompaniesDetails] = useState([
-    {
-      selectedCompany: "",
-      selectedDesignation: "",
-      whatWentWell: "",
-      whatWentWrong: "",
-      selectedTopics: [],
-    },
-  ]);
+  const location = useLocation();
+  const [companiesDetails, setCompaniesDetails] = useState([]);
   const { isSignedIn, user, isLoaded } = useUser();
+  
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) return;
+
+      const userData = await getUserByClerkId(user.id);
+      const questionariesData = await getQuestionariesByUserId(userData.data.user._id);
+
+      if (questionariesData.data[0]?.data_past_interview_response.length > 0) {
+        // Map API response to new array format
+        const initialCompanies = questionariesData.data[0].data_past_interview_response.map(interview => ({
+          selectedCompany: interview.company_Name?._id || "",
+          selectedDesignation: interview.designation?._id || "",
+          whatWentWell: interview.what_went_well || "",
+          whatWentWrong: interview.what_went_bad || "",
+          selectedTopics: interview.topics?.map(item => item._id) || [],
+        }));
+
+        // Set state once with complete array
+        setCompaniesDetails(initialCompanies);
+      }else{
+        const initialCompanies = [{
+          selectedCompany: "",
+          selectedDesignation: "",
+          whatWentWell: "",
+          whatWentWrong: "",
+          selectedTopics: [],
+        }];
+        setCompaniesDetails(initialCompanies);
+      }
+    };
+    apiCaller();
+  }, [user]);
 
   useEffect(() => {
     const apiCaller = async () => {
@@ -39,7 +66,7 @@ function Question7() {
 
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate("/question6");
+    navigate(location.state.backLink);
   };
 
   const handleCompanySelect = (company, index) => {
@@ -113,8 +140,22 @@ function Question7() {
     const submissionData = {
       user_id: data.data.user._id,
       data_past_interview_response: pastData,
+      profile_status:true,
     };
 
+    const responseData = await createUserProfile(submissionData);
+    navigate("/profileComplete", { state: { backLink: "/question7" } });
+  };
+  const handleDeleteCompany = (indexToDelete) => {
+    setCompaniesDetails(companiesDetails.filter((_, index) => index !== indexToDelete));
+  };
+
+  const handleSkip = async () => {
+    const data = await getUserByClerkId(user.id);
+    const submissionData = {
+      user_id: data.data.user._id,
+      profile_status: true,
+    };
     const responseData = await createUserProfile(submissionData);
     navigate("/profileComplete", { state: { backLink: "/question7" } });
   };
@@ -129,6 +170,7 @@ function Question7() {
         <div className="Title">Tell me about past interview experience</div>
 
         {companiesDetails.map((companyDetail, index) => (
+
           <div className="Form" key={index}>
             <label className="Label">Company Name</label>
             <Select
@@ -254,12 +296,23 @@ function Question7() {
               }}
               isMulti
             />
+
+            {index > 0 && (
+              <button
+                className="DeleteButton"
+                onClick={() => handleDeleteCompany(index)}
+              >
+                Delete Company
+              </button>
+            )}
           </div>
+
         ))}
 
         <button className="NextButton" onClick={handleNext}>
           Next
         </button>
+         <SkipButton onClick={handleSkip}>Skip</SkipButton>
 
         <button className="anotherCompany" onClick={handleAddAnotherCompany}>
           Add Another Company

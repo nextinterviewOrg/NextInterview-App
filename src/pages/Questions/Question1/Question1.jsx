@@ -15,20 +15,39 @@ import { RxArrowLeft } from "react-icons/rx";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
 import { getJobById, getJobs } from "../../../api/jobApi";
 import { useUser } from "@clerk/clerk-react";
-import { createUserProfile, getUserByClerkId } from "../../../api/userApi";
+import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from "../../../api/userApi";
 
 const QuestionPage1 = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const navigate = useNavigate();
   const [options, setOptions] = useState([]);
+
+  const { isSignedIn, user, isLoaded } = useUser();
   useEffect(() => {
     const apiCaller = async () => {
+
       const data = await getJobs();
       setOptions(data.data);
     };
     apiCaller();
   }, []);
-  const { isSignedIn, user, isLoaded } = useUser();
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (!user) {
+        return;
+      }
+      const userData = await getUserByClerkId(user.id);
+      const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
+      console.log("questionaries Data ", questionariesData)
+      if (questionariesData.data[0]?.data_job_response) {
+        setSelectedOption(questionariesData.data[0].data_job_response._id);
+      }
+
+    };
+    apiCaller();
+  }, [user]);
+
+
 
   const handleOptionChange = (option) => {
     setSelectedOption(option);
@@ -112,7 +131,7 @@ const QuestionPage1 = () => {
           <NextButton disabled={!selectedOption} onClick={handleClick}>
             Next
           </NextButton>
-          <SkipButton onClick={() => navigate("/question2")}>Skip</SkipButton>
+          {/* <SkipButton onClick={() => navigate("/question2")}>Skip</SkipButton> */}
         </Section>
       </Container>
     </div>
