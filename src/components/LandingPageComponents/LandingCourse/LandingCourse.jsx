@@ -139,6 +139,7 @@ import { useNavigate } from 'react-router-dom';
 import { getModule } from '../../../api/addNewModuleApi';
 import api from '../../../config/axiosconfig';
 import LandingHeader from '../LandingHeader/LandingHeader';
+import LandingFooter from '../LandingFooter/LandingFooter';
 
 export default function LandingCourse() {
     const [searchQuery, setSearchQuery] = useState(""); // Search query state
@@ -218,6 +219,7 @@ export default function LandingCourse() {
                 </div>
             </div>
         </UserLearningWrapper>
+        <LandingFooter />
         </>
     )
 }

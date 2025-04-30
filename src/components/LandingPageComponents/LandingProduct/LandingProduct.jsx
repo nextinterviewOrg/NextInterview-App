@@ -3,6 +3,7 @@ import { UserLearningWrapper, Subheading} from "../LandingProduct/LandingProduct
 import LandingHeader from "../LandingHeader/LandingHeader";
 import LandingCourse from "../LandingCourse/LandingCourse";
 import LandingFeature from "../LandingFeature/LandingFeature";
+import LandingFooter from "../LandingFooter/LandingFooter";
 
 const LandingProduct = () => {
     return (
@@ -21,6 +22,7 @@ const LandingProduct = () => {
             </div>
             </UserLearningWrapper>
             <LandingFeature />
+            <LandingFooter />
        
             </>
     )
