@@ -9,11 +9,10 @@ const LandingPage = () => {
     return (
         <>
             <LandingHeader />
-            <HeroSection />
-            <Arsenal />
             <OurFeatures/>
             <LandingFooter/>
-            
+            <HeroSection />
+            <Arsenal />
         </>
     );
 };

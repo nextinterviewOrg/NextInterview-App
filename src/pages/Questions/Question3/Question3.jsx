@@ -33,7 +33,9 @@ const QuestionPage3 = () => {
       if (questionariesData.data[0]?.data_experience_response) {
         setSelectedOption(questionariesData.data[0].data_experience_response);
       }
-
+      if(userData.data.user.profile_status){
+        navigate("/user")
+      }
     };
     apiCaller();
   }, [user]);

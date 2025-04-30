@@ -33,7 +33,9 @@ const QuestionPage2 = () => {
           console.log("questionaries Data ", questionariesData.data[0].data_ai_job_response)
          setSelectedOption(questionariesData.data[0].data_ai_job_response);
         }
-  
+        if(userData.data.user.profile_status){
+          navigate("/user")
+        }
       };
       apiCaller();
     }, [user]);

@@ -63,7 +63,9 @@ const CompaniesPlan = () => {
             : ''
         );
       }
-
+      if (userData.data.user.profile_status) {
+        navigate("/user")
+      }
     };
     apiCaller();
   }, [user]);
@@ -150,11 +152,11 @@ const CompaniesPlan = () => {
       zIndex: 9999, // Ensure the dropdown is above other elements
     }),
   };
-const handleSkip=async(e)=>{
-  e.preventDefault();
-  console.log("handleSkip");
-  navigate("/question7", { state: { backLink: "/question5" } });
-}
+  const handleSkip = async (e) => {
+    e.preventDefault();
+    console.log("handleSkip");
+    navigate("/question7", { state: { backLink: "/question5" } });
+  }
   return (
     <>
       <HeaderWithLogo />
@@ -186,7 +188,7 @@ const handleSkip=async(e)=>{
               <Input
                 type="date"
                 value={interviewDate}
-                onChange={(e) =>{console.log("sfgshjk",e.target.value); setInterviewDate(e.target.value)}}
+                onChange={(e) => { console.log("sfgshjk", e.target.value); setInterviewDate(e.target.value) }}
               />
             </FormField>
 
@@ -221,8 +223,8 @@ const handleSkip=async(e)=>{
             </Button>
             <Button
               secondary
-              onClick={(e)=>{ e.preventDefault();handleSkip(e)}}
-              type="button" 
+              onClick={(e) => { e.preventDefault(); handleSkip(e) }}
+              type="button"
             >
               Not scheduled yet
             </Button>

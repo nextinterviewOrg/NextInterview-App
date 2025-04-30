@@ -88,6 +88,7 @@ import Unauthorized from "./components/Unauthorized/Unauthorized";
 import LandingPage from "./pages/LandingPage/LandingPage";
 import LandingCourse from "./components/LandingPageComponents/LandingCourse/LandingCourse";
 import LandingProduct from "./components/LandingPageComponents/LandingProduct/LandingProduct";
+import AboutPage from "./pages/AboutPage/AboutPage";
 
 function App() {
   return (
@@ -96,6 +97,7 @@ function App() {
         <GlobalStyle />
         <Routes>
           <Route path="/landingpage" element={<LandingPage />} />
+          <Route path="/about" element={<AboutPage />} />
           <Route path="/landing-course" element={<LandingCourse />} />
           <Route path="/landing-product" element={<LandingProduct />} />
           <Route path="/" element={<PublicRoutes Component={SignUp} />} />

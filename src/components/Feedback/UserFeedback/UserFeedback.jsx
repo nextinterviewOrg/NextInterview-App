@@ -5,8 +5,9 @@ import api from "../../../config/axiosconfig";
 import { getUserBySessionId, getUserByClerkId } from "../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
 import "./UserFeedback.css";
+import { addModuleFeedback } from "../../../api/moduleFeedbackApi";
 
-const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
+const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen,feedbackOrder ,closeModel,returnUrl}) => {
   const { user, sessionId } = useUser();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(autoOpen);
@@ -16,70 +17,79 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [mongoUserId, setMongoUserId] = useState(null);
+  
 
   // Get user ID when component mounts
-  useEffect(() => {
-    const fetchUserId = async () => {
-      try {
-        // Get session ID
-        const sessions = await user?.getSessions();
-        const sessionVar = sessionId || 
-          (sessions && sessions.length > 0 ? sessions[0].id : null) || 
-          JSON.parse(localStorage.getItem("sessionId"));
+  // useEffect(() => {
+  //   const fetchUserId = async () => {
+  //     try {
+  //       // Get session ID
+  //       const sessions = await user?.getSessions();
+  //       const sessionVar = sessionId || 
+  //         (sessions && sessions.length > 0 ? sessions[0].id : null) || 
+  //         JSON.parse(localStorage.getItem("sessionId"));
 
-        if (!sessionVar) {
-          setIsLoading(false);
-          return;
-        }
+  //       if (!sessionVar) {
+  //         setIsLoading(false);
+  //         return;
+  //       }
 
-        // Get user ID from session
-        const sessionResponse = await getUserBySessionId({ sessionId: sessionVar });
-        const clerkUserId = sessionResponse.userId;
+  //       // Get user ID from session
+  //       const sessionResponse = await getUserBySessionId({ sessionId: sessionVar });
+  //       const clerkUserId = sessionResponse.userId;
 
-        if (!clerkUserId) {
-          setIsLoading(false);
-          return;
-        }
+  //       if (!clerkUserId) {
+  //         setIsLoading(false);
+  //         return;
+  //       }
 
-        // Get the MongoDB user ID
-        const userResponse = await getUserByClerkId(clerkUserId);
-        if (!userResponse || !userResponse.data || !userResponse.data.user) {
-          setIsLoading(false);
-          return;
-        }
+  //       // Get the MongoDB user ID
+  //       const userResponse = await getUserByClerkId(clerkUserId);
+  //       if (!userResponse || !userResponse.data || !userResponse.data.user) {
+  //         setIsLoading(false);
+  //         return;
+  //       }
 
-        const userId = userResponse.data.user._id;
-        setMongoUserId(userId);
+  //       const userId = userResponse.data.user._id;
+  //       setMongoUserId(userId);
         
-        // Check if feedback exists for this user and module
-        if (userId && moduleId) {
-          try {
-            const response = await api.get(`/feedback/user/${userId}/module/${moduleId}`);
+  //       // Check if feedback exists for this user and module
+  //       if (userId && moduleId) {
+  //         try {
+  //           const response = await api.get(`/feedback/user/${userId}/module/${moduleId}`);
             
-            if (response.data && response.data.data && response.data.data.length > 0) {
-              setHasSubmitted(true);
-              setSuccessMessage("You have already submitted feedback for this module.");
-            }
-          } catch (err) {
-            console.error("Error checking previous feedback:", err);
-          }
-        }
-      } catch (err) {
-        console.error("Error fetching user ID:", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //           if (response.data && response.data.data && response.data.data.length > 0) {
+  //             setHasSubmitted(true);
+  //             setSuccessMessage("You have already submitted feedback for this module.");
+  //           }
+  //         } catch (err) {
+  //           console.error("Error checking previous feedback:", err);
+  //         }
+  //       }
+  //     } catch (err) {
+  //       console.error("Error fetching user ID:", err);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    if (moduleId) {
-      fetchUserId();
-    }
-  }, [moduleId, user, sessionId]);
+  //   if (moduleId) {
+  //     fetchUserId();
+  //   }
+  // }, [moduleId, user, sessionId]);
 
   const handleRatingClick = (value) => {
     setRating(value);
+  };
+
+  const handleCloseModal = () => {
+    closeModel();
+    if (returnUrl) {
+      navigate(returnUrl);
+      return;
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -87,26 +97,26 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
     setIsSubmitting(true);
     setError(null);
 
-    if (hasSubmitted) {
-      setError("Feedback has already been submitted for this module.");
-      setIsSubmitting(false);
-      return;
-    }
-
-    if (!mongoUserId) {
-      setError("User ID not found. Please log in again.");
-      setIsSubmitting(false);
-      return;
-    }
+    
 
     try {
       // Submit feedback
-      await api.post("/feedback", {
-        userId: mongoUserId,
+      // await api.post("/feedback", {
+      //   userId: mongoUserId,
+      //   moduleId,
+      //   rating,
+      //   feedback,
+      // });
+      const userData= await getUserByClerkId(user.id);
+
+     
+      const data=  await addModuleFeedback({
+        userId: userData.data.user._id,
         moduleId,
         rating,
         feedback,
-      });
+        feedback_order:feedbackOrder
+      })
 
       // Show success message and mark as submitted
       setSuccessMessage("Feedback submitted successfully!");
@@ -142,9 +152,12 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
     setSuccessMessage("");
     setHasSubmitted(false);
     setIsModalOpen(false); // Close the entire modal when dismissed
-    
+    closeModel();
     // Navigate back to the lesson
-    navigate("/user/learning");
+    if (returnUrl) {
+      navigate(returnUrl);
+      return;
+    }
   };
 
   useEffect(() => {
@@ -155,9 +168,9 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
 
   return (
     <div className="feedback-container">
-      <button className="feedback-button" onClick={toggleModal}>
+      {/* <button className="feedback-button" onClick={toggleModal}>
         Provide Feedback
-      </button>
+      </button> */}
 
       {isModalOpen && (
         <div className="modal-overlay">
@@ -206,7 +219,7 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen }) => {
                   <button
                     type="button"
                     className="cancel-button"
-                    onClick={toggleModal}
+                    onClick={()=>{toggleModal();handleCloseModal();}}
                     disabled={isSubmitting}
                   >
                     Cancel

@@ -48,6 +48,9 @@ function Question7() {
         }];
         setCompaniesDetails(initialCompanies);
       }
+      if(userData.data.user.profile_status){
+        navigate("/user")
+      }
     };
     apiCaller();
   }, [user]);
@@ -144,7 +147,7 @@ function Question7() {
     };
 
     const responseData = await createUserProfile(submissionData);
-    navigate("/profileComplete", { state: { backLink: "/question7" } });
+    navigate("/profileComplete", { state: { backLink: "/question7" } }, { replace: true });
   };
   const handleDeleteCompany = (indexToDelete) => {
     setCompaniesDetails(companiesDetails.filter((_, index) => index !== indexToDelete));
@@ -157,7 +160,7 @@ function Question7() {
       profile_status: true,
     };
     const responseData = await createUserProfile(submissionData);
-    navigate("/profileComplete", { state: { backLink: "/question7" } });
+    navigate("/profileComplete", { state: { backLink: "/question7" } }, { replace: true });
   };
 
   return (

@@ -34,7 +34,9 @@ const QuestionPage4 = () => {
         console.log("questionaries Data jjj ", questionariesData.data[0].data_scheduled_interview_response?"true":"false")
        setSelectedOption(questionariesData.data[0].data_scheduled_interview_response?"true":"false");
       }
-
+      if(userData.data.user.profile_status){
+        navigate("/user")
+      }
     };
     apiCaller();
   }, [user]);

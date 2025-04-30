@@ -29,11 +29,13 @@ function Question6() {
       const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
       console.log("questionaries Data qq ", questionariesData)
       if (questionariesData.data[0]?.data_planned_interview_response) {
-        console.log(" lala ",questionariesData.data[0].data_planned_interview_response.designations);
-       setSelectedCompany(questionariesData.data[0].data_planned_interview_response.companies);
-       setSelectedDesignation(questionariesData.data[0].data_planned_interview_response.designations);
+        console.log(" lala ", questionariesData.data[0].data_planned_interview_response.designations);
+        setSelectedCompany(questionariesData.data[0].data_planned_interview_response.companies);
+        setSelectedDesignation(questionariesData.data[0].data_planned_interview_response.designations);
       }
-
+      if (userData.data.user.profile_status) {
+        navigate("/user")
+      }
     };
     apiCaller();
   }, [user]);
@@ -117,7 +119,7 @@ function Question6() {
       },
     };
     const responseData = await createUserProfile(submissionData);
-    navigate("/question7",{state:{backLink:"/question6"}});
+    navigate("/question7", { state: { backLink: "/question6" } });
   };
 
   return (
@@ -135,7 +137,7 @@ function Question6() {
             onChange={handleCompanySelect}
             placeholder="Select Company Name"
             value={companyOptions.filter(
-              (option) =>  selectedCompany.includes(option.value)
+              (option) => selectedCompany.includes(option.value)
             )}
             styles={customStyles}
             isMulti

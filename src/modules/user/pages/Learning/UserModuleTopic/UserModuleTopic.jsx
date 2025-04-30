@@ -38,6 +38,7 @@ import {
   completeSubTopic,
   completeTopic,
   getUserProgressBySubTopic,
+  getUserProgressStats,
   startSubTopic,
   startTopic,
 } from "../../../../../api/userProgressApi";
@@ -51,6 +52,7 @@ import {
 import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
+import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
 
 // Sample Data for Dynamic Rendering
 
@@ -122,6 +124,8 @@ const UserModuleTopic = () => {
   const [popupContent, setPopupContent] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [isModuleCompleted, setIsModuleCompleted] = useState(false);
+  const [feedbackOrder, setFeedbackOrder] = useState(1);
+  const [returnUrl, setReturnUrl] = useState(null);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -133,53 +137,114 @@ const UserModuleTopic = () => {
       delayPara(i, gptSummaryText[i]);
     }
   };
+
   const handleCloseModal = async () => {
     setShowModal(false);
-    
-    // Show the feedback modal after the user manually closes the skill assessment
-    setShowFeedbackModal(true);
-    
     let finalTopicIndex = location.state?.topicIndex;
     let finalSubTopicIndex = location.state?.subtopicIndex;
     const userData = await getUserByClerkId(user.id);
     const moduleResponse = await getModuleById(moduleId);
     const module_code = moduleResponse.data.module_code;
-    const topic_code =
-      moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
-    const subtopic_code =
-      moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[
-        location.state?.subtopicIndex
-      ].subtopic_code;
-
+    const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
+    const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
+    const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
     finalSubTopicIndex = finalSubTopicIndex + 1;
+
+
     //checking is this last topic
-    const lastTopic = await getLastTopicByModuleCode({
-      moduleCode: module_code,
-    });
-    const lastSubTopic = await getLastSubTopicByTopicCode({
-      moduleCode: module_code,
-      topicCode: topic_code,
-    });
+    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
+    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
 
     if (lastSubTopic.data.subtopic_code === subtopic_code) {
-      console.log(
-        "lastSubTopic.data.subtopic_code === subtopic_code",
-        lastSubTopic.data.subtopic_code,
-        subtopic_code
-      );
+      console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code, subtopic_code);
+      const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
       finalTopicIndex = finalTopicIndex + 1;
       finalSubTopicIndex = 0;
+      // const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+      // await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+      //   if (item.moduleCode === moduleResponse.data.module_code) {
+      //     // setTotalCompletedTopics(item.topicStats.completed);
+      //     if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+      //       const statusData = await checkUserFeedBackExists({
+      //         userId: userData.data.user._id,
+      //         feedback_order: 1,
+      //         moduleId: moduleResponse.data._id,
+      //       })
+      //       console.log("statusData", statusData);
+      //       if (statusData?.found === false) {
+
+      //         /// logic for feedback
+      //         setShowFeedbackModal(true);
+      //         setFeedbackOrder(1);
+
+      //       }
+
+      //     }
+      //   }
+      // }));
+      if (lastTopic.data.topic_code === topic_code) {
+        const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
+        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+        //logic for feedback
+        await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+          if (item.moduleCode === moduleResponse.data.module_code) {
+            // setTotalCompletedTopics(item.topicStats.completed);
+            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
+            if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+              const statusData = await checkUserFeedBackExists({
+                userId: userData.data.user._id,
+                feedback_order: 2,
+                moduleId: moduleResponse.data._id,
+              })
+              console.log("statusData", statusData);
+              if (statusData.found === false) {
+
+                /// logic for feedback
+                setShowFeedbackModal(true);
+                setFeedbackOrder(2);
+                setReturnUrl(`/user/learning/`);
+              }
+
+            }
+          }
+        }));
+        // navigate(`/user/learning`);
+        return
+      }
+      navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
+      return
     }
-    if (
-      lastTopic.data.topic_code === topic_code &&
-      lastSubTopic.data.subtopic_code === subtopic_code
-    ) {
-      setIsModuleCompleted(true);
-      return;
+    if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
+      const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
+      const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+      //logic for feedback
+      await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+        if (item.moduleCode === moduleResponse.data.module_code) {
+          // setTotalCompletedTopics(item.topicStats.completed);
+          console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
+          if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+            const statusData = await checkUserFeedBackExists({
+              userId: userData.data.user._id,
+              feedback_order: 2,
+              moduleId: moduleResponse.data._id,
+            })
+            console.log("statusData", statusData);
+            if (statusData.found === false) {
+
+              /// logic for feedback
+              setShowFeedbackModal(true);
+              setFeedbackOrder(2);
+              setReturnUrl(`/user/learning/`);
+            }
+
+          }
+        }
+      }));
+
+      // navigate(`/user/learning`);
+      return
     }
-    navigate(`/user/learning/${moduleId}/topic`, {
-      state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
-    });
+    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
   };
   useEffect(() => {
     const apiCaller = async () => {
@@ -188,28 +253,29 @@ const UserModuleTopic = () => {
         const response = await getModuleById(moduleId);
         console.log("Module data received in UserModuleTopic:", response.data);
         setModuleName(response.data.moduleName);
-        
+
         const data = {
           title: response.data.moduleName,
           topicsList: await Promise.all(
-            response.data.topicData.map(async (item) => {
+            response.data.topicData.map(async (item, topicIndex) => {
               console.log("Processing topic:", item.topicName, "with code:", item.topic_code);
+
               return {
                 title: item.topicName,
                 topic_code: item.topic_code || "", // Preserve topic_code
                 subtopics: await Promise.all(
-                  item.subtopicData.map(async (subitem) => {
+                  item.subtopicData.map(async (subitem, subIndex) => {
                     console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
-                    const gptSumm = await summariseTopic({
-                      message: subitem.subtopicContent,
-                    });
+                    // const gptSumm = await summariseTopic({
+                    //   message: subitem.subtopicContent,
+                    // });
                     return {
                       title: subitem.subtopicName,
                       subtopic_code: subitem.subtopic_code || "", // Preserve subtopic_code
                       completed: subitem.completed,
                       subtopicContent: subitem.subtopicContent,
                       subtopicSummary: subitem.subtopicSummary,
-                      gptSummary: gptSumm.data,
+                      // gptSummary: gptSumm.data,
                       cheatSheetURL: subitem.cheatSheetURL || "#",
                       conceptClarifiers: subitem.conceptClarifier || [],
                     };
@@ -256,20 +322,22 @@ const UserModuleTopic = () => {
     const apiCaller = async () => {
       try {
         // Make sure you're calling the API correctly and checking the response
+        const userData= await getUserByClerkId(user.id);
         const response = await getModuleById(moduleId);
         console.log("Module data in location state effect:", response.data);
-        
+
         if (!response.data || !response.data.topicData || response.data.topicData.length === 0) {
           console.error("No topic data found in module response");
           return;
         }
-        
+
         let currentMooduleCode = response.data.module_code;
-        let currentModuleId = response.data.module_id;
+        let currentModuleId = response.data._id;
         let currentTopicCode = null;
         let currentTopicId = null;
         let currentSubtopicCode = null;
-        
+        let currentSubtopicId = null;
+
         // Ensure the response is valid before setting the state
         const data = {
           title: response.data.moduleName,
@@ -285,8 +353,9 @@ const UserModuleTopic = () => {
                 topic_code: item.topic_code || "",
                 subtopics: await Promise.all(
                   item.subtopicData.map(async (subitem, subIndex) => {
-                    if (subIndex === location.state.subtopicIndex && topicIndex === location.state.topicIndex) {
+                    if (topicIndex === location.state.topicIndex && subIndex === location.state.subtopicIndex) {
                       currentSubtopicCode = subitem.subtopic_code;
+                      currentSubtopicId = subitem._id;
                     }
                     const gptSumm = await summariseTopic({
                       message: subitem.subtopicContent,
@@ -311,7 +380,7 @@ const UserModuleTopic = () => {
         // Now, after setting courseData, use location.state to update topicData
         const topic =
           data.topicsList?.[location.state.topicIndex]?.subtopics?.[
-            location.state.subtopicIndex
+          location.state.subtopicIndex
           ];
         if (topic) {
           setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
@@ -325,11 +394,10 @@ const UserModuleTopic = () => {
             },
           ]);
           setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          setGptSummaryText(topic.gptSummary);
-          
+          setGptSummaryText(topic.subtopicSummary);
+
           const userData = await getUserByClerkId(user.id);
           console.log("userData", userData, " ", userData.data.user._id);
-          
           if (currentTopicCode && currentTopicId && currentMooduleCode && currentModuleId) {
             const markingTopicOngoing = await startTopic(
               userData.data.user._id,
@@ -339,7 +407,18 @@ const UserModuleTopic = () => {
               currentModuleId
             );
             console.log("markingTopicOngoing", markingTopicOngoing);
+            const markingSubTopicOngoing = await startSubTopic(
+              userData.data.user._id,
+              currentMooduleCode,
+              currentTopicCode,
+              currentTopicId,
+              currentModuleId,
+              currentSubtopicCode,
+              currentSubtopicId,
+            );
+            console.log("markingSubTopicOngoing", markingSubTopicOngoing,"currentSubtopicCode",currentSubtopicCode);
           }
+
 
           if (currentMooduleCode && currentTopicCode && currentSubtopicCode) {
             const moduleStatus = await getUserProgressBySubTopic({
@@ -357,6 +436,29 @@ const UserModuleTopic = () => {
             }
           }
         }
+        const moduleResponse = await getModuleById(moduleId);
+        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+        await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+          if (item.moduleCode === moduleResponse.data.module_code) {
+            // setTotalCompletedTopics(item.topicStats.completed);
+            if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50 && (Number.parseFloat(item.subtopicStats.completed / (moduleResponse.data.topicData[location.state.topicIndex].subtopicData.length) * 100).toFixed(0)) <= 60) {
+              const statusData = await checkUserFeedBackExists({
+                userId: userData.data.user._id,
+                feedback_order: 1,
+                moduleId: moduleResponse.data._id,
+              })
+              console.log("statusData", statusData);
+              if (statusData?.found === false) {
+
+                /// logic for feedback
+                setShowFeedbackModal(true);
+                setFeedbackOrder(1);
+
+              }
+
+            }
+          }
+        }));
       } catch (error) {
         console.error("Error in UserModuleTopic location state effect:", error);
       }
@@ -367,11 +469,11 @@ const UserModuleTopic = () => {
 
   const renderConceptClarifiers = (text, clarifiers) => {
     if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
-    
+
     let result = text;
     clarifiers.forEach(({ conceptClarifier, hoverExplanation, popupExplanation }) => {
       if (!conceptClarifier) return;
-      
+
       const escapedConcept = conceptClarifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const escapedHover = hoverExplanation.replace(/"/g, '"').replace(/'/g, '&#39;');
       const escapedPopup = popupExplanation
@@ -380,7 +482,7 @@ const UserModuleTopic = () => {
         .replace(/>/g, '>')
         .replace(/"/g, '\\"')
         .replace(/'/g, "\\'");
-      
+
       result = result.replace(
         new RegExp(`\\b${escapedConcept}\\b`, "g"),
         `<span class="concept-tooltip" 
@@ -407,7 +509,7 @@ const UserModuleTopic = () => {
     try {
       console.log("Feedback submitted:", feedbackData);
       // TODO: Implement API call to save feedback
-      navigate(`/user/learning`);
+      // navigate(`/user/learning`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
     }
@@ -424,7 +526,7 @@ const UserModuleTopic = () => {
       //   subtopicIndex: location.state?.subtopicIndex,
       //   isHelpful
       // });
-      
+
       // Set animation state
       if (isHelpful) {
         setLikeAnimation(true);
@@ -433,16 +535,16 @@ const UserModuleTopic = () => {
         setDislikeAnimation(true);
         setTimeout(() => setDislikeAnimation(false), 1000);
       }
-      
+
       // Save the selected feedback state
       setSelectedFeedback(isHelpful);
       setFeedbackSubmitted(true);
-      
+
       // Show feedback popup
       setIsHelpful(isHelpful);
       setFeedbackMessage(`Thank you for your feedback! The summary was ${isHelpful ? 'helpful' : 'not helpful'}.`);
       setShowFeedbackPopup(true);
-      
+
       // Auto-hide popup after 3 seconds
       setTimeout(() => {
         setShowFeedbackPopup(false);
@@ -452,13 +554,13 @@ const UserModuleTopic = () => {
     }
   };
 
-const handleMarkAsCompleted = async () => {
+  const handleMarkAsCompleted = async () => {
     const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
     if (allSubtopicsCompleted) {
-        setIsModuleCompleted(true); // Show feedback only after the last subtopic
-        setShowFeedbackModal(true); // Show feedback modal directly
+      setIsModuleCompleted(true); // Show feedback only after the last subtopic
+      // setShowFeedbackModal(true); // Show feedback modal directly
     } else {
-        console.log("Not all subtopics are completed.");
+      console.log("Not all subtopics are completed.");
     }
 
     try {
@@ -545,16 +647,16 @@ const handleMarkAsCompleted = async () => {
     try {
       const moduleResponse = await getModuleById(moduleId);
       console.log("Module data in handleNext:", moduleResponse.data);
-      
+
       if (!moduleResponse.data || !moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
         console.error("No topic data found in module response");
         return;
       }
-      
+
       const module_code = moduleResponse.data.module_code;
       const topic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.topic_code;
       const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.subtopicData[location.state?.subtopicIndex]?.subtopic_code;
-      
+
       console.log("Navigation data:", {
         module_code,
         topic_code,
@@ -562,7 +664,7 @@ const handleMarkAsCompleted = async () => {
         topicIndex: location.state?.topicIndex,
         subtopicIndex: location.state?.subtopicIndex
       });
-      
+
       const lastTopic = await getLastTopicByModuleCode({
         moduleCode: module_code,
       });
@@ -570,10 +672,10 @@ const handleMarkAsCompleted = async () => {
         moduleCode: module_code,
         topicCode: topic_code,
       });
-      
+
       let finalTopicIndex = location.state?.topicIndex;
       let finalSubTopicIndex = location.state?.subtopicIndex;
-      
+
       // Check if we're at the last subtopic of the current topic
       if (lastSubTopic.data.subtopic_code === subtopic_code) {
         // Move to the next topic
@@ -583,14 +685,14 @@ const handleMarkAsCompleted = async () => {
         // Move to the next subtopic in the current topic
         finalSubTopicIndex = finalSubTopicIndex + 1;
       }
-      
+
       // Check if we're at the last topic and subtopic
       if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
         console.log("Navigating to /user/learning as last topic is reached");
         navigate(`/user/learning`);
         return;
       }
-      
+
       // Navigate to the next topic/subtopic
       navigate(`/user/learning/${moduleId}/topic`, {
         state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
@@ -697,7 +799,8 @@ const handleMarkAsCompleted = async () => {
             <SummaryContainer>
               <SummaryTitle>Summary</SummaryTitle>
 
-              <SummaryText>{delayedText}</SummaryText>
+              <SummaryText dangerouslySetInnerHTML={{ __html: gptSummaryText }} />
+              {/* {gptSummaryText}</SummaryText> */}
 
               <ButtonGroup
                 style={{
@@ -740,8 +843,8 @@ const handleMarkAsCompleted = async () => {
                     marginRight: "20px",
                   }}
                 >
-                  <FeedbackButton 
-                    onClick={() => handleSummaryFeedback(true)} 
+                  <FeedbackButton
+                    onClick={() => handleSummaryFeedback(true)}
                     isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}
                     style={{ opacity: feedbackSubmitted && selectedFeedback !== true ? 0.5 : 1 }}
                   >
@@ -750,8 +853,8 @@ const handleMarkAsCompleted = async () => {
                     </FeedbackIconWrapper>
                     Helpful
                   </FeedbackButton>
-                  <FeedbackButton 
-                    onClick={() => handleSummaryFeedback(false)} 
+                  <FeedbackButton
+                    onClick={() => handleSummaryFeedback(false)}
                     isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}
                     style={{ opacity: feedbackSubmitted && selectedFeedback !== false ? 0.5 : 1 }}
                   >
@@ -822,6 +925,9 @@ const handleMarkAsCompleted = async () => {
               moduleId={moduleId}
               onFeedbackSubmit={handleFeedbackSubmit}
               autoOpen={true}
+               returnUrl={returnUrl}
+               closeModel={() => setShowFeedbackModal(false)}
+              feedbackOrder={feedbackOrder}
             />
           </ModalContent>
         </ModalOverlay>
