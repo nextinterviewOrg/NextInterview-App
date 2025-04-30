@@ -55,6 +55,7 @@ import QuestionBank from "./modules/user/pages/QuestionBank/QuestionBank";
 import QuestionCollapsible from "./modules/user/components/QuestionBank/QuestionCollapsible";
 // import UserModuleTopic from "./modules/user/pages/Learning/UserModuleTopic/UserModuleTopic";
 import UserSampleInterview from "./modules/user/pages/Learning/userSampleInterview/UserSampleInterview";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 
 function App() {
@@ -63,6 +64,7 @@ function App() {
       <Router>
         <GlobalStyle />
         <Routes>
+          <Route path="/" element={<LandingPage />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<SignUp />} />
           <Route path="/signup" element={<SignUpPage />} />
