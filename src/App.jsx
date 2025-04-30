@@ -85,6 +85,7 @@ import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
 import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
 import OAuthCallbackPage from "./pages/OAuthCallback/OAuthCallback";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
+import LandingPage from "./pages/LandingPage/LandingPage";
 
 function App() {
   return (
@@ -92,6 +93,7 @@ function App() {
       <Router>
         <GlobalStyle />
         <Routes>
+          <Route path="/landingpage" element={<LandingPage />} />
           <Route path="/" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
