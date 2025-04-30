@@ -77,7 +77,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     },
     {
       id: 9,
-      name: "Real world scenarios",
+      name: "Blogs",
       path: "/user/blogs",
      icon: <img className="svgicon" src={world} alt="Users Icon" />
     }

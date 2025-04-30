@@ -1,118 +1,83 @@
-import styled from "styled-components";
-import theme from "../../../../theme/Theme";
+import styled from 'styled-components';
+ 
+ export const UserReminderWrapper = styled.div`
+   background-color: #fff;
+  //  border: 1px solid #ddd;
+   border-radius: 10px;
+   padding: 20px;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   width: 60%;
+  
+ 
+   .user-reminder-content {
+     display: flex;
+     flex-direction: column;
+     align-items: flex-start;
+   }
+ 
+   .reminder-text {
+     margin-bottom: 20px;
+   }
+ 
+   .reminder-text-title {
+     font-family: "DM Sans";
+ font-size: 24px;
+ font-style: normal;
+ font-weight: 700;
+ color:${({ theme }) => theme.colors.black};
+     margin-bottom: 10px;
+   }
+     .reminder-text-subtitle{
+     font-size: 12px;
+ font-style: normal;
+ font-weight: 400;
+ color:${({ theme }) => theme.colors.textgray};
+     }
+ 
+   .reminder-text-description {
+    font-size: 14px;
+ font-style: normal;
+ font-weight: 400;
+ color:${({ theme }) => theme.colors.black};
+     margin-bottom: 10px;
+   }
+ 
+   .reminder-actions {
+     display: flex;
+     justify-content: flex-start;
+     align-items: center;
+   }
+ 
+   .dismiss-button {
+    border-radius: 16px;
+ border: 1px solid #F5F5F5;
+     font-size: 1rem;
+     margin-right: 15px;
+     cursor: pointer;
+     padding: 8px;
+     color: ${({ theme }) => theme.colors.error};
+     background-color: #F5F5F5;
+   }
+ 
+   .thanks-button {
+     display: flex;
+     width: 300px;
+ align-items: center;
+ height: 44px;
+ padding: 5px 9px;
+ justify-content: center;
+ align-items: center;
+ gap: 8px;
+ flex: 1 0 0;
+     border-radius: 16px;
+ border: 1px solid white!important;
+   }
+ 
+   
+ `;
 
-export const MarqueeContainer = styled.div`
-  width: 100%;
-  overflow: hidden;
-  border-radius: 10px;
-  background: #fff;
-  padding: 10px;
 
-  @media (max-width: 1024px) {
-    padding: 8px;
-  }
 
-  @media (max-width: 768px) {
-    padding: 6px;
-  }
 
-  @media (max-width: 480px) {
-    padding: 4px;
-  }
-`;
-
-// The track that actually moves
-export const MarqueeTrack = styled.div`
-  display: flex;
-  animation: scroll 15s linear infinite;
-  border: none;
-
-  /* Pause animation on hover */
-  &:hover {
-    animation-play-state: paused;
-  }
-
-  @keyframes scroll {
-    0% {
-      transform: translateX(0);
-    }
-    100% {
-      transform: translateX(-50%);
-    }
-  }
-
-  @media (max-width: 1024px) {
-    animation: scroll 12s linear infinite; /* Faster than desktop */
-  }
-
-  @media (max-width: 768px) {
-    animation: scroll 10s linear infinite; /* Even faster */
-  }
-
-  @media (max-width: 480px) {
-    animation: scroll 8s linear infinite; /* Fastest on mobile */
-  }
-`;
-
-export const Card = styled.div`
-  flex: 0 0 25%; /* Show 4 cards at a time */
-  box-sizing: border-box;
-  margin-right: 1rem; /* Add spacing between cards if you want */
-  border-radius: 20px;
-  background-color: #f8f8f8;
-  padding: 1rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  max-height: 300px;
-
-  @media (max-width: 1024px) {
-    flex: 0 0 33.33%; /* 3 cards per row on medium screens */
-  }
-
-  @media (max-width: 768px) {
-    flex: 0 0 50%; /* 2 cards per row on smaller screens */
-  }
-
-  @media (max-width: 480px) {
-   flex: 0 0 80%; /* Wider cards on mobile (shows 1.25 cards at a time) */
-    min-width: 80%; /* Ensures consistent width */
-  }
-
-  /* Basic styling */
-  text-align: left;
-
-  /* On hover, slightly scale up and add shadow */
-  &:hover {
-    transform: scale(1.05);
-    background-color: rgb(209, 250, 248);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-  }
-
-  h2 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1rem;
-    font-weight: 700;
-  }
-
-  p {
-    margin: 20px;
-    display: flex;
-    justify-content: center;
-    font-size: 0.9rem;
-  }
-`;
-
-export const KnowButton = styled.button`
-  color: black;
-  background-color: #68c184;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: normal;
-  padding: 6px 12px;
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-`;

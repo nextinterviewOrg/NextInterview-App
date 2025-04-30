@@ -210,7 +210,7 @@ const FlashcardsComponents = () => {
             <FlashContainer key={card._id}>
               <Flashcard>
                 <h4>Flash Card - {card.id}</h4>
-                <Image src={card.backgroundImage} />
+                {/* <Image src={card.backgroundImage} /> */}
                 <p>{card.text}</p>
                 <p>{card.createdAt}</p>
                 <InteractionStats>

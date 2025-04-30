@@ -80,7 +80,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     },
     {
       id: 10,
-      name: "Real world scenarios",
+      name: "Blogs",
       path: "/admin/real-world-scenario",
       icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
     },

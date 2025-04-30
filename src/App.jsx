@@ -85,6 +85,9 @@ import UserBlog from "./modules/user/pages/UserBlog/UserBlog";
 import UserBlogDisplay from "./modules/user/pages/UserBlogDisplay/UserBlogDisplay";
 import OAuthCallbackPage from "./pages/OAuthCallback/OAuthCallback";
 import Unauthorized from "./components/Unauthorized/Unauthorized";
+import LandingPage from "./pages/LandingPage/LandingPage";
+import LandingCourse from "./components/LandingPageComponents/LandingCourse/LandingCourse";
+import LandingProduct from "./components/LandingPageComponents/LandingProduct/LandingProduct";
 
 function App() {
   return (
@@ -92,6 +95,9 @@ function App() {
       <Router>
         <GlobalStyle />
         <Routes>
+          <Route path="/landingpage" element={<LandingPage />} />
+          <Route path="/landing-course" element={<LandingCourse />} />
+          <Route path="/landing-product" element={<LandingProduct />} />
           <Route path="/" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
