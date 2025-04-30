@@ -21,6 +21,7 @@ import { useNavigate } from "react-router-dom";
 import { on } from "codemirror";
 import { Feedback } from "@mui/icons-material";
 import { addQuestionToUserSkillAssessmentProgress } from "../../../../../api/userSkillAssessmentProgressApi";
+import { Input, notification } from "antd";
 
 const SkillAssessment = ({
   module_code,
@@ -55,6 +56,7 @@ const SkillAssessment = ({
           question_type,
           level
         );
+        console.log("response", response);
 
         if (response && response.success && Array.isArray(response.data)) {
           setFilteredQuestions(response.data);
@@ -64,8 +66,16 @@ const SkillAssessment = ({
           setError("Invalid response from server.");
         }
       } catch (err) {
-        console.error("Error fetching questions:", err);
-        setError("Failed to load questions. Please try again.");
+        if (err.response.status === 404) {
+          setShowClosebtn(true);
+          onCloseModal();
+
+        } else {
+          console.error("Error fetching questions:", err);
+
+          setError("Failed to load questions. Please try again.");
+        }
+
       } finally {
         setLoading(false);
       }
@@ -79,8 +89,8 @@ const SkillAssessment = ({
       console.log("Feedback updated:", feedback);
     }
   }, [feedback]);
-  const handleOptionChange = (questionId, option,optionText) => {
-    console.log(questionId, option,optionText);
+  const handleOptionChange = (questionId, option, optionText) => {
+    console.log(questionId, option, optionText);
     setAnswers((prev) => ({ ...prev, [questionId]: optionText }));
   };
 
@@ -126,18 +136,50 @@ const SkillAssessment = ({
     const userData = await getUserByClerkId(user.id);
     let finalTopicIndex = currentTopicIndex;
     let finalSubTopicIndex = currentSubTopicIndex;
+    const errors = {};
+    let hasErrors = false;
+
+    filteredQuestions.forEach(question => {
+      const answer = answers[question._id];
+      let isValid = true;
+
+      if (question.question_type === "mcq") {
+        isValid = !!answer;
+      } else {
+        isValid = answer?.trim()?.length > 0;
+      }
+
+      if (!isValid) {
+        errors[question._id] = "This question is required";
+        hasErrors = true;
+      }
+    });
+
+    if (hasErrors) {
+      // Set errors state to highlight unanswered questions
+      setFeedback(errors);
+      notification.error({
+        message: "Answer all questions",  // Title of the notification
+        description: "Please answer all questions before submitting.",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      })
+      // alert("Please answer all questions before submitting");
+      return;
+    }
     const newFeedback = {};
     for (const question of filteredQuestions) {
-      const userAnswer = answers[question._id]; 
+      const userAnswer = answers[question._id];
       console.log(userAnswer);// User's input
-    
+
       // const isCorrect = checkAnswer(question);
       const isCorrect = await evaluateSkillAssessment({ id: question._id, option: userAnswer });
+      console.log("isCorrect q1qqq", isCorrect);
       await addQuestionToUserSkillAssessmentProgress(
         {
           userId: userData.data.user._id,
           moduleId: moduleId,
-          moduleCode:module_code,
+          moduleCode: module_code,
           topicCode: topic_code,
           subtopicCode: subtopic_code,
           questionId: question._id,
@@ -148,25 +190,28 @@ const SkillAssessment = ({
       console.log(isCorrect);
       newFeedback[question._id] = {
         text: isCorrect.result ? "Correct" : "Incorrect",
-        isCorrect: isCorrect.result
+        isCorrect: isCorrect.result,
+        answer: isCorrect.skillAssessment[isCorrect.skillAssessment.correct_option],
       };
     };
     console.log(feedback);
     setFeedback(newFeedback);
     setSubmitted(true); // Mark the form as submitted
     setShowClosebtn(true);
-    
+
     // Don't automatically close the modal - let the user close it manually
     // The feedback modal will be shown after the user closes this modal
   };
 
   if (loading) return <div>Loading questions...</div>;
   if (error) return <div>{error}</div>;
-  if (!filteredQuestions.length) return <div>No questions available.</div>;
+  if (!filteredQuestions.length) return <div>No questions available.
+    {/* {showClosebtn ? <CloseButton onClick={onCloseModal}>X</CloseButton> : null} */}
+  </div>;
 
   return (
     <AssessmentContainer>
-      {showClosebtn ? <CloseButton onClick={onCloseModal}>X</CloseButton>: null}
+      {showClosebtn ? <CloseButton onClick={onCloseModal}>X</CloseButton> : null}
       <h1>Skill Assessment</h1>
       {filteredQuestions.map((q, index) => (
         <QuestionWrapper key={q._id || index}>
@@ -180,7 +225,7 @@ const SkillAssessment = ({
                     type="radio"
                     name={`question-${q._id}`}
                     value={option}
-                    onChange={() => handleOptionChange(q._id, option,`option_${String.fromCharCode(97 + idx)}`)}
+                    onChange={() => handleOptionChange(q._id, option, `option_${String.fromCharCode(97 + idx)}`)}
                   />
                   {option}
                 </Option>
@@ -199,11 +244,16 @@ const SkillAssessment = ({
           {submitted && feedback[q._id] && (
             <>
               <AnswerFeedback isCorrect={feedback[q._id].isCorrect}>
+                {/* <div className="error-message" style={{ color: 'red' }}>
+                  {feedback[q._id]}
+                </div> */}
                 {feedback[q._id].text}
               </AnswerFeedback>
-              <CorrectAnswer>
-                <strong>Correct Answer:</strong> {q.answer}
-              </CorrectAnswer>
+              {
+                !feedback[q._id].isCorrect &&
+                <CorrectAnswer>
+                  <strong>Correct Answer:</strong> {feedback[q._id].answer}
+                </CorrectAnswer>}
             </>
           )}
         </QuestionWrapper>

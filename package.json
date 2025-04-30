@@ -29,6 +29,7 @@
     "ckeditor5": "^44.1.0",
     "ckeditor5-premium-features": "^44.1.0",
     "codemirror": "^5.65.18",
+    "dompurify": "^3.2.5",
     "dotenv": "^16.4.7",
     "esbuild": "^0.24.2",
     "extendable-media-recorder": "^9.2.20",

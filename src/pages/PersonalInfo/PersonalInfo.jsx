@@ -37,6 +37,9 @@ const PersonalInfo = () => {
         return;
       }
       const userData = await getUserByClerkId(user.id);
+      if(userData.data.user.profile_status){
+        navigate("/user")
+      }
 
       if ((userData.data.user.user_name!=="Anonymous") && (userData.data.user.user_linkedin_profile_link!=="") ) {
         setFormValues((prev) => ({

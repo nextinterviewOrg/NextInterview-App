@@ -37,7 +37,11 @@ const QuestionPage1 = () => {
         return;
       }
       const userData = await getUserByClerkId(user.id);
+
       const questionariesData = await getQuestionariesByUserId(userData.data.user._id)
+      if(userData.data.user.profile_status){
+        navigate("/user")
+      }
       console.log("questionaries Data ", questionariesData)
       if (questionariesData.data[0]?.data_job_response) {
         setSelectedOption(questionariesData.data[0].data_job_response._id);

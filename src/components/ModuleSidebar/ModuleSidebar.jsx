@@ -58,7 +58,7 @@ export default function ModuleSidebar({
 
       setExpandedTopic(location.state?.topicIndex || 0);
       setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
-
+      
       userModuleProgressStats.ModuleProgress.map((item) => {
         if (item.moduleCode === response.data.module_code) {
           setTotalCompletedTopics(item.topicStats.completed);
