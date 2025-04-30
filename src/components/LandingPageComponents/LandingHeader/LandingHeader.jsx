@@ -12,7 +12,7 @@ import {
 } from './LandingHeader.styles';
 import logo from '../../../assets/Logo.png';
 
-const LandingHeader = () => {
+const   LandingHeader = () => {
   return (
     <HeaderContainer>
         <Left>
