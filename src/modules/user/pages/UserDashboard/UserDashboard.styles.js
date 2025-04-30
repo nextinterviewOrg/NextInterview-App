@@ -41,11 +41,16 @@ export const UserDashboardWrapper = styled.div`
   );
   height: 90px;
 
+
   @media (max-width: 1100px) {
     position: relative;
     height: auto;
     padding-bottom: 80px; /* Add space for the stats container */
+    // margin-left:60px;
   }
+    @media (max-width: 1024px) {
+      margin-left: 20px;
+    }
 
   @media (max-width: 768px) {
     padding-bottom: 60px;
