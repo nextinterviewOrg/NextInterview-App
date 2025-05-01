@@ -97,7 +97,7 @@ function App() {
         <GlobalStyle />
         <Routes>
           <Route path="/landingpage" element={<LandingPage />} />
-          <Route path="/about" element={<AboutPage />} />
+          <Route path="/landing-about" element={<AboutPage />} />
           <Route path="/landing-course" element={<LandingCourse />} />
           <Route path="/landing-product" element={<LandingProduct />} />
           <Route path="/" element={<PublicRoutes Component={SignUp} />} />
