@@ -180,6 +180,8 @@ export default function LandingCourse() {
         <><LandingHeader />
         <UserLearningWrapper>
             <div className="courses-container">
+                <div className="head-container">
+                <div className="header-content">
                 <div className="header">
                     <h1 className='header-title'>All Relevant Topics To Crack Your Next Data Interview</h1>
                   
@@ -196,6 +198,16 @@ export default function LandingCourse() {
                 <Subheading>
          In 2025, acing data science interviews means mastering a wide array of subjects—statistical analysis, machine learning
     </Subheading>
+
+                </div>
+                <div className="search-container">
+                    <button className='search-button'>
+                        start practicing now
+                    </button>
+                </div>
+                </div>
+
+                
 
                 {/* Course Cards Layout */}
                 <div className="course-cards grid-view">

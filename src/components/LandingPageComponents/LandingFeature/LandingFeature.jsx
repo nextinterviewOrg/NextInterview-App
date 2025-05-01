@@ -20,10 +20,11 @@ import {
   PlayButton,
   WatchText,
   SectionVideo,
-  ContainerWrapper
+  ContainerWrapper,
+  How
 } from "../LandingFeature/LandingFeature.style";
 
-import interviewVideoImage from "../../../assets/featureLanding.png"; // Video thumbnail
+import interviewVideoImage from "../../../assets/featureLanding.jpg"; // Video thumbnail
 import analyserIllustration from "../../../assets/featureLanding2.png"; // New image for Approach Analyser
 import { FaPlay } from "react-icons/fa";
 
@@ -53,7 +54,73 @@ const features = [
     ],
     mediaType: "image",
     mediaSrc: analyserIllustration
-  }
+  },
+  {
+    key: "Topic Summariser",
+    title: "Topic Summariser",
+    description:
+      "Our premium mock interview feature is designed to simulate real interview scenarios, letting you practice in a realistic, pressure-free environment. It helps you gain confidence and refine your responses through hands-on experience and comprehensive feedback.",
+    steps: [
+        "Pick an interview round or topic and kick off your session.",
+        "Answer or code responses as an AI interviewer posts questions, mimicking real–world challenges.",
+        "Receive holistic, actionable feedback to improve and excel in your next interview."
+    ],
+    mediaType: "image",
+    mediaSrc: analyserIllustration
+  },
+  {
+    key: "Code Explainer",
+    title: "Code Explainer",
+    description:
+      "Our premium mock interview feature is designed to simulate real interview scenarios, letting you practice in a realistic, pressure-free environment. It helps you gain confidence and refine your responses through hands-on experience and comprehensive feedback.",
+    steps: [
+        "Pick an interview round or topic and kick off your session.",
+        "Answer or code responses as an AI interviewer posts questions, mimicking real–world challenges.",
+        "Receive holistic, actionable feedback to improve and excel in your next interview."
+    ],
+    mediaType: "image",
+    mediaSrc: analyserIllustration
+  },
+  {
+    key: "Dynamic Difficulty Variations",
+    title: "Dynamic Difficulty Variations",
+    description:
+      "Our premium mock interview feature is designed to simulate real interview scenarios, letting you practice in a realistic, pressure-free environment. It helps you gain confidence and refine your responses through hands-on experience and comprehensive feedback.",
+    steps: [
+        "Pick an interview round or topic and kick off your session.",
+        "Answer or code responses as an AI interviewer posts questions, mimicking real–world challenges.",
+        "Receive holistic, actionable feedback to improve and excel in your next interview."
+    ],
+    mediaType: "image",
+    mediaSrc: analyserIllustration
+  },
+  {
+    key: "Code Polish",
+    title: "Code Polish",
+    description:
+      "Our premium mock interview feature is designed to simulate real interview scenarios, letting you practice in a realistic, pressure-free environment. It helps you gain confidence and refine your responses through hands-on experience and comprehensive feedback.",
+    steps: [
+        "Pick an interview round or topic and kick off your session.",
+        "Answer or code responses as an AI interviewer posts questions, mimicking real–world challenges.",
+        "Receive holistic, actionable feedback to improve and excel in your next interview."
+    ],
+    mediaType: "image",
+    mediaSrc: analyserIllustration
+  },
+  {
+    key: "Quick Revise",
+    title: "Quick Revise",
+    description:
+      "Our premium mock interview feature is designed to simulate real interview scenarios, letting you practice in a realistic, pressure-free environment. It helps you gain confidence and refine your responses through hands-on experience and comprehensive feedback.",
+    steps: [
+        "Pick an interview round or topic and kick off your session.",
+        "Answer or code responses as an AI interviewer posts questions, mimicking real–world challenges.",
+        "Receive holistic, actionable feedback to improve and excel in your next interview."
+    ],
+    mediaType: "image",
+    mediaSrc: analyserIllustration
+  },
+  
 ];
 
 const LandingFeature = () => {
@@ -75,19 +142,16 @@ const LandingFeature = () => {
               </Tab>
             )
           )}
-          <Tab>Topic Summariser</Tab>
-          <Tab>Code Explainer</Tab>
-          <Tab>Dynamic Difficulty Variations</Tab>
-          <Tab>Code Polish</Tab>
-          <Tab>Quick Revise</Tab>
         </Sidebar>
 
+
         <Content>
+
           <Title>{currentFeature.title}</Title>
           <Description>{currentFeature.description}</Description>
           <Title2> How it Works</Title2>
           <SectionVideo>
-          
+          <How>
             <HowItWorks>
               {currentFeature.steps.map((step, index) => (
                 <Step key={index}>
@@ -96,7 +160,10 @@ const LandingFeature = () => {
                 </Step>
               ))}
             </HowItWorks>
-
+            <ButtonRow>
+            <GetStartedButton>Get Started</GetStartedButton>
+          </ButtonRow>
+          </How>
             <VideoContainer>
               <VideoImage
                 src={currentFeature.mediaSrc}
@@ -105,17 +172,13 @@ const LandingFeature = () => {
               {currentFeature.mediaType === "video" && (
                 <>
                   <PlayButton>
-                    <FaPlay size={14} color="#fff" />
+                    <FaPlay size={24} color="#2290ac" />
                   </PlayButton>
                   <WatchText>Watch this video to learn more</WatchText>
                 </>
               )}
             </VideoContainer>
           </SectionVideo>
-
-          <ButtonRow>
-            <GetStartedButton>Get Started</GetStartedButton>
-          </ButtonRow>
         </Content>
       </SectionWrapper>
     </ContainerWrapper>
