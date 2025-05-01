@@ -441,7 +441,8 @@ const UserModuleTopic = () => {
         await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
           if (item.moduleCode === moduleResponse.data.module_code) {
             // setTotalCompletedTopics(item.topicStats.completed);
-            if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50 && (Number.parseFloat(item.subtopicStats.completed / (moduleResponse.data.topicData[location.state.topicIndex].subtopicData.length) * 100).toFixed(0)) <= 60) {
+            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50)&&(Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50));
+            if ((Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50)&&(Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50)) {
               const statusData = await checkUserFeedBackExists({
                 userId: userData.data.user._id,
                 feedback_order: 1,

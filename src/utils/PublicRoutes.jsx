@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId, getUserBySessionId } from "../api/userApi";
 import { Navigate } from "react-router-dom";
+import Lottie from "lottie-react";
+import loadingAnimation from "../assets/Lottie/loading_animation.json";
 
 export default function PublicRoutes({ Component, roles }) {
   const { isSignedIn, user, isLoaded, sessionId } = useUser();
@@ -27,7 +29,7 @@ export default function PublicRoutes({ Component, roles }) {
         setLoading(false);
       } catch (error) {
         setLoading(false);
-        console.error("Error fetching user data:", error);
+        // console.error("Error fetching user data:", error);
       }
     };
     apiCaller();
@@ -46,7 +48,14 @@ export default function PublicRoutes({ Component, roles }) {
   }
 
   if (loading) {
-    return <div>Loading...</div>; // Optionally, show loading state while checking if the user is loaded
+    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+      <Lottie
+        className="Lottie"
+        animationData={loadingAnimation}
+        loop={true}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
   }
   return <Component />;
 }
