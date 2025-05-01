@@ -242,7 +242,8 @@ export const Subheading = styled.p`
 export const Wrapper = styled.div`
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  // align-items: center;
+  flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 1.5rem;
@@ -252,7 +253,7 @@ export const Heading = styled.h2`
   font-size: 1.2rem;
   font-weight: 600;
   color: #222;
-  flex: 1 0 100%;
+  // flex: 1 0 100%;
 `;
 
 export const Filters = styled.div`
@@ -334,4 +335,9 @@ export const ToggleButtons = styled.div`
       background-color: #ccc;
     }
   }
+`;
+export const Head = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 `;
