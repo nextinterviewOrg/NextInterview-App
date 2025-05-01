@@ -15,6 +15,7 @@ import {
 } from './LandingHeader.styles';
 import { FaBars } from 'react-icons/fa';
 import logo from '../../../assets/Logo.png';
+import { Link } from 'react-router-dom';
 
 const LandingHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -53,9 +54,9 @@ const LandingHeader = () => {
         </LogoContainer>
 
         <NavLinks>
-          <NavLinkItem href="#">About</NavLinkItem>
-          <NavLinkItem href="#">Topics</NavLinkItem>
-          <NavLinkItem href="#">Product</NavLinkItem>
+       <Link to="/landing-about" style={{ textDecoration: 'none' }}>   <NavLinkItem >About</NavLinkItem></Link>
+          <Link to="/landing-course" style={{ textDecoration: 'none' }}>   <NavLinkItem >Topics</NavLinkItem></Link>
+          <Link to="/landing-product" style={{ textDecoration: 'none' }}>   <NavLinkItem >Product</NavLinkItem></Link>
           <NavLinkItem href="#">Pricing</NavLinkItem>
         </NavLinks>
       </Left>

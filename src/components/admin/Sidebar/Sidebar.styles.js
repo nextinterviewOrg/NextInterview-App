@@ -25,7 +25,7 @@ export const SideBarwrapper = styled.div`
     align-items: center;
     padding: 20px;
     img {
-      width: ${(props) => (props.isExpanded ? "80%" : "50%")};
+      width: ${(props) => (props.isExpanded ? "80%" : "80%")};
     }
   }
 

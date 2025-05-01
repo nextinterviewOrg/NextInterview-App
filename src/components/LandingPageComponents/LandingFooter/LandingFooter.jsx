@@ -31,8 +31,8 @@ const LandingFooter = () => {
         <FooterDetails>
         <Column>
           <Title>Company</Title>
-          <Link href="#">About us</Link>
-          <Link href="#">Contact us</Link>
+          <Link href="/landing-about">About us</Link>
+          <Link href="/landing-about">Contact us</Link>
           <Link href="#">Pricing</Link>
           <Link href="#">Testimonials</Link>
         </Column>

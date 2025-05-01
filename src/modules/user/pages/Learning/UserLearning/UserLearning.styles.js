@@ -105,8 +105,11 @@ import styled from "styled-components";
  /* Grid View Styling */
  .grid-view {
    display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(430px, 1fr));
+   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
    gap: 20px;
+    @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  }
  }
  
  .list-view {
@@ -121,7 +124,8 @@ import styled from "styled-components";
    border-radius: 10px;
    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
    overflow: hidden;
-   width: 100%;
+  //  width: 100%;
+  height:395px;
    margin-bottom: 10px;
    transition: transform 0.3s;
    cursor: pointer;
@@ -153,7 +157,7 @@ import styled from "styled-components";
  
  .course-image {
   width: 100%;
- height: 270px;
+ height: 205px;
    border-radius: 15px ;
    object-fit: cover;
    
@@ -213,9 +217,10 @@ import styled from "styled-components";
  .course-info {
    display: flex;
    justify-content: flex-start;
-   padding: 10px;
-   background-color: #f8f8f8;
+  //  padding: 10px;
+  //  background-color: #f8f8f8;
    gap: 10px;
+   margin-left: 10px;
  }
  .course-info-list{
  background-color:${({ theme }) => theme.colors.white};

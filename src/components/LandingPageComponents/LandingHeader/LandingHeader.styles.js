@@ -66,6 +66,8 @@ export const NavLinkItem = styled.a`
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
+  
+  text-decoration: none;
 
   &:hover {
     background-color: ${theme.colors.bluetext};
