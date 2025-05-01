@@ -1,42 +1,74 @@
+// OurMission.jsx
 import React from 'react';
-import { ArsenalContainer, Heading, CardContainer, Card, IconWrapper, Title, Description } from './Arsenal.styles';
-import Arsenal1 from '../../../assets/Arsenal1.svg';
-import Arsenal2 from '../../../assets/Arsenal2.svg';
+import {
+  Wrapper,
+  Title,
+  Description,
+  SectionCard,
+  CardHeader,
+  CardText,
+  CardContent,
+  QuoteIcon,
+  CardImage,
+  MissionContent,
+  CardTitle,
+  VisionContent
+} from './OurMission.styles';
 
-const arsenalItems = [
-  {
-    icon: Arsenal2,
-    title: "Practice Unlimited:",
-    description: "Grind with questions they actually ask"
-  },
-  {
-    icon: Arsenal1,
-    title: "Interview Practice:",
-    description: "Practice with our cutting-edge AI agents tuned to crack real interviews."
-  },
-  {
-    icon: Arsenal2,
-    title: "Instant Feedback:",
-    description: "Receive AI-powered, instant insights to sharpen your approach."
-  }
-];
+import missionImg from '../../../assets/Mission.svg'; // Replace with actual mission image path
+import visionImg from '../../../assets/Vision.svg';   // Replace with actual vision image path
 
 const OurMission = () => {
   return (
-    <ArsenalContainer>
-      <Heading>Your Prep Arsenal</Heading>
-      <CardContainer>
-        {arsenalItems.map((item, index) => (
-          <Card key={index}>
-            <IconWrapper>``
-              <img src={item.icon} alt={item.title} />
-            </IconWrapper>
-            <Title>{item.title}</Title>
-            <Description>{item.description}</Description>
-          </Card>
-        ))}
-      </CardContainer>
-    </ArsenalContainer>
+    <Wrapper>
+      <Title>Who Are We</Title>
+      <Description>
+        We know how difficult it can be to get an interview call—and even more challenging to land a job
+        in today’s competitive market. Preparing for interviews often means juggling countless browser
+        tabs filled with blogs, coding websites, and endless resources. That’s why we, a group of
+        seasoned professionals with deep industry experience, created Nextinterview. Our personalized
+        interview prep platform is designed to revolutionize how data aspirants prepare for interviews,
+        transforming academic knowledge into the language companies need. We're here to simplify the
+        journey, helping you confidently secure that dream job.
+      </Description>
+
+      <SectionCard>
+        <CardContent>
+          <CardHeader>Our Mission</CardHeader>
+          <MissionContent>
+          <CardImage src={missionImg} alt="Our Mission" />
+          <CardText>
+          <QuoteIcon>❝</QuoteIcon>
+          <CardTitle>
+            Help every data candidate interview smarter, faster, and with confidence.  <QuoteIcon right>❝</QuoteIcon>
+            </CardTitle>
+
+          </CardText>
+          
+          </MissionContent>
+        </CardContent>
+        
+      </SectionCard>
+
+      <SectionCard reverse>
+
+        <CardContent>
+          <CardHeader>Our Vision</CardHeader>
+          <VisionContent>
+
+          <CardText>
+          <QuoteIcon>❝</QuoteIcon>
+          <CardTitle>
+            Make interview prep smarter, sharper, and radically personalized.
+          <QuoteIcon right>❝</QuoteIcon>
+          </CardTitle>
+          </CardText>
+          <CardImage src={visionImg} alt="Our Vision" />
+        </VisionContent>
+        </CardContent>
+
+      </SectionCard>
+    </Wrapper>
   );
 };
 

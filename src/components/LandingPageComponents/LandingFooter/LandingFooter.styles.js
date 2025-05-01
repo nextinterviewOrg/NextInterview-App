@@ -188,7 +188,7 @@ export const SocialIcons = styled.div`
   justify-content: flex-end;
 
   @media (max-width: 1024px) {
-    gap: 0.5rem;
+    gap: 0.1rem;
   }
   @media (max-width: 768px) {
     justify-content: center;
