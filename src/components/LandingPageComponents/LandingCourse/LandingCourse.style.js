@@ -18,6 +18,9 @@ export const UserLearningWrapper = styled.div`
   align-items: center;
   margin-bottom: 50px;
   flex-direction:row;
+  @media ( max-width:768px){
+    flex-direction: column;
+  }
 }
 
 .search-container {
@@ -70,6 +73,9 @@ font-style: normal;
 font-weight: 700;
 line-height: 28px; 
 color:${({ theme }) => theme.colors.black};
+@media (max-width: 768px) {
+  line-height: 38px;
+}
 }
 
 .header-actions {

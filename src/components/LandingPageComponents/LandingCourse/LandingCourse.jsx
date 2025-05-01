@@ -201,7 +201,7 @@ export default function LandingCourse() {
 
                 </div>
                 <div className="search-container">
-                    <button className='search-button'>
+                    <button className='search-button' onClick={() => { navigate(`/signup`) }}>
                         start practicing now
                     </button>
                 </div>
@@ -224,7 +224,7 @@ export default function LandingCourse() {
                             </div>
 
                             <div className="coursecard-bt-container">
-                                <button className="start-btn" onClick={() => { navigate(`/user/learning/${course._id}`) }}>Start</button>
+                                <button className="start-btn" onClick={() => { navigate(`/signup`) }}>Start</button>
                             </div>
                         </div>
                     ))}

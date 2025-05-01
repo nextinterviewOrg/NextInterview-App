@@ -99,9 +99,9 @@ function App() {
         <Routes>
           {/* <Route path="/landingpage" element={<LandingPage />} /> */}
           <Route path="/about" element={<PublicRoutes Component={AboutPage} />} />
-          <Route path="/landing-course" element={<PublicRoutes Component={LandingCourse} />} />
-          <Route path="/landing-product" element={<PublicRoutes Component={LandingProduct} />} />
-          <Route path="/landing-pricing" element={<PublicRoutes Component={Pricing} />} />
+          <Route path="/course" element={<PublicRoutes Component={LandingCourse} />} />
+          <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
+          <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
           <Route path="/" element={<PublicRoutes Component={LandingPage} />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />

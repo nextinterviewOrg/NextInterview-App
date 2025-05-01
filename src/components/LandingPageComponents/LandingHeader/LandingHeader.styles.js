@@ -100,7 +100,7 @@ export const LoginButton = styled.a`
   font-size: 18px;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   @media (max-width: 1024px) {
