@@ -1,6 +1,6 @@
 import React from "react";
 import { SideBarwrapper } from "./Sidebar.styles";
-import Logo from "../../../assets/Logo.png";
+import Logo from "../../../assets/nextInetrviewLogo.svg";
 import { NavLink, useLocation } from "react-router-dom";
 import dboard from "../../../assets/Dashboard.svg";
 import users from "../../../assets/Vector.svg";
