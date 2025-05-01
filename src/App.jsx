@@ -89,6 +89,7 @@ import LandingPage from "./pages/LandingPage/LandingPage";
 import LandingCourse from "./components/LandingPageComponents/LandingCourse/LandingCourse";
 import LandingProduct from "./components/LandingPageComponents/LandingProduct/LandingProduct";
 import AboutPage from "./pages/AboutPage/AboutPage";
+import Pricing from "./pages/Pricing/Pricing";
 
 function App() {
   return (
@@ -100,6 +101,7 @@ function App() {
           <Route path="/landing-about" element={<AboutPage />} />
           <Route path="/landing-course" element={<LandingCourse />} />
           <Route path="/landing-product" element={<LandingProduct />} />
+          <Route path="/landing-pricing" element={<Pricing />} />
           <Route path="/" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />

@@ -10,6 +10,37 @@ export const UserLearningWrapper = styled.div`
  
 //  }
 /* General Page Styling */
+
+
+.head-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  flex-direction:row;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+ justify-content: space-between;
+  gap: 10px;
+}
+
+.search-button {
+  background-color: #2290ac; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
 .courses-container {
   padding: 40px;
   margin-left:130px;
@@ -199,5 +230,102 @@ export const Subheading = styled.p`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.textgray};
   margin-top: 8px;
-  margin-bottom: 50px;
+  margin-bottom: 20px;
+`;
+
+export const Wrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const Heading = styled.h2`
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #222;
+  flex: 1 0 100%;
+`;
+
+export const Filters = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+
+  button {
+    border: 1px solid #ddd;
+    background-color: #fff;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    font-size: 14px;
+    color: #444;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+      background-color: #444;
+      color: #fff;
+    }
+
+    &:hover {
+      border-color: #aaa;
+    }
+  }
+`;
+
+export const RightActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+`;
+
+export const SearchBox = styled.div`
+  display: flex;
+  align-items: center;
+  background-color: #eef7f1;
+  padding: 0.4rem 0.6rem;
+  border-radius: 10px;
+  gap: 0.5rem;
+
+  input {
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 14px;
+    width: 140px;
+  }
+
+  svg {
+    font-size: 16px;
+    color: #333;
+  }
+`;
+
+export const ToggleButtons = styled.div`
+  display: flex;
+  gap: 0.3rem;
+
+  button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 0.4rem 0.6rem;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &.active {
+      background-color: #444;
+      color: #fff;
+    }
+
+    &:hover {
+      background-color: #ccc;
+    }
+  }
 `;
