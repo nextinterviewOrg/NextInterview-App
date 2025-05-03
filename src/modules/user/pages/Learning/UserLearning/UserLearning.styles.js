@@ -232,7 +232,7 @@ import styled from "styled-components";
  font-size: 14px;
  font-style: normal;
  font-weight: 400;
- line-height: 20px; 
+ line-height: 10px; 
  color:${({ theme }) => theme.colors.textgray};
  }
  
@@ -247,7 +247,7 @@ import styled from "styled-components";
    .coursecard-bt-container{
      display: flex;
      justify-content: space-between;
-     padding: 10px;
+    //  padding: 10px;
      margin-top: 10px;
      margin-bottom: 0;
    }

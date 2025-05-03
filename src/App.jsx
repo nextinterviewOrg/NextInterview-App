@@ -90,6 +90,8 @@ import LandingCourse from "./components/LandingPageComponents/LandingCourse/Land
 import LandingProduct from "./components/LandingPageComponents/LandingProduct/LandingProduct";
 import AboutPage from "./pages/AboutPage/AboutPage";
 import Pricing from "./pages/Pricing/Pricing";
+import UserFeedback from "./components/Feedback/UserFeedback/UserFeedback";
+import UserFeedbackDisplay from "./modules/admin/pages/UserFeedback/UserFeedbackDisplay";
 
 function App() {
   return (
@@ -170,6 +172,7 @@ function App() {
             <Route path="manage-mfa/add" element={<AddTOTP />} />
             <Route path="real-world-scenario" element={<Blog />} />
             <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
+            <Route path="user-feedback" element={<UserFeedbackDisplay />} />
             {/* </Route> */}
           </Route>
           <Route
