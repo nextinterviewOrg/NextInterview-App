@@ -10,6 +10,7 @@ import {
   ButtonGroup,
   ModalOverlay,
   ModalContent,
+  CCModalContent,
   CloseButton,
   TryItYourself,
   TryButton,
@@ -935,13 +936,13 @@ const UserModuleTopic = () => {
 
       {showPopup && (
         <ModalOverlay onClick={() => setShowPopup(false)}>
-          <ModalContent onClick={(e) => e.stopPropagation()}>
+          <CCModalContent onClick={(e) => e.stopPropagation()}>
             <h2 style={{ margin: "0px 0px 30px 0px" }}>Concept Explanation</h2>
             <div dangerouslySetInnerHTML={{ __html: popupContent }} />
             <CloseButton onClick={() => setShowPopup(false)} className="">
               <IoCloseSharp />
             </CloseButton>
-          </ModalContent>
+          </CCModalContent>
         </ModalOverlay>
       )}
 
