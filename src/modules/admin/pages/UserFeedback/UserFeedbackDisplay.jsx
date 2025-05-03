@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   TableContainer,
   TableHeader,
@@ -7,15 +7,10 @@ import {
   AvgRating,
   RatingStars,
   Star,
-  UserCount
+  UserCount,
+  Container
 } from './UserFeedbackDisplay.style';
-
-const modules = [
-  { name: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', rating: 4, users: 10 },
-  { name: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', rating: 2, users: 20 },
-  { name: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', rating: 3, users: 35 },
-  { name: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry.', rating: 4, users: 35 },
-];
+import { getSummaryFeedbackAllModule } from '../../../../api/moduleFeedbackApi';
 
 const renderStars = (count) =>
   [...Array(5)].map((_, i) => (
@@ -23,16 +18,52 @@ const renderStars = (count) =>
   ));
 
 const UserFeedbackDisplay = () => {
+  const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getSummaryFeedbackAllModule();
+        if (response && response.sucess) {
+          const formattedModules = response.data.map(item => ({
+            id: item.module._id,
+            name: item.module.moduleName,
+            rating: Math.round(item.averageRating), // Round to nearest integer for star display
+            users: item.submittedUserFeedbackCount,
+            description: item.module.description
+          }));
+          setModules(formattedModules);
+        }
+      } catch (error) {
+        console.error('Error fetching module feedback:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!modules.length) {
+    return <div>No module feedback data available</div>;
+  }
+
   return (
+    <Container>
     <TableContainer>
       <TableHeader>
         <div>Module Name</div>
         <div>Avg Rating</div>
-        <div>Submitted User Count</div>
+        <div> User Count</div>
       </TableHeader>
-      {modules.map((mod, index) => (
-        <RowContainer key={index}>
-          <ModuleName>{mod.name}</ModuleName>
+      {modules.map((mod) => (
+        <RowContainer key={mod.id}>
+          <ModuleName title={mod.description}>{mod.name}</ModuleName>
           <AvgRating>
             {mod.rating}
             <RatingStars>{renderStars(mod.rating)}</RatingStars>
@@ -41,6 +72,7 @@ const UserFeedbackDisplay = () => {
         </RowContainer>
       ))}
     </TableContainer>
+    </Container>
   );
 };
 

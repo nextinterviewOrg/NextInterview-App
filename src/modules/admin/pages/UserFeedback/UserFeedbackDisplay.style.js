@@ -1,9 +1,20 @@
 import styled from 'styled-components';
 
+export const Container = styled.div`
+margin-left: 60px;
+margin-right: 60px;
+
+@media (max-width: 768px) {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+`;
 export const TableContainer = styled.div`
   width: 100%;
   font-family: ${({ theme }) => theme.fonts.body};
-  margin-left: 60px;
+ 
+ 
 `;
 
 export const TableHeader = styled.div`
@@ -50,5 +61,6 @@ export const UserCount = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-size: 22px;
   font-weight: 400;
-  text-align: center;
+  text-align: left;
+  margin-left: 40px;
 `;

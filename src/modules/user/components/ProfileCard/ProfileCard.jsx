@@ -8,7 +8,7 @@ import {
   getUserQuestionariesByUserId,
   updateUser,
 } from "../../../../api/userApi";
-import { Spin } from "antd";
+import { Spin, message } from "antd";
 
 const ProfileCard = () => {
   const clerk = new Clerk(
@@ -26,6 +26,7 @@ const ProfileCard = () => {
     experience: "",
     profilePhoto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
   });
+  const [linkedInError, setLinkedInError] = useState("");
   const imageInputRef = useRef(null);
 
   // Initialize Clerk
@@ -69,7 +70,15 @@ const ProfileCard = () => {
   }, [isLoaded, user]); // Add dependencies here
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    if (name === "linkedIn") {
+      if (!value.startsWith("https://www.linkedin.com") && value !== "") {
+        setLinkedInError("LinkedIn URL must start with https://www.linkedin.com");
+      } else {
+        setLinkedInError("");
+      }
+    }
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleImageClick = () => {
@@ -89,6 +98,11 @@ const ProfileCard = () => {
   };
 
   const handleSave = async () => {
+    if (linkedInError) {
+      message.error("Please fix the LinkedIn URL before saving");
+      return;
+    }
+    
     try {
       setLoading(true);
       const formDataSub = new FormData();
@@ -108,8 +122,10 @@ const ProfileCard = () => {
         data_experience_response: formData.experience,
         user_id: userId,
       });
+      message.success("Profile saved successfully!");
     } catch (error) {
       console.error("Error saving profile:", error);
+      message.error("Failed to save profile");
     } finally {
       setLoading(false);
     }
@@ -179,15 +195,21 @@ const ProfileCard = () => {
               />
             </div>
 
-            <div className="form-group">
-              <label>Linked profile link</label>
+            <div className="form-group"
+         
+            >
+              <label>LinkedIn profile link</label>
+              <div className="input-container">
               <input
                 type="text"
                 name="linkedIn"
                 value={formData.linkedIn}
                 onChange={handleChange}
                 disabled={loading}
+                placeholder="https://www.linkedin.com/in/your-profile"
               />
+              {linkedInError && <div className="error-message">{linkedInError}</div>}
+              </div>
             </div>
 
             <div className="form-group">
@@ -217,7 +239,7 @@ const ProfileCard = () => {
               <button 
                 className="save-btn" 
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || !!linkedInError}
               >
                 {loading ? "Saving..." : "Save"}
               </button>

@@ -192,7 +192,7 @@ const UserLearningModule = () => {
               <span className="topic-information">
                 <span className="topics-title">Maximum time taken:</span>{" "}
                 <span className="topics-count">
-                  Less than {courseData.duration} hrs
+                  {courseData.duration > 1 ? `${courseData.duration} hrs` : `${courseData.duration} hr`}
                 </span>
               </span>
             </span>
