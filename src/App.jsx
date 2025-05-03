@@ -91,6 +91,7 @@ import LandingProduct from "./components/LandingPageComponents/LandingProduct/La
 import AboutPage from "./pages/AboutPage/AboutPage";
 import Pricing from "./pages/Pricing/Pricing";
 import EditQuestionModule from "./modules/admin/pages/EditQuestionModule/EditQuestionModule";
+import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
 
 function App() {
   return (
@@ -172,6 +173,7 @@ function App() {
             <Route path="real-world-scenario" element={<Blog />} />
             <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
             <Route path="editquestionmodule" element={<EditQuestionModule />} />
+            <Route path="settingspage" element={<SettingsPage />} />
             
             {/* </Route> */}
           </Route>
