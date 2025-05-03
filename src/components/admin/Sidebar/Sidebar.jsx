@@ -84,6 +84,12 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       path: "/admin/real-world-scenario",
       icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
     },
+    {
+      id: 11,
+      name: "Settings",
+      path: "/admin/settingspage",
+      icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
+    }
   ];
 
    useEffect(() => {
