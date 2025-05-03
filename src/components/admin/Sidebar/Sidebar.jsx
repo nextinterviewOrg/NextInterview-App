@@ -90,7 +90,9 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       path:"/admin/user-feedback",
       icon:<img className="svgicon" src={world} alt="User feedback Icon" />
     
-      },{  id: 12,
+      },
+      {
+          id: 12,
       name: "Settings",
       path: "/admin/settingspage",
       icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
