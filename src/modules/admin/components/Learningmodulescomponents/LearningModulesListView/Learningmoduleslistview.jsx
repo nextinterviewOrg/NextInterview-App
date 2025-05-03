@@ -104,6 +104,9 @@ const LearningModulesListView = () => {
             <Link to={"/admin/moduleFileUpload"}>File Upload</Link>
           </NewUploadButton>
           <NewUploadButton>
+            <Link to={"/admin/editquestionmodule"}>Edit Questions</Link>
+          </NewUploadButton>
+          <NewUploadButton>
             <Link to={"/admin/uploadmodule"}>New Upload</Link>
           </NewUploadButton>
           

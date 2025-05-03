@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect } from "react";
 import { SideBarwrapper } from "../SidebarUser/SidebarUser.styles";
-import Logo from "../../../assets/Logo.png";
+import Logo from "../../../assets/nextInetrviewLogo.svg";
 import { NavLink, useLocation } from "react-router-dom";
 import { FiHome } from "react-icons/fi";
 import { MdOutlineMenuBook } from "react-icons/md";

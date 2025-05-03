@@ -44,3 +44,31 @@ export const getQuestionBankById = async (id) => {
     throw error;
   }
 };
+export const getQuestionBankByModule = async (module_code) => {
+  try {
+    const response = await api.get(`/questionBank/get/module/${module_code}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+export const softDeleteQuestionBank = async (id) => {
+  try {
+    const response = await api.delete(`/questionBank/softDelete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const editQuestionBank = async (id, data) => {
+  try {
+    const response = await api.put(`/questionBank/edit/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

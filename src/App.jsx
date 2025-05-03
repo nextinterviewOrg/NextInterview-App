@@ -92,6 +92,8 @@ import AboutPage from "./pages/AboutPage/AboutPage";
 import Pricing from "./pages/Pricing/Pricing";
 import UserFeedback from "./components/Feedback/UserFeedback/UserFeedback";
 import UserFeedbackDisplay from "./modules/admin/pages/UserFeedback/UserFeedbackDisplay";
+import EditQuestionModule from "./modules/admin/pages/EditQuestionModule/EditQuestionModule";
+import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
 
 function App() {
   return (
@@ -173,6 +175,9 @@ function App() {
             <Route path="real-world-scenario" element={<Blog />} />
             <Route path="real-world-scenario/:id" element={<AdminBlogDisplay />} />
             <Route path="user-feedback" element={<UserFeedbackDisplay />} />
+            <Route path="editquestionmodule" element={<EditQuestionModule />} />
+            <Route path="settingspage" element={<SettingsPage />} />
+            
             {/* </Route> */}
           </Route>
           <Route

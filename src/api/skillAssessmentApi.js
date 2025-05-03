@@ -47,3 +47,22 @@ export const evaluateSkillAssessment = async (data) => {
     throw error;
   }
 };
+export const softDeleteSkillAssessment = async (id) => {
+  try {
+    const response = await api.delete(`/skillAssessment/softDelete/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getSkillAssessmentByModule = async (module_code) => {
+  try {
+    const response = await api.get(`/skillAssessment/get/module/${module_code}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
