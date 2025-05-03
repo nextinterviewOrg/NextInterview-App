@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   TopBar,
@@ -25,12 +25,19 @@ import {
   ModalButtons,
   TableWrapper
 } from './EditQuestionModule.styles';
+import { Select } from 'antd';
+import Lottie from "lottie-react";
+import dataNot from "../../../../assets/Lottie/5nvMVE1u7L.json";
 
 import { FaSearch } from 'react-icons/fa';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import EditQuestion from '../../components/Learningmodulescomponents/EditQuestion/EditQuestion';
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FiEdit3 } from "react-icons/fi";
+import { getModule } from '../../../../api/addNewModuleApi';
+import { getSkillAssessment, getSkillAssessmentByModule } from '../../../../api/skillAssessmentApi';
+import { gettiyByModule } from '../../../../api/tiyApi';
+import { getQuestionBankByModule } from '../../../../api/questionBankApi';
 
 const TABS = ['Skill Assessment', 'Try-it-Yourself', 'Question Bank'];
 
@@ -84,11 +91,50 @@ const EditQuestionModule = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [questions, setQuestions] = useState(mockQuestions);
-
+  const [questions, setQuestions] = useState([]);
+  const [moduleOptions, setModuleOptions] = useState([]);
+  const [selectedModuleCode, setSelectedModuleCode] = useState('');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState('Modules');
-  const moduleOptions = ['Modules', 'Sample Module 1', 'Module 2'];
+
+
+  useEffect(() => {
+    const apiCaller = async () => {
+      try {
+        const moduleResponse = await getModule();
+        setModuleOptions(moduleResponse.data.map((module) => { return ({ value: module.module_code, label: module.moduleName }) }));
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    apiCaller();
+  }, []);
+
+  useEffect(() => {
+    const apiCaller = async () => {
+      try {
+        if (activeTab === 'Skill Assessment') {
+          const quetsionData = await getSkillAssessmentByModule(selectedModuleCode);
+          setQuestions(quetsionData.data);
+
+        } else if (activeTab === 'Try-it-Yourself') {
+          const quetsionData = await gettiyByModule(selectedModuleCode);
+          setQuestions(quetsionData.data);
+
+        } else if (activeTab === 'Question Bank') {
+          const questionData = await getQuestionBankByModule(selectedModuleCode);
+          setQuestions(questionData.data);
+        }
+
+      } catch (error) {
+        console.log(error);
+        if (error.response.status === 404) {
+          setQuestions([]);
+        }
+      }
+    }
+    apiCaller();
+  }, [selectedModuleCode, activeTab]);
 
   const handleEditClick = (q, idx) => {
     setCurrentQuestion({ ...q, index: idx });
@@ -165,30 +211,55 @@ const EditQuestionModule = () => {
         </SearchWrapper>
 
         <ModuleWrapper>
-          <DropdownIcon>
+          {/* <DropdownIcon>
             <MdOutlineKeyboardArrowDown className="ModuleIncon" />
-          </DropdownIcon>
-          <CustomSelectWrapper>
-            <CustomSelectBox onClick={() => setIsDropdownOpen((prev) => !prev)}>
+          </DropdownIcon> */}
+          {/* <CustomSelectWrapper> */}
+          <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder="Search to Select"
+            optionFilterProp="label"
+            filterSort={(optionA, optionB) => {
+              var _a, _b;
+              return (
+                (_a = optionA === null || optionA === void 0 ? void 0 : optionA.label) !== null &&
+                  _a !== void 0
+                  ? _a
+                  : ''
+              )
+                .toLowerCase()
+                .localeCompare(
+                  ((_b = optionB === null || optionB === void 0 ? void 0 : optionB.label) !== null &&
+                    _b !== void 0
+                    ? _b
+                    : ''
+                  ).toLowerCase(),
+                );
+            }}
+            options={moduleOptions}
+            onChange={(value) => setSelectedModuleCode(value)}
+          />
+          {/* <CustomSelectBox onClick={() => setIsDropdownOpen((prev) => !prev)}>
               {selectedModule}
               <MdOutlineKeyboardArrowDown />
-            </CustomSelectBox>
-            {isDropdownOpen && (
+            </CustomSelectBox> */}
+          {/* {isDropdownOpen && (
               <CustomOptionsDropdown>
                 {moduleOptions.map((opt, index) => (
                   <CustomOption
                     key={index}
                     onClick={() => {
-                      setSelectedModule(opt);
+                      setSelectedModule(opt.module_code);
                       setIsDropdownOpen(false);
                     }}
                   >
-                    {opt}
+                    {opt.moduleName}
                   </CustomOption>
                 ))}
               </CustomOptionsDropdown>
-            )}
-          </CustomSelectWrapper>
+            )} */}
+          {/* </CustomSelectWrapper> */}
         </ModuleWrapper>
       </TopBar>
 
@@ -203,44 +274,63 @@ const EditQuestionModule = () => {
           </Tab>
         ))}
       </Tabs>
+      {
+        questions.length === 0 ?
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}> <Lottie
+            className="Lottie"
+            animationData={dataNot}
+            loop={true}
+            style={{
+              // width: "100%", height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100vw",
+              height: "50vh",      // full viewport height
+              margin: 0,            // ensure no default margins
+              padding: 0,
+            }}
+          /></div>
+          :
 
-      <TableWrapper>
-        <Table>
-          <TableHeader>
-            <Cell header>Type</Cell>
-            <Cell header>Question</Cell>
-            <Cell header>Answer</Cell>
-            <Cell header>Action</Cell>
-          </TableHeader>
 
-          <TableBody>
-            {filteredQuestions.map((q, idx) => (
-              <TableRow key={idx}>
-                <Cell>{q.question_type}</Cell>
-                <Cell>{q.question}</Cell>
-                <Cell>{renderAnswer(q)}</Cell>
-                <Cell>
-                  <ActionIcons>
-                    {(q.question_type === 'single line' || q.question_type === 'multi line') && (
-                      <FiEdit3
-                        color="#888888"
-                        style={{ cursor: 'pointer', fontSize: '20px' }}
-                        onClick={() => handleEditClick(q, idx)}
-                      />
-                    )}
-                    <RiDeleteBinLine
-                      color="#dc3545"
-                      style={{ cursor: 'pointer', fontSize: '20px' }}
-                      onClick={() => handleDeleteClick(q, idx)}
-                    />
-                  </ActionIcons>
-                </Cell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableWrapper>
+          <TableWrapper>
+            <Table>
+              <TableHeader>
+                <Cell header>Type</Cell>
+                <Cell header>Question</Cell>
+                <Cell header>Answer</Cell>
+                <Cell header>Action</Cell>
+              </TableHeader>
 
+              <TableBody>
+                {filteredQuestions.map((q, idx) => (
+                  <TableRow key={idx}>
+                    <Cell>{q.question_type}</Cell>
+                    <Cell>{q.question}</Cell>
+                    <Cell>{renderAnswer(q)}</Cell>
+                    <Cell>
+                      <ActionIcons>
+                        {(q.question_type === 'single line' || q.question_type === 'multi line') && (
+                          <FiEdit3
+                            color="#888888"
+                            style={{ cursor: 'pointer', fontSize: '20px' }}
+                            onClick={() => handleEditClick(q, idx)}
+                          />
+                        )}
+                        <RiDeleteBinLine
+                          color="#dc3545"
+                          style={{ cursor: 'pointer', fontSize: '20px' }}
+                          onClick={() => handleDeleteClick(q, idx)}
+                        />
+                      </ActionIcons>
+                    </Cell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableWrapper>
+      }
       <EditQuestion
         isOpen={isModalOpen}
         onClose={() => {
