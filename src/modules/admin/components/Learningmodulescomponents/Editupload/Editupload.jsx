@@ -291,7 +291,7 @@ const Editupload = () => {
             <TextArea
               id="description"
               rows={2}
-              maxLength={50}
+              maxLength={5000}
               placeholder="Enter a short description..."
               value={moduleData.description || ""}
               onChange={(e) =>
@@ -364,13 +364,15 @@ const Editupload = () => {
               placeholder="Add points here..."
               value={
                 moduleData.whatUsersLearn
-                  ? moduleData.whatUsersLearn.join("\n")
+                  ? moduleData.whatUsersLearn?.map((point) => `•${point}`).join("\n")
                   : ""
               }
+ 
               onChange={(e) =>
                 setModuleData({
                   ...moduleData,
-                  whatUsersLearn: e.target.value.split("\n"),
+                  whatUsersLearn: e.target.value.split("\n")
+                  .map((line) => line.replace(/^•?\s*/, "")),
                 })
               }
             />
