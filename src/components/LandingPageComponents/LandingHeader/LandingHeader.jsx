@@ -15,6 +15,7 @@ import {
 } from './LandingHeader.styles';
 import { FaBars } from 'react-icons/fa';
 import logo from '../../../assets/Logo.png';
+import { Link } from 'react-router-dom';
 
 const LandingHeader = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -49,20 +50,20 @@ const LandingHeader = () => {
     <HeaderContainer>
       <Left>
         <LogoContainer>
-          <LogoImage src={logo} alt="Next Interview Logo" />
+        <Link to="/" style={{ textDecoration: 'none' }}><LogoImage src={logo} alt="Next Interview Logo" /></Link>   
         </LogoContainer>
 
         <NavLinks>
-          <NavLinkItem href="#">About</NavLinkItem>
-          <NavLinkItem href="#">Topics</NavLinkItem>
-          <NavLinkItem href="#">Product</NavLinkItem>
-          <NavLinkItem href="#">Pricing</NavLinkItem>
+       <Link to="/about" style={{ textDecoration: 'none' }}>   <NavLinkItem >About</NavLinkItem></Link>
+          <Link to="/course" style={{ textDecoration: 'none' }}>   <NavLinkItem >Topics</NavLinkItem></Link>
+          <Link to="/product" style={{ textDecoration: 'none' }}>   <NavLinkItem >Product</NavLinkItem></Link>
+          <NavLinkItem href="/pricing">Pricing</NavLinkItem>
         </NavLinks>
       </Left>
 
       <ButtonGroup>
-        <LoginButton href="#">Login</LoginButton>
-        <SignupButton href="#">Sign up</SignupButton>
+        <LoginButton style={{ textDecoration: 'none' }} href="/login">Login</LoginButton>
+        <SignupButton style={{ textDecoration: 'none' }} href="/signup">Sign up</SignupButton>
       </ButtonGroup>
 
       <Hamburger ref={hamburgerRef} onClick={() => setMenuOpen((prev) => !prev)}>
@@ -71,12 +72,12 @@ const LandingHeader = () => {
 
       {menuOpen && (
         <MobileMenu ref={menuRef}>
-          <MobileMenuItem href="#">About</MobileMenuItem>
-          <MobileMenuItem href="#">Topics</MobileMenuItem>
-          <MobileMenuItem href="#">Product</MobileMenuItem>
-          <MobileMenuItem href="#">Pricing</MobileMenuItem>
-          <MobileMenuItem href="#">Login</MobileMenuItem>
-          <MobileMenuItem href="#">Sign up</MobileMenuItem>
+          <MobileMenuItem href="/about">About</MobileMenuItem>
+          <MobileMenuItem href="/course">Topics</MobileMenuItem>
+          <MobileMenuItem href="/produc">Product</MobileMenuItem>
+          <MobileMenuItem href="/pricing">Pricing</MobileMenuItem>
+          <MobileMenuItem href="/login">Login</MobileMenuItem>
+          <MobileMenuItem href="/signup">Sign up</MobileMenuItem>
         </MobileMenu>
       )}
     </HeaderContainer>

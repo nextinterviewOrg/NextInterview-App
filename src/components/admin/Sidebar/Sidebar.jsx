@@ -1,6 +1,6 @@
 import React from "react";
 import { SideBarwrapper } from "./Sidebar.styles";
-import Logo from "../../../assets/Logo.png";
+import Logo from "../../../assets/nextInetrviewLogo.svg";
 import { NavLink, useLocation } from "react-router-dom";
 import dboard from "../../../assets/Dashboard.svg";
 import users from "../../../assets/Vector.svg";
@@ -84,6 +84,19 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       path: "/admin/real-world-scenario",
       icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
     },
+    {
+      id:11,
+      name:"User feeback",
+      path:"/admin/user-feedback",
+      icon:<img className="svgicon" src={world} alt="User feedback Icon" />
+    
+      },
+      {
+          id: 12,
+      name: "Settings",
+      path: "/admin/settingspage",
+      icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
+    }
   ];
 
    useEffect(() => {

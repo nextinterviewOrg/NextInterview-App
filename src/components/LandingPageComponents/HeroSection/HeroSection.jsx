@@ -14,6 +14,7 @@ import {
 import HeroImage1 from '../../../assets/HeroImage1.svg';
 import HeroImage2 from '../../../assets/HeroImage2.svg';
 import HeroImage3 from '../../../assets/HeroImage3.svg';
+import { useNavigate } from 'react-router-dom';
 
 const slides = [
   {
@@ -38,6 +39,7 @@ const slides = [
 
 const HeroSection = () => {
   const [index, setIndex] = useState(0);
+  const navigate= useNavigate();
 
   // Autoplay every 5 seconds
   useEffect(() => {
@@ -59,7 +61,7 @@ const HeroSection = () => {
       <LeftSection>
         <Title>{slides[index].title}</Title>
         <Description>{slides[index].description}</Description>
-        <CTAButton>Start Practising Now</CTAButton>
+        <CTAButton onClick={() => { navigate('/signup')}}>Start Practising Now</CTAButton>
 
       </LeftSection>
       <RightSection>

@@ -276,7 +276,7 @@ const Editupload = () => {
             <Input
               id="moduleName"
               type="text"
-              maxLength={20}
+              maxLength={100}
               placeholder="Enter module name..."
               value={moduleData.moduleName || ""}
               onChange={(e) =>

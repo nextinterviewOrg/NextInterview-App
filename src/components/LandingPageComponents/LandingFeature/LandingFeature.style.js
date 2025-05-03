@@ -13,7 +13,7 @@ export const SectionWrapper = styled.div`
   background-color: ${({ theme }) => theme.colors.background};
 //   padding-top: 2rem;
 // padding:40px;
-//   border-radius: 1rem;
+  border-radius: 20px;
   margin-left:130px;
   margin-right:130px;
  
@@ -22,13 +22,11 @@ export const SectionWrapper = styled.div`
 
 export const Sidebar = styled.div`
   width: 250px;
-  border-right: 1px solid ${({ theme }) => theme.colors.border};
-  padding-right: 1.5rem;
-  margin:10px;
+  border-right: px solid ${({ theme }) => theme.colors.border};
 `;
 
 export const Tab = styled.div`
-  padding: 0.75rem 0;
+  padding: 1.5rem 1rem;
 //   color: ${({ theme }) => theme.colors.textSecondary};
   cursor: pointer;
   
@@ -44,14 +42,24 @@ export const ActiveTab = styled(Tab)`
   color: ${({ theme }) => theme.colors.black};
   font-weight: 600;
   background-color: ${({ theme }) => theme.colors.lightgreen};
-  padding: 0.75rem 1rem;
+  padding: 1.5rem 1rem;
 border-left: 5px solid ${({ theme }) => theme.colors.primary};
-  border-radius: 8px;
+  // border-radius: 8px;
+
+  &:first-child {
+    border-top-left-radius: 8px;
+  }
+`;
+
+export const How = styled.div`
+display:flex;
+flex-direction:column;
+
 `;
 
 export const Content = styled.div`
   flex: 1;
-  padding-left: 2rem;
+  padding: 2rem;
 `;
 
 export const Title = styled.h2`
@@ -84,7 +92,7 @@ export const StepNumber = styled.div`
   font-weight: bold;
   border-radius: 50%;
   padding: 0.5rem 0.75rem;
-   background-color: "#c7eaf4";
+   background-color: ${({ theme }) => theme.colors.lightgreen};
 `;
 
 export const StepText = styled.p`
@@ -120,22 +128,24 @@ export const VideoContainer = styled.div`
   margin-right: 100px;
   
   width: 431px;
-  height: 285px;
+  // height: 285px;
 `;
 
 export const VideoImage = styled.img`
   width: 100%;
   display: block;
+  border-top-left-radius: 25px;
+  border-top-right-radius: 25px;
 `;
 
 export const PlayButton = styled.button`
   position: absolute;
-  top: 45%;
-  left: 45%;
-  background-color: ${({ theme }) => theme.colors.primary};
+  top: 35%;
+  left: 40%;
+  background-color: ${({ theme }) => theme.colors.white};
   border: none;
   border-radius: 50%;
-  padding: 0.75rem;
+  padding: 1.5rem 1.3rem 1.5rem 1.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,10 +153,12 @@ export const PlayButton = styled.button`
 `;
 
 export const WatchText = styled.div`
-  background-color: ${({ theme }) => theme.colors.primary};
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   text-align: center;
   padding: 0.5rem 0;
+    border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
   
   font-weight: 500;
 `;

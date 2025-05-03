@@ -20,7 +20,7 @@ const QuicklyRevise = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState({});
   const { user } = useUser();
-  
+
   useEffect(() => {
     const fetchModules = async () => {
       try {
@@ -136,14 +136,16 @@ const QuicklyRevise = () => {
             className="Lottie"
             animationData={dataNot}
             loop={true}
-            style={{ width: "100%", height: "100%", 
+            style={{
+              // width: "100%", height: "100%",
               display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      width: "100vw",
-      height: "50vh",      // full viewport height
-      margin: 0,            // ensure no default margins
-      padding: 0,}} 
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100vw",
+              height: "50vh",      // full viewport height
+              margin: 0,            // ensure no default margins
+              padding: 0,
+            }}
           />
         </>
       )}

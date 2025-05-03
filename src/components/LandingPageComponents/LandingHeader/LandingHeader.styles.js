@@ -66,6 +66,8 @@ export const NavLinkItem = styled.a`
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
+  
+  text-decoration: none;
 
   &:hover {
     background-color: ${theme.colors.bluetext};
@@ -98,7 +100,7 @@ export const LoginButton = styled.a`
   font-size: 18px;
 
   &:hover {
-    text-decoration: underline;
+    text-decoration: none;
   }
 
   @media (max-width: 1024px) {

@@ -1,58 +1,95 @@
+import React, { useEffect, useState } from "react";
 import { useUser } from "@clerk/clerk-react";
-import { Navigate, useLocation, Outlet } from "react-router-dom";
-import Unauthorized from "../components/Unauthorized/Unauthorized";
-import PropTypes from 'prop-types';
-import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import { getUserByClerkId } from "../api/userApi";
+import { useClerk } from "@clerk/clerk-react";
+import Lottie from "lottie-react";
+import loadingAnimation from "../assets/Lottie/loading_animation.json";
 
-// Usage: <Route element={<ProtectedRoute roles={["admin"]} />}>
-//           <Route path="..." element={<... />} />
-//        </Route>
-
-const ProtectedRoute = ({ roles = [] }) => {
-  const { isSignedIn, isLoaded, user } = useUser();
-  const location = useLocation();
-  const [userRole, setUserRole] = useState(null);
-  const [checked, setChecked] = useState(false);
+const ProtectedRoute = ({ Component, roles }) => {
+  const { isSignedIn, user, isLoaded } = useUser();
+  const [loading, setLoading] = useState(true);
+  const [redirectPath, setRedirectPath] = useState(null);
+  const [authorized, setAuthorized] = useState(false);
+  const { signOut } = useClerk();
 
   useEffect(() => {
-    const fetchRole = async () => {
-      if (!isLoaded || !isSignedIn || !user) return;
-      let role = user?.publicMetadata?.user_role || user?.unsafeMetadata?.user_role;
-      if (role) {
-        setUserRole(role);
-        setChecked(true);
-        return;
-      }
+    const fetchData = async () => {
       try {
-        const backendUser = await getUserByClerkId(user.id);
-        role = backendUser?.data?.user?.user_role;
-        setUserRole(role);
-      } catch {
-        setUserRole(null);
+        // console.log("ProtectedRoute useEffect isSignedIn:", isSignedIn, "user:", user, "isLoaded:", isLoaded);
+        // console.log("component", Component, "roles", roles);
+        if (!isSignedIn || !user || !isLoaded) {
+          setRedirectPath(null);
+          // console.log("Not signed in");
+          setLoading(true);
+          return;
+        }
+
+        const userResponse = await getUserByClerkId(user.id);
+        const userRole = userResponse.data.user.user_role;
+        // console.log("userRole", userRole, "roles", roles, "roles && !roles.includes(userRole)", roles.length > 0 && !roles.includes(userRole));
+        if (roles.length > 0 && !roles.includes(userRole)) {
+          // console.log("Not authorized");
+          localStorage.clear();
+          if (userRole === "admin") {
+            setRedirectPath("/admin");
+          } else if (userRole === "user") {
+            setRedirectPath("/user");
+          } else {
+            await signOut();
+            setRedirectPath("/login");
+          }
+          return;
+        } else {
+          // console.log("Authorized");
+
+
+          setAuthorized(true);
+
+        }
+
+        // Clear redirect path if authorized
+        setRedirectPath(null);
+      } catch (err) {
+        // console.error("Error:", err);
+        setRedirectPath("/login");
+      } finally {
+        setLoading(false);
       }
-      setChecked(true);
     };
-    fetchRole();
-  }, [isLoaded, isSignedIn, user]);
 
-  if (!isLoaded || !checked) return null;
+    fetchData();
+  }, [isSignedIn, user, roles, , isLoaded, signOut]);
 
-  if (!isSignedIn) {
-    localStorage.setItem("redirectUrl", location.pathname);
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    // console.log("loading");
+    return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+    <Lottie
+      className="Lottie"
+      animationData={loadingAnimation}
+      loop={true}
+      style={{ width: "100%", height: "100%" }}
+    />
+  </div>
   }
 
-  if (roles.length > 0) {
-    if (!userRole) return <Unauthorized />;
-    if (!roles.includes(userRole)) return <Unauthorized />;
+  if (redirectPath) {
+    return <Navigate to={redirectPath} replace />;
+  }
+  if (authorized) {
+    return <Component />;
   }
 
-  return <Outlet />;
-};
+  // Only render component when authorized
+  return <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
+    <Lottie
+      className="Lottie"
+      animationData={loadingAnimation}
+      loop={true}
+      style={{ width: "100%", height: "100%" }}
+    />
+  </div>
 
-ProtectedRoute.propTypes = {
-  roles: PropTypes.arrayOf(PropTypes.string)
 };
 
 export default ProtectedRoute;

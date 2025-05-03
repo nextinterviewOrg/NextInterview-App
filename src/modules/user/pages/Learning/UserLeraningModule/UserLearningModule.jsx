@@ -260,7 +260,7 @@ const UserLearningModule = () => {
   
       <div className="course-overview">
         <h3 className="course-overview-title">Course Overview</h3>
-        <p className="course-overview-description">{courseData.description}</p>
+        <p className="course-overview-description">{courseData.courseOverview}</p>
       </div>
   )}
       {loading ? (

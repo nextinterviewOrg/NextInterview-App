@@ -31,10 +31,10 @@ const LandingFooter = () => {
         <FooterDetails>
         <Column>
           <Title>Company</Title>
-          <Link href="#">About us</Link>
-          <Link href="#">Contact us</Link>
-          <Link href="#">Pricing</Link>
-          <Link href="#">Testimonials</Link>
+          <Link href="/about">About us</Link>
+          <Link href="/about">Contact us</Link>
+          <Link href="/pricing">Pricing </Link>
+          {/* <Link href="#">Testimonials</Link> */}
         </Column>
 
         <SecondColumn>

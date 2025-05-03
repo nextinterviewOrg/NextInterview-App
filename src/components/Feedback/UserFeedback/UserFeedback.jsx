@@ -84,7 +84,16 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen,feedbackOrder ,c
     setRating(value);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async() => {
+    const userData= await getUserByClerkId(user.id);
+    const data=  await addModuleFeedback({
+      userId: userData.data.user._id,
+      moduleId,
+      rating,
+      feedback,
+      skip:true,
+      feedback_order:feedbackOrder
+    })
     closeModel();
     if (returnUrl) {
       navigate(returnUrl);
@@ -115,6 +124,7 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen,feedbackOrder ,c
         moduleId,
         rating,
         feedback,
+        skip:false,
         feedback_order:feedbackOrder
       })
 
@@ -222,7 +232,7 @@ const UserFeedback = ({ moduleId, onFeedbackSubmitted, autoOpen,feedbackOrder ,c
                     onClick={()=>{toggleModal();handleCloseModal();}}
                     disabled={isSubmitting}
                   >
-                    Cancel
+                    Skip
                   </button>
                   <button
                     type="submit"
