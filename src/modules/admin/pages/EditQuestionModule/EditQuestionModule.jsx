@@ -35,9 +35,9 @@ import EditQuestion from '../../components/Learningmodulescomponents/EditQuestio
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FiEdit3 } from "react-icons/fi";
 import { getModule } from '../../../../api/addNewModuleApi';
-import { getSkillAssessment, getSkillAssessmentByModule } from '../../../../api/skillAssessmentApi';
-import { gettiyByModule } from '../../../../api/tiyApi';
-import { getQuestionBankByModule } from '../../../../api/questionBankApi';
+import { getSkillAssessment, getSkillAssessmentByModule, softDeleteSkillAssessment } from '../../../../api/skillAssessmentApi';
+import { editTiy, gettiyByModule, softDeleteTiy } from '../../../../api/tiyApi';
+import { editQuestionBank, getQuestionBankByModule, softDeleteQuestionBank } from '../../../../api/questionBankApi';
 
 const TABS = ['Skill Assessment', 'Try-it-Yourself', 'Question Bank'];
 
@@ -93,7 +93,9 @@ const EditQuestionModule = () => {
   const [currentQuestion, setCurrentQuestion] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [moduleOptions, setModuleOptions] = useState([]);
-  const [selectedModuleCode, setSelectedModuleCode] = useState('');
+  const [selectedModuleCode, setSelectedModuleCode] = useState(
+    moduleOptions.length > 0 ? moduleOptions[0].value : null
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState('Modules');
 
@@ -102,7 +104,9 @@ const EditQuestionModule = () => {
     const apiCaller = async () => {
       try {
         const moduleResponse = await getModule();
-        setModuleOptions(moduleResponse.data.map((module) => { return ({ value: module.module_code, label: module.moduleName }) }));
+        const data = moduleResponse.data.map((module) => { return ({ value: module.module_code, label: module.moduleName }) })
+        setModuleOptions(data);
+        setSelectedModuleCode(data.length > 0 ? data[0].value : null);
       } catch (error) {
         console.log(error);
       }
@@ -126,6 +130,7 @@ const EditQuestionModule = () => {
           setQuestions(questionData.data);
         }
 
+
       } catch (error) {
         console.log(error);
         if (error.response.status === 404) {
@@ -141,12 +146,33 @@ const EditQuestionModule = () => {
     setIsModalOpen(true);
   };
 
-  const handleSave = (updated) => {
-    const newQuestions = [...questions];
-    newQuestions[updated.index] = updated;
-    setQuestions(newQuestions);
-    setIsModalOpen(false);
-    setCurrentQuestion(null);
+  const handleSave = async (updated) => {
+    console.log("updated", updated);
+    try {
+      if (activeTab === 'Skill Assessment') {
+        // const quetsionData = await softDeleteSkillAssessment(currentQuestion._id);
+
+      } else if (activeTab === 'Try-it-Yourself') {
+        const quetsionData = await editTiy(updated._id, {
+          question: updated.question,
+          answer: updated.answer,
+        });
+
+
+      } else if (activeTab === 'Question Bank') {
+        const questionData = await editQuestionBank(updated._id, {
+          question: updated.question,
+          answer: updated.answer,
+        });
+      }
+      const newQuestions = [...questions];
+      newQuestions[updated.index] = updated;
+      setQuestions(newQuestions);
+      setIsModalOpen(false);
+      setCurrentQuestion(null);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleDeleteClick = (q, idx) => {
@@ -154,11 +180,27 @@ const EditQuestionModule = () => {
     setIsConfirmationModalOpen(true);
   };
 
-  const handleDeleteConfirm = () => {
-    const newQuestions = questions.filter((_, idx) => idx !== currentQuestion.index);
-    setQuestions(newQuestions);
-    setIsConfirmationModalOpen(false);
-    setCurrentQuestion(null);
+  const handleDeleteConfirm = async () => {
+    try {
+      if (activeTab === 'Skill Assessment') {
+        const quetsionData = await softDeleteSkillAssessment(currentQuestion._id);
+
+      } else if (activeTab === 'Try-it-Yourself') {
+        const quetsionData = await softDeleteTiy(currentQuestion._id);
+
+
+      } else if (activeTab === 'Question Bank') {
+        const questionData = await softDeleteQuestionBank(currentQuestion._id);
+      }
+      const newQuestions = questions.filter((_, idx) => idx !== currentQuestion.index);
+      setQuestions(newQuestions);
+      setIsConfirmationModalOpen(false);
+      setCurrentQuestion(null);
+    } catch (error) {
+      console.log(error);
+    }
+
+
   };
 
   const handleDeleteCancel = () => {
@@ -195,7 +237,7 @@ const EditQuestionModule = () => {
       );
     }
 
-    return q.answer;
+    return q.answer || "N/A";
   };
 
   return (
@@ -238,6 +280,7 @@ const EditQuestionModule = () => {
                 );
             }}
             options={moduleOptions}
+            value={selectedModuleCode}
             onChange={(value) => setSelectedModuleCode(value)}
           />
           {/* <CustomSelectBox onClick={() => setIsDropdownOpen((prev) => !prev)}>
@@ -311,7 +354,7 @@ const EditQuestionModule = () => {
                     <Cell>{renderAnswer(q)}</Cell>
                     <Cell>
                       <ActionIcons>
-                        {(q.question_type === 'single line' || q.question_type === 'multi line') && (
+                        {(q.question_type === 'single-line' || q.question_type === 'multi-line') && (
                           <FiEdit3
                             color="#888888"
                             style={{ cursor: 'pointer', fontSize: '20px' }}
@@ -338,6 +381,7 @@ const EditQuestionModule = () => {
           setCurrentQuestion(null);
         }}
         questionData={currentQuestion}
+        activeTab={activeTab}
         onSave={handleSave}
       />
 

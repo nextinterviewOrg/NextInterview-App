@@ -14,7 +14,7 @@ import {
   Input
 } from './EditQuestion.styles';
 
-const EditQuestion = ({ isOpen, onClose, questionData, onSave }) => {
+const EditQuestion = ({ isOpen, onClose, questionData, onSave,activeTab }) => {
   const modalRef = useRef();
 
   const [question, setQuestion] = useState('');
