@@ -34,6 +34,14 @@ color:${({ theme }) => theme.colors.textgray};
   gap: 20px;
 }
 
+.input-container {
+display: flex
+;
+    flex-direction: column;
+    width: 60%;
+    box-sizing: border-box;
+    margin-right: 20px;}
+
 .profile-photo-section {
   display: flex;
   flex-direction: column;

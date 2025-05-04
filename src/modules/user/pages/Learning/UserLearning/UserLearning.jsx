@@ -79,13 +79,13 @@ import React, { useEffect, useState } from 'react'
                              <img src={course.image} alt={course.title} className={isGridView ? "course-image" : "course-image-list"} />
                              <div className={isGridView ? "course-details" : "course-details-list"}>
                                  <h3 className='course-title'>{course.title}</h3>
+                                 {/* <h3 className='course-title'>{course.title.slice(0,30)}</h3> */}
  {/* ///i wnat to limit course description to 100 characters */}
                                  {/* <p className={isGridView?'course-description':'course-description-list'}>{course.description}</p> */}
-                              <p className={isGridView?'course-description':'course-description-list'}>{course.description.slice(0,100)}...</p>
+                              <p className={isGridView?'course-description':'course-description-list'}>{course.description.slice(0,110)}...</p>
                                  <div className={isGridView?"course-info":"course-info-list"}>
-                                     <span style={{marginRight:"40px"}}>{course.topics} topic</span> 
-                                    
-                                     <span>Less than {course.duration} hrs</span>
+                                     <span style={{marginRight:"40px"}}>{course.topics} topic</span>                                 
+                                     <span>Less than {course.duration} {course.duration>1?"hrs":"hr"}</span>
                                  </div>
                              </div>
  

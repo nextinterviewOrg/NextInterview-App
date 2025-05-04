@@ -85,7 +85,14 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
     },
     {
-      id: 11,
+      id:11,
+      name:"User feeback",
+      path:"/admin/user-feedback",
+      icon:<img className="svgicon" src={world} alt="User feedback Icon" />
+    
+      },
+      {
+          id: 12,
       name: "Settings",
       path: "/admin/settingspage",
       icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,

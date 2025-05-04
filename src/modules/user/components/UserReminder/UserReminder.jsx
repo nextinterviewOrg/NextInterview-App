@@ -73,8 +73,17 @@ const UserReminder = () => {
   };
 
   if (loading) return <div>Loading flashcards...</div>;
-  if (!flashcards.length) return <div>Thanks you have completed all the flashcards for Today!</div>;
-
+  if (!flashcards.length) {
+    return (
+      <UserReminderWrapper>
+        <div className="user-reminder-completed">
+          <p className="completed-message">You have completed all the tasks for today!</p>
+          <div className="tick-icon">✔</div> {/* Display the checkmark */}
+        </div>
+      </UserReminderWrapper>
+    );
+  }
+  
   const card = flashcards[0]; // show one at a time
 
   return (

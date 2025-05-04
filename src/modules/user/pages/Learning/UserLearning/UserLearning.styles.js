@@ -6,6 +6,7 @@ import styled from "styled-components";
  
  @media (max-width:768px){
  margin-left: 0px;
+ margin-right: 0px;
   
   }
  /* General Page Styling */
@@ -108,7 +109,7 @@ import styled from "styled-components";
    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
    gap: 20px;
     @media (max-width: 768px) {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   }
  }
  
@@ -186,18 +187,18 @@ import styled from "styled-components";
  margin-bottom: 20px;
  }
  .course-title {
-   padding: 5px;
+   padding-left: 5px;
    margin: 0 10px;
   font-family: "DM Sans";
  font-size: 18px;
  font-style: normal;
- font-weight: 700;
+ font-weight: 600;
  line-height: normal;
    color:${({ theme }) => theme.colors.black};
  }
  
  .course-description{
-   padding: 0 10px;
+   padding-left: 15px;
   overflow: hidden;
  
  text-overflow: ellipsis;
@@ -217,7 +218,7 @@ import styled from "styled-components";
  .course-info {
    display: flex;
    justify-content: flex-start;
-  //  padding: 10px;
+   padding-left: 8px;
   //  background-color: #f8f8f8;
    gap: 10px;
    margin-left: 10px;
@@ -232,7 +233,7 @@ import styled from "styled-components";
  font-size: 14px;
  font-style: normal;
  font-weight: 400;
- line-height: 20px; 
+ line-height: 10px; 
  color:${({ theme }) => theme.colors.textgray};
  }
  
@@ -248,7 +249,7 @@ import styled from "styled-components";
      display: flex;
      justify-content: space-between;
      padding: 10px;
-     margin-top: 10px;
+    //  margin-top: 10px;
      margin-bottom: 0;
    }
      .coursecard-bt-container-list{

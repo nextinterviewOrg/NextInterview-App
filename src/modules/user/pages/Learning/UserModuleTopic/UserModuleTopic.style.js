@@ -69,6 +69,17 @@ export const ModalContent = styled.div`
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
+export const CCModalContent = styled.div`
+  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+`;
+
 export const Title = styled.h2`
   font-family: ${({ theme }) => theme.fonts.body};
   color: ${({ theme }) => theme.colors.text};
