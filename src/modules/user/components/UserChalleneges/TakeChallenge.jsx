@@ -138,7 +138,7 @@ const TakeChallenge = () => {
     { src: google, alt: "" },
   ];
   const handleClick = () => {
-    navigate("/user/TakeChallengeQuestionType");
+    navigate("/user/takeChallenge");
   };
   return (
     <Card>

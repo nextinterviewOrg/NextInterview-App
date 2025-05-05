@@ -14,7 +14,11 @@ import {
   Button,
   Footer,
   Icons,
+  BackIcon,
 } from "./NewChallenges.style";
+import { useNavigate } from "react-router-dom";
+import { RxArrowLeft } from "react-icons/rx";
+
 
 const NewChallenge = () => {
   const iconList = [
@@ -23,7 +27,23 @@ const NewChallenge = () => {
     { src: google, alt: "" },
   ];
 
+  const navigate = useNavigate();
+  const handleClick = () => {
+    navigate("/user/TakeChallenge");
+  };
+ 
+  const handleGoBack = () => {
+    navigate('/user/challenges'); // Navigate back to the previous page
+  };
+
   return (
+    <>
+    <BackIcon              onClick={handleGoBack}
+          style={{
+            borderRadius: "10%",
+            border: "1px solid grey",
+            padding: "8px",
+          }}><RxArrowLeft /></BackIcon>
     <Card>
       <Header>
         <Tag>#Today's Challenge 123</Tag>
@@ -51,7 +71,7 @@ const NewChallenge = () => {
       <hr className="hrtag" />
 
       <Footer>
-        <Button>Take Challenge</Button>
+        <Button onClick={handleClick}>Take Challenge</Button>
         <Icons>
           <div className="icons-container">
             <span>Previously Asked In</span>
@@ -68,6 +88,7 @@ const NewChallenge = () => {
         </Icons>
       </Footer>
     </Card>
+    </>
   );
 };
 
