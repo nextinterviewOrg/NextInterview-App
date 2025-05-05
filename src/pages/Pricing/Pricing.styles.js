@@ -72,22 +72,78 @@ export const Subscription = styled.p`
   margin-bottom: 40px;
 `;
 
+// export const PlanCard = styled.div`
+//   background-color: ${({ suggested }) => (suggested ? theme.colors.lightgreen : '#fff')};
+//   border: 1px solid ${({ suggested }) => (suggested ? theme.colors.primary : '#ccc')};
+//   border-radius: 10px;
+//   padding: 30px 20px;
+//   position: relative;
+//   text-align: left;
+//   &:hover {
+//     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+//     background-color: ${theme.colors.lightgreen};
+//   }
+
+//   @media (max-width: 1024px) {
+//     padding: 20px 10px;
+//   }
+
+//   @media (max-width: 768px) {
+// width: 100%;
+// max-width: 400px;
+// }
+// `;
+
 export const PlanCard = styled.div`
-  background-color: ${({ suggested }) => (suggested ? theme.colors.lightgreen : '#fff')};
-  border: 1px solid ${({ suggested }) => (suggested ? theme.colors.primary : '#ccc')};
+  background-color: ${({ suggested, selected }) => 
+    selected ? theme.colors.lightgreen : 
+    suggested ? theme.colors.light : '#fff'};
+  border: 1px solid ${({ suggested, selected }) => 
+    selected ? theme.colors.primary : 
+    suggested ? theme.colors.primary : '#ccc'};
   border-radius: 10px;
   padding: 30px 20px;
   position: relative;
   text-align: left;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    background-color: ${theme.colors.lightgreen};
+  }
 
   @media (max-width: 1024px) {
     padding: 20px 10px;
   }
 
   @media (max-width: 768px) {
-width: 100%;
-max-width: 400px;
-}
+    width: 100%;
+    max-width: 400px;
+  }
+`;
+
+export const ContinueButton = styled.button`
+  padding: 15px 60px;
+  background-color: ${({ disabled }) => disabled ? '#cccccc' : '#0ca3c6'};
+  color: white;
+  font-size: 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: ${({ disabled }) => disabled ? 'not-allowed' : 'pointer'};
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: ${({ disabled }) => disabled ? '#cccccc' : '#098fb2'};
+  }
+
+  @media (max-width: 1360px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
 `;
 
 export const SuggestedTag = styled.span`
@@ -174,26 +230,26 @@ export const FeatureItem = styled.li`
   }
 `;
 
-export const ContinueButton = styled.button`
-  padding: 15px 60px;
-  background-color: #0ca3c6;
-  color: white;
-  font-size: 20px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+// export const ContinueButton = styled.button`
+//   padding: 15px 60px;
+//   background-color: #0ca3c6;
+//   color: white;
+//   font-size: 20px;
+//   border: none;
+//   border-radius: 6px;
+//   cursor: pointer;
 
-  &:hover {
-    background-color: #098fb2;
-  }
+//   &:hover {
+//     background-color: #098fb2;
+//   }
 
-  @media (max-width: 1360px) {
-    font-size: 18px;
-  }
+//   @media (max-width: 1360px) {
+//     font-size: 18px;
+//   }
 
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-`;
+//   @media (max-width: 1024px) {
+//     font-size: 16px;
+//   }
+// `;
 
 

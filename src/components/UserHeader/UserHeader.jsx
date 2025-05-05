@@ -483,7 +483,8 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
               <Dropdown
                 isOpen={isProfileOpen}
                 position={avatarPosition}
-               onClose={() => setIsProfileOpen(false)}
+              //  onClose={() => setIsProfileOpen(false)}
+              onclose = {handleClose}
                 onLogoutClick={() => {
                   setIsLogoutModalOpen(true);
                }}

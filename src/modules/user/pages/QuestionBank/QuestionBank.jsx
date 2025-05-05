@@ -261,6 +261,7 @@ const shimmerItems = new Array(10).fill(null);
                   to={`/user/questionBank/${item._id}`}
                   key={index}
                   style={{ textDecoration: "none" }}
+                  state={{ filteredQuestions }}
                 >
                   <QuestionCard
                     style={{

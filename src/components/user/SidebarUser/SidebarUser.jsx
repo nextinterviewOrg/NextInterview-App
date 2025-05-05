@@ -69,12 +69,12 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       path: "/user/challenges",
       icon: <img className="svgicon" src={challenge} alt="Users Icon" />,
     },
-    {
-      id: 8,
-      name: "Subscription",
-      path: "/user/subscription",
-      icon: <FaMoneyCheckAlt />,
-    },
+    // {
+    //   id: 8,
+    //   name: "Subscription",
+    //   path: "/user/subscription",
+    //   icon: <FaMoneyCheckAlt />,
+    // },
     {
       id: 9,
       name: "Blogs",

@@ -11,8 +11,10 @@ export const checkUserAnswerStatusQuestionBank = async (data) => {
             questionBankId: "67b9954dfd5023119cb12541"
         }
         */
+        console.log("data",data);
         const response = await api.post(`/userQuestionBankProgress/checkQuestionAnswered`, data);
         return response.data;
+       
     } catch (error) {
         console.log(error);
         throw error;
