@@ -12,6 +12,7 @@ import { getUserProgress, getUserProgressByModule, getUserProgressStats } from "
 import { getModule, getModuleByModuleCode } from "../../../../api/addNewModuleApi";
 import { Link } from "react-router-dom";
 import { ShimmerPostDetails, ShimmerText } from "react-shimmer-effects";
+import NewUser from "../../components/NewUser/NewUser"; // Import the NewUser component
 
 export default function UserDashboard() {
   const [startIndex, setStartIndex] = useState(0);
@@ -31,6 +32,7 @@ export default function UserDashboard() {
   const [loader, setLoader] = useState(false);
   const [hasStartedModules, setHasStartedModules] = useState(false);
   const [error, setError] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(false); // New state to track if user is new
 
   useEffect(() => {
     const handleResize = () => {
@@ -45,7 +47,6 @@ export default function UserDashboard() {
   useEffect(() => {
     const apiCaller = async () => {
       try {
-
         setLoader(true);
         console.log("user", user, "isLoaded", isLoaded,"sessionId", sessionId,"isSignedIn", isSignedIn);
         if (!isLoaded || !user) {  return};
@@ -61,19 +62,23 @@ export default function UserDashboard() {
         const userProgressData = await getUserProgressStats(userId);
         
         // Set basic stats
-      // Set basic stats
-setModuleCompleted(userProgressData.moduleStats?.completed || 0);
-setModuleOngoing(userProgressData.moduleStats?.ongoing || 0);
-setRemainingModule(moduleData.data.length - (userProgressData.moduleStats?.completed || 0));
+        setModuleCompleted(userProgressData.moduleStats?.completed || 0);
+        setModuleOngoing(userProgressData.moduleStats?.ongoing || 0);
+        setRemainingModule(moduleData.data.length - (userProgressData.moduleStats?.completed || 0));
 
-// Calculate progress percentage
-const completedModules = userProgressData.moduleStats?.completed || 0;
-const totalModules = moduleData.data.length;
-const progressPercentage = (completedModules / totalModules) * 100;
-setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
+        // Calculate progress percentage
+        const completedModules = userProgressData.moduleStats?.completed || 0;
+        const totalModules = moduleData.data.length;
+        const progressPercentage = (completedModules / totalModules) * 100;
+        setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
+        
         // Check if user has started any modules
         const hasStarted = userProgressData.ModuleProgress?.length > 0;
         setHasStartedModules(hasStarted);
+        
+        // Check if user is new (hasn't started any modules and hasn't completed any)
+        const isNew = !hasStarted && (userProgressData.moduleStats?.completed || 0) === 0;
+        setIsNewUser(isNew);
         
         if (hasStarted) {
           // If user has started modules, show only ongoing modules
@@ -136,7 +141,6 @@ setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
     if (user?.id) {
       apiCaller();
     }
-    apiCaller();
   }, [user]);
 
   const handleNext = () => {
@@ -160,10 +164,8 @@ setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
     { title: "Modules ongoing", value: moduleOngoing },
     { title: "Remaining Modules", value: remainingModule },
     { title: "Progress rate", value: `${moduleProgress}%` },
-    // ...(window.innerWidth > 1024 ? [{ title: "Progress rate", value: `${moduleProgress}%` }] : []),
-     // { title: "Progress rate", value: `${moduleProgress}%` },
-     ...(window.innerWidth > 1024 ? [{ title: "Challenges completed", value: "0/0" }] : [])
-   ];
+    ...(window.innerWidth > 1024 ? [{ title: "Challenges completed", value: "0/0" }] : [])
+  ];
 
   const visibleStats = isMobile && !showAllStats ? stats.slice(0, 4) : stats;
 
@@ -176,6 +178,11 @@ setModuleProgress(Number.parseFloat(progressPercentage.toFixed(2)));
         </div>
       </UserDashboardWrapper>
     );
+  }
+
+  // If user is new, show the NewUser component
+  if (isNewUser && !loader) {
+    return <NewUser />;
   }
 
   return (

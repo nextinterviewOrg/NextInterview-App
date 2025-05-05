@@ -1,6 +1,7 @@
 // UserSubscriptionInfo.js
 import React from 'react';
 import { UserSubscriptionInfoWrapper1 } from './UserSubscriptionInfo.styles';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const UserSubscriptionInfo = () => {
     const subscription = {
@@ -10,6 +11,7 @@ const UserSubscriptionInfo = () => {
         planEndDate: "23 Dec 2024",
         frequency: "Monthly"
     };
+     const navigate = useNavigate();
 
     return (
         <UserSubscriptionInfoWrapper1>
@@ -23,7 +25,7 @@ const UserSubscriptionInfo = () => {
                     <div className="detail-item"><span className='detail-item-title'>Frequency</span> <span className='detail-item-value'>{subscription.frequency}</span></div>
                 </div>
                 <div className="subscription-upgrade-btn">
-                    <button className="upgrade-button">Upgrade</button>
+                    <button className="upgrade-button" onClick={() => {navigate('/user/subscription')}}>Upgrade</button>
                 </div>
             </div>
         </UserSubscriptionInfoWrapper1>
