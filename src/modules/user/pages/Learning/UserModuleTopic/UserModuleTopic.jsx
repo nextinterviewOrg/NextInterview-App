@@ -38,6 +38,8 @@ import {
   completeModule,
   completeSubTopic,
   completeTopic,
+  getAllTopicsCompletionStatus,
+  getSubtopicCompletionStatus,
   getUserProgressBySubTopic,
   getUserProgressStats,
   startSubTopic,
@@ -151,42 +153,38 @@ const UserModuleTopic = () => {
     const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
     finalSubTopicIndex = finalSubTopicIndex + 1;
 
+    const subTopicCompletionData = await getSubtopicCompletionStatus(userData.data.user._id, module_code, topic_code, subtopic_code);
 
-    //checking is this last topic
-    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
-
-    if (lastSubTopic.data.subtopic_code === subtopic_code) {
-      console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code, subtopic_code);
+    if (subTopicCompletionData.allSubtopicCompleted == true) {
       const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
       finalTopicIndex = finalTopicIndex + 1;
       finalSubTopicIndex = 0;
-      // const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-      // await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-      //   if (item.moduleCode === moduleResponse.data.module_code) {
-      //     // setTotalCompletedTopics(item.topicStats.completed);
-      //     if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-      //       const statusData = await checkUserFeedBackExists({
-      //         userId: userData.data.user._id,
-      //         feedback_order: 1,
-      //         moduleId: moduleResponse.data._id,
-      //       })
-      //       console.log("statusData", statusData);
-      //       if (statusData?.found === false) {
+      const topicCompletionData = await getAllTopicsCompletionStatus(userData.data.user._id, module_code,);
+      const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+      await Promise.all(userModuleProgressStats.ModuleProgress.map(async(item) => {
+        if (item.moduleCode === moduleResponse.data.module_code) {
+          
+          if(Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)>50){
+            const statusData = await checkUserFeedBackExists({
+              userId: userData.data.user._id,
+              feedback_order: 1,
+              moduleId: moduleResponse.data._id,
+            })
+            if (statusData.found === false) {
 
-      //         /// logic for feedback
-      //         setShowFeedbackModal(true);
-      //         setFeedbackOrder(1);
+              /// logic for feedback
+              setShowFeedbackModal(true);
+              setFeedbackOrder(1);
+              
+            }
 
-      //       }
-
-      //     }
-      //   }
-      // }));
-      if (lastTopic.data.topic_code === topic_code) {
+          };
+        }
+      }));
+      if (topicCompletionData.allTopicsCompleted == true) {
         const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
         //logic for feedback
+        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
         await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
           if (item.moduleCode === moduleResponse.data.module_code) {
             // setTotalCompletedTopics(item.topicStats.completed);
@@ -212,39 +210,101 @@ const UserModuleTopic = () => {
         // navigate(`/user/learning`);
         return
       }
-      navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-      return
     }
-    if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-      const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-      const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-      //logic for feedback
-      await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-        if (item.moduleCode === moduleResponse.data.module_code) {
-          // setTotalCompletedTopics(item.topicStats.completed);
-          console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-          if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-            const statusData = await checkUserFeedBackExists({
-              userId: userData.data.user._id,
-              feedback_order: 2,
-              moduleId: moduleResponse.data._id,
-            })
-            console.log("statusData", statusData);
-            if (statusData.found === false) {
 
-              /// logic for feedback
-              setShowFeedbackModal(true);
-              setFeedbackOrder(2);
-              setReturnUrl(`/user/learning/`);
-            }
+    //checking is this last topic
+    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
+    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
 
-          }
-        }
-      }));
+    // if (lastSubTopic.data.subtopic_code === subtopic_code) {
+    //   console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code, subtopic_code);
+    //   const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
+    //   finalTopicIndex = finalTopicIndex + 1;
+    //   finalSubTopicIndex = 0;
+    //   // const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+    //   // await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+    //   //   if (item.moduleCode === moduleResponse.data.module_code) {
+    //   //     // setTotalCompletedTopics(item.topicStats.completed);
+    //   //     if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+    //   //       const statusData = await checkUserFeedBackExists({
+    //   //         userId: userData.data.user._id,
+    //   //         feedback_order: 1,
+    //   //         moduleId: moduleResponse.data._id,
+    //   //       })
+    //   //       console.log("statusData", statusData);
+    //   //       if (statusData?.found === false) {
 
-      // navigate(`/user/learning`);
-      return
-    }
+    //   //         /// logic for feedback
+    //   //         setShowFeedbackModal(true);
+    //   //         setFeedbackOrder(1);
+
+    //   //       }
+
+    //   //     }
+    //   //   }
+    //   // }));
+    //   if (lastTopic.data.topic_code === topic_code) {
+    //     const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
+    //     const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+    //     //logic for feedback
+    //     await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+    //       if (item.moduleCode === moduleResponse.data.module_code) {
+    //         // setTotalCompletedTopics(item.topicStats.completed);
+    //         console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
+    //         if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+    //           const statusData = await checkUserFeedBackExists({
+    //             userId: userData.data.user._id,
+    //             feedback_order: 2,
+    //             moduleId: moduleResponse.data._id,
+    //           })
+    //           console.log("statusData", statusData);
+    //           if (statusData.found === false) {
+
+    //             /// logic for feedback
+    //             setShowFeedbackModal(true);
+    //             setFeedbackOrder(2);
+    //             setReturnUrl(`/user/learning/`);
+    //           }
+
+    //         }
+    //       }
+    //     }));
+    //     // navigate(`/user/learning`);
+    //     return
+    //   }
+    //   navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
+    //   return
+    // }
+    // if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
+    //   const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
+    //   const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
+    //   //logic for feedback
+    //   await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
+    //     if (item.moduleCode === moduleResponse.data.module_code) {
+    //       // setTotalCompletedTopics(item.topicStats.completed);
+    //       console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
+    //       if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
+    //         const statusData = await checkUserFeedBackExists({
+    //           userId: userData.data.user._id,
+    //           feedback_order: 2,
+    //           moduleId: moduleResponse.data._id,
+    //         })
+    //         console.log("statusData", statusData);
+    //         if (statusData.found === false) {
+
+    //           /// logic for feedback
+    //           setShowFeedbackModal(true);
+    //           setFeedbackOrder(2);
+    //           setReturnUrl(`/user/learning/`);
+    //         }
+
+    //       }
+    //     }
+    //   }));
+
+    //   // navigate(`/user/learning`);
+    //   return
+    // }
     navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
   };
   useEffect(() => {
@@ -323,7 +383,7 @@ const UserModuleTopic = () => {
     const apiCaller = async () => {
       try {
         // Make sure you're calling the API correctly and checking the response
-        const userData= await getUserByClerkId(user.id);
+        const userData = await getUserByClerkId(user.id);
         const response = await getModuleById(moduleId);
         console.log("Module data in location state effect:", response.data);
 
@@ -417,7 +477,7 @@ const UserModuleTopic = () => {
               currentSubtopicCode,
               currentSubtopicId,
             );
-            console.log("markingSubTopicOngoing", markingSubTopicOngoing,"currentSubtopicCode",currentSubtopicCode);
+            console.log("markingSubTopicOngoing", markingSubTopicOngoing, "currentSubtopicCode", currentSubtopicCode);
           }
 
 
@@ -442,8 +502,8 @@ const UserModuleTopic = () => {
         await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
           if (item.moduleCode === moduleResponse.data.module_code) {
             // setTotalCompletedTopics(item.topicStats.completed);
-            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50)&&(Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50));
-            if ((Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50)&&(Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50)) {
+            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50) && (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50));
+            if ((Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50) && (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50)) {
               const statusData = await checkUserFeedBackExists({
                 userId: userData.data.user._id,
                 feedback_order: 1,
@@ -927,8 +987,8 @@ const UserModuleTopic = () => {
               moduleId={moduleId}
               onFeedbackSubmit={handleFeedbackSubmit}
               autoOpen={true}
-               returnUrl={returnUrl}
-               closeModel={() => setShowFeedbackModal(false)}
+              returnUrl={returnUrl}
+              closeModel={() => setShowFeedbackModal(false)}
               feedbackOrder={feedbackOrder}
             />
           </ModalContent>

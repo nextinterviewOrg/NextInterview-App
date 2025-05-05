@@ -35,6 +35,7 @@ export default function ModuleSidebar({
   const [moduleProgressPercentage, setModuleProgressPercentage] = useState(0);
   const navigate = useNavigate();
   const [slectectedCurrentSubTopic, setSelectedCurrentSubTopic] = useState(null);
+  const [slectectedCurrentTopic, setSelectedCurrentTopic] = useState(null); const [selectedSubTopic, setSelectedSubTopic] = useState(null);
   const [courseData, setCourseData] = useState(courseData1);
   const moduleId = useParams().id;
   const { isLoaded, user, isSignedIn } = useUser();
@@ -58,7 +59,7 @@ export default function ModuleSidebar({
 
       setExpandedTopic(location.state?.topicIndex || 0);
       setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
-      
+      setSelectedCurrentTopic(location.state?.topicIndex || 0);
       userModuleProgressStats.ModuleProgress.map((item) => {
         if (item.moduleCode === response.data.module_code) {
           setTotalCompletedTopics(item.topicStats.completed);
@@ -260,7 +261,7 @@ export default function ModuleSidebar({
                         onClick={() => isMobile && setSidebarOpen(false)}
                       >
                         <div key={subIndex} className="subtopic">
-                          <div className="subtopic-info" style={{ backgroundColor: slectectedCurrentSubTopic == subIndex ? "lightgray" : "transparent", borderRadius: "5px" }}>
+                          <div className="subtopic-info" style={{ backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", borderRadius: "5px" }}>
                             <span
                               className={
                                 subtopic.completed ? "completed" : "pending"

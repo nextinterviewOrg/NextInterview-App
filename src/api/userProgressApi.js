@@ -152,3 +152,27 @@ export const getcompletedModuleByUser = async (userId) => {
         throw error;
     }
 };
+
+export const getSubtopicCompletionStatus = async (userId, moduleCode, topicCode) => {
+    try {
+        const response = await api.get(
+            `/userProgress/progress/${userId}/subtopics/${moduleCode}/${topicCode}`
+        );
+        return response.data;
+    } catch (error) {
+        console.log("Subtopic completion check error:", error);
+        throw error;
+    }
+};
+
+export const getAllTopicsCompletionStatus = async (userId, moduleCode) => {
+    try {
+        const response = await api.get(
+            `/userProgress/progress/${userId}/topics/${moduleCode}`
+        );
+        return response.data;
+    } catch (error) {
+        console.log("Topics completion check error:", error);
+        throw error;
+    }
+};

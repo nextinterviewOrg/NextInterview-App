@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/admin/Sidebar/Sidebar";
 import SidebarUser from "../components/user/SidebarUser/SidebarUser";
 import { PageWrapper, ContentWrapper } from "./BaseLayout.style";
@@ -7,6 +7,8 @@ import Header from "../components/Header/Header";
 import NavBar from "../components/admin/Navbar/Navbar";
 import UserHeader from "../components/UserHeader/UserHeader";
 import ModuleSidebar from "../components/ModuleSidebar/ModuleSidebar";
+import { useUser, useSession } from '@clerk/clerk-react';
+import { getUserByClerkId } from "../api/userApi";
 
 const BaseLayout = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -15,7 +17,8 @@ const BaseLayout = () => {
     JSON.parse(localStorage.getItem("title")) || ""
   );
   const location = useLocation();
-
+  const { isSignedIn, user, isLoaded, sessionId } = useUser();
+  const navigate = useNavigate();
   // Determine layout based on path
   const isAdminPath = location.pathname.startsWith("/admin");
   const isUserPath = location.pathname.startsWith("/user");
@@ -29,14 +32,35 @@ const BaseLayout = () => {
       setIsExpanded(true); // Force expanded view on mobile when opened
     }
   };
+  useEffect(() => {
+    const apiCaller = async () => {
+      if (isSignedIn && isLoaded && user) {
+        try {
+          const data = await getUserByClerkId(user.id);
+          if (data.data.user.user_role === "user") {
+            if (data.data.user.profile_status === true) {
+              // navigate("/user", { state: sessionId });
+            } else {
+              navigate("/personalInfo");
+            }
+          } else if (data.data.user.user_role === "admin") {
+            // navigate("/admin");
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+    apiCaller();
+  }, [user])
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (window.innerWidth <= 768 && isMobileSidebarOpen) {
         const sidebar = document.querySelector('.sidebar-wrapper');
-        if (sidebar && !sidebar.contains(event.target) && 
-            !event.target.closest('.mobile-hamburger')) {
+        if (sidebar && !sidebar.contains(event.target) &&
+          !event.target.closest('.mobile-hamburger')) {
           setIsMobileSidebarOpen(false);
         }
       }
@@ -60,8 +84,8 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <Header 
-              title={title} 
+            <Header
+              title={title}
               toggleMobileSidebar={toggleMobileSidebar}
             />
             <NavBar />
@@ -78,8 +102,8 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <UserHeader 
-              title={title} 
+            <UserHeader
+              title={title}
               toggleMobileSidebar={toggleMobileSidebar}
             />
             <Outlet />
@@ -95,8 +119,8 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <UserHeader 
-              title={title} 
+            <UserHeader
+              title={title}
               toggleMobileSidebar={toggleMobileSidebar}
             />
             <Outlet />
