@@ -21,6 +21,25 @@ export const Card = styled.div`
   }
 `;
 
+export const BackIcon = styled.div`
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 80px;
+  margin-bottom: 10px;
+ 
+  @media (max-width: 1024px) {
+    margin-left: 20px;
+  }
+`;
+
 export const Header = styled.div`
   margin-bottom: 20px;
 `;

@@ -94,6 +94,7 @@ import UserFeedback from "./components/Feedback/UserFeedback/UserFeedback";
 import UserFeedbackDisplay from "./modules/admin/pages/UserFeedback/UserFeedbackDisplay";
 import EditQuestionModule from "./modules/admin/pages/EditQuestionModule/EditQuestionModule";
 import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
+import CodeEditorWindow from "./modules/user/components/CodeEditorWindow/CodeEditorWindow";
 
 function App() {
   return (
@@ -207,6 +208,7 @@ function App() {
             <Route path="challengeInfo" element={<NewChallenge />} />
             <Route path="blogs" element={<UserBlog />} />
             <Route path="real-world-scenario/:id" element={<UserBlogDisplay />} />
+            <Route path="takeChallenge" element={<CodeEditorWindow />} />
           </Route>
           {/* <Route path="userfaq" element={<UserFAQ />} /> */}
           {/* <Route path="subscription" element={<UserSubscription />} /> */}
