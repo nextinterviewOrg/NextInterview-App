@@ -3,6 +3,9 @@ import { UserSampleInterviewWrapper } from "./UserSampleInterview.styles";
 import { useParams } from "react-router-dom";
 import { getModuleById } from "../../../../../api/addNewModuleApi";
 import { IoMdArrowRoundBack } from "react-icons/io";
+import { useUser } from "@clerk/clerk-react";
+import { addFeedback, checkStatus } from "../../../../../api/sampleInterviewFeedbackApi";
+import { getUserByClerkId } from "../../../../../api/userApi";
 
 const UserSampleInterview = () => {
   const [modalOpen, setModalOpen] = useState(false);
@@ -10,10 +13,27 @@ const UserSampleInterview = () => {
   const moduleId = useParams().id;
   const [helpful, setHelpful] = useState(""); // Track if the interview was helpful
   const [response, setResponse] = useState(""); // Track feedback response
-
-  const handleSubmit = () => {
-    // Handle form submission logic here, like sending feedback to the server
-    setModalOpen(false); // Close modal after submitting
+  const { user } = useUser();
+  const handleSubmit = async () => {
+    try {
+      const userData = await getUserByClerkId(user.id);
+      console.log("helpful", helpful);
+      const feedbackData = await addFeedback({ moduleId: moduleId, userId: userData.data.user._id, feedback: response, helpfull: helpful === "Yes" ? true : false, skip: false });
+      setModalOpen(false); 
+      setResponse(""); // Close modal after submitting
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleSkip = async () => {
+    try {
+      const userData = await getUserByClerkId(user.id);
+      const feedbackData = await addFeedback({ moduleId: moduleId, userId: userData.data.user._id, skip: true });
+      setModalOpen(false); // Close modal after submitting
+      setResponse(""); 
+    } catch (error) {
+      console.log(error);
+    }
   };
   useEffect(() => {
     const apiCaller = async () => {
@@ -24,7 +44,10 @@ const UserSampleInterview = () => {
   }, []);
 
   // Handle video completion
-  const handleVideoEnd = () => {
+  const handleVideoEnd = async () => {
+    const userData = await getUserByClerkId(user.id);
+    const checkStatusData = await checkStatus({ moduleId: moduleId, userId: userData.data.user._id });
+    if (checkStatusData.submitted) return;
     setModalOpen(true); // Open the modal when the video is finished
   };
 
@@ -45,6 +68,8 @@ const UserSampleInterview = () => {
                 controls
                 onEnded={handleVideoEnd}
                 className="video-player"
+                controlsList="nodownload"  // This is the key attribute
+                onContextMenu={(e) => e.preventDefault()}
               >
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -118,7 +143,7 @@ const UserSampleInterview = () => {
                     <div className="modal-actions">
                       <button
                         className="modal-skip-btn"
-                        onClick={() => setModalOpen(false)}
+                        onClick={handleSkip}
                       >
                         Skip
                       </button>

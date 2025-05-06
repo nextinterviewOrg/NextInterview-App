@@ -8,51 +8,83 @@ import TakeChallenge from "../../components/UserChalleneges/TakeChallenge";
 import UserReminder from "../../components/UserReminder/UserReminder";
 import InterviewFavoriteCard from "../../components/InterviewFavoriteCard/InterviewFavoriteCard";
 import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
+import { getInterviewFavourites } from "../../../../api/aiMockInterviewApi";
 
 export default function UserHome() {
-  const interviewFavoriteCardData = [
-    {
-      title: "Diagnosing and Investigating Metrics",
-      description: "Analyze data to gain insights and make smarter decisions.",
-      topics: 3,
-      duration: "Less than 2 hrs",
-      imgSrc: [
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      ],
-    },
-    {
-      title: "Optimizing System Performance",
-      description: "Learn how to enhance system efficiency and responsiveness.",
-      topics: 4,
-      duration: "2 to 3 hrs",
-      imgSrc: [
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      ],
-    },
-    {
-      title: "Building Scalable Systems",
-      description:
-        "Master the art of designing systems that handle growth seamlessly.",
-      topics: 5,
-      duration: "3+ hrs",
-      imgSrc: [
-        "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-      ],
-    },
-  ];
-
+  // const interviewFavoriteCardData = [
+  //   {
+  //     title: "Diagnosing and Investigating Metrics",
+  //     description: "Analyze data to gain insights and make smarter decisions.",
+  //     topics: 3,
+  //     duration: "Less than 2 hrs",
+  //     imgSrc: [
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     ],
+  //   },
+  //   {
+  //     title: "Optimizing System Performance",
+  //     description: "Learn how to enhance system efficiency and responsiveness.",
+  //     topics: 4,
+  //     duration: "2 to 3 hrs",
+  //     imgSrc: [
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     ],
+  //   },
+  //   {
+  //     title: "Building Scalable Systems",
+  //     description:
+  //       "Master the art of designing systems that handle growth seamlessly.",
+  //     topics: 5,
+  //     duration: "3+ hrs",
+  //     imgSrc: [
+  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+  //     ],
+  //   },
+  // ];
+  const [interviewFavoriteCardData, setInterviewFavoriteCardData] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
 
   useEffect(() => {
+    
     const interval = setInterval(() => {
       handleNext();
     }, 5000);
 
     return () => clearInterval(interval);
   }, []);
+  useEffect(() => {
+   
+    const apiCaller = async () => {
+      try {
+
+
+        const responeData = await getInterviewFavourites();
+       
+
+        const preparedData = responeData.map((item) => ({
+          title: item.moduleName,
+          description: "Learn how to enhance system efficiency and responsiveness.",
+          topics: item.topicName,
+          //   duration: "2 to 3 hrs",
+          //   imgSrc: [
+          //     "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+          //     "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+          //     "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
+          //   ],
+          moduleId: item.moduleId,
+          imgSrc: item.imageURL
+        })
+        );
+        setInterviewFavoriteCardData(preparedData);
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    apiCaller();
+  }, [])
 
   const handleNext = () => {
     setStartIndex(
@@ -69,6 +101,8 @@ export default function UserHome() {
   };
 
   const getVisibleCards = () => {
+    if(!interviewFavoriteCardData) return [];
+    if(interviewFavoriteCardData.length < 4) return interviewFavoriteCardData;
     return Array.from({ length: 4 }, (_, i) => {
       const index = (startIndex + i) % interviewFavoriteCardData.length;
       return interviewFavoriteCardData[index];
@@ -100,16 +134,18 @@ export default function UserHome() {
             <FaAngleLeft />
           </ArrowButton>
           <InterviewFavoriteCardContainer>
-            {visibleCards.map((cardData, index) => (
-              <InterviewFavoriteCard
-                key={`${startIndex}-${index}`}
-                title={cardData.title}
-                description={cardData.description}
-                topics={cardData.topics}
-                duration={cardData.duration}
-                imgSrc={cardData.imgSrc}
-              />
-            ))}
+            {visibleCards.length>0 &&
+              visibleCards.map((cardData, index) => (
+                <InterviewFavoriteCard
+                  key={`${startIndex}-${index}`}
+                  title={cardData.title}
+                  // description={cardData.description}
+                  topics={cardData.topics}
+                  // duration={cardData.duration}
+                  imgSrc={cardData.imgSrc}
+                  moduleId={cardData.moduleId}
+                />
+              ))}
           </InterviewFavoriteCardContainer>
           <ArrowButton onClick={handleNext}>
             <FaAngleRight />
