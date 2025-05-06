@@ -11,16 +11,17 @@ const iconList = [
   { src: google, alt: "" },
 ];
 
-const InterviewFavoriteCard = ({ title, topics, imgSrc }) => {
+const InterviewFavoriteCard = ({ title, topics, imgSrc ,moduleId}) => {
+  console.log("imgSrc", imgSrc,"moduleId",moduleId,"topics",topics,"title",title);
   return (
     <InterviewFavoriteCardWrapper>
       <div className="card">
         <div className="card-overlay">
           <img className="card-image" src={imgSrc} alt="Topic Thumbnail" />
         </div>
-        <div className="overlay">
+        {/* <div className="overlay">
           <span className="overlay-text">Machine Learning</span>
-        </div>
+        </div> */}
         <div className="card-content">
           <h3 className="card-title">{title}</h3>
           <p className="card-subtitle">
@@ -28,8 +29,8 @@ const InterviewFavoriteCard = ({ title, topics, imgSrc }) => {
             <span className="info">{topics}</span>
           </p>
           <div className="card-footer">
-            <button className="learn-btn">Learn</button>
-            <div className="tags">
+            <button className="learn-btn" onClick={() => {window.location.href = `/user/learning/${moduleId}`}}>Learn</button>
+            {/* <div className="tags">
               <div className="icons-container">
                 {iconList.map((icon, index) => (
                   <img
@@ -43,7 +44,7 @@ const InterviewFavoriteCard = ({ title, topics, imgSrc }) => {
 
                 <span>In Interviews</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

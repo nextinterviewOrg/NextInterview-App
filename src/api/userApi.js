@@ -133,3 +133,33 @@ export const getQuestionariesByUserId=async(id)=>{
     throw error;
   }
 }
+
+export const createAdmin = async ({ email, password, name }) => {
+  try {
+    const response = await api.post("/users/createAdmins", { email, password, name });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const deleteUser = async (userId) => {
+  try {
+    const response = await api.delete("/users/deleteUser", { data: { userId } });
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getAdmins = async () => {
+  try {
+    const response = await api.get("/users/getAdmins");
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};

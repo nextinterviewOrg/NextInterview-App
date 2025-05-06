@@ -23,6 +23,7 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
+  width: 100%;
 `;
  
 export const EditorContainer = styled.div`
@@ -61,3 +62,18 @@ export const BackIcon = styled.div`
   align-items: center;
 `;
  
+export const Button = styled.button`
+  padding: 10px 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+`;
+ 
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+`

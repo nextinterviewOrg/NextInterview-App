@@ -34,9 +34,9 @@ const SettingsPage = () => {
         {/* <Tab active={activeTab === 'ai'} onClick={() => setActiveTab('ai')}>
           AI
         </Tab> */}
-        <Tab active={activeTab === 'smtp'} onClick={() => setActiveTab('smtp')}>
+        {/* <Tab active={activeTab === 'smtp'} onClick={() => setActiveTab('smtp')}>
           SMTP Server
-        </Tab>
+        </Tab> */}
  
       </TabContainer>
       {renderContent()}

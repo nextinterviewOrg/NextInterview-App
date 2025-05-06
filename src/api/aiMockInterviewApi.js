@@ -95,3 +95,13 @@ export const endInterview= async (data)=>{
         throw error;
     }
 }
+
+export const getInterviewFavourites = async () => {
+    try {
+        const response = await api.get(`/addNewModule/get/InterviewFavorites`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

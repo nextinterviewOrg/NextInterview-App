@@ -1,52 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
-  EditorContainer,
-  StyledIframe,
   Title,
   QuestionBox,
   Wrapper,
   BackIcon,
-} from './CodeEditorWindow.styles';
-import { RxArrowLeft } from 'react-icons/rx';
-import { useNavigate } from 'react-router-dom';
- 
+  Button,
+  Header,
+} from "./CodeEditorWindow.styles";
+import { RxArrowLeft } from "react-icons/rx";
+import { useNavigate } from "react-router-dom";
+import ReadyToCode from "../Compiler/ReadyToCode";
+
 const CodeEditorWindow = () => {
-  const [language, setLanguage] = useState('python');
   const navigate = useNavigate();
- 
-  const getIframeSrc = () => {
-    if (language === 'python') {
-      return 'https://onecompiler.com/embed/python?hideLanguageSelection=true&hideNew=true&hideNewFileOption=true&disableCopyPaste=true&disableAutoComplete=true&theme=dark&fontSize=20&hideEditorOptions=true&hideStdin=true';
-    } else if (language === 'mysql') {
-      return 'https://onecompiler.com/embed/mysql?hideLanguageSelection=true&hideNew=true&hideNewFileOption=true&disableCopyPaste=true&disableAutoComplete=true&theme=dark&fontSize=20&hideEditorOptions=true&hideStdin=true';
-    }
-    return '';
-  };
- 
+
   const handleGoBack = () => {
-    navigate('/user/challengeInfo'); // Navigate back to the previous page
+    navigate("/user/challengeInfo"); // Navigate back to the previous page
   };
- 
+
   return (
     <Wrapper>
-      <BackIcon              onClick={handleGoBack}
-            style={{
-              borderRadius: "10%",
-              border: "1px solid grey",
-              padding: "8px",
-            }}><RxArrowLeft /></BackIcon>
+      <Header>
+        <BackIcon
+          onClick={handleGoBack}
+          style={{
+            borderRadius: "10%",
+            border: "1px solid grey",
+            padding: "8px",
+          }}
+        >
+          <RxArrowLeft />
+        </BackIcon>
+        <Button>Submit</Button>
+      </Header>
       <Title>Question Type - Coding</Title>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          gap: "20px",
+          alignItems: "flex-start",
+        }}
+      >
         <QuestionBox>
-        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+          Tesla is investigating production bottlenecks and they need your help
+          to extract the relevant data. Write a query to determine which parts
+          have begun the assembly process but are not yet finished. Assumptions:
+          parts_assembly_table contains all parts currently in production, each
+          at varying stages of the assembly process. An unfinished part is one
+          that lacks a finish_date. This question is straightforward, so
+          approach it with simplicity in both thinking and solution. Effective
+          April 11th 2023, the problem statement and assumptions were updated to
+          enhance clarity. Explanation The bumpers in step 3 and 4 are the only
+          item that remains unfinished as it lacks a recorded finish date. The
+          dataset you are querying against may have different input & output
+          -this is just an example !
         </QuestionBox>
- 
-      <EditorContainer>
-        <StyledIframe src={getIframeSrc()} title={`${language} editor`} />
-      </EditorContainer>
+        <ReadyToCode style={{ width: "100%" }} />
+      </div>
     </Wrapper>
   );
 };
- 
+
 export default CodeEditorWindow;
- 
- 

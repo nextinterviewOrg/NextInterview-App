@@ -95,6 +95,8 @@ import UserFeedbackDisplay from "./modules/admin/pages/UserFeedback/UserFeedback
 import EditQuestionModule from "./modules/admin/pages/EditQuestionModule/EditQuestionModule";
 import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
 import CodeEditorWindow from "./modules/user/components/CodeEditorWindow/CodeEditorWindow";
+import ReadyToCode from "./modules/user/components/Compiler/ReadyToCode";
+
 
 function App() {
   return (
@@ -136,6 +138,7 @@ function App() {
           <Route path="/verifytotp" element={<VerifyTOTP />} />
           <Route path="/chatmode" element={<MockInterviewChat />} />
           <Route path="/voicemode" element={<MockInterviewVoice />} />
+          <Route path='/readytocode' element={<ReadyToCode />} />
           <Route path="/tryityourself" element={<TryItYourself />} />
           <Route
             path="/Diagnosing-and-Investigating-Metrics"

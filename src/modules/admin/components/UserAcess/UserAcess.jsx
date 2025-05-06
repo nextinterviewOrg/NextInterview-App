@@ -18,46 +18,38 @@ import {
   Backdrop,
   ModalBox,
   ModalTitle,
-  Select,
   Input,
   ModalButtons,
   Button
 } from "./UserAcess.styles";
-import { BiEditAlt } from "react-icons/bi";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { CiSearch } from "react-icons/ci";
 import noData from "../../../../assets/nodataanimation.gif";
- 
-const initialData = Array.from({ length: 4 }, (_, index) => ({
-  id: index + 1,
-  name: "DIGI9",
-  role: "Admin",
-  mobileNumber: "9090909090",
-  email: "digi9@gmail.com",
-}));
+import { createAdmin, deleteUser, getAdmins } from '../../../../api/userApi';
  
 const ITEMS_PER_PAGE = 10;
  
 export default function UserAcess() {
-  const [data, setData] = useState(initialData);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState([]);
+  const [currentPage] = useState(1);
   const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalType, setModalType] = useState("");
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
-    role: "",
-    mobileNumber: "",
     email: "",
+    password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [fetching, setFetching] = useState(true);
  
   const filteredData = data.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-      item.email.toLowerCase().includes(searchText.toLowerCase())
+      (item.name && item.name.toLowerCase().includes(searchText.toLowerCase())) ||
+      (item.email && item.email.toLowerCase().includes(searchText.toLowerCase()))
   );
  
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -69,80 +61,86 @@ export default function UserAcess() {
     return emailRegex.test(email);
   };
  
-  const openModal = (type, user = null) => {
-    setModalType(type);
-    setSelectedUser(user);
-    if (type === "edit" && user) {
-      setFormData({
-        name: user.name,
-        role: user.role,
-        mobileNumber: user.mobileNumber,
-        email: user.email,
-      });
-    } else {
-      setFormData({ name: "", role: "", mobileNumber: "", email: "" });
-    }
+  const openModal = () => {
+    setFormData({ name: "", email: "", password: "" });
     setIsModalOpen(true);
-   
   };
  
   const closeModal = () => {
     setIsModalOpen(false);
-    setSelectedUser(null);
   };
  
-  const handleAddUser = () => {
+  const fetchAdmins = React.useCallback(async () => {
+    setFetching(true);
+    try {
+      const res = await getAdmins();
+      if (res && res.success && Array.isArray(res.data)) {
+        setData(res.data.map(admin => ({
+          id: admin._id || admin.id,
+          userId: admin._id,
+          name: admin.user_name,
+          email: admin.user_email,
+        })));
+      } else {
+        setData([]);
+      }
+    } catch {
+      setData([]);
+    } finally {
+      setFetching(false);
+    }
+  }, []);
+ 
+  React.useEffect(() => {
+    fetchAdmins();
+  }, [fetchAdmins]);
+ 
+  const handleAddUser = async () => {
     if (!areFieldsValid()) return;
- 
-    const newUser = {
-      id: data.length + 1,
-      ...formData,
-    };
-    setData([...data, newUser]);
-    closeModal();
-  };
- 
- 
-  const handleEditUser = () => {
-    if (!areFieldsValid()) return;
- 
-    setData((prevData) =>
-      prevData.map((item) =>
-        item.id === selectedUser.id ? { ...item, ...formData } : item
-      )
+    // Check for duplicate email
+    const emailExists = data.some(
+      (admin) => admin.email && admin.email.toLowerCase() === formData.email.toLowerCase()
     );
-    closeModal();
+    if (emailExists) {
+      setFormErrors((prev) => ({ ...prev, email: 'This email is already registered as an admin.' }));
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await createAdmin({
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+      });
+      if (res && res.success) {
+        closeModal();
+        window.location.reload();
+      } else {
+        alert(res?.message || 'Failed to create admin');
+      }
+    } catch (error) {
+      alert('Error creating admin: ' + (error?.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
   };
- 
  
   const [formErrors, setFormErrors] = useState({
     name: "",
-    role: "",
-    mobileNumber: "",
     email: "",
+    password: "",
   });
  
   const areFieldsValid = () => {
     const errors = {
       name: "",
-      role: "",
-      mobileNumber: "",
       email: "",
+      password: "",
     };
     let isValid = true;
  
     if (!formData.name.trim()) {
       errors.name = "Name is required";
-      isValid = false;
-    }
- 
-    if (!formData.role) {
-      errors.role = "Role is required";
-      isValid = false;
-    }
- 
-    if (!formData.mobileNumber || formData.mobileNumber.length !== 10) {
-      errors.mobileNumber = "Valid 10-digit mobile number is required";
       isValid = false;
     }
  
@@ -154,17 +152,48 @@ export default function UserAcess() {
       isValid = false;
     }
  
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*]).{8,}$/;
+    if (!formData.password.trim()) {
+      errors.password = "Password is required";
+      isValid = false;
+    } else if (!passwordRegex.test(formData.password)) {
+      errors.password = "Password must be at least 8 characters, include uppercase, lowercase, number, and special character (!@#$%^&*)";
+      isValid = false;
+    }
+ 
     setFormErrors(errors);
     return isValid;
   };
  
+  const handleDeleteUser = async () => {
+    setLoading(true);
+    try {
+      const user = data.find((item) => item.id === deleteId);
+      if (user && user.userId) {
+        const res = await deleteUser(user.userId);
+        if (res && res.success) {
+          setIsDeleteModalOpen(false);
+          setDeleteId(null);
+          window.location.reload();
+        } else {
+          alert(res?.message || 'Failed to delete user');
+        }
+      } else {
+        alert('Could not find user ID for deletion.');
+      }
+    } catch (error) {
+      alert('Error deleting user: ' + (error?.response?.data?.message || error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
  
   return (
     <>
       <Container>
         <HeaderRow>
           <Title>User Access</Title>
-          <CreateButton onClick={() => openModal("add")}>Add Admin</CreateButton>
+          <CreateButton onClick={openModal}>Add Admin</CreateButton>
         </HeaderRow>
  
         <SearchWrapper>
@@ -183,34 +212,30 @@ export default function UserAcess() {
             <TableHead>
               <TableRow>
                 <TableHeader>Name</TableHeader>
-                <TableHeader>Role</TableHeader>
-                <TableHeader>Mobile Number</TableHeader>
                 <TableHeader>Email</TableHeader>
                 <TableHeader>Actions</TableHeader>
               </TableRow>
             </TableHead>
             <TableBody>
-              {currentItems.length > 0 ? (
+              {fetching ? (
+                <TableRow>
+                  <TableCell colSpan={3} style={{ textAlign: "center", padding: "20px" }}>
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : currentItems.length > 0 ? (
                 currentItems.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>{item.name}</TableCell>
-                    <TableCell>{item.role}</TableCell>
-                    <TableCell>{item.mobileNumber}</TableCell>
                     <TableCell>{item.email}</TableCell>
                     <TableCell>
                       <ActionsContainer>
-                        <BiEditAlt
-                          title="Edit"
-                          size={20}
-                          onClick={() => openModal("edit", item)}
-                        />
                         <RiDeleteBin6Line
                           title="Delete"
                           size={20}
                           color="#FB4F4F"
                           onClick={() => {
                             setDeleteId(item.id);
-                            setSelectedUser(item);
                             setIsDeleteModalOpen(true);
                           }}
                         />
@@ -220,7 +245,7 @@ export default function UserAcess() {
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} style={{ textAlign: "center", padding: "20px" }}>
+                  <TableCell colSpan={3} style={{ textAlign: "center", padding: "20px" }}>
                     <img src={noData} alt="No Data" style={{ padding: "10%" }} />
                   </TableCell>
                 </TableRow>
@@ -233,59 +258,63 @@ export default function UserAcess() {
       {isModalOpen && (
         <Backdrop onClick={closeModal}>
           <ModalBox onClick={(e) => e.stopPropagation()}>
-            <ModalTitle>{modalType === "add" ? "Add User" : "Edit User"}</ModalTitle>
+            <ModalTitle>Add User</ModalTitle>
             <Input
-  placeholder="Name"
-  value={formData.name}
-  onChange={(e) => {
-    const onlyLetters = e.target.value.replace(/[^a-zA-Z\s]/g, "");
-    setFormData({ ...formData, name: onlyLetters });
-    setFormErrors({ ...formErrors, name: "" });
-  }}
-/>
-{formErrors.name && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.name}</span>}
+              placeholder="Name"
+              value={formData.name}
+              onChange={(e) => {
+                const onlyLetters = e.target.value.replace(/[^a-zA-Z\s]/g, "");
+                setFormData({ ...formData, name: onlyLetters });
+                setFormErrors({ ...formErrors, name: "" });
+              }}
+            />
+            {formErrors.name && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.name}</span>}
  
-<Select
-  value={formData.role}
-  onChange={(e) => {
-    setFormData({ ...formData, role: e.target.value });
-    setFormErrors({ ...formErrors, role: "" });
-  }}
->
-  <option value="">Select Role</option>
-  <option value="Admin">Admin</option>
-  <option value="User">User</option>
-</Select>
-{formErrors.role && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.role}</span>}
+            <Input
+              type="email"
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) => {
+                const value = e.target.value;
+                setFormData({ ...formData, email: value });
+                setFormErrors({ ...formErrors, email: "" });
+              }}
+            />
+            {formErrors.email && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.email}</span>}
  
-<Input
-  placeholder="Mobile Number"
-  value={formData.mobileNumber}
-  onChange={(e) => {
-    const digitsOnly = e.target.value.replace(/\D/g, "").slice(0, 10);
-    setFormData({ ...formData, mobileNumber: digitsOnly });
-    setFormErrors({ ...formErrors, mobileNumber: "" });
-  }}
-/>
-{formErrors.mobileNumber && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.mobileNumber}</span>}
- 
-<Input
-  type="email"
-  placeholder="Email"
-  value={formData.email}
-  onChange={(e) => {
-    const value = e.target.value;
-    setFormData({ ...formData, email: value });
-    setFormErrors({ ...formErrors, email: "" });
-  }}
-/>
-{formErrors.email && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.email}</span>}
- 
+            <div style={{ position: 'relative' }}>
+              <Input
+                type={showPassword ? "text" : "password"}
+                placeholder="Password"
+                value={formData.password}
+                onChange={(e) => {
+                  setFormData({ ...formData, password: e.target.value });
+                  setFormErrors({ ...formErrors, password: "" });
+                }}
+                style={{ paddingRight: '32px' }}
+              />
+              <span
+                onClick={() => setShowPassword((prev) => !prev)}
+                style={{
+                  position: 'absolute',
+                  right: 8,
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  cursor: 'pointer',
+                  zIndex: 2,
+                }}
+                tabIndex={0}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+              </span>
+            </div>
+            {formErrors.password && <span style={{ color: "red", fontSize: "14px" }}>{formErrors.password}</span>}
  
             <ModalButtons>
               <Button onClick={closeModal}>Cancel</Button>
-              <Button variant="submit" onClick={modalType === "add" ? handleAddUser : handleEditUser}>
-                {modalType === "add" ? "Add" : "Save"}
+              <Button variant="submit" onClick={handleAddUser}>
+                Add
               </Button>
             </ModalButtons>
           </ModalBox>
@@ -300,15 +329,12 @@ export default function UserAcess() {
             <ModalButtons>
               <Button
                 variant="delete"
-                onClick={() => {
-                  setData((prev) => prev.filter((item) => item.id !== deleteId));
-                  setIsDeleteModalOpen(false);
-                  setDeleteId(null);
-                }}
+                onClick={handleDeleteUser}
+                disabled={loading}
               >
-                Delete
+                {loading ? 'Deleting...' : 'Delete'}
               </Button>
-              <Button onClick={() => setIsDeleteModalOpen(false)}>Cancel</Button>
+              <Button onClick={() => setIsDeleteModalOpen(false)} disabled={loading}>Cancel</Button>
             </ModalButtons>
           </ModalBox>
         </Backdrop>
