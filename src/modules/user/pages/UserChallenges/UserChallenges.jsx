@@ -7,6 +7,7 @@ const UserChallenges = () => {
         <UserChallengesWrapper>
             <div className="UserChallenges-container">
                 <TakeChallenge />
+                <hr className="divider" />
                 <PastChallenge />
 
             </div>

@@ -172,7 +172,7 @@ const TakeChallenge = () => {
       </Tags>
       <MarginButton>
         <Buttons>
-          <Button
+          {/* <Button
             onClick={handleClick}
             primary
             style={{
@@ -180,7 +180,7 @@ const TakeChallenge = () => {
             }}
           >
             Take Challenge
-          </Button>
+          </Button> */}
           <Button
             style={{
               color: "#2390ac",
@@ -190,7 +190,7 @@ const TakeChallenge = () => {
             Challenge Info
           </Button>
         </Buttons>
-        <Icons>
+        {/* <Icons>
           <div className="icons-container">
             <span>Previously Asked In</span>
 
@@ -203,7 +203,7 @@ const TakeChallenge = () => {
               />
             ))}
           </div>
-        </Icons>
+        </Icons> */}
       </MarginButton>
     </Card>
   );

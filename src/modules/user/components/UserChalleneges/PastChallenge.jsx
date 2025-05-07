@@ -1,69 +1,80 @@
 import React from "react";
-import styled from "styled-components";
+import {
+  Wrapper,
+  Image,
+  Text,
+  Title,
+  ChallengeItem,
+  ChallengeNumber,
+  ChallengeDetails,
+  ChallengeTitle,
+  ChallengeDate,
+  ChallengeDescription,
+  Status,
+} from "./PastChallenge.styles";
 import quicklyimage from "../../assets/quicklyimage.png";
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-//   height: 100vh; /* Full screen height */
-  background-color: ${(props) => props.theme.colors.light}; /* Using theme color */
 
-  @media (max-width: 768px) {
-    margin-left: 0;
-  }
-`;
 
-const Image = styled.img`
-//   max-width: 400px;
-  margin-bottom: ${(props) => props.theme.spacing(3)};
-  @media (max-width: 768px) {
-    max-width: 300px;
-  }
-`;
+const challenges = [
+  {
+    id: 120,
+    date: "19 Nov 2024",
+    status: "Completed",
+    title: "Predicting Customer Churn in a ghg Subscription–Based Business",
+    description:
+      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
+  },
+  {
+    id: 119,
+    date: "19 Nov 2024",
+    status: "Missed",
+    title: "Predicting Customer Churn in a Subscription–Based Business",
+    description:
+      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
+  },
+  {
+    id: 118,
+    date: "19 Nov 2024",
+    status: "Completed",
+    title: "Predicting Customer Churn in a Subscription–Based Business",
+    description:
+      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
+  },
+  {
+    id: 117,
+    date: "19 Nov 2024",
+    status: "Completed",
+    title: "Predicting Customer Churn in a Subscription–Based Business",
+    description:
+      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
+  },
+];
 
-const Text = styled.p`
-  font-family: ${(props) => props.theme.fonts.body};
-  font-size: 1rem;
-  color: ${(props) => props.theme.colors.textgray};
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-`;
-
-const Title = styled.h2`
-  font-family: ${(props) => props.theme.fonts.body};
-  color: ${(props) => props.theme.colors.text};
-  font-size: 1.2rem;
-  margin: ${(props) => props.theme.spacing(1)} 0;
-  margin-left: 10px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin-top:${(props) => props.theme.spacing(3)};
-
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-    margin-left: 10px;
-  }
-`;
 
 const PastChallenge = () => {
   return (
-    <div>
-    <Title>Past Challenges</Title>
-    <Container>
-       
-      <Image src={quicklyimage}
-      style={{ width: "30%", height: "30%" }} />
-       
-     
-       
-      <Text>No any past challenges</Text>
-    </Container>
-    </div>
+    <Wrapper>
+      <Title>Past Challenges</Title>
+
+      {challenges.length === 0 ? (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <Image src={quicklyimage} alt="No any past challenges" />
+          <Text>No any past challenges</Text>
+        </div>
+      ) : (
+        challenges.map((challenge) => (
+          <ChallengeItem key={challenge.id}>
+            <ChallengeNumber>#{challenge.id}</ChallengeNumber>
+            <ChallengeDetails>
+              <ChallengeDate>{challenge.date}</ChallengeDate>
+              <ChallengeTitle>{challenge.title}</ChallengeTitle>
+              <ChallengeDescription>{challenge.description}</ChallengeDescription>
+            </ChallengeDetails>
+            <Status status={challenge.status}>{challenge.status}</Status>
+          </ChallengeItem>
+        ))
+      )}
+    </Wrapper>
   );
 };
 
