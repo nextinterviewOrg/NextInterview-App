@@ -112,7 +112,7 @@ function App() {
           <Route path="/" element={<PublicRoutes Component={LandingPage} />} />
           <Route path="/loginPhone" element={<Login />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/signup"  element={<PublicRoutes Component={SignUpPage} />} />
           <Route path="/personalinfo" element={<PersonalInfo />} />
           <Route path="/question1" element={<QuestionPage1 />} />
           <Route path="/question2" element={<QuestionPage2 />} />
