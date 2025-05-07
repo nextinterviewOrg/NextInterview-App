@@ -4,9 +4,9 @@ import theme from "../../../../../theme/Theme";
 export const Container = styled.div`
   display: flex;
   margin-left: 60px;
-  //   justify-content: center;
-  //   align-items: center;
-  //   padding: ${theme.spacing(2)};
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    margin-left: 0px;
+  }
 `;
 
 export const ModuleCard = styled.div`
@@ -14,15 +14,8 @@ export const ModuleCard = styled.div`
   background-color: ${theme.colors.white};
   border-radius: 8px;
   overflow: hidden;
-  //   max-width: 800px;
   align-items: flex-start;
   width: 100%;
-`;
-
-export const ModuleImage = styled.img`
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
 `;
 
 export const ModuleDetails = styled.div`
@@ -31,22 +24,14 @@ export const ModuleDetails = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  //   justify-content: space-between;
   align-items: flex-start;
+  width: 100%;
 `;
 
 export const Title = styled.h2`
   font-family: ${theme.fonts.body};
   color: ${theme.colors.text};
   font-size: 1.4rem;
-  //   margin-bottom: ${theme.spacing(1)};
-`;
-
-export const Time = styled.span`
-  font-family: ${theme.fonts.accent};
-  color: ${theme.colors.secondary};
-  font-size: 0.9rem;
-  margin-bottom: ${theme.spacing(2)};
 `;
 
 export const Button = styled.button`
@@ -59,6 +44,9 @@ export const Button = styled.button`
   cursor: pointer;
   font-size: 0.8rem;
   transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 
   &:hover {
     background-color: ${theme.colors.sidebarTextColor}10;
@@ -67,4 +55,20 @@ export const Button = styled.button`
 
 export const LinkStyled = styled.a`
   text-decoration: none;
+`;
+
+export const RevisitLinkContainer = styled.div`
+  position: absolute;
+  right: 40px;
+  bottom: 10px;
+`;
+export const ResponsiveContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: column;
+  }
 `;

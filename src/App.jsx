@@ -191,10 +191,11 @@ function App() {
             {/* <Route element={<BaseLayout />}> */}
             <Route index element={<UserDashboard />} />
             <Route path="revise" element={<QuicklyRevise />} />
-            <Route path="revise/:id" element={<QuicklyDetailed />}>
+            <Route path="reviseModule/:id" element={<QuicklyByModule />} />
+            {/* <Route path="revise/:id" element={<QuicklyDetailed />}>
               <Route index element={<Navigate to="0" />} />
               <Route path=":topic" element={<QuicklyReviseTopicDetails />} />
-            </Route>
+            </Route> */}
             <Route path="challenges" element={<UserChallenges />} />
             <Route path="home" element={<UserHome />} />
             <Route path="userProfile" element={<ProfileUser />} />

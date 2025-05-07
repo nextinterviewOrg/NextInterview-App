@@ -95,7 +95,7 @@ const QuicklyRevise = () => {
       ) : modules.length > 0 ? (
         modules.map((module) => (
           <Link
-            to={`/user/revise/${module._id}`}
+            to={`/user/reviseModule/${module._id}`}
             style={{ textDecoration: "none" }}
             key={module._id}
           >

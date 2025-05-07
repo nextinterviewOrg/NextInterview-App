@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getModuleById } from "../../../../../api/addNewModuleApi";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   ModuleCard,
@@ -8,18 +8,21 @@ import {
   Title,
   Button,
   LinkStyled,
+  RevisitLinkContainer,
+  ResponsiveContainer
 } from "./QuicklyByModule.styles";
 import { useParams } from "react-router-dom";
 import spark from "../../../../../assets/fluentsparkle.svg";
 
 import { ShimmerText, ShimmerButton } from "react-shimmer-effects";
+import theme from "../../../../../theme/Theme";
 
 const QuicklyByModule = () => {
   const [moduleData, setModuleData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const moduleId = useParams().id;
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchModuleData = async () => {
       try {
@@ -39,11 +42,8 @@ const QuicklyByModule = () => {
   if (loading) {
     return (
       <div style={{ minHeight: "100vh", width: "100%" }}>
-        {/* You can also put a flexbox or grid here to structure your skeletons */}
         <ShimmerText line={1} gap={10} />
         <ShimmerButton size="md" />
-        {/* Replicate as many placeholders as needed to match final layout */}
-        
         {[1, 2, 3].map((_, topicIndex) => (
           <div key={topicIndex} style={{ marginTop: "20px" }}>
             <ShimmerText line={1} gap={10} />
@@ -65,44 +65,34 @@ const QuicklyByModule = () => {
       </div>
     );
   }
-  
+
   if (error) return <div>{error}</div>;
 
   return (
     <Container>
       <ModuleCard>
         <ModuleDetails>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              gap: "20px",
-            }}
-          >
-            {/* Shimmer for Title during loading */}
+          <ResponsiveContainer>
             {loading ? (
               <ShimmerText line={1} gap={10} />
             ) : (
               <Title>{moduleData.moduleName}</Title>
             )}
 
-            {/* Shimmer for View Sample Button during loading */}
             {loading ? (
               <ShimmerButton size="md" />
             ) : (
-              <LinkStyled href={moduleData.interviewSampleURL} target="_blank">
-                <Button>
-                  <img src={spark} alt="start" /> View Sample Interview
-                </Button>
-              </LinkStyled>
+              // <LinkStyled href={moduleData.interviewSampleURL} target="_blank">
+              <Button onClick={() => { console.log("moduleData"); navigate(`/user/learning/${moduleId}/topic/sampleInterview`); }}>
+                <img src={spark} alt="start"  /> View Sample Interview
+              </Button>
+              // </LinkStyled>
             )}
-          </div>
+          </ResponsiveContainer>
 
-          <div>
+          <div style={{ width: "100%" }}>
             {moduleData.topicData.map((topic, topicIndex) => (
-              <div key={topicIndex}>
-                {/* Shimmer for Topic Name */}
+              <div key={topicIndex} style={{ width: "100%" }}>
                 {loading ? (
                   <ShimmerText line={10} gap={10} />
                 ) : (
@@ -117,10 +107,10 @@ const QuicklyByModule = () => {
                     style={{
                       position: "relative",
                       paddingBottom: "40px",
+                      width: "100%",
                     }}
                   >
                     <div>
-                      {/* Shimmer for Subtopic Name */}
                       {loading ? (
                         <ShimmerText line={1} gap={8} />
                       ) : (
@@ -129,7 +119,6 @@ const QuicklyByModule = () => {
                         </h4>
                       )}
 
-                      {/* Shimmer for Subtopic Summary */}
                       {loading ? (
                         <ShimmerText line={3} gap={6} />
                       ) : (
@@ -142,23 +131,19 @@ const QuicklyByModule = () => {
                       )}
                     </div>
 
-                    {/* Shimmer for Revisit Button */}
-                    {loading ? (
-                      <ShimmerButton size="sm" />
-                    ) : (
-                      <Link to={`/user/learning/${moduleId}/topic`}>
-                        <Button
+                    {!loading && (
+                      <RevisitLinkContainer>
+                        <Link
+                          to={`/user/learning/${moduleId}/topic`}
+                          state={{ topicIndex: Number(topicIndex), subtopicIndex:Number(subtopicIndex)  }}
                           style={{
-                            position: "absolute",
-                            right: "10px",
-                            bottom: "10px",
-                            width: "auto",
-                            border: "none",
+                            textDecoration: "none",
+                            color: theme.colors.bluetext,
                           }}
                         >
                           Revisit Subtopic
-                        </Button>
-                      </Link>
+                        </Link>
+                      </RevisitLinkContainer>
                     )}
                   </div>
                 ))}
@@ -171,14 +156,13 @@ const QuicklyByModule = () => {
   );
 };
 
-// Helper function to parse JSON content safely
 const parseJSONContent = (content) => {
   try {
     const parsedContent = JSON.parse(content);
-    return parsedContent; // Return parsed content if it's valid JSON
+    return parsedContent;
   } catch (error) {
     console.error("Error parsing JSON content:", error);
-    return content; // Return original content if parsing fails
+    return content;
   }
 };
 
