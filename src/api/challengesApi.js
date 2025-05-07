@@ -1,14 +1,26 @@
 import api from "../config/axiosconfig";
 
 
-export const addChallenge =async (data) => {
-    try {
-      const response =await api.post(`/userChallenges/`, data);
+export const addChallenge = async (data) => {
+  try {
+    const response = await api.post(`/userChallenges/`, data);
+    console.log("[API] Response:", JSON.stringify(response.data, null, 2));
+    console.log("[API] Sending:", JSON.stringify(data, null, 2));
+
+    
+    if (response.data && response.data.success) {
       return response.data;
-    } catch (error) {
-        console.log(error);
-        throw error;
+    } else {
+      throw new Error(response.data?.message || "Unknown server error");
     }
+  } catch (error) {
+    console.error("[API] Error details:", {
+      message: error.message,
+      response: error.response?.data,
+      stack: error.stack
+    });
+    throw error;
+  }
 }
 
 export const getChallenges =async () => {
@@ -51,7 +63,7 @@ export const getTodaysUserChallenges =async (userId) => {
     }
 }
 
-export const getAllChallengesWithUSerResults =async (userId) => {
+export const getAllChallengesWithUserResults =async (userId) => {
     try {
       const response =await api.get(`/userChallenges/all-with-results/${userId}`);
       return response.data;
