@@ -22,6 +22,7 @@ import {
 import { MdOutlineFileUpload } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 const { Option } = Select;
+import { Input, notification } from "antd";
 
 const ModuleFileUpload = () => {
   const [form] = Form.useForm();
@@ -70,6 +71,25 @@ const ModuleFileUpload = () => {
   };
 
   const handleSubmit = async (values) => {
+    if (!selectedOption) {
+     
+      notification.error({
+        message: "please select an type of file",  // Title of the notification
+        description: "Failed to upload file.",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      });
+      return;
+    }
+    if (fileList.length<=0) {
+      notification.error({
+        message: "Please upload a file",  // Title of the notification
+        description: "Failed to upload file.",  // Error message description
+        placement: "topRight",
+        duration: 3,
+      });
+      return;
+    }
     const submissionData = {
       module_code: values.moduleCode,
       topic_code: values.topicCode,
@@ -88,6 +108,7 @@ const ModuleFileUpload = () => {
           const dataSA = await uploadSkillAssessmentFile(submissionData);
           break;
         default:
+
           break;
       }
       navigate("/admin/learning");
@@ -123,7 +144,7 @@ const ModuleFileUpload = () => {
           >
             <StyledSelect
               placeholder="Select Module Code"
-              onChange={handleModuleChange} 
+              onChange={handleModuleChange}
             >
               {moduleOptions.map((option) => (
                 <Option key={option.module_code} value={option.module_code}>

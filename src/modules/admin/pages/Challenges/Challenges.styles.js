@@ -102,3 +102,16 @@ export const AddButton = styled.button`
 
 
 
+export const LoadingMessage = styled.div`
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: ${({ theme }) => theme.colors.text};
+`;
+
+export const StatusMessage = styled.div`
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: ${({ theme }) => theme.colors.text};
+`;

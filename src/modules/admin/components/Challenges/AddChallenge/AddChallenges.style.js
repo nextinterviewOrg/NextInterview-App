@@ -95,3 +95,50 @@ export const CloseButton = styled.button`
   cursor: pointer;
   font-size: 20px;
 `;
+
+export const HintButton = styled.button`
+  background-color: #007c91;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  margin: 16px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  margin:auto;
+`;
+
+export const HintContainer = styled.div`
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin:auto;
+`;
+
+export const HintItem = styled.div`
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+`;
+
+export const HintList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+`;
+
+export const RemoveHintButton = styled.button`
+  background-color: #007c91;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  margin: 16px 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  margin:auto;
+`;
