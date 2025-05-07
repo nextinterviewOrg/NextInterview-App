@@ -63,7 +63,9 @@ const QuicklyReviseTopicDetails = () => {
                                             }}
                                         ></Text>
                                     </TopicFaqContent>
-                                  <Link to={`/user/learning/${params.id}/topic`} state={{ topicIndex: Number(params.topic), subtopicIndex: index }} style={{ textDecoration: 'none' }}> <TopicFaqLink >Read more</TopicFaqLink></Link> 
+                                  <Link to={`/user/learning/${params.id}/topic`}
+                                   state={{ topicIndex: Number(params.topic), subtopicIndex: index }}
+                                    style={{ textDecoration: 'none' }}> <TopicFaqLink >Read more</TopicFaqLink></Link> 
                                 </>
                                 )}
                             </TopicFaq>
