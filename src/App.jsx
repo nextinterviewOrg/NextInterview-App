@@ -209,10 +209,10 @@ function App() {
             <Route path="userfaq" element={<UserFAQ />} />
             <Route path="subscription" element={<UserSubscription />} />
             <Route path="interview" element={<InterviewPage />} />
-            <Route path="challengeInfo" element={<NewChallenge />} />
+            <Route path="challengeInfo/:id" element={<NewChallenge />} />
             <Route path="blogs" element={<UserBlog />} />
             <Route path="real-world-scenario/:id" element={<UserBlogDisplay />} />
-            <Route path="takeChallenge" element={<CodeEditorWindow />} />
+            <Route path="takeChallenge/:id" element={<CodeEditorWindow />} />
           </Route>
           {/* <Route path="userfaq" element={<UserFAQ />} /> */}
           {/* <Route path="subscription" element={<UserSubscription />} /> */}

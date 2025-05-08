@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Editor from '@monaco-editor/react';
 import {
   Container,
@@ -21,23 +21,20 @@ const languageOptions = {
   },
 };
 
-const ReadyToCode = () => {
-  const [selectedLang, setSelectedLang] = useState('');
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
-
+const ReadyToCode = ({ selectedLang, setSelectedLang, code, setCode, output, setOutput }) => {
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectedLang(lang);
     setCode(languageOptions[lang].defaultCode);
     setOutput('');
   };
+
   const runCode = async () => {
     if (!selectedLang || !code) {
       setOutput('Please select a language and write some code.');
       return;
     }
-  
+
     const payload = {
       language: selectedLang,
       files: [
@@ -47,20 +44,20 @@ const ReadyToCode = () => {
         },
       ],
     };
-  
+
     try {
       const res = await fetch('https://onecompiler-apis.p.rapidapi.com/api/v1/run', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-rapidapi-key': "e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c",
+          'x-rapidapi-key': 'e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c',
           'x-rapidapi-host': 'onecompiler-apis.p.rapidapi.com',
         },
         body: JSON.stringify(payload),
       });
-  
+
       const result = await res.json();
-  
+
       if (result.status === 'success') {
         setOutput(result.stdout || result.stderr || 'No output');
       } else {
@@ -70,7 +67,7 @@ const ReadyToCode = () => {
       setOutput('Request failed: ' + err.message);
     }
   };
-  
+
   return (
     <Container>
       <CodeBox>

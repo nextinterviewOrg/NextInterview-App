@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Wrapper,
   Image,
@@ -13,45 +13,35 @@ import {
   Status,
 } from "./PastChallenge.styles";
 import quicklyimage from "../../assets/quicklyimage.png";
+import { getAllChallengesWithUserResults } from "../../../../api/challengesApi"; // adjust path
+import { format } from "date-fns"; // optional: for better date formatting
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../api/userApi";
+const PastChallenge = ({ userId }) => {
+  const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+const { user} = useUser();
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const userData = await getUserByClerkId(user.id);
+        const userId = userData.data.user._id;
 
 
-const challenges = [
-  {
-    id: 120,
-    date: "19 Nov 2024",
-    status: "Completed",
-    title: "Predicting Customer Churn in a ghg Subscription–Based Business",
-    description:
-      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
-  },
-  {
-    id: 119,
-    date: "19 Nov 2024",
-    status: "Missed",
-    title: "Predicting Customer Churn in a Subscription–Based Business",
-    description:
-      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
-  },
-  {
-    id: 118,
-    date: "19 Nov 2024",
-    status: "Completed",
-    title: "Predicting Customer Churn in a Subscription–Based Business",
-    description:
-      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
-  },
-  {
-    id: 117,
-    date: "19 Nov 2024",
-    status: "Completed",
-    title: "Predicting Customer Churn in a Subscription–Based Business",
-    description:
-      "You are given a dataset from a subscription-based business that includes customer demographics, subscription details, usage patterns, and past customer interactions. The goal is to predict whether a customer is likely to churn (cancel their subscription) within the next three months.",
-  },
-];
+        const response = await getAllChallengesWithUserResults(userId);
+        setChallenges(response.data); // access `data` from API
+      } catch (error) {
+        console.error("Failed to fetch past challenges:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
+    fetchChallenges();
+  }, [userId]);
 
-const PastChallenge = () => {
+  if (loading) return <div>Loading past challenges...</div>;
+
   return (
     <Wrapper>
       <Title>Past Challenges</Title>
@@ -62,15 +52,24 @@ const PastChallenge = () => {
           <Text>No any past challenges</Text>
         </div>
       ) : (
-        challenges.map((challenge) => (
-          <ChallengeItem key={challenge.id}>
-            <ChallengeNumber>#{challenge.id}</ChallengeNumber>
+        challenges.map((challenge, index) => (
+          <ChallengeItem key={challenge.challengeId}>
+            {/* <ChallengeNumber>#{index + 1}</ChallengeNumber> */}
+            {/* //newly added challenges should come first in the list */}
+             <ChallengeNumber>#{challenges.length - index}</ChallengeNumber>
             <ChallengeDetails>
-              <ChallengeDate>{challenge.date}</ChallengeDate>
-              <ChallengeTitle>{challenge.title}</ChallengeTitle>
+              <ChallengeDate>
+                {challenge.lastAttempted
+                  ? format(new Date(challenge.lastAttempted), "dd MMM yyyy")
+                  : "Not Attempted"}
+              </ChallengeDate>
+             
+              <ChallengeTitle>{challenge.questionText}</ChallengeTitle>
               <ChallengeDescription>{challenge.description}</ChallengeDescription>
             </ChallengeDetails>
-            <Status status={challenge.status}>{challenge.status}</Status>
+            <Status status={challenge.userStatus === "attempted" ? "Completed" : "Missed"}>
+              {challenge.userStatus === "attempted" ? "Completed" : "Missed"}
+            </Status>
           </ChallengeItem>
         ))
       )}

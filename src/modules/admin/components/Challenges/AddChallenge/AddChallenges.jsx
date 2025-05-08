@@ -14,11 +14,23 @@ import {
   HintContainer,
   HintList,
   HintItem,
-  RemoveHintButton
+  RemoveHintButton,
+  RunCodeButton
 } from '../AddChallenge/AddChallenges.style';
 import { FiX } from 'react-icons/fi';
-import { addChallenge } from '../../../../../api/challengesApi'; // Ensure this path is correct
-import { Form } from 'react-router-dom';
+import { addChallenge } from '../../../../../api/challengesApi';
+import Editor from '@monaco-editor/react';
+
+const languageOptions = {
+  python: {
+    filename: 'index.py',
+    defaultCode: `# Write your code here\n# Use input() to read input if needed\nprint("Hello World")`
+  },
+  mysql: {
+    filename: 'main.sql',
+    defaultCode: `-- Write your SQL query here\nSELECT 'Hello World';`
+  },
+};
 
 const AddChallenge = ({ onClose, onChallengeAdded }) => {
   const [formData, setFormData] = useState({
@@ -36,7 +48,9 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
     explanation: ''
   });
 
+  const [code, setCode] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
@@ -77,32 +91,72 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
     }));
   };
 
+  const runCode = async () => {
+    if (!formData.programming_language || !code) {
+      setError('Please select a language and write some code.');
+      return;
+    }
+
+    setIsRunning(true);
+    setError(null);
+
+    const language = formData.programming_language.toLowerCase();
+    const payload = {
+      language,
+      files: [
+        {
+          name: languageOptions[language].filename,
+          content: code,
+        },
+      ],
+      stdin: formData.input // Pass the sample input as stdin
+    };
+
+    try {
+      const res = await fetch('https://onecompiler-apis.p.rapidapi.com/api/v1/run', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-rapidapi-key': 'e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c',
+          'x-rapidapi-host': 'onecompiler-apis.p.rapidapi.com',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await res.json();
+
+      if (result.status === 'success') {
+        const output = result.stdout || result.stderr || 'No output';
+        setFormData(prev => ({
+          ...prev,
+          output: output.trim() // Auto-populate the output field
+        }));
+      } else {
+        setError('Execution error: ' + (result.exception || 'Unknown error'));
+      }
+    } catch (err) {
+      setError('Request failed: ' + err.message);
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
-    console.log("[1] Form submission started");
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    console.log("[2] State reset complete");
   
-    const requiredFields = ['programming_language', 'QuestionText', 'description'];
+    const requiredFields = ['programming_language', 'QuestionText', 'description', 'output'];
     const missingFields = requiredFields.filter(field => !formData[field].trim());
-    console.log("[3] Missing fields check:", missingFields);
   
     if (missingFields.length > 0) {
-      console.log("[4] Validation failed - missing fields");
       setError(`Missing required fields: ${missingFields.join(', ')}`);
       return;
     }
   
     setIsSubmitting(true);
-    console.log("[5] isSubmitting set to true");
   
     try {
-      console.log("[6] Preparing API payload:", JSON.stringify({
-        ...formData,
-        hints: formData.hints
-      }, null, 2));
-  
       const response = await addChallenge({
         ...formData,
         hints: formData.hints.map(hint => ({
@@ -111,32 +165,25 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         }))
       });
       
-      console.log("[7] API Response:", response);
-  
       if (response.success) {
-        console.log("[8] Success case");
         setSuccess('Challenge added successfully!');
         onChallengeAdded(response.data);
         setTimeout(() => {
-          console.log("[9] Closing modal");
           onClose();
         }, 1500);
       } else {
-        console.log("[10] API returned failure");
         throw new Error(response.message || "Failed to save challenge");
       }
     } catch (err) {
-      console.error("[11] Error caught:", err);
       setError(err.message || "Failed to save challenge. Please try again.");
     } finally {
-      console.log("[12] Final cleanup");
       setIsSubmitting(false);
     }
   };
 
   return (
     <ModalOverlay>
-      <FormContainer >
+      <FormContainer>
         <CloseButton onClick={onClose} type="button">
           <FiX size={20} />
         </CloseButton>
@@ -157,7 +204,6 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
             <option value="">Select Language</option>
             <option value="Python">Python</option>
             <option value="MySQL">MySQL</option>
-            
           </FormSelect>
         </FormGroup>
 
@@ -199,6 +245,23 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         </FormGroup>
 
         <FormGroup>
+          <FormLabel>Code Editor</FormLabel>
+          <div style={{ border: '1px solid #ccc', borderRadius: '4px', marginBottom: '10px' }}>
+            <Editor
+              height="200px"
+              language={formData.programming_language.toLowerCase()}
+              value={code}
+              onChange={setCode}
+              theme="vs-light"
+              options={{
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false
+              }}
+            />
+          </div>
+        </FormGroup>
+
+        <FormGroup>
           <FormLabel>Sample Input</FormLabel>
           <FormTextArea
             name="input"
@@ -209,14 +272,19 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
           />
         </FormGroup>
 
+        <RunCodeButton type="button" onClick={runCode} disabled={isRunning}>
+          {isRunning ? 'Running...' : 'Run Code'}
+        </RunCodeButton>
+
         <FormGroup>
-          <FormLabel>Expected Output</FormLabel>
+          <FormLabel>Expected Output *</FormLabel>
           <FormTextArea
             name="output"
             value={formData.output}
             onChange={handleChange}
-            placeholder="Enter expected output"
+            placeholder="Output will appear here after running the code"
             rows={3}
+            required
           />
         </FormGroup>
 
@@ -265,12 +333,10 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         </FormGroup>
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-          <CloseButton type="button" onClick={onClose} secondary>
-         
+          <CloseButton type="button" onClick={onClose}>
+            Cancel
           </CloseButton>
-          <SaveButton type="submit"
-           disabled={isSubmitting} 
-           onClick={handleSubmit}>
+          <SaveButton type="submit" disabled={isSubmitting} onClick={handleSubmit}>
             {isSubmitting ? 'Saving...' : 'Save Challenge'}
           </SaveButton>
         </div>

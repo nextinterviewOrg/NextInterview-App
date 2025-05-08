@@ -1,18 +1,17 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import amazon from "../../../../assets/Avatar.svg";
 import flipkart from "../../../../assets/PersonPhoto.svg";
 import google from "../../../../assets/image.svg";
 import { useNavigate } from "react-router-dom";
+import { getTodaysUserChallenges } from "../../../../api/challengesApi";
 
 const Card = styled.div`
   background-color: ${(props) => props.theme.colors.light};
-  //   border: 1px solid ${(props) => props.theme.colors.borderblue};
   border-radius: 12px;
   padding: ${(props) => props.theme.spacing(2)};
   box-shadow: 0 8px 12px #7090b018;
   font-family: ${(props) => props.theme.fonts.body};
-  // margin-left: 60px;
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -80,6 +79,7 @@ const Button = styled.button`
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;
+  border:1px solid ${(props) => props.theme.colors.secondary};
 
   @media (max-width: 768px) {
     font-size: 12px;
@@ -113,7 +113,6 @@ export const Icons = styled.div`
 `;
 
 export const MarginButton = styled.div`
-  /* margin-bottom: ${(props) => props.theme.spacing(3)}; */
   display: flex;
   justify-content: space-between;
   align-items: center;  
@@ -130,83 +129,142 @@ const PreviouslyAsked = styled.div`
   text-align: right;
 `;
 
-const TakeChallenge = () => {
-  const navigate = useNavigate();
-  const iconList = [
-    { src: amazon, alt: "" },
-    { src: flipkart, alt: "" },
-    { src: google, alt: "" },
-  ];
-  const handleClick = () => {
-    navigate("/user/takeChallenge");
-  };
-  return (
-    <Card>
-      <small
-        style={{
-          color: "#2390ac",
-          fontWeight: "bold",
-          backgroundColor: "#f0f8f1",
-          borderRadius: "4px",
-          padding: "3px 5px",
-          fontSize: "0.7rem",
-        }}
-      >
-        #Today's Challenge 123
-      </small>
-      <ChallengeTitle>
-        Predicting Customer Churn in a Subscription-Based Business
-      </ChallengeTitle>
-      <ChallengeSubtitle>
-        You are given a dataset from a subscription-based business that includes
-        customer demographics, subscription details, usage patterns, and past
-        customer interactions. The goal is to predict whether a customer is
-        likely to churn (cancel their subscription) within the next three
-        months.
-      </ChallengeSubtitle>
-      <Tags>
-        <Tag>Topic 1</Tag>
-        <Tag>Topic 2</Tag>
-        <Tag>Topic 3</Tag>
-        <Tag>Topic 4</Tag>
-      </Tags>
-      <MarginButton>
-        <Buttons>
-          {/* <Button
-            onClick={handleClick}
-            primary
-            style={{
-              color: "#fff",
-            }}
-          >
-            Take Challenge
-          </Button> */}
-          <Button
-            style={{
-              color: "#2390ac",
-            }}
-            onClick={() => navigate("/user/challengeInfo")}
-          >
-            Challenge Info
-          </Button>
-        </Buttons>
-        {/* <Icons>
-          <div className="icons-container">
-            <span>Previously Asked In</span>
+const StatusBadge = styled.span`
+  color: ${props => 
+    props.status === 'completed' ? '#2ecc71' : 
+    props.status === 'attempted' ? '#f39c12' : '#e74c3c'};
+  font-weight: bold;
+  background-color: ${props => 
+    props.status === 'completed' ? '#e8f8f0' : 
+    props.status === 'attempted' ? '#fef5e6' : '#fdedec'};
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  margin-left: 10px;
+`;
 
-            {iconList.map((icon, index) => (
-              <img
-                key={index}
-                src={icon.src}
-                alt={icon.alt}
-                style={{ right: `${index * 10}px` }} // Adjust overlap dynamically
-              />
-            ))}
+const ErrorMessage = styled.div`
+  color: #e74c3c;
+  background-color: #fdedec;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px solid #ef9a9a;
+`;
+
+const LoadingMessage = styled.div`
+  color: #3498db;
+  background-color: #e3f2fd;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+  border: 1px solid #bbdefb;
+`;
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../api/userApi";const TakeChallenge = () => {
+  const navigate = useNavigate();
+  const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const { user, isLoaded } = useUser();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // 1. Get user data
+        const userResponse = await getUserByClerkId(user.id);
+        if (!userResponse?.data?.user?._id) {
+          throw new Error("Failed to get user ID");
+        }
+        
+        // 2. Get challenges
+        const challengesResponse = await getTodaysUserChallenges(userResponse.data.user._id);
+        const challengesArray = challengesResponse?.data;
+        
+        if (Array.isArray(challengesArray)) {
+          // Filter out completed challenges
+          const filteredChallenges = challengesArray.filter(
+            challenge => challenge.userStatus !== 'answered'
+          );
+          setChallenges(filteredChallenges);
+        } else {
+          throw new Error("Invalid challenges data format");
+        }
+        
+      } catch (err) {
+        console.error("API Error:", err);
+        setError(err.response?.data?.message || err.message || "Failed to load data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user, isLoaded]);
+
+  // ... (keep all your loading/error states as they are)
+
+  if (challenges.length === 0) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center", color: "#7f8c8d" }}>
+        {loading ? "Loading..." : "No challenges available for today. Check back tomorrow!"}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {challenges.map((challenge) => (
+        <Card key={challenge._id}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <small style={badgeStyle}>
+              #Today's Challenge
+            </small>
+            {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
+              {challenge.userStatus === 'completed' ? 'Completed' : 
+               challenge.userStatus === 'attempted' ? 'Attempted' : 'Not Attempted'}
+            </StatusBadge> */}
           </div>
-        </Icons> */}
-      </MarginButton>
-    </Card>
+          
+          <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
+          <ChallengeSubtitle>{challenge.description}</ChallengeSubtitle>
+          
+          <Tags>
+            <Tag>{challenge.programming_language}</Tag>
+            <Tag>{challenge.difficulty}</Tag>
+            {challenge.tags?.map((tag, index) => (
+              <Tag key={index}>{tag}</Tag>
+            ))}
+          </Tags>
+          
+          <MarginButton>
+            <Buttons>
+              <Button
+                secondary
+                onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
+              >
+                Challenge Info
+              </Button>
+            </Buttons>
+          </MarginButton>
+        </Card>
+      ))}
+    </>
   );
+};
+
+const badgeStyle = {
+  color: "#2390ac",
+  fontWeight: "bold",
+  backgroundColor: "#f0f8f1",
+  borderRadius: "4px",
+  padding: "3px 5px",
+  fontSize: "0.7rem",
 };
 
 export default TakeChallenge;

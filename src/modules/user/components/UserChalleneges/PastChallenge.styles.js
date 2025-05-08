@@ -88,7 +88,7 @@ display: flex;
   font-size: 0.85rem;
   color: #1A1C1E99;
   background-color: #f5f5f5;
-  width: 80px;
+  width: 100px;
   font-weight: 400;
   font-size: 12px;
 `;
