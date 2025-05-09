@@ -110,9 +110,9 @@ function App() {
           <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
           <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
           <Route path="/" element={<PublicRoutes Component={LandingPage} />} />
-          <Route path="/loginPhone" element={<Login />} />
+          <Route path="/loginPhone" element={<PublicRoutes Component={Login}  />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
-          <Route path="/signup"  element={<PublicRoutes Component={SignUpPage} />} />
+          <Route path="/signup" element={<PublicRoutes Component={SignUpPage} />} />
           <Route path="/personalinfo" element={<PersonalInfo />} />
           <Route path="/question1" element={<QuestionPage1 />} />
           <Route path="/question2" element={<QuestionPage2 />} />
@@ -181,7 +181,7 @@ function App() {
             <Route path="user-feedback" element={<UserFeedbackDisplay />} />
             <Route path="editquestionmodule" element={<EditQuestionModule />} />
             <Route path="settingspage" element={<SettingsPage />} />
-            
+
             {/* </Route> */}
           </Route>
           <Route

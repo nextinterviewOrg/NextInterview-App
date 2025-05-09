@@ -198,7 +198,10 @@ export default function ModuleSidebar({
         sidebarOpen={sidebarOpen}
       >
         <div className="logo">
-          <img src={Logo} alt="logo" />
+          <Link to={`/user/learning/${moduleId}/`}>
+            <img src={Logo} alt="logo" />
+          </Link>
+
         </div>
 
         {/* Progress Bar Section */}
