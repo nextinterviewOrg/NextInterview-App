@@ -21,28 +21,27 @@ const languageOptions = {
   },
 };
 
-const ReadyToCode = () => {
-  const [selectedLang, setSelectedLang] = useState('');
-  const [code, setCode] = useState('');
-  const [output, setOutput] = useState('');
+const ReadyToCode = ({selectLang, setSelectLang, output, setOutput, showCodeEditor, code, setCode}) => {
+
+
 
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
-    setSelectedLang(lang);
+    setSelectLang(lang);
     setCode(languageOptions[lang].defaultCode);
     setOutput('');
   };
   const runCode = async () => {
-    if (!selectedLang || !code) {
+    if (!selectLang || !code) {
       setOutput('Please select a language and write some code.');
       return;
     }
   
     const payload = {
-      language: selectedLang,
+      language: selectLang,
       files: [
         {
-          name: languageOptions[selectedLang].filename,
+          name: languageOptions[selectLang].filename,
           content: code,
         },
       ],
@@ -72,17 +71,17 @@ const ReadyToCode = () => {
   };
   
   return (
-    <Container>
+    <Container isCodeEditorVisible={showCodeEditor}>
       <CodeBox>
         <Editor
           height="300px"
-          language={selectedLang || 'plaintext'}
+          language={selectLang || 'plaintext'}
           value={code}
           onChange={(value) => setCode(value || '')}
           theme="vs-light"
         />
         <Buttons>
-          <LanguageSelect value={selectedLang} onChange={handleLanguageChange}>
+          <LanguageSelect value={selectLang} onChange={handleLanguageChange}>
             <option value="">Select Language</option>
             {Object.keys(languageOptions).map((lang) => (
               <option key={lang} value={lang}>

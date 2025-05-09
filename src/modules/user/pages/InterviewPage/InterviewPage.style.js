@@ -36,6 +36,7 @@ export const Container = styled.div`
 
   @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, 1fr);
+    margin-left: 0px;
   }
   @media (max-width: ${theme.breakpoints.mobile}) {
     grid-template-columns: repeat(1, 1fr);

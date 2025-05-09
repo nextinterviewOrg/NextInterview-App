@@ -175,6 +175,8 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if(path.includes("challenges")) return "Challenges";
       if(path.includes("subscription")) return "Subscription";
       if (path.includes("questionbank")) return "Question Bank"; // Add this line
+      if (path.includes("interview")) return "Mock Interview";
+ 
       // Add more routes as needed
       return "Dashboard"; // Default title
     };

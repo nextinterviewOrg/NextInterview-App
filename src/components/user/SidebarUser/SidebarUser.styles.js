@@ -93,7 +93,88 @@ export const SideBarwrapper = styled.div`
     @media (max-width: 768px) {
       display: block;
     }
+  }.mock-card {
+    background: linear-gradient(to bottom, #2290ac, #68c184);
+    border-radius: 16px;
+    padding: 10px;
+    text-align: center;
+    width: 200px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 65%;
+    color: white;
+    font-family: Arial, sans-serif;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+    left: 10px;
   }
+ 
+  .mock-card-icon {
+    background: linear-gradient(to bottom, #2290ac, #68c184);
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -40px auto 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border: 5px solid white;
+    font-size: 40px;
+  }
+ 
+  .mock-card-icon.collapsed{
+  background: linear-gradient(to bottom, #2290ac, #68c184);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  color: white;
+   position: absolute;
+  top: 60%;
+  left: 10px;
+}
+ 
+  .mock-card-icon img {
+    width: 40px;
+    height: 40px;
+  }
+ 
+  .mock-card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+ 
+  .mock-card-description {
+    font-size: 14px;
+    margin: 10px 0;
+    color: rgba(255, 255, 255, 0.9);
+  }
+ 
+  .mock-card-button {
+    background: white;
+    color: #68c184;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background 0.3s ease;
+  }
+ 
+  .mock-card-button:hover {
+    background: #ccc;
+  }
+
+
 `;
 
 export const ContentWrapper = styled.div`
