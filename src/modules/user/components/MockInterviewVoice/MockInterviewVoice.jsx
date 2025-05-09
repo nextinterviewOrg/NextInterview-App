@@ -14,6 +14,8 @@ import {
   Profile,
   Sendicon,
   SendButton,
+  InputTab,
+  Tab,
 } from "./MockInterviewVoice.style";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -28,6 +30,7 @@ import {
   speechToText,
 } from "../../../../api/aiMockInterviewApi";
 import { getUserByClerkId } from "../../../../api/userApi";
+import ReadyToCode from "../../components/Compiler/ReadyToCode";
 
 const EXTERNAL_API_BASE = "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
 
@@ -47,6 +50,10 @@ const MockInterview = () => {
   const [clarificationMode, setClarificationMode] = useState(false);
   const [questionCount, setQuestionCount] = useState(1);
   const [feedback, setFeedback] = useState(null);
+  const [code, setCode] = useState("");
+  const [selectLang, setSelectLang] = useState("python");
+  const [output, setOutput] = useState("");
+  const [showCodeEditor, setShowCodeEditor] = useState(false);
 
   const session_id = location.state?.session_id;
   const initialQuestion = location.state?.question;
@@ -276,11 +283,15 @@ const MockInterview = () => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between" }}>
+    <div>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <HeaderWithLogo />
-        <h2 style={{ margin: "2% 0 0 10%" }}>MOCK INTERVIEW</h2>
+        <h2 style={{ margin: "0" }}>MOCK INTERVIEW</h2>
         <UserHeader />
       </div>
+      </div>
+      <div style={{ display:"flex", height:"calc(100vh - 108px)"}}>
+      <div style ={{width: showCodeEditor ? "60%" : "100%", transsition: "width 0.3s", overflowY:"auto"}}>
       <Container>
         <Header>
           <TimerBtn isRunning={isRunning}>
@@ -330,12 +341,14 @@ const MockInterview = () => {
         <InputBox>
           {isRecording ? (
             <>
+            <InputTab>
+            <Tab>
               <Sendicon
                 onClick={() => {
                   handleStopRecording();
                 }}
                 disabled={!isRecording}
-                style={{ display: !isRecording ? "none" : "block" }}
+                // style={{ display: !isRecording ? "none" : "block" }}
               >
                 Listening
                 <BiSolidMicrophone
@@ -343,27 +356,50 @@ const MockInterview = () => {
                   className="inputmic"
                 />
               </Sendicon>
+              </Tab>
               <SendButton>Ready to code</SendButton>
+              </InputTab>
             </>
           ) : (
             <>
+            <InputTab>
+            <Tab>
               <Sendicon
                 onClick={() => {
                   startRecording();
                 }}
                 disabled={isRecording}
-                style={{ display: isRecording ? "none" : "block" }}
+                // style={{ display: isRecording ? "none" : "block" }}
               >
                 <BiSolidMicrophone
                   style={{ fontSize: "32px" }}
                   className="inputmic"
                 />
               </Sendicon>
-              <SendButton>Ready to code</SendButton>
+              </Tab>
+              <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>Ready to code</SendButton>
+              </InputTab>
             </>
           )}
         </InputBox>
       </Container>
+      </div>
+
+      {showCodeEditor && (
+        <div style={{width: "40%", height: "100%"}}>
+          <ReadyToCode
+          code={code}
+          setCode={setCode}
+          selectLang={selectLang}
+          setSelectLang={setSelectLang}
+          output={output}
+          setOutput={setOutput}
+          showCodeEditor={showCodeEditor}
+          />
+          
+        </div>
+      )}
+       </div>
     </>
   );
 };

@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 96vw;
+  //width: 96vw;
   border: 2px solid #ccc;
   border-radius: 8px;
-  margin: 0px 30px 20px 30px;
+  margin: 0px 30px 0px 30px;
   overflow: hidden; 
   display: flex;
   flex-direction: column;
-  height: 87vh;
+  height: 85vh;
 `;
 
 export const Header = styled.div`
@@ -168,6 +168,7 @@ export const InputBox = styled.div`
   align-items: center;
   padding: 15px;
   background: #ffffff;
+  position: relative;
   // gap: 10px;
   // margin-top: 20%;
   gap: 40%;
@@ -188,6 +189,20 @@ export const Input = styled.input`
   }
 `;
 
+export const InputTab = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position:relative;
+`;
+export const Tab = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position:relative;
+`;
 export const Sendicon = styled.div`
    padding: 10px;
   display: flex;
@@ -199,7 +214,7 @@ export const Sendicon = styled.div`
   background: white; 
   position: relative; 
   cursor: pointer;
-  margin-left: 48%;
+  // margin-left: 48%;
   
   &::before {
     content: "";
@@ -230,8 +245,9 @@ export const SendButton = styled.button`
   font-size: 16px;
   width: 10%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   text-align: center;
+  display: ${({show}) => (show ? "none" : "block")};
 
   &:hover {
     background: #2290AC;
