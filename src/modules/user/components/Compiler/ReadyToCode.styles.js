@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 2rem;
-  width: 80%;
+  width: 60%;
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 `;
 
@@ -12,7 +12,7 @@ export const CodeBox = styled.div`
 
 export const RunButton = styled.button`
   padding: 10px 16px;
-  background-color: #007bff;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   border: none;
   border-radius: 5px;

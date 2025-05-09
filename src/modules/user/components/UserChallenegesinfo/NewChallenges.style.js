@@ -132,3 +132,25 @@ export const Icons = styled.div`
     }
   }
 `;
+
+
+export const Tags = styled.div`
+  display: flex;
+  gap: ${(props) => props.theme.spacing(1)};
+  margin-bottom: ${(props) => props.theme.spacing(3)};
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
+`;
+
+// export const Tag = styled.span`
+//   background-color: ${(props) => props.theme.colors.backgray};
+//   color: ${(props) => props.theme.colors.borderblue};
+//   padding: ${(props) => props.theme.spacing(0.2)}
+//     ${(props) => props.theme.spacing(1)};
+//   border-radius: 4px;
+//   font-size: 11px;
+//   @media (max-width: 768px) {
+//     font-size: 9px;
+//   }
+// `;
