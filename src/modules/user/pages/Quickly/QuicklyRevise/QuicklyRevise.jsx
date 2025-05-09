@@ -11,7 +11,7 @@ import { ShimmerThumbnail } from "react-shimmer-effects";
 import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
-import { getcompletedModuleByUser, getUserProgress } from "../../../../../api/userProgressApi";
+import { getcompletedModuleByUser, getcompletedOngoingModuleByUser, getUserProgress } from "../../../../../api/userProgressApi";
 import Lottie from "lottie-react";
 import dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json";
 
@@ -26,7 +26,7 @@ const QuicklyRevise = () => {
       try {
         console.log("user", user);
         const userData = await getUserByClerkId(user.id);
-        const userProgress = await getcompletedModuleByUser(userData.data.user._id);
+        const userProgress = await getcompletedOngoingModuleByUser(userData.data.user._id);
         console.log("userProgress", userProgress);
         const completedModules = userProgress.data.map((item) => item.moduleId);
         let allModules = await Promise.all(completedModules.map(async (id) => {
@@ -95,7 +95,7 @@ const QuicklyRevise = () => {
       ) : modules.length > 0 ? (
         modules.map((module) => (
           <Link
-            to={`/user/revise/${module._id}`}
+            to={`/user/reviseModule/${module._id}`}
             style={{ textDecoration: "none" }}
             key={module._id}
           >

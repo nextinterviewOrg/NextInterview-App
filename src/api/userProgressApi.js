@@ -176,3 +176,32 @@ export const getAllTopicsCompletionStatus = async (userId, moduleCode) => {
         throw error;
     }
 };
+export const getcompletedOngoingModuleByUser = async (userId) => {
+    try {
+        const response = await api.get(`/userProgress/get/moduleOngoingCompleted/${userId}`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getcompletedOngoingModuleTopicByUser = async (userId, moduleCode) => {
+    try {
+        const response = await api.get(`/userProgress/get/ongoingComletedTopic/${userId}/${moduleCode}`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getcompletedOngoingModuleSubTopicByUser = async (userId, moduleCode) => {
+    try {
+        const response = await api.get(`/userProgress/get/ongoingComletedSubtopic/${userId}/${moduleCode}`); 
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

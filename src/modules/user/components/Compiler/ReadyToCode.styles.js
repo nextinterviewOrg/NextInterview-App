@@ -12,7 +12,7 @@ export const CodeBox = styled.div`
 
 export const RunButton = styled.button`
   padding: 10px 16px;
-  background-color: #007bff;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   border: none;
   border-radius: 5px;

@@ -1,69 +1,79 @@
-import React from "react";
-import styled from "styled-components";
+import React, { useEffect, useState } from "react";
+import {
+  Wrapper,
+  Image,
+  Text,
+  Title,
+  ChallengeItem,
+  ChallengeNumber,
+  ChallengeDetails,
+  ChallengeTitle,
+  ChallengeDate,
+  ChallengeDescription,
+  Status,
+} from "./PastChallenge.styles";
 import quicklyimage from "../../assets/quicklyimage.png";
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-//   height: 100vh; /* Full screen height */
-  background-color: ${(props) => props.theme.colors.light}; /* Using theme color */
+import { getAllChallengesWithUserResults } from "../../../../api/challengesApi"; // adjust path
+import { format } from "date-fns"; // optional: for better date formatting
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../api/userApi";
+const PastChallenge = ({ userId }) => {
+  const [challenges, setChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+const { user} = useUser();
+  useEffect(() => {
+    const fetchChallenges = async () => {
+      try {
+        const userData = await getUserByClerkId(user.id);
+        const userId = userData.data.user._id;
 
-  @media (max-width: 768px) {
-    margin-left: 0;
-  }
-`;
 
-const Image = styled.img`
-//   max-width: 400px;
-  margin-bottom: ${(props) => props.theme.spacing(3)};
-  @media (max-width: 768px) {
-    max-width: 300px;
-  }
-`;
+        const response = await getAllChallengesWithUserResults(userId);
+        setChallenges(response.data); // access `data` from API
+      } catch (error) {
+        console.error("Failed to fetch past challenges:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-const Text = styled.p`
-  font-family: ${(props) => props.theme.fonts.body};
-  font-size: 1rem;
-  color: ${(props) => props.theme.colors.textgray};
-  @media (max-width: 768px) {
-    font-size: 0.8rem;
-  }
-`;
+    fetchChallenges();
+  }, [userId]);
 
-const Title = styled.h2`
-  font-family: ${(props) => props.theme.fonts.body};
-  color: ${(props) => props.theme.colors.text};
-  font-size: 1.2rem;
-  margin: ${(props) => props.theme.spacing(1)} 0;
-  margin-left: 10px;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  margin-top:${(props) => props.theme.spacing(3)};
+  if (loading) return <div>Loading past challenges...</div>;
 
-  @media (max-width: 768px) {
-    font-size: 1.2rem;
-    margin-left: 10px;
-  }
-`;
-
-const PastChallenge = () => {
   return (
-    <div>
-    <Title>Past Challenges</Title>
-    <Container>
-       
-      <Image src={quicklyimage}
-      style={{ width: "30%", height: "30%" }} />
-       
-     
-       
-      <Text>No any past challenges</Text>
-    </Container>
-    </div>
+    <Wrapper>
+      <Title>Past Challenges</Title>
+
+      {challenges.length === 0 ? (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+          <Image src={quicklyimage} alt="No any past challenges" />
+          <Text>No any past challenges</Text>
+        </div>
+      ) : (
+        challenges.map((challenge, index) => (
+          <ChallengeItem key={challenge.challengeId}>
+            {/* <ChallengeNumber>#{index + 1}</ChallengeNumber> */}
+            {/* //newly added challenges should come first in the list */}
+             <ChallengeNumber>#{challenges.length - index}</ChallengeNumber>
+            <ChallengeDetails>
+              <ChallengeDate>
+                {challenge.lastAttempted
+                  ? format(new Date(challenge.lastAttempted), "dd MMM yyyy")
+                  : "Not Attempted"}
+              </ChallengeDate>
+             
+              <ChallengeTitle>{challenge.questionText}</ChallengeTitle>
+              <ChallengeDescription>{challenge.description}</ChallengeDescription>
+            </ChallengeDetails>
+            <Status status={challenge.userStatus === "attempted" ? "Completed" : "Missed"}>
+              {challenge.userStatus === "attempted" ? "Completed" : "Missed"}
+            </Status>
+          </ChallengeItem>
+        ))
+      )}
+    </Wrapper>
   );
 };
 

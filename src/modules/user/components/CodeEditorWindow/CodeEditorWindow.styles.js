@@ -23,7 +23,7 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
-  width: 100%;
+  width: 60%;
 `;
  
 export const EditorContainer = styled.div`
@@ -64,7 +64,7 @@ export const BackIcon = styled.div`
  
 export const Button = styled.button`
   padding: 10px 16px;
-  background-color: #007bff;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   border: none;
   border-radius: 5px;

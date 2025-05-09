@@ -111,9 +111,9 @@ function App() {
           <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
           <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
           <Route path="/" element={<PublicRoutes Component={LandingPage} />} />
-          <Route path="/loginPhone" element={<Login />} />
+          <Route path="/loginPhone" element={<PublicRoutes Component={Login}  />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/signup" element={<PublicRoutes Component={SignUpPage} />} />
           <Route path="/personalinfo" element={<PersonalInfo />} />
           <Route path="/question1" element={<QuestionPage1 />} />
           <Route path="/question2" element={<QuestionPage2 />} />
@@ -182,7 +182,7 @@ function App() {
             <Route path="user-feedback" element={<UserFeedbackDisplay />} />
             <Route path="editquestionmodule" element={<EditQuestionModule />} />
             <Route path="settingspage" element={<SettingsPage />} />
-            
+
             {/* </Route> */}
           </Route>
           <Route
@@ -192,10 +192,11 @@ function App() {
             {/* <Route element={<BaseLayout />}> */}
             <Route index element={<UserDashboard />} />
             <Route path="revise" element={<QuicklyRevise />} />
-            <Route path="revise/:id" element={<QuicklyDetailed />}>
+            <Route path="reviseModule/:id" element={<QuicklyByModule />} />
+            {/* <Route path="revise/:id" element={<QuicklyDetailed />}>
               <Route index element={<Navigate to="0" />} />
               <Route path=":topic" element={<QuicklyReviseTopicDetails />} />
-            </Route>
+            </Route> */}
             <Route path="challenges" element={<UserChallenges />} />
             <Route path="home" element={<UserHome />} />
             <Route path="userProfile" element={<ProfileUser />} />
@@ -209,7 +210,7 @@ function App() {
             <Route path="userfaq" element={<UserFAQ />} />
             <Route path="subscription" element={<UserSubscription />} />
             <Route path="interview" element={<InterviewPage />} />
-            <Route path="challengeInfo" element={<NewChallenge />} />
+            <Route path="challengeInfo/:id" element={<NewChallenge />} />
             <Route path="blogs" element={<UserBlog />} />
             <Route path="real-world-scenario/:id" element={<UserBlogDisplay />} />
             <Route path="takeChallenge" element={<CodeEditorWindow />} />

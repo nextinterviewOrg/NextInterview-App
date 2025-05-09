@@ -1,253 +1,172 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import uploadicon from "../../../../assets/Upload icon.png";
-import { FaFileWord, FaFileExcel, FaFile } from "react-icons/fa";
+import React, { useState, useEffect, useCallback } from "react";
+import { FiEdit } from "react-icons/fi";
+import AddChallenge from "../../components/Challenges/AddChallenge/AddChallenges";
+import { getChallenges } from "../../../../api/challengesApi";
+import EditChallenge from "../../components/Challenges/EditChallenge/EditChallenge";
 import {
   Container,
-  UploadSection,
-  UploadBox,
-  UploadText,
-  UploadIcon,
-  DragDropText,
-  SupportedFormats,
-  BrowseLink,
-  ChallengesList,
-  ChallengeCard,
-  ChallengeHeader,
-  ChallengeContent,
-  FileInfo,
-  FileName,
-  UploadDate,
-  Status,
-  AnalyticsButton,
-  ActionButtons,
-  Button,
-  Rightdiv,
+  TableContainer,
+  TableHeader,
+  RowContainer,
+  Type,
+  Question,
+  Answer,
+  Action,
+  IconButton,
+  SearchBar,
+  AddButton,
+  StatusMessage,
+  LoadingMessage
 } from "./Challenges.styles";
 
 const Challenges = () => {
-  const fileInputRef = useRef(null);
-  const replaceInputRef = useRef(null);
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-  const [replaceIndex, setReplaceIndex] = useState(null); // FIX: Define replaceIndex
-  const getFileIcon = (fileName) => {
-    const fileExtension = fileName.split(".").pop().toLowerCase();
+  // State management
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [currentChallenge, setCurrentChallenge] = useState(null);
+  const [challenges, setChallenges] = useState([]);
+  const [filteredChallenges, setFilteredChallenges] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
-    if (fileExtension === "docx" || fileExtension === "doc") {
-      return <FaFileWord size={24} color="blue" />;
-    } else if (fileExtension === "xlsx" || fileExtension === "xls") {
-      return <FaFileExcel size={24} color="green" />;
-    } else {
-      return <FaFile size={24} color="gray" />;
-    }
-  };
-
-  // Load persisted files from localStorage on component mount
-  useEffect(() => {
-    const savedFiles = localStorage.getItem("uploadedFiles");
-    if (savedFiles) {
-      setUploadedFiles(JSON.parse(savedFiles));
+  // Fetch challenges from API
+  const fetchChallenges = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await getChallenges();
+      setChallenges(response.data);
+      setFilteredChallenges(response.data);
+      setError(null);
+    } catch (err) {
+      setError(err.message || "Failed to fetch challenges");
+      setChallenges([]);
+      setFilteredChallenges([]);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  // Save files to localStorage whenever `uploadedFiles` changes
+  // Initial data load
   useEffect(() => {
-    localStorage.setItem("uploadedFiles", JSON.stringify(uploadedFiles));
-  }, [uploadedFiles]);
+    fetchChallenges();
+  }, [fetchChallenges]);
 
-  const handleBrowseClick = () => {
-    fileInputRef.current.click();
+  // Filter challenges based on search query
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredChallenges(challenges);
+    } else {
+      const filtered = challenges.filter(challenge =>
+        challenge.QuestionText.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredChallenges(filtered);
+    }
+  }, [searchQuery, challenges]);
+
+  // Modal handlers
+  const handleOpenAddModal = () => setShowAddModal(true);
+  const handleCloseAddModal = () => setShowAddModal(false);
+
+  const handleOpenEditModal = (challenge) => {
+    setCurrentChallenge(challenge);
+    setShowEditModal(true);
   };
 
-  const handleFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    const allowedExtensions = ["doc", "docx", "xls", "xlsx"];
-
-    const validFiles = files.filter((file) => {
-      const fileExtension = file.name.split(".").pop().toLowerCase();
-      return allowedExtensions.includes(fileExtension);
-    });
-
-    if (validFiles.length !== files.length) {
-      alert("Only Word and Excel files are allowed!");
-    }
-
-    if (validFiles.length > 0) {
-      setUploadedFiles((prevFiles) => [
-        ...prevFiles,
-        ...validFiles.map((file) => ({
-          fileName: file.name,
-          applied: false,
-          uploadDate: new Date().toLocaleDateString(),
-        })),
-      ]);
-    }
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setCurrentChallenge(null);
   };
 
-  const handleReplaceFileChange = (event) => {
-    const files = Array.from(event.target.files);
-    const allowedExtensions = ["doc", "docx", "xls", "xlsx"];
+  // Data manipulation handlers
+  const handleChallengeAdded = useCallback((newChallenge) => {
+    setChallenges(prev => [newChallenge, ...prev]);
+    setSuccessMessage('Challenge added successfully!');
+    setTimeout(() => setSuccessMessage(null), 3000);
+  }, []);
 
-    if (files.length > 0) {
-      const fileExtension = files[0].name.split(".").pop().toLowerCase();
-      if (!allowedExtensions.includes(fileExtension)) {
-        alert("Only Word and Excel files are allowed!");
-        return;
-      }
-
-      if (replaceIndex !== null) {
-        setUploadedFiles((prevFiles) =>
-          prevFiles.map((fileObj, index) =>
-            index === replaceIndex
-              ? {
-                  ...fileObj,
-                  fileName: files[0].name,
-                  uploadDate: new Date().toLocaleDateString(),
-                }
-              : fileObj
-          )
-        );
-        setReplaceIndex(null); // Reset replaceIndex after replacing
-      }
-    }
-  };
-
-  const handleRemoveClick = (index) => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.filter((_, fileIndex) => fileIndex !== index)
+  const handleChallengeUpdated = useCallback((updatedChallenge) => {
+    setChallenges(prev => 
+      prev.map(challenge => 
+        challenge._id === updatedChallenge._id ? updatedChallenge : challenge
+      )
     );
+    setSuccessMessage('Challenge updated successfully!');
+    setTimeout(() => setSuccessMessage(null), 3000);
+  }, []);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
   };
 
-  const handleApplyClick = () => {
-    setUploadedFiles((prevFiles) =>
-      prevFiles.map((fileObj) => ({ ...fileObj, applied: true }))
-    );
-    alert("File(s) applied successfully!");
-  };
-
-  const handleReplaceClick = (index) => {
-    setReplaceIndex(index); // FIX: Set the correct index before opening file picker
-    replaceInputRef.current.click();
-  };
-
-  const getCurrentMonthAndYear = () => {
-    const date = new Date();
-    const month = date.toLocaleString("default", { month: "long" });
-    const year = date.getFullYear();
-    return `${month} ${year}`;
-  };
+  if (loading) return <LoadingMessage>Loading challenges...</LoadingMessage>;
 
   return (
     <Container>
-      <UploadSection>
-        <div
-          className="topbtn"
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            marginBottom: "20px",
-          }}
-        >
-          <Link to={"/admin/viewanalytics"} style={{ marginLeft: "10px" }}>
-            <AnalyticsButton>All Challenges</AnalyticsButton>
-          </Link>
-        </div>
-        <UploadBox>
-          <UploadText>
-            <strong>Upload {getCurrentMonthAndYear()}'s challenge</strong>
-          </UploadText>
-          <UploadIcon src={uploadicon} alt="Upload Icon" />
-          <DragDropText>
-            Drag & drop files or{" "}
-            <BrowseLink onClick={handleBrowseClick}>Browse</BrowseLink>
-          </DragDropText>
-          <SupportedFormats>
-            Supported formats: Word (.doc, .docx), Excel (.xls, .xlsx)
-          </SupportedFormats>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-            multiple
-            accept=".doc,.docx,.xls,.xlsx"
-          />
+      {/* Status messages */}
+      {error && <StatusMessage error>{error}</StatusMessage>}
+      {successMessage && <StatusMessage success>{successMessage}</StatusMessage>}
 
-          <input
-            type="file"
-            ref={replaceInputRef}
-            style={{ display: "none" }}
-            onChange={handleReplaceFileChange}
-            accept=".doc,.docx,.xls,.xlsx"
-          />
+      {/* Action controls */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <AddButton onClick={handleOpenAddModal}>Add Challenge</AddButton>
+        <SearchBar 
+          placeholder="Search for a Question" 
+          value={searchQuery}
+          onChange={handleSearchChange} 
+        />
+      </div>
+      
+      {/* Challenges table */}
+      <TableContainer>
+        <TableHeader>
+          <div>Type</div>
+          <div>Question</div>
+          <div>Description</div>
+          <div>Action</div>
+        </TableHeader>
+        
+        {filteredChallenges.length > 0 ? (
+          filteredChallenges.map((item) => (
+            <RowContainer key={item._id}>
+              <Type>{item.programming_language}</Type>
+              <Question>{item.QuestionText.slice(0,30)}...</Question>
+              <Answer>{item.description.slice(0.32)}...</Answer>
+              <Action>
+                <IconButton 
+                  aria-label="Edit challenge"
+                  onClick={() => handleOpenEditModal(item)}
+                >
+                  <FiEdit />
+                </IconButton>
+              </Action>
+            </RowContainer>
+          ))
+        ) : (
+          <RowContainer>
+            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px' }}>
+              {searchQuery ? 'No challenges match your search' : 'No challenges available'}
+            </div>
+          </RowContainer>
+        )}
+      </TableContainer>
 
-          {/* Upload button should be visible only when files are selected */}
-          {uploadedFiles.length > 0 && (
-            <Button onClick={handleApplyClick}>Upload</Button>
-          )}
-        </UploadBox>
+      {/* Modals */}
+      {showAddModal && (
+        <AddChallenge 
+          onClose={handleCloseAddModal} 
+          onChallengeAdded={handleChallengeAdded}
+        />
+      )}
 
-        {/* <UploadBox>
-          <UploadText>
-            <strong>Upload {getCurrentMonthAndYear()}'s challenge</strong>
-          </UploadText>
-          <UploadIcon>📤</UploadIcon>
-          <DragDropText>
-            Drag & drop files or{" "}
-            <BrowseLink onClick={handleBrowseClick}>Browse</BrowseLink>
-          </DragDropText>
-          <SupportedFormats>
-            Supported formats: Word (.doc, .docx), Excel (.xls, .xlsx)
-          </SupportedFormats>
-          <input
-            type="file"
-            ref={fileInputRef}
-            style={{ display: "none" }}
-            onChange={handleFileChange}
-            multiple
-            accept=".doc,.docx,.xls,.xlsx"
-          />
-
-          <input
-            type="file"
-            ref={replaceInputRef}
-            style={{ display: "none" }}
-            onChange={handleReplaceFileChange}
-            accept=".doc,.docx,.xls,.xlsx"
-          />
-
-          <Button onClick={handleApplyClick}>Upload</Button>
-        </UploadBox> */}
-      </UploadSection>
-
-      <ChallengesList>
-        {uploadedFiles.map((fileObj, index) => (
-          <ChallengeCard key={index}>
-            <ChallengeContent>
-              <FileInfo>
-                <ChallengeHeader>{getCurrentMonthAndYear()}</ChallengeHeader>
-                <FileName>
-                  {getFileIcon(fileObj.fileName)} {fileObj.fileName}
-                </FileName>
-                <UploadDate>Uploaded On - {fileObj.uploadDate}</UploadDate>
-              </FileInfo>
-              <div style={{ textAlign: "center" }}>
-                <Status>{fileObj.applied ? "Ongoing" : "Pending"}</Status>
-              </div>
-              <Rightdiv>
-                <ActionButtons>
-                  <Button onClick={() => handleRemoveClick(index)}>
-                    Remove
-                  </Button>
-                  <Button onClick={() => handleReplaceClick(index)}>
-                    Replace
-                  </Button>
-                </ActionButtons>
-              </Rightdiv>
-            </ChallengeContent>
-          </ChallengeCard>
-        ))}
-      </ChallengesList>
+      {showEditModal && currentChallenge && (
+        <EditChallenge 
+          challenge={currentChallenge}
+          onClose={handleCloseEditModal}
+          onChallengeUpdated={handleChallengeUpdated}
+        />
+      )}
     </Container>
   );
 };

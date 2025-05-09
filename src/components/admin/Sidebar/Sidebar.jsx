@@ -1,6 +1,7 @@
 import React from "react";
 import { SideBarwrapper } from "./Sidebar.styles";
-import Logo from "../../../assets/nextInetrviewLogo.svg";
+import LogoSmall from "../../../assets/nextInetrviewLogo.svg";
+import LogoBig from "../../../assets/LOGO.png";
 import { NavLink, useLocation } from "react-router-dom";
 import dboard from "../../../assets/Dashboard.svg";
 import users from "../../../assets/Vector.svg";
@@ -136,7 +137,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
           isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
         >
           <div className="logo">
-            <img src={Logo} alt="logo" />
+            <img src={isExpanded ? LogoBig : LogoSmall} alt="logo" />
           </div>
           <div className="menu">
             <ul className="menu-list">

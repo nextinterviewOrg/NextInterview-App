@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useSignIn, useSignUp, useAuth } from "@clerk/clerk-react";
 import { RxArrowLeft } from "react-icons/rx";
 import HeaderWithLogo from "../../components/HeaderWithLogo/HeaderWithLogo";
-import PhoneInput, { getCountries ,  isValidPhoneNumber } from 'react-phone-number-input';
+import PhoneInput, { getCountries, isValidPhoneNumber } from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 // import { IoIosArrowRoundBack } from "react-icons/io";
 
@@ -15,7 +15,7 @@ import {
   Label,
   Button,
 } from "./Login.styles";
-import { Input,notification } from "antd";
+import { Input, notification } from "antd";
 import MessageStatus from "../MessageStatus/MessageStatus";
 
 const Login = () => {
@@ -64,7 +64,7 @@ const Login = () => {
       setMessageType("error");
       return;
     }
-   
+
     const fullPhoneNumber = `${phoneNumber.trim()}`;
     if (location.state.flow === "SIGN_UP") {
       try {
@@ -90,8 +90,8 @@ const Login = () => {
         notification.error({
           message: "Error",  // Title of the notification
           description: "Something went wrong. Please try again.",  // Error message description
-          placement: "topRight", 
-          duration: 3,  
+          placement: "topRight",
+          duration: 3,
         });
         // alert("Something went wrong while sending OTP. Please try again.");
       }
@@ -107,7 +107,7 @@ const Login = () => {
           message: "Success",  // Title of the notification
           description: "OTP has been sent to your phone number successfully!",  // Description of the notification
           placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
-          duration: 3, 
+          duration: 3,
         });
 
         // If we're here, user is found → flow = SIGN_IN
@@ -126,6 +126,25 @@ const Login = () => {
           setMessage("Couldn't find your account.");
           setMessageType("error");
           setIsError(true);
+        } else if (error?.errors[0]?.code == "session_exists") {
+          setMessage("You're currently in single session mode. You can only be signed into one account at a time.");
+          setMessageType("error");
+          setIsError(true);
+        }
+        else if (error?.errors[0]?.code == "user_locked") {
+          setMessage("Your account has been Restricted. For more information, please contact support:- support@nextinterview.ai");
+          setMessageType("error");
+          setIsError(true);
+
+        }
+        else {
+          notification.error({
+            message: "Error",  // Title of the notification
+            description: "Something went wrong. Please try again.",  // Error message description
+            placement: "topRight",
+            duration: 3,
+          });
+          // alert("Something went wrong while sending OTP. Please try again.");
         }
       }
     }
@@ -151,16 +170,16 @@ const Login = () => {
           <div className="Title">Login with Mobile Number</div>
           <Subtitle>OTP will be sent to your mobile number</Subtitle>
           {/* <div className="Form"> */}
-            <Label className="Label">Mobile Number</Label>
-            <PhoneInput
-              className="Input"
-              international
-              defaultCountry="IN" // Set the default country code (IN for India)
-              value={phoneNumber}
-              onChange={setPhoneNumber}
-              error={isError}
-            />
-            {/* <Input
+          <Label className="Label">Mobile Number</Label>
+          <PhoneInput
+            className="Input"
+            international
+            defaultCountry="IN" // Set the default country code (IN for India)
+            value={phoneNumber}
+            onChange={setPhoneNumber}
+            error={isError}
+          />
+          {/* <Input
               className="Input"
               type="tel"
               value={phoneNumber}

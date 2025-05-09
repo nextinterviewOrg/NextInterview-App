@@ -1,8 +1,6 @@
-import React from "react";
-import amazon from "../../../../assets/Avatar.svg";
-import flipkart from "../../../../assets/PersonPhoto.svg";
-import google from "../../../../assets/image.svg";
-
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { getChallengeById } from "../../../../api/challengesApi"; // Adjust the path if needed
 import {
   Card,
   Header,
@@ -15,79 +13,96 @@ import {
   Footer,
   Icons,
   BackIcon,
+  Tags,
 } from "./NewChallenges.style";
-import { useNavigate } from "react-router-dom";
 import { RxArrowLeft } from "react-icons/rx";
-
+import amazon from "../../../../assets/Avatar.svg";
+import flipkart from "../../../../assets/PersonPhoto.svg";
+import google from "../../../../assets/image.svg";
 
 const NewChallenge = () => {
+  const { id } = useParams();
+  const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchChallenge = async () => {
+      try {
+        const response = await getChallengeById(id);
+        console.log("Fetched challenge:", response);
+        setChallenge(response.data);
+      } catch (err) {
+        console.error("Error fetching challenge:", err);
+        setError("Failed to load challenge data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchChallenge();
+  }, [id]);
+
+  if (loading) return <div>Loading challenge...</div>;
+  if (error) return <div style={{ color: "red" }}>{error}</div>;
+
   const iconList = [
-    { src: amazon, alt: "" },
-    { src: flipkart, alt: "" },
-    { src: google, alt: "" },
+    { src: amazon, alt: "Amazon" },
+    { src: flipkart, alt: "Flipkart" },
+    { src: google, alt: "Google" },
   ];
 
-  const navigate = useNavigate();
-  const handleClick = () => {
-    navigate("/user/TakeChallenge");
-  };
- 
   const handleGoBack = () => {
-    navigate('/user/challenges'); // Navigate back to the previous page
+    navigate("/user/takeChallenge");
+  };
+
+  const handleStartChallenge = () => {
+    navigate(`/user/takeChallenge/${id}`); // Navigate to Code Editor Window
   };
 
   return (
     <>
-    <BackIcon              onClick={handleGoBack}
-          style={{
-            borderRadius: "10%",
-            border: "1px solid grey",
-            padding: "8px",
-          }}><RxArrowLeft /></BackIcon>
-    <Card>
-      <Header>
-        <Tag>#Today's Challenge 123</Tag>
-        <Title>
-          Predicting Customer Churn in a Subscription-Based Business
-        </Title>
-        <Description>
-          You are given a dataset from a subscription-based business that
-          includes customer demographics, subscription details, usage patterns,
-          and past customer interactions. The goal is to predict whether a
-          customer is likely to churn (cancel their subscription) within the
-          next three months.
-        </Description>
-      </Header>
+      <BackIcon
+        onClick={handleGoBack}
+        style={{ borderRadius: "10%", border: "1px solid grey", padding: "8px" }}
+      >
+        <RxArrowLeft />
+      </BackIcon>
 
-      <hr className="hrtag" />
+      <Card>
+        <Header>
+          <Tag>#Today's Challenge</Tag>
+          <Title>{challenge.QuestionText}</Title>
+          <Description>{challenge.description}</Description>
+          <Tags>
+            <Tag>{challenge.programming_language}</Tag>
+            <Tag>{challenge.difficulty}</Tag>
+          </Tags>
+        </Header>
 
-      <TopicsList>
-        <TopicItem>Topic 1</TopicItem>
-        <TopicItem>Topic 2</TopicItem>
-        <TopicItem>Topic 3</TopicItem>
-        <TopicItem>Topic 4</TopicItem>
-      </TopicsList>
+        <hr className="hrtag" />
 
-      <hr className="hrtag" />
+        <TopicsList>
+          {challenge.hints?.map((hint, index) => (
+            <TopicItem key={index}>{hint.hint_text}</TopicItem>
+          ))}
+        </TopicsList>
 
-      <Footer>
-        <Button onClick={handleClick}>Take Challenge</Button>
-        <Icons>
-          <div className="icons-container">
-            <span>Previously Asked In</span>
+        <hr className="hrtag" />
 
-            {iconList.map((icon, index) => (
-              <img
-                key={index}
-                src={icon.src}
-                alt={icon.alt}
-                style={{ right: `${index * 10}px` }} // Adjust overlap dynamically
-              />
-            ))}
-          </div>
-        </Icons>
-      </Footer>
-    </Card>
+        <Footer>
+          <Button onClick={handleStartChallenge}>Take Challenge</Button>
+          <Icons>
+            <div className="icons-container">
+              <span>Previously Asked In</span>
+              {iconList.map((icon, index) => (
+                <img key={index} src={icon.src} alt={icon.alt} style={{ right: `${index * 10}px` }} />
+              ))}
+            </div>
+          </Icons>
+        </Footer>
+      </Card>
     </>
   );
 };

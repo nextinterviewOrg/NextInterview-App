@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { RxArrowLeft } from "react-icons/rx";
+import { getChallengeById } from "../../../../api/challengesApi";
+import { submitUserChallengeProgress } from "../../../../api/challengesApi";
 import {
   Title,
   QuestionBox,
@@ -7,56 +11,124 @@ import {
   Button,
   Header,
 } from "./CodeEditorWindow.styles";
-import { RxArrowLeft } from "react-icons/rx";
-import { useNavigate } from "react-router-dom";
 import ReadyToCode from "../Compiler/ReadyToCode";
+import HintChallenges from "../../../admin/components/Challenges/HintChallenges/HintChallenges";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../api/userApi";
 
 const CodeEditorWindow = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [selectedLang, setSelectedLang] = useState('');
+  const [code, setCode] = useState('');
+  const [output, setOutput] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user } = useUser();
+
+  const handleSubmit = async () => {
+    if (!challenge || !user || isSubmitting) return;
+    
+    setIsSubmitting(true);
+    
+    try {
+      // Get user data from Clerk ID
+      const userData = await getUserByClerkId(user.id);
+      const userId = userData.data.user._id;
+      
+      const expectedOutput = challenge.output?.trim();
+      const actualOutput = output?.trim();
+  
+      // Only proceed if output matches
+      if (expectedOutput === actualOutput) {
+        // Prepare submission payload
+        const payload = {
+          questionId: challenge._id,
+          userId,
+          answer: code,
+          finalResult: true,
+          skip: false,
+        };
+  
+        console.log("payload", payload);
+        
+        // Submit the challenge progress only if answer is correct
+        const response = await submitUserChallengeProgress(payload);
+        
+        console.log("Submitted response", response);
+        alert("Congratulations! Your solution is correct and progress has been saved.");
+        navigate("/user/challenges");
+      } else {
+        // Don't store wrong answers, just show error message
+        alert("Your output doesn't match the expected result. Please try again.");
+      }
+      
+    } catch (err) {
+      console.error("Submission error:", err);
+      alert("Failed to submit your solution. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchChallenge = async () => {
+      try {
+        const response = await getChallengeById(id);
+        setChallenge(response.data);
+      } catch (err) {
+        setError("Failed to load challenge data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchChallenge();
+  }, [id]);
 
   const handleGoBack = () => {
-    navigate("/user/challengeInfo"); // Navigate back to the previous page
+    navigate(`/user/challengeInfo/${id}`);
   };
+
+  if (loading) return <div>Loading challenge...</div>;
+  if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (
     <Wrapper>
       <Header>
         <BackIcon
           onClick={handleGoBack}
-          style={{
-            borderRadius: "10%",
-            border: "1px solid grey",
-            padding: "8px",
-          }}
+          style={{ borderRadius: "10%", border: "1px solid grey", padding: "8px" }}
         >
           <RxArrowLeft />
         </BackIcon>
-        <Button>Submit</Button>
+        <Button onClick={handleSubmit} disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : "Submit"}
+        </Button>
       </Header>
+
       <Title>Question Type - Coding</Title>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "20px",
-          alignItems: "flex-start",
-        }}
-      >
+
+      <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
         <QuestionBox>
-          Tesla is investigating production bottlenecks and they need your help
-          to extract the relevant data. Write a query to determine which parts
-          have begun the assembly process but are not yet finished. Assumptions:
-          parts_assembly_table contains all parts currently in production, each
-          at varying stages of the assembly process. An unfinished part is one
-          that lacks a finish_date. This question is straightforward, so
-          approach it with simplicity in both thinking and solution. Effective
-          April 11th 2023, the problem statement and assumptions were updated to
-          enhance clarity. Explanation The bumpers in step 3 and 4 are the only
-          item that remains unfinished as it lacks a recorded finish date. The
-          dataset you are querying against may have different input & output
-          -this is just an example !
+          <h3>{challenge.QuestionText}</h3>
+          <p><strong>Description:</strong> {challenge.description}</p>
+          <p><strong>Input:</strong> {challenge.input}</p>
+          <p><strong>Output:</strong> {challenge.output}</p>
+          <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
         </QuestionBox>
-        <ReadyToCode style={{ width: "100%" }} />
+
+        <ReadyToCode
+          selectedLang={selectedLang}
+          setSelectedLang={setSelectedLang}
+          code={code}
+          setCode={setCode}
+          output={output}
+          setOutput={setOutput}
+        />
+
+        <HintChallenges hints={challenge.hints} />
       </div>
     </Wrapper>
   );
