@@ -147,6 +147,34 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
               ))}
             </ul>
           </div>
+
+           
+      {isExpanded ? (
+  <div className="mock-card">
+    <div className="mock-card-icon">
+      <PiVideoConference />
+    </div>
+    <h2 className="mock-card-title">Take a Mock Interview</h2>
+    <p className="mock-card-description">
+      Take a Mock interview to understand whether you are Interview Ready!
+    </p>
+    <button
+      className="mock-card-button"
+      onClick={() => navigate("/user/interview")}
+    >
+      Start interview
+    </button>
+  </div>
+) : (
+  <div
+    className="mock-card-icon collapsed"
+    title="Take a Mock Interview"
+ 
+  >
+    <PiVideoConference />
+  </div>
+)}
+ 
     
         </SideBarwrapper>
       );

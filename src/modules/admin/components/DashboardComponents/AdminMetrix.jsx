@@ -54,8 +54,8 @@ const MetricValue = styled.div`
 const AdminMetrics = () => {
   const metrics = [
     { title: "Total Users", value: "0" },
-    { title: "Active Users", value: "0" },
-    { title: "Topics Completed", value: "0" },
+    { title: "Subscribed Users", value: "0" },
+    { title: "Total Topics", value: "0" },
     { title: "Average Quiz score", value: "0%" },
     { title: "Avg. Feedback Rating", value: "Neutral" },
   ];

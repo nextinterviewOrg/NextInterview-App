@@ -1,14 +1,14 @@
 import styled from "styled-components";
 
 export const Container = styled.div`
-  width: 97vw;
+  // width: 97vw;
   border: 2px solid #ccc;
   border-radius: 8px;
   margin: 0px 30px 0px 30px;
   overflow: hidden; 
   display: flex;
   flex-direction: column;
-  height: 87vh;
+  height: 85vh;
 `;
 
 export const Header = styled.div`
@@ -175,6 +175,18 @@ export const InputBox = styled.div`
   // margin-top: 30%;
 `;
 
+export const InputTab = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  margin-right: 10px;
+  margin-left: 10px;
+`;
+
+
+
 export const Input = styled.textarea`
   width: 100%;
   // min-height: 60px;
@@ -197,7 +209,7 @@ export const Input = styled.textarea`
 
 export const Sendicon = styled.div`
 position: absolute;
-right: 12%;
+right: 20px;
 margin-top: 5px;
 font-size: 20px; 
 cursor: pointer;
@@ -208,7 +220,7 @@ export const CharCount = styled.div`
   color: #666;
   // margin-top: 5px;
   position: absolute;
-  right: 14%;
+  right: 50px;
 `;
 
 export const SendButton = styled.button`
@@ -220,7 +232,7 @@ export const SendButton = styled.button`
   cursor: pointer;
   font-size: 18px;
   width: 10%;
-
+  display: ${({show}) => (show ? "none" : "block")};
   &:hover {
     background: #2290AC;
   }

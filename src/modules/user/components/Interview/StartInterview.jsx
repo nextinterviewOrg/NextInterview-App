@@ -13,7 +13,7 @@ import {
 
 const StartInterview = ({ isOpen, onClose, course }) => {
   const [module, setModule] = useState("Deep Learning");
-  const [mode, setMode] = useState("voice");
+  const [mode, setMode] = useState("chat");
 
   if (!isOpen) return null;
 

@@ -61,6 +61,24 @@ export const generateSummary = async ({ text, maxLength }) => {
     }
 };
 
+// Fetch topics from the EXTERNAL API
+export const getExternalTopics = async () => {
+    try {
+        const response = await fetch("https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/topics", {
+            method: "GET",
+            headers: { "Content-Type": "application/json" },
+        });
+        console.log(response);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch topics: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
 
 
 

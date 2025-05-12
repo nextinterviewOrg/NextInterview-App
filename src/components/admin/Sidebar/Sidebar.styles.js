@@ -12,7 +12,7 @@ export const SideBarwrapper = styled.div`
   z-index: 999;
 
   @media (max-width: 768px) {
-   width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
+    width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
     position: fixed;
     height: 100vh;
     z-index: 1000;
@@ -32,7 +32,7 @@ export const SideBarwrapper = styled.div`
   .menu-list {
     display: flex;
     flex-direction: column;
-    padding: 0; 
+    padding: 0;
     margin: 0;
     list-style: none;
     align-items: flex-start;
@@ -46,8 +46,7 @@ export const SideBarwrapper = styled.div`
 
   .menu-link {
     display: grid;
-    grid-template-columns: ${(props) =>
-      props.isExpanded ? "1fr 4fr" : "1fr"};
+    grid-template-columns: ${(props) => (props.isExpanded ? "1fr 4fr" : "1fr")};
     align-items: center;
     padding: 0 10px;
     color: ${(props) => props.theme.colors.sidebarTextColor || "grey"};
@@ -93,6 +92,15 @@ export const SideBarwrapper = styled.div`
     @media (max-width: 768px) {
       display: block;
     }
+  }
+
+  .svgicon {
+    width: 20px;
+    height: 20px;
+    // color: ${(props) => props.theme.colors.sidebarTextColor};
+    margin-right: ${(props) => (props.isExpanded ? "10px" : "0px")};
+    font-size: 20px;
+    transition: color 0.3s;
   }
 `;
 

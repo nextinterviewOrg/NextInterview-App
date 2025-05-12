@@ -96,6 +96,7 @@ import EditQuestionModule from "./modules/admin/pages/EditQuestionModule/EditQue
 import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
 import CodeEditorWindow from "./modules/user/components/CodeEditorWindow/CodeEditorWindow";
 import ReadyToCode from "./modules/user/components/Compiler/ReadyToCode";
+import ProblemStatement from "./modules/user/components/ProblemStatement/ProblemStatement";
 
 
 function App() {
@@ -212,7 +213,9 @@ function App() {
             <Route path="challengeInfo/:id" element={<NewChallenge />} />
             <Route path="blogs" element={<UserBlog />} />
             <Route path="real-world-scenario/:id" element={<UserBlogDisplay />} />
+            <Route path="takeChallenge" element={<CodeEditorWindow />} />
             <Route path="takeChallenge/:id" element={<CodeEditorWindow />} />
+            <Route path="interview/interview-feedback" element={<ProblemStatement />} />
           </Route>
           {/* <Route path="userfaq" element={<UserFAQ />} /> */}
           {/* <Route path="subscription" element={<UserSubscription />} /> */}

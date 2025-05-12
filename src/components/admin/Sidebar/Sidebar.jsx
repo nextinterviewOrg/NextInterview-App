@@ -16,6 +16,9 @@ import world from "../../../modules/user/assets/world.svg";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
+import Blogs  from "../../../assets/blogging.svg";
+import UserFeedback  from "../../../assets/userFeedback.svg";
+import Authentication  from "../../../assets/Authentication.svg";
 // import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
@@ -77,19 +80,19 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       id: 9,
       name: "Multi Factor Authentication",
       path: "/admin/manage-mfa",
-      icon: <img className="svgicon" src={Settings} alt="MFA Icon" />,
+      icon: <img className="svgicon" src={Authentication} alt="MFA Icon" />,
     },
     {
       id: 10,
       name: "Blogs",
       path: "/admin/real-world-scenario",
-      icon: <img className="svgicon" src={world} alt="Real world scenarios Icon" />,
+      icon: <img className="svgicon" src={Blogs} alt="Blogs Icon" />,
     },
     {
       id:11,
       name:"User feeback",
       path:"/admin/user-feedback",
-      icon:<img className="svgicon" src={world} alt="User feedback Icon" />
+      icon:<img className="svgicon" src={UserFeedback} alt="User feedback Icon" />
     
       },
       {
