@@ -1,6 +1,6 @@
 import React from "react";
 import { Line } from "react-chartjs-2";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import {
   Chart as ChartJS,
   LineElement,
@@ -11,7 +11,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register Chart.js components
 ChartJS.register(
   LineElement,
   CategoryScale,
@@ -24,13 +23,12 @@ ChartJS.register(
 // Styled components
 const Wrapper = styled.div`
   width: 100%;
-  height: 100%;
   padding: 16px;
-  //    padding: ${(props) => props.theme.spacing(4)};
   margin-top: ${(props) => props.theme.spacing(4)};
+  box-sizing: border-box;
+  overflow: hidden; // prevents any child from forcing the width
 
   @media (max-width: 768px) {
-    width: 90%;
     padding: 1px;
     margin-top: 0px;
   }
@@ -45,16 +43,28 @@ const Title = styled.h2`
 `;
 
 const CardContainer = styled.div`
-  padding: ${(props) => props.theme.spacing(2)};
   background-color: ${(props) => props.theme.colors.light};
   border-radius: ${(props) => props.theme.spacing(1)};
   box-shadow: 0 4px 4px ${(props) => props.theme.colors.borderblue};
   width: 100%;
-  height: 300px;
+  height: auto;
+  padding: ${(props) => props.theme.spacing(2)};
   margin-left: 1px;
+  box-sizing: border-box;
+  overflow: hidden;
+`;
+
+const ChartWrapper = styled.div`
+  width: 100%;
+  height: 300px;
+  position: relative;
+  box-sizing: border-box;
+  margin-top: ${(props) => props.theme.spacing(2)};
 `;
 
 const UserActivity = () => {
+  const theme = useTheme();
+
   const data = {
     labels: [
       "Jan",
@@ -77,41 +87,40 @@ const UserActivity = () => {
           1000, 5000, 10000, 30000, 80000, 70000, 90000, 85000, 60000, 70000,
           80000, 90000,
         ],
-        borderColor: `${({ theme }) => theme.colors.primary}`,
+        borderColor: theme.colors.primary,
         backgroundColor: "transparent",
         borderWidth: 2,
         pointRadius: 3,
-        pointBackgroundColor: `${({ theme }) => theme.colors.primary}`,
+        pointBackgroundColor: theme.colors.primary,
       },
     ],
   };
 
   const options = {
     responsive: true,
+    maintainAspectRatio: false, // Crucial
     plugins: {
       legend: {
         display: true,
         position: "right",
-
         labels: {
           font: {
-            family: `${({ theme }) => theme.fonts.body}`,
-            marginLeft: "auto",
+            family: theme.fonts.body,
           },
-          color: `${({ theme }) => theme.colors.textgray}`,
+          color: theme.colors.textgray,
         },
       },
       tooltip: {
         enabled: true,
-        backgroundColor: `${({ theme }) => theme.colors.primary}`,
+        backgroundColor: theme.colors.primary,
       },
     },
     scales: {
       x: {
         ticks: {
-          color: `${({ theme }) => theme.colors.textgray}`,
+          color: theme.colors.textgray,
           font: {
-            family: `${({ theme }) => theme.fonts.body}`,
+            family: theme.fonts.body,
           },
         },
         grid: {
@@ -120,9 +129,9 @@ const UserActivity = () => {
       },
       y: {
         ticks: {
-          color: `${({ theme }) => theme.colors.textgray}`,
+          color: theme.colors.textgray,
           font: {
-            family: `${({ theme }) => theme.fonts.body}`,
+            family: theme.fonts.body,
           },
         },
       },
@@ -133,7 +142,9 @@ const UserActivity = () => {
     <Wrapper>
       <Title>User Activity Trends</Title>
       <CardContainer>
-        <Line data={data} options={options} />
+        <ChartWrapper>
+          <Line data={data} options={options} />
+        </ChartWrapper>
       </CardContainer>
     </Wrapper>
   );

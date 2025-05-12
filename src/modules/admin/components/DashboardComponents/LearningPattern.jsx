@@ -8,7 +8,7 @@ const Wrapper = styled.div`
   margin-top: ${(props) => props.theme.spacing(4)};
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
 
   @media (max-width: 768px) {

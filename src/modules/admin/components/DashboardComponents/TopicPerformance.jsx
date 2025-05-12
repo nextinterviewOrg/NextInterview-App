@@ -21,6 +21,7 @@ const Container = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(1)};
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -37,6 +38,7 @@ const Item = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
+  box-sizing: border-box;
 `;
 
 const Section = styled.div`

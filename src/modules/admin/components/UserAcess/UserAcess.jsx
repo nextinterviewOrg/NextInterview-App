@@ -193,7 +193,7 @@ export default function UserAcess() {
       <Container>
         <HeaderRow>
           <Title>User Access</Title>
-          <CreateButton onClick={openModal}>Add Admin</CreateButton>
+          <CreateButton onClick={openModal}>Add Administrator</CreateButton>
         </HeaderRow>
  
         <SearchWrapper>
@@ -211,8 +211,8 @@ export default function UserAcess() {
           <StyledTable>
             <TableHead>
               <TableRow>
-                <TableHeader>Name</TableHeader>
-                <TableHeader>Email</TableHeader>
+                <TableHeader>Full Name</TableHeader>
+                <TableHeader>Email Address</TableHeader>
                 <TableHeader>Actions</TableHeader>
               </TableRow>
             </TableHead>
