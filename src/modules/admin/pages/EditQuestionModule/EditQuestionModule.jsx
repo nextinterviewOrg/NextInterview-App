@@ -38,6 +38,7 @@ import { getModule } from '../../../../api/addNewModuleApi';
 import { getSkillAssessment, getSkillAssessmentByModule, softDeleteSkillAssessment } from '../../../../api/skillAssessmentApi';
 import { editTiy, gettiyByModule, softDeleteTiy } from '../../../../api/tiyApi';
 import { editQuestionBank, getQuestionBankByModule, softDeleteQuestionBank } from '../../../../api/questionBankApi';
+import { editMainQuestion, getMainQuestionByModule, softDeleteMainQuestion } from '../../../../api/userMainQuestionBankApi';
 
 const TABS = ['Skill Assessment', 'Try-it-Yourself', 'Question Bank'];
 
@@ -122,11 +123,11 @@ const EditQuestionModule = () => {
           setQuestions(quetsionData.data);
 
         } else if (activeTab === 'Try-it-Yourself') {
-          const quetsionData = await gettiyByModule(selectedModuleCode);
+          const quetsionData = await getMainQuestionByModule(selectedModuleCode, 'tiy');
           setQuestions(quetsionData.data);
 
         } else if (activeTab === 'Question Bank') {
-          const questionData = await getQuestionBankByModule(selectedModuleCode);
+          const questionData = await getMainQuestionByModule(selectedModuleCode, 'questionBank');
           setQuestions(questionData.data);
         }
 
@@ -153,14 +154,14 @@ const EditQuestionModule = () => {
         // const quetsionData = await softDeleteSkillAssessment(currentQuestion._id);
 
       } else if (activeTab === 'Try-it-Yourself') {
-        const quetsionData = await editTiy(updated._id, {
+        const quetsionData = await editMainQuestion(updated._id, {
           question: updated.question,
           answer: updated.answer,
         });
 
 
       } else if (activeTab === 'Question Bank') {
-        const questionData = await editQuestionBank(updated._id, {
+        const questionData = await editMainQuestion(updated._id, {
           question: updated.question,
           answer: updated.answer,
         });
@@ -186,11 +187,11 @@ const EditQuestionModule = () => {
         const quetsionData = await softDeleteSkillAssessment(currentQuestion._id);
 
       } else if (activeTab === 'Try-it-Yourself') {
-        const quetsionData = await softDeleteTiy(currentQuestion._id);
+        const quetsionData = await softDeleteMainQuestion(currentQuestion._id);
 
 
       } else if (activeTab === 'Question Bank') {
-        const questionData = await softDeleteQuestionBank(currentQuestion._id);
+        const questionData = await softDeleteMainQuestion(currentQuestion._id);
       }
       const newQuestions = questions.filter((_, idx) => idx !== currentQuestion.index);
       setQuestions(newQuestions);
