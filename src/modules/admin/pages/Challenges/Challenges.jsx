@@ -100,7 +100,7 @@ const Challenges = () => {
     setSearchQuery(e.target.value);
   };
 
-  if (loading) return <LoadingMessage>Loading challenges...</LoadingMessage>;
+  if (loading) return <LoadingMessage>Loading questions...</LoadingMessage>;
 
   return (
     <Container>
@@ -110,7 +110,7 @@ const Challenges = () => {
 
       {/* Action controls */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-        <AddButton onClick={handleOpenAddModal}>Add Challenge</AddButton>
+        <AddButton onClick={handleOpenAddModal}>Add Questions</AddButton>
         <SearchBar 
           placeholder="Search for a Question" 
           value={searchQuery}
@@ -146,7 +146,7 @@ const Challenges = () => {
         ) : (
           <RowContainer>
             <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px' }}>
-              {searchQuery ? 'No challenges match your search' : 'No challenges available'}
+              {searchQuery ? 'No questions match your search' : 'No questions available'}
             </div>
           </RowContainer>
         )}

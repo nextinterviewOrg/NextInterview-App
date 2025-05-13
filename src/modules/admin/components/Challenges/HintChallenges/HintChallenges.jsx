@@ -7,6 +7,8 @@ import {
   HintDescription,
   DropdownIcon,
   HintBox,
+  CarouselWrapper,
+  Arrow,
 } from "../HintChallenges/HintChallenges.style";
 import { useNavigate } from "react-router-dom";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
@@ -14,6 +16,7 @@ import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 const HintChallenges = ({ hints }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [currentHintIndex, setCurrentHintIndex] = useState(0);
 
   const handleNavigate = () => {
     navigate("/user/questionbank");
@@ -21,6 +24,14 @@ const HintChallenges = ({ hints }) => {
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
+  };
+
+  const handlePrev = () => {
+    setCurrentHintIndex((prev) => (prev > 0 ? prev - 1 : hints.length - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentHintIndex((prev) => (prev < hints.length - 1 ? prev + 1 : 0));
   };
 
   return (
@@ -33,20 +44,38 @@ const HintChallenges = ({ hints }) => {
       </HintTitle>
 
       {isOpen && (
-        <HintBox>
-          {hints && hints.length > 0 ? (
-            <ul>
-              {hints.map((hint, index) => (
-                <li key={index}>
-                  <strong>{hint.hint_text}:</strong>{" "}
-                  {hint.explanation || "No explanation provided"}
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p>No hints available for this challenge.</p>
-          )}
-        </HintBox>
+       <HintBox>
+       {hints && hints.length > 0 ? (
+         <CarouselWrapper>
+           {hints.length > 1 && (
+             <Arrow
+               onClick={handlePrev}
+               disabled={currentHintIndex === 0}
+             >
+               &lt;
+             </Arrow>
+           )}
+     
+           <HintContent>
+             <strong>{hints[currentHintIndex].hint_text}</strong>
+             <br />
+             {hints[currentHintIndex].explanation || "No explanation provided"}
+           </HintContent>
+     
+           {hints.length > 1 && (
+             <Arrow
+               onClick={handleNext}
+               disabled={currentHintIndex === hints.length - 1}
+             >
+               &gt;
+             </Arrow>
+           )}
+         </CarouselWrapper>
+       ) : (
+         <p>No hints available for this challenge.</p>
+       )}
+     </HintBox>
+       
       )}
 
       <HintContent>
