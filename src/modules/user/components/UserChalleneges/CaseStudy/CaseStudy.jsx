@@ -4,12 +4,12 @@ import {
   ApproachContainer,
   QuestionCard,
   QuestionTitle,
-} from "./ApproachAnalysis.styles";
+} from "./CaseStudy.styles";
 
 const questions = [
   {
     id: 1,
-    title: "Why is React popular?",
+    title: "This is Case Study?",
     fullText: "Explain the reasons why React is widely adopted for frontend development.",
   },
   {
@@ -24,11 +24,11 @@ const questions = [
   },
 ];
 
-const ApproachAnalysis = () => {
+const CaseStudy = () => {
   const navigate = useNavigate();
 
   const handleQuestionClick = (id) => {
-    navigate(`/user/challenges/approach/${id}`);
+    navigate(`/user/challenges/casestudy/${id}`);
   };
 
   return (
@@ -42,4 +42,4 @@ const ApproachAnalysis = () => {
   );
 };
 
-export default ApproachAnalysis;
+export default CaseStudy;

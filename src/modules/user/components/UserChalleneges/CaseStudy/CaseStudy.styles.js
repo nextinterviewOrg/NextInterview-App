@@ -85,8 +85,7 @@ export const CrossIcon = styled.button`
 //   cursor: pointer;
 // `;
 
-//asdfghjkl;'
-
+//CasestudyQuestion STYLES
 
 export const QuestionPageContainer = styled.div`
   max-width: 90%;

@@ -60,33 +60,7 @@ export const CrossIcon = styled.button`
   cursor: pointer;
 `;
 
-// export const SelectedQuestionTitle = styled.div`
-//   font-size: 20px;
-//   font-weight: bold;
-//   margin-bottom: 1rem;
-// `;
-
-// export const Textarea = styled.textarea`
-//   width: 100%;
-//   height: 200px;
-//   padding: 10px;
-//   border: 1px solid #ccc;
-//   border-radius: 5px;
-//   resize: none;
-//   box-sizing: border-box;
-// `;
-
-// export const SubmitButton = styled.button`
-//   background-color: #007bff;
-//   color: #fff;
-//   border: none;
-//   border-radius: 5px;
-//   padding: 10px 20px;
-//   cursor: pointer;
-// `;
-
-//asdfghjkl;'
-
+//MultiLineQuestion STYLES
 
 export const QuestionPageContainer = styled.div`
   max-width: 90%;
