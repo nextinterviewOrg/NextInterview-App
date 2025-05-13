@@ -24,9 +24,9 @@ import {
 } from "../QuestionBank/QuestionBank.styles";
 import { IoClose } from "react-icons/io5"; // Close icon
 import { RiArrowDropDownLine } from "react-icons/ri";
-import { getQuestionBank } from "../../../../api/questionBankApi"; // Adjust the API path
-import { getModuleCode } from "../../../../api/addNewModuleApi"; // Adjust the API path
-import { ShimmerCategoryItem, ShimmerCategoryList, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
+import { getMainQuestion, getAllQBQuestions, getMainQuestionByModule } from "../../../../api/userMainQuestionBankApi"; // Updated API imports
+import { getModuleCode } from "../../../../api/addNewModuleApi";
+import { ShimmerCategoryItem } from "react-shimmer-effects";
 
 const QuestionBank = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -37,7 +37,7 @@ const QuestionBank = () => {
     easy: false,
     medium: false,
     hard: false,
-    topic: null, // Updated to hold only one topic at a time
+    topic: null,
   });
 
   const [filteredQuestions, setFilteredQuestions] = useState([]);
@@ -49,7 +49,7 @@ const QuestionBank = () => {
     const fetchQuestions = async () => {
       try {
         setLoading(true);
-        const response = await getQuestionBank();
+        const response = await getAllQBQuestions();
         setFilteredQuestions(response.data);
         setLoading(false);
       } catch (error) {
@@ -68,7 +68,7 @@ const QuestionBank = () => {
 
     const fetchDifficultyLevels = async () => {
       try {
-        const response = await getQuestionBank();
+        const response = await getAllQBQuestions();
         const levels = response.data.map((question) => question.level);
         const uniqueLevels = [...new Set(levels)];
         setDifficultyLevels(uniqueLevels);
@@ -98,7 +98,7 @@ const QuestionBank = () => {
   const handleTopicChange = (topicName) => {
     setSelectedFilters((prevFilters) => ({
       ...prevFilters,
-      topic: prevFilters.topic === topicName ? null : topicName, // Toggle selection
+      topic: prevFilters.topic === topicName ? null : topicName,
     }));
   };
 
@@ -115,37 +115,47 @@ const QuestionBank = () => {
     if (selectedFilters.medium) filters.level.push("medium");
     if (selectedFilters.hard) filters.level.push("hard");
   
-    if (selectedFilters.topic) {
-      const selectedModule = moduleCodes.find(
-        (module) => module.module_name === selectedFilters.topic
-      );
-      if (selectedModule) {
-        filters.module_code = selectedModule.module_code;
-      }
-    }
-  
     try {
-      const response = await getQuestionBank(
-        filters.module_code,
-        filters.topic_code,
-        filters.subtopic_code,
-        filters.question_type,
-        filters.level.join(",")
-      );
+      let response;
+      
+      if (selectedFilters.topic) {
+        const selectedModule = moduleCodes.find(
+          (module) => module.module_name === selectedFilters.topic
+        );
+        
+        if (selectedModule) {
+          // Use getMainQuestionByModule when a specific module is selected
+          response = await getMainQuestionByModule(
+            selectedModule.module_code,
+            "questionBank"
+          );
+        }
+      } else if (filters.level.length > 0) {
+        // Use getMainQuestion when filtering by level only
+        response = await getMainQuestion(
+          "",
+          "",
+          "",
+          "",
+          filters.level.join(","),
+          "questionBank"
+        );
+      } else {
+        // Default case - get all QB questions
+        response = await getAllQBQuestions();
+      }
   
-      // Always set the filtered questions, even if empty array
       setFilteredQuestions(response.data || []);
       setIsDropdownOpen(false);
     } catch (error) {
       console.error("Error applying filters:", error);
-      // Set empty array on error too
       setFilteredQuestions([]);
     }
   };
 
   const noQuestionsMessage = selectedFilters.topic
-  ? `No questions available for module "${selectedFilters.topic}".`
-  : "No questions found.";
+    ? `No questions available for module "${selectedFilters.topic}".`
+    : "No questions found.";
 
   const clearFilters = async () => {
     setSelectedFilters({
@@ -158,7 +168,7 @@ const QuestionBank = () => {
     });
 
     try {
-      const response = await getQuestionBank();
+      const response = await getAllQBQuestions();
       setFilteredQuestions(response.data);
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -171,89 +181,90 @@ const QuestionBank = () => {
     );
     return module ? module.module_name : "Unknown Module";
   };
-const shimmerItems = new Array(10).fill(null);
+
+  const shimmerItems = new Array(10).fill(null);
 
   return (
     <ThemeProvider theme={theme}>
       <Container>
-  
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <MoreFilters onClick={toggleDropdown}>
-                More filters <RiArrowDropDownLine style={{ fontSize: "25px" }} />
-              </MoreFilters>
-            </div>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <MoreFilters onClick={toggleDropdown}>
+            More filters <RiArrowDropDownLine style={{ fontSize: "25px" }} />
+          </MoreFilters>
+        </div>
 
-            {isDropdownOpen && (
-              <DropdownContainer>
-                <FilterHeader>
-                  <SearchInput
-                    type="text"
-                    placeholder="Search filters..."
-                    value={filterSearchQuery}
-                    onChange={(e) =>
-                      setFilterSearchQuery(e.target.value.toLowerCase())
+        {isDropdownOpen && (
+          <DropdownContainer>
+            <FilterHeader>
+              <SearchInput
+                type="text"
+                placeholder="Search filters..."
+                value={filterSearchQuery}
+                onChange={(e) =>
+                  setFilterSearchQuery(e.target.value.toLowerCase())
+                }
+              />
+              <CloseFilterButton onClick={closeDropdown}>
+                <IoClose size={22} />
+              </CloseFilterButton>
+            </FilterHeader>
+
+            <FilterSection>
+              <SubText>Difficulty Level</SubText>
+              {difficultyLevels.map((level) => (
+                <CheckboxLabel key={level}>
+                  <input
+                    type="checkbox"
+                    checked={selectedFilters[level.toLowerCase()]}
+                    onChange={() =>
+                      handleDifficultyChange(level.toLowerCase())
                     }
-                  />
-                  <CloseFilterButton onClick={closeDropdown}>
-                    <IoClose size={22} />
-                  </CloseFilterButton>
-                </FilterHeader>
+                  />{" "}
+                  {level}
+                </CheckboxLabel>
+              ))}
+            </FilterSection>
 
-                <FilterSection>
-                  <SubText>Difficulty Level</SubText>
-                  {difficultyLevels.map((level) => (
-                    <CheckboxLabel key={level}>
-                      <input
-                        type="checkbox"
-                        checked={selectedFilters[level.toLowerCase()]}
-                        onChange={() =>
-                          handleDifficultyChange(level.toLowerCase())
-                        }
-                      />{" "}
-                      {level}
-                    </CheckboxLabel>
-                  ))}
-                </FilterSection>
+            <FilterSection>
+              <SubText>Topics</SubText>
+              {moduleCodes
+                .filter((module) =>
+                  module.module_name
+                    .toLowerCase()
+                    .includes(filterSearchQuery)
+                )
+                .map((module) => (
+                  <CheckboxLabel key={module.module_code}>
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedFilters.topic === module.module_name
+                      }
+                      onChange={() => handleTopicChange(module.module_name)}
+                    />{" "}
+                    {module.module_name}
+                  </CheckboxLabel>
+                ))}
+            </FilterSection>
 
-                <FilterSection>
-                  <SubText>Topics</SubText>
-                  {moduleCodes
-                    .filter((module) =>
-                      module.module_name
-                        .toLowerCase()
-                        .includes(filterSearchQuery)
-                    )
-                    .map((module) => (
-                      <CheckboxLabel key={module.module_code}>
-                        <input
-                          type="checkbox"
-                          checked={
-                            selectedFilters.topic === module.module_name
-                          }
-                          onChange={() => handleTopicChange(module.module_name)}
-                        />{" "}
-                        {module.module_name}
-                      </CheckboxLabel>
-                    ))}
-                </FilterSection>
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                padding: "10px",
+              }}
+            >
+              <ClearButton onClick={clearFilters}>Clear all</ClearButton>
+              <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
+            </div>
+          </DropdownContainer>
+        )}
 
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    padding: "10px",
-                  }}
-                >
-                  <ClearButton onClick={clearFilters}>Clear all</ClearButton>
-                  <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
-                </div>
-              </DropdownContainer>
-            )}
-      {loading ? (
-  shimmerItems.map((_, index) => (
-    <ShimmerCategoryItem key={index} line={5} gap={10} />
-  ))
-) : (
+        {loading ? (
+          shimmerItems.map((_, index) => (
+            <ShimmerCategoryItem key={index} line={5} gap={10} />
+          ))
+        ) : (
           <>
             {filteredQuestions.length > 0 ? (
               filteredQuestions.map((item, index) => (

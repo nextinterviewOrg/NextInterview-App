@@ -97,6 +97,10 @@ import SettingsPage from "./modules/admin/pages/SettingsPage/SettingsPage";
 import CodeEditorWindow from "./modules/user/components/CodeEditorWindow/CodeEditorWindow";
 import ReadyToCode from "./modules/user/components/Compiler/ReadyToCode";
 import ProblemStatement from "./modules/user/components/ProblemStatement/ProblemStatement";
+import ApproachQuestion from "./modules/user/components/UserChalleneges/Approachanalysis/ApproachQuestion";
+import CasestudyQuestion from "./modules/user/components/UserChalleneges/CaseStudy/CasestudyQuestion";
+import SinglelineQuestion from "./modules/user/components/UserChalleneges/SingleLine/SinglelineQuestion";
+import MultilineQuestion from "./modules/user/components/UserChalleneges/MultiLine/MultilineQuestion";
 
 
 function App() {
@@ -198,6 +202,10 @@ function App() {
               <Route path=":topic" element={<QuicklyReviseTopicDetails />} />
             </Route> */}
             <Route path="challenges" element={<UserChallenges />} />
+            <Route path="challenges/approach/:id" element={<ApproachQuestion />} />
+            <Route path="challenges/casestudy/:id" element={<CasestudyQuestion />} />
+            <Route path="challenges/singleline/:id" element={<SinglelineQuestion />} />
+            <Route path="challenges/multiline/:id" element={<MultilineQuestion />} />
             <Route path="home" element={<UserHome />} />
             <Route path="userProfile" element={<ProfileUser />} />
             <Route path="learning" element={<UserLearning />} />

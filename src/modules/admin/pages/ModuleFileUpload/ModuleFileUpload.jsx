@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Select, Button, Form } from "antd";
+import { Tabs } from "antd";
+const { TabPane } = Tabs;
 
 import {
   getModuleCode,
@@ -23,6 +25,8 @@ import { MdOutlineFileUpload } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 const { Option } = Select;
 import { Input, notification } from "antd";
+import ViewCodes from "../../components/Learningmodulescomponents/FileUpload/ViewCodes/ViewCodes";
+import FileUpload from "../../components/Learningmodulescomponents/FileUpload/FileUpload/FileUpload";
 
 const ModuleFileUpload = () => {
   const [form] = Form.useForm();
@@ -133,8 +137,18 @@ const ModuleFileUpload = () => {
   return (
     <ModuleUploadWrapper>
       <Container>
-        {/* <Title>Learning Modules</Title> */}
-        <StyledForm form={form} onFinish={handleSubmit} layout="vertical">
+      <Tabs defaultActiveKey="2" centered>
+  <TabPane tab="View Codes" key="1">
+    <ViewCodes />
+  </TabPane>
+
+  <TabPane tab="File Upload" key="2">
+    <FileUpload />
+  </TabPane>
+
+  <TabPane tab="Skill Assessment Upload" key="3">
+    <StyledForm form={form} onFinish={handleSubmit} layout="vertical">
+    <StyledForm form={form} onFinish={handleSubmit} layout="vertical">
           <Form.Item
             className="dropdown-box"
             name="moduleCode"
@@ -242,6 +256,11 @@ const ModuleFileUpload = () => {
             </SubmitButton>
           </Form.Item>
         </StyledForm>
+    </StyledForm>
+  </TabPane>
+</Tabs>
+        {/* <Title>Learning Modules</Title> */}
+      
       </Container>
     </ModuleUploadWrapper>
   );

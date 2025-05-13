@@ -20,14 +20,19 @@ export const FormContainer = styled.div`
   border-radius: 8px;
   width: 90%;
   max-width: 700px;
-  height: 80vh;
+  max-height: 80vh;       /* allow modal to grow but cap it */
   position: relative;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-   overflow-y: auto;  
+  overflow-y: auto;       /* allow scrolling only when needed */
 `;
 
 export const FormTitle = styled.h2`
   margin-bottom: 20px;
+`;
+
+export const FormTitleQuestion = styled.h2`
+  margin-bottom: 20px;
+  font-size: 18px;
 `;
 
 export const FormGroup = styled.div`
@@ -45,6 +50,7 @@ export const FormInput = styled.input`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 `;
 
 export const FormTextArea = styled.textarea`
@@ -53,7 +59,8 @@ export const FormTextArea = styled.textarea`
   border: 1px solid #ccc;
   border-radius: 4px;
   min-height: 100px;
-  resize: vertical;
+  resize: none;
+  box-sizing: border-box;
 `;
 
 export const FormSelect = styled.select`
@@ -61,6 +68,7 @@ export const FormSelect = styled.select`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  box-sizing: border-box;
 `;
 
 export const SaveButton = styled.button`
@@ -106,7 +114,7 @@ export const HintButton = styled.button`
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  margin:auto;
+  margin: auto;
 `;
 
 export const HintContainer = styled.div`
@@ -116,6 +124,7 @@ export const HintContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin:auto;
+  gap: 10px;
 `;
 
 export const HintItem = styled.div`
@@ -142,3 +151,5 @@ export const RemoveHintButton = styled.button`
   flex-direction: column;
   margin:auto;
 `;
+
+// Case Study
