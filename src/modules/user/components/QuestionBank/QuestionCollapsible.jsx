@@ -1,8 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import {PageContainer,Sidebar, Content,QuestionHeader, Option,QuestionContainer,FeedbackBox,
-  SolutionBox, Icon, Button, NextButton, MetaInfo1, Topic1, Difficulty1,Type1,SidebarToggle
+import {
+  PageContainer,
+  Sidebar,
+  Content,
+  QuestionHeader,
+  Option,
+  QuestionContainer,
+  FeedbackBox,
+  SolutionBox,
+  Icon,
+  Button,
+  NextButton,
+  MetaInfo1,
+  Topic1,
+  Difficulty1,
+  Type1,
+  SidebarToggle
 } from "./QuestionCollapsible.styles";
 import MainWindow from "../CodeEditorWindow/MainWindow";
 import { FcOk } from "react-icons/fc";
@@ -10,17 +25,19 @@ import { GoThumbsup, GoThumbsdown, GoX } from "react-icons/go";
 import {FiChevronLeft, FiChevronRight} from "react-icons/fi";
 import { useRef } from "react";
 import {
-  getQuestionBank,
-  getQuestionBankById,
-} from "../../../../api/questionBankApi";
+  getMainQuestion,
+  getmainQuestionById,
+  getAllQBQuestions
+} from "../../../../api/userMainQuestionBankApi"; // Updated API imports
 import { ShimmerSectionHeader, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 import {getModuleByModuleCode} from "../../../../api/addNewModuleApi";
-import { checkUserAnswerStatusQuestionBank, addQuestionToQuestionBankProgress } from "../../../../api/userQuestionBankProgressApi";
+import { checkUserAnswerStatusQuestion, addQuestionToQuestionProgress } from "../../../../api/userMainQuestionBankProgressApi";
 import { IoIosArrowDropright } from "react-icons/io";
 import { IoIosArrowDropleft } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { getModuleCode } from "../../../../api/addNewModuleApi";
+import { message } from "antd";
 
 const QuestionCollapsible = () => {
   const { id } = useParams();
@@ -42,6 +59,7 @@ const QuestionCollapsible = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [moduleCodes, setModuleCodes] = useState([]);
   const [error, setError] = useState(null);
+  const [wasAlreadyAnswered, setWasAlreadyAnswered] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -74,7 +92,7 @@ const QuestionCollapsible = () => {
 
   const fetchAllQuestions = async () => {
     try {
-      const response = await getQuestionBank();
+      const response = await getAllQBQuestions();
       if (response?.data) {
         setAllQuestions(response.data);
         setFilteredQuestions(response.data);
@@ -106,7 +124,7 @@ const QuestionCollapsible = () => {
 
   const fetchQuestionById = async () => {
     try {
-      const response = await getQuestionBankById(id);
+      const response = await getmainQuestionById(id);
       if (response?.data) {
         setSelectedQuestion(response.data);
       }
@@ -136,11 +154,12 @@ const QuestionCollapsible = () => {
           questionBankId: selectedQuestion._id
         };
     
-        const response = await checkUserAnswerStatusQuestionBank(requestData);
+        const response = await checkUserAnswerStatusQuestion(requestData);
     
         if (response?.success) {
           setIsQuestionAnswered(true);
-          // Set the stored answer if available
+          setShowSolution(true);
+          setWasAlreadyAnswered(true); // 👈 Track that user has already submitted before
           if (response.data) {
             if (selectedQuestion.question_type === "mcq") {
               setStoredAnswer(response.data.choosen_option);
@@ -150,7 +169,9 @@ const QuestionCollapsible = () => {
           }
         } else {
           setIsQuestionAnswered(false);
+          setWasAlreadyAnswered(false);
         }
+        
       } catch (error) {
         console.error("Error checking answer status:", error);
         setError(new Error("Could not load progress. Feature may be temporarily unavailable."));
@@ -163,6 +184,10 @@ const QuestionCollapsible = () => {
   }, [selectedQuestion, userId]);
 
   const storeUserAnswer = async () => {
+    if (isQuestionAnswered) {
+      setShowSolution(true);
+      return;
+    }
     if (!selectedQuestion || !userId) return;
   
     // Validate input based on question type
@@ -193,9 +218,10 @@ const QuestionCollapsible = () => {
         answer: selectedQuestion.question_type === "mcq" ? "" : userAnswer,
         choosen_option: selectedQuestion.question_type === "mcq" ? selectedAnswer : ""
       };
-  
-      const response = await addQuestionToQuestionBankProgress(requestData);
-  
+  console.log("Storing data",requestData);
+      const response = await addQuestionToQuestionProgress(requestData);
+  console.log("Response",response);
+  message.success("Your answered is stored!");
       if (response && response.success) {
         setIsQuestionAnswered(true);
         if (selectedQuestion.question_type === "mcq") {
@@ -203,7 +229,12 @@ const QuestionCollapsible = () => {
         } else {
           setStoredAnswer(userAnswer);
         }
-        setShowSolution(true);
+        // if (wasAlreadyAnswered) {
+        //   message.info("You have already answered this question");
+        // } else {
+        //   message.success("You have answered this question");
+        //   setWasAlreadyAnswered(true);
+        // }
       }
     } catch (error) {
       console.error("Error storing answer:", error);
@@ -224,21 +255,20 @@ const QuestionCollapsible = () => {
 
   const handleNextQuestion = () => {
     if (filteredQuestions.length === 0) return;
-    
+  
     const currentIndex = filteredQuestions.findIndex(
       (q) => q._id === selectedQuestion._id
     );
     const nextIndex = currentIndex + 1;
-    
+  
     if (nextIndex < filteredQuestions.length) {
       const nextQuestion = filteredQuestions[nextIndex];
       navigate(`/user/questionBank/${nextQuestion._id}`, {
         state: { filteredQuestions },
-        replace: true
+        replace: true,
       });
     }
   };
-
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -293,21 +323,7 @@ const QuestionCollapsible = () => {
               </div>
             )}
             
-            {isQuestionAnswered && (
-              <div style={{ 
-                color: 'green', 
-                padding: '10px', 
-                backgroundColor: '#f0f0f0', 
-                borderRadius: '5px',
-                marginBottom: '15px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                <FcOk style={{ fontSize: '20px' }} />
-                <span>You've answered this question</span>
-              </div>
-            )}
+        
 
             <MetaInfo1>
               <Topic1>Module: {getModuleName(selectedQuestion.module_code || selectedQuestion.moduleId)}</Topic1>
