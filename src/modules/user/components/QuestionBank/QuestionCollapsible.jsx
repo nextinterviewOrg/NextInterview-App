@@ -15,7 +15,7 @@ import {
 } from "../../../../api/questionBankApi";
 import { ShimmerSectionHeader, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
 import {getModuleByModuleCode} from "../../../../api/addNewModuleApi";
-import { checkUserAnswerStatusQuestionBank } from "../../../../api/userQuestionBankProgressApi";
+import { checkUserAnswerStatusQuestionBank, addQuestionToQuestionBankProgress } from "../../../../api/userQuestionBankProgressApi";
 import { IoIosArrowDropright } from "react-icons/io";
 import { IoIosArrowDropleft } from "react-icons/io";
 import { useUser } from "@clerk/clerk-react";
@@ -25,10 +25,10 @@ import { getModuleCode } from "../../../../api/addNewModuleApi";
 const QuestionCollapsible = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const location = useLocation(); // Add this to access location state
+  const location = useLocation();
 
   const [allQuestions, setAllQuestions] = useState([]);
-  const [filteredQuestions, setFilteredQuestions] = useState([]); // New state for filtered questions
+  const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [userAnswer, setUserAnswer] = useState("");
@@ -36,10 +36,12 @@ const QuestionCollapsible = () => {
   const [isQuestionAnswered, setIsQuestionAnswered] = useState(false);
   const [isLoadingStatus, setIsLoadingStatus] = useState(false);
   const [storedAnswer, setStoredAnswer] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-   const [moduleCodes, setModuleCodes] = useState([]);
+  const [moduleCodes, setModuleCodes] = useState([]);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -53,23 +55,19 @@ const QuestionCollapsible = () => {
 
     fetchUserData();
 
-    // Initialize questions based on location state or fetch all
     if (location.state?.filteredQuestions) {
       setFilteredQuestions(location.state.filteredQuestions);
       setAllQuestions(location.state.filteredQuestions);
       
-      // Find and set the current question from filtered list
       const currentQuestion = location.state.filteredQuestions.find(
         q => q._id === id
       );
       if (currentQuestion) {
         setSelectedQuestion(currentQuestion);
       } else {
-        // If not found in filtered list, fetch it individually
         fetchQuestionById();
       }
     } else {
-      // If no filtered questions in state, fetch all questions
       fetchAllQuestions();
     }
   }, [id, location.state]);
@@ -95,15 +93,15 @@ const QuestionCollapsible = () => {
       console.error("Error fetching all questions:", error);
     }
 
-     const fetchModuleCodes = async () => {
-          try {
-            const response = await getModuleCode();
-            setModuleCodes(response.data);
-          } catch (error) {
-            console.error("Error fetching modules:", error);
-          }
-        };
-        fetchModuleCodes();
+    const fetchModuleCodes = async () => {
+      try {
+        const response = await getModuleCode();
+        setModuleCodes(response.data);
+      } catch (error) {
+        console.error("Error fetching modules:", error);
+      }
+    };
+    fetchModuleCodes();
   };
 
   const fetchQuestionById = async () => {
@@ -118,108 +116,112 @@ const QuestionCollapsible = () => {
   };
 
   useEffect(() => {
-    // Check if the user has already answered this question
-    const checkAnswerStatus = async () => {
-      if (!selectedQuestion || !userId) return;
+    if (!selectedQuestion || !userId) return;
 
-      setIsLoadingStatus(true);
-      try {
-        console.log("selectedQuestion", selectedQuestion);
-        // Ensure all required fields are present and properly formatted
-        const requestData = {
-          moduleId: selectedQuestion.module_code || '', // Provide fallback empty string if undefined
-          userId: userId,
-          questionBankId: selectedQuestion._id
-        };
-        console.log("Selected module ", selectedQuestion.moduleId, " and user ", userId, " and question ", selectedQuestion._id);
-        // Log the request data for debugging
-        console.log("Sending request with data:", requestData);
-
-        // Validate required fields
-        if (!requestData.moduleId || !requestData.userId || !requestData.questionBankId) {
-          console.error("Missing required fields in request data");
-          setIsQuestionAnswered(false);
-          return;
-        }
-
-        const response = await checkUserAnswerStatusQuestionBank(requestData);
-
-        // Log the response for debugging
-        console.log("Received response:", response);
-
-        if (response && typeof response.success !== 'undefined') {
-          setIsQuestionAnswered(response.success);
-
-          if (response.success) {
-            setShowSolution(true);
-            // Handle stored answer if available in response
-            if (response.data) {
-              const answerData = response.data.answered_Questions?.find(
-                q => q.questionBankId === selectedQuestion._id
-              );
-              if (answerData) {
-                setStoredAnswer(answerData.choosen_option || answerData.answer);
-                if (selectedQuestion.question_type === "mcq") {
-                  setSelectedAnswer(answerData.choosen_option);
-                } else {
-                  setUserAnswer(answerData.answer || "");
-                }
-              }
-            }
-          }
-        } else {
-          console.error("Invalid response format from API");
-          setIsQuestionAnswered(false);
-        }
-      } catch (error) {
-        console.error("Error checking answer status:", error);
-        // More detailed error handling
-        if (error.response) {
-          console.error("Response data:", error.response.data);
-          console.error("Response status:", error.response.status);
-          console.error("Response headers:", error.response.headers);
-        } else if (error.request) {
-          console.error("No response received:", error.request);
-        } else {
-          console.error("Error setting up request:", error.message);
-        }
-        setIsQuestionAnswered(false);
-      } finally {
-        setIsLoadingStatus(false);
-      }
-    };
-
-    checkAnswerStatus();
-  }, [selectedQuestion]);
-
-  useEffect(() => {
-    const fetchQuestion = async () => {
-      try {
-        const response = await getQuestionBankById(id);
-        if (response && response.data) {
-          setSelectedQuestion(response.data);
-        } else {
-          console.error("No data found for this question");
-        }
-      } catch (error) {
-        console.error("Error fetching question:", error);
-      }
-    };
-
-    fetchQuestion();
+    // Reset answer state when question changes
     setSelectedAnswer(null);
     setUserAnswer("");
     setShowSolution(false);
     setIsQuestionAnswered(false);
     setStoredAnswer(null);
-  }, [id]);
+
+    const checkAnswerStatus = async () => {
+      setIsLoadingStatus(true);
+      setError(null);
+    
+      try {
+        const requestData = {
+          moduleId: selectedQuestion.moduleId || selectedQuestion.module_code || '',
+          userId: userId,
+          questionBankId: selectedQuestion._id
+        };
+    
+        const response = await checkUserAnswerStatusQuestionBank(requestData);
+    
+        if (response?.success) {
+          setIsQuestionAnswered(true);
+          // Set the stored answer if available
+          if (response.data) {
+            if (selectedQuestion.question_type === "mcq") {
+              setStoredAnswer(response.data.choosen_option);
+            } else {
+              setStoredAnswer(response.data.answer);
+            }
+          }
+        } else {
+          setIsQuestionAnswered(false);
+        }
+      } catch (error) {
+        console.error("Error checking answer status:", error);
+        setError(new Error("Could not load progress. Feature may be temporarily unavailable."));
+      } finally {
+        setIsLoadingStatus(false);
+      }
+    };
+    
+    checkAnswerStatus();
+  }, [selectedQuestion, userId]);
+
+  const storeUserAnswer = async () => {
+    if (!selectedQuestion || !userId) return;
+  
+    // Validate input based on question type
+    if (selectedQuestion.question_type === "mcq" && !selectedAnswer) {
+      alert("Please select an answer before submitting");
+      return;
+    }
+  
+    if (
+      (selectedQuestion.question_type === "single-line" ||
+       selectedQuestion.question_type === "multi-line" ||
+       selectedQuestion.question_type === "approach") &&
+      !userAnswer.trim()
+    ) {
+      alert("Please enter an answer before submitting");
+      return;
+    }
+  
+    setIsSubmitting(true);
+    setError(null);
+  
+    try {
+      const requestData = {
+        moduleId: selectedQuestion.moduleId || selectedQuestion.module_code || '',
+        userId: userId,
+        questionBankId: selectedQuestion._id,
+        question_type: selectedQuestion.question_type,
+        answer: selectedQuestion.question_type === "mcq" ? "" : userAnswer,
+        choosen_option: selectedQuestion.question_type === "mcq" ? selectedAnswer : ""
+      };
+  
+      const response = await addQuestionToQuestionBankProgress(requestData);
+  
+      if (response && response.success) {
+        setIsQuestionAnswered(true);
+        if (selectedQuestion.question_type === "mcq") {
+          setStoredAnswer(selectedAnswer);
+        } else {
+          setStoredAnswer(userAnswer);
+        }
+        setShowSolution(true);
+      }
+    } catch (error) {
+      console.error("Error storing answer:", error);
+      alert("Failed to save your answer. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleShowSolution = () => {
     if (isQuestionAnswered) {
-      alert("You have already answered this question. Viewing the solution again.");
+      setShowSolution(true);
+      return;
     }
-    setShowSolution(true);
+  
+    storeUserAnswer();
   };
+
   const handleNextQuestion = () => {
     if (filteredQuestions.length === 0) return;
     
@@ -231,24 +233,21 @@ const QuestionCollapsible = () => {
     if (nextIndex < filteredQuestions.length) {
       const nextQuestion = filteredQuestions[nextIndex];
       navigate(`/user/questionBank/${nextQuestion._id}`, {
-        state: { filteredQuestions }, // Pass along the filtered questions
+        state: { filteredQuestions },
         replace: true
       });
     }
   };
 
-  // const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
+
   const getModuleName = (moduleCode) => {
-    // First check if moduleCode exists in moduleCodes
     const module = moduleCodes.find(
       (module) => module.module_code === moduleCode
     );
     
-    // If not found, try to find by moduleId (some APIs use different property names)
     if (!module && selectedQuestion?.moduleId) {
       const moduleById = moduleCodes.find(
         (m) => m._id === selectedQuestion.moduleId
@@ -258,6 +257,7 @@ const QuestionCollapsible = () => {
     
     return module ? module.module_name : "Unknown Module";
   };
+
   return (
     <PageContainer>
       <SidebarToggle onClick={toggleSidebar}>
@@ -270,7 +270,7 @@ const QuestionCollapsible = () => {
           <Link
             key={index}
             to={`/user/questionBank/${question._id}`}
-            state={{ filteredQuestions }} // Pass filtered questions when navigating
+            state={{ filteredQuestions }}
             style={{ textDecoration: "none", color: "black" }}
             onClick={() => window.innerWidth <= 860 && setSidebarOpen(false)}
           >
@@ -287,15 +287,30 @@ const QuestionCollapsible = () => {
       <Content>
         {selectedQuestion ? (
           <>
-            {isLoadingStatus && <p>Checking answer status...</p>}
+            {isLoadingStatus && (
+              <div style={{ padding: '10px', marginBottom: '15px' }}>
+                <ShimmerText line={1} gap={10} />
+              </div>
+            )}
+            
             {isQuestionAnswered && (
-              <p style={{ color: 'green', padding: '10px', backgroundColor: '#f0f0f0', borderRadius: '5px' }}>
-                You've already answered this question
-              </p>
+              <div style={{ 
+                color: 'green', 
+                padding: '10px', 
+                backgroundColor: '#f0f0f0', 
+                borderRadius: '5px',
+                marginBottom: '15px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <FcOk style={{ fontSize: '20px' }} />
+                <span>You've answered this question</span>
+              </div>
             )}
 
             <MetaInfo1>
-            <Topic1>Module: {getModuleName(selectedQuestion.module_code || selectedQuestion.moduleId)}</Topic1>
+              <Topic1>Module: {getModuleName(selectedQuestion.module_code || selectedQuestion.moduleId)}</Topic1>
               <Difficulty1>Difficulty: {selectedQuestion.level}</Difficulty1>
               <Type1>Type: {selectedQuestion.question_type}</Type1>
             </MetaInfo1>
@@ -312,7 +327,11 @@ const QuestionCollapsible = () => {
                           type="radio"
                           name="answer"
                           value="option_a"
-                          checked={selectedAnswer === "option_a"}
+                          checked={
+                            isQuestionAnswered 
+                              ? storedAnswer === "option_a" 
+                              : selectedAnswer === "option_a"
+                          }
                           onChange={() => {
                             if (!isQuestionAnswered) {
                               setSelectedAnswer("option_a");
@@ -323,7 +342,15 @@ const QuestionCollapsible = () => {
                         />
                         {selectedQuestion.option_a}
                         {isQuestionAnswered && storedAnswer === "option_a" && (
-                          <span style={{ color: 'green', marginLeft: '10px' }}>(Your answer)</span>
+                          <span style={{ 
+                            color: 'green', 
+                            marginLeft: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}>
+                            <FcOk /> (Your answer)
+                          </span>
                         )}
                       </Option>
                     )}
@@ -333,7 +360,11 @@ const QuestionCollapsible = () => {
                           type="radio"
                           name="answer"
                           value="option_b"
-                          checked={selectedAnswer === "option_b"}
+                          checked={
+                            isQuestionAnswered 
+                              ? storedAnswer === "option_b" 
+                              : selectedAnswer === "option_b"
+                          }
                           onChange={() => {
                             if (!isQuestionAnswered) {
                               setSelectedAnswer("option_b");
@@ -344,7 +375,15 @@ const QuestionCollapsible = () => {
                         />
                         {selectedQuestion.option_b}
                         {isQuestionAnswered && storedAnswer === "option_b" && (
-                          <span style={{ color: 'green', marginLeft: '10px' }}>(Your answer)</span>
+                          <span style={{ 
+                            color: 'green', 
+                            marginLeft: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}>
+                            <FcOk /> (Your answer)
+                          </span>
                         )}
                       </Option>
                     )}
@@ -354,7 +393,11 @@ const QuestionCollapsible = () => {
                           type="radio"
                           name="answer"
                           value="option_c"
-                          checked={selectedAnswer === "option_c"}
+                          checked={
+                            isQuestionAnswered 
+                              ? storedAnswer === "option_c" 
+                              : selectedAnswer === "option_c"
+                          }
                           onChange={() => {
                             if (!isQuestionAnswered) {
                               setSelectedAnswer("option_c");
@@ -365,7 +408,15 @@ const QuestionCollapsible = () => {
                         />
                         {selectedQuestion.option_c}
                         {isQuestionAnswered && storedAnswer === "option_c" && (
-                          <span style={{ color: 'green', marginLeft: '10px' }}>(Your answer)</span>
+                          <span style={{ 
+                            color: 'green', 
+                            marginLeft: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}>
+                            <FcOk /> (Your answer)
+                          </span>
                         )}
                       </Option>
                     )}
@@ -375,7 +426,11 @@ const QuestionCollapsible = () => {
                           type="radio"
                           name="answer"
                           value="option_d"
-                          checked={selectedAnswer === "option_d"}
+                          checked={
+                            isQuestionAnswered 
+                              ? storedAnswer === "option_d" 
+                              : selectedAnswer === "option_d"
+                          }
                           onChange={() => {
                             if (!isQuestionAnswered) {
                               setSelectedAnswer("option_d");
@@ -386,55 +441,27 @@ const QuestionCollapsible = () => {
                         />
                         {selectedQuestion.option_d}
                         {isQuestionAnswered && storedAnswer === "option_d" && (
-                          <span style={{ color: 'green', marginLeft: '10px' }}>(Your answer)</span>
+                          <span style={{ 
+                            color: 'green', 
+                            marginLeft: '10px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px'
+                          }}>
+                            <FcOk /> (Your answer)
+                          </span>
                         )}
                       </Option>
                     )}
                   </form>
-                  {(selectedAnswer || isQuestionAnswered) && !showSolution && (
-                    <Button onClick={handleShowSolution}>
-                      {isQuestionAnswered ? "View Solution Again" : "Show Solution"}
-                    </Button>
-                  )}
-                  {(showSolution || isQuestionAnswered) && (
-                    <FeedbackBox
-                      correct={
-                        isQuestionAnswered
-                          ? storedAnswer === selectedQuestion.correct_option
-                          : selectedAnswer === selectedQuestion.correct_option
-                      }
+                  {(selectedAnswer || isQuestionAnswered) && (
+                    <Button 
+                      onClick={handleShowSolution}
+                      disabled={isSubmitting}
                     >
-                      <Icon>
-                        {(isQuestionAnswered
-                          ? storedAnswer === selectedQuestion.correct_option
-                          : selectedAnswer === selectedQuestion.correct_option) ? (
-                          <FcOk />
-                        ) : (
-                          <GoX
-                            style={{
-                              color: "red",
-                              fontSize: "24px",
-                              marginTop: "5px",
-                            }}
-                          />
-                        )}
-                      </Icon>
-                      {(isQuestionAnswered
-                        ? storedAnswer === selectedQuestion.correct_option
-                        : selectedAnswer === selectedQuestion.correct_option)
-                        ? "Your answer is correct"
-                        : "Your answer is incorrect"}
-                    </FeedbackBox>
-                  )}
-                  {(showSolution || isQuestionAnswered) && (
-                    <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
-                        Solution
-                      </p>
-                      <div className="correction">
-                        <p>{selectedQuestion.answer}</p>
-                      </div>
-                    </SolutionBox>
+                      {isSubmitting ? "Submitting..." : 
+                       isQuestionAnswered ? "View Solution" : "Submit Answer"}
+                    </Button>
                   )}
                 </>
               ) : selectedQuestion.question_type === "single-line" ? (
@@ -442,87 +469,44 @@ const QuestionCollapsible = () => {
                   <SolutionBox>
                     <input
                       type="text"
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="Your answer"
+                      value={isQuestionAnswered ? storedAnswer : userAnswer}
+                      onChange={(e) => !isQuestionAnswered && setUserAnswer(e.target.value)}
+                      placeholder={isQuestionAnswered ? "Your previous answer is shown above" : "Your answer"}
+                      disabled={isQuestionAnswered}
                       style={{
                         width: "100%",
-                        // padding: "10px",
-                        // border: "1px solid #ccc",
                         border: "none",
                         borderRadius: "5px",
                         lineHeight: "2",
                         padding: "5px",
+                        backgroundColor: isQuestionAnswered ? "#f5f5f5" : "white"
                       }}
                     />
                   </SolutionBox>
-                  {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>
-                      Show Solution
+                  {(userAnswer || isQuestionAnswered) && (
+                    <Button 
+                      onClick={handleShowSolution}
+                      disabled={isSubmitting}
+                    >
+                      {isSubmitting ? "Submitting..." : 
+                       isQuestionAnswered ? "View Solution" : "Submit Answer"}
                     </Button>
                   )}
-                  {showSolution && (
-                    <FeedbackBox
-                      correct={
-                        userAnswer.trim() === selectedQuestion.answer.trim()
-                      }
-                    >
-                      <Icon>
-                        {userAnswer.trim() ===
-                        selectedQuestion.answer.trim() ? (
-                          <FcOk />
-                        ) : (
-                          <GoX
-                            style={{
-                              color: "red",
-                              fontSize: "24px",
-                              marginTop: "5px",
-                            }}
-                          />
-                        )}
-                      </Icon>
-                      {userAnswer.trim() === selectedQuestion.answer.trim()
-                        ? "Your answer is correct"
-                        : "Your answer is incorrect"}
-                    </FeedbackBox>
-                  )}
-                  {showSolution && (
-                    <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
-                        Solution
-                      </p>
-                      <div className="correction">
-                        <p>{selectedQuestion.answer}</p>
-                        {/* <div className="thumbsup">
-                          <span>
-                            <GoThumbsup />
-                            Helpful
-                          </span>
-                          <span>
-                            <GoThumbsdown />
-                            Not Helpful
-                          </span>
-                        </div> */}
-                      </div>
-                    </SolutionBox>
-                  )}
                 </>
-              )
-  : selectedQuestion.question_type === "multi-line" ? (
+              ) : selectedQuestion.question_type === "multi-line" ? (
                 <>
                   <SolutionBox>
                     <textarea
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="Your answer"
+                      value={isQuestionAnswered ? storedAnswer : userAnswer}
+                      onChange={(e) => !isQuestionAnswered && setUserAnswer(e.target.value)}
+                      placeholder={isQuestionAnswered ? "Your previous answer is shown above" : "Your answer"}
                       rows="5"
+                      disabled={isQuestionAnswered}
                       style={{
                         width: "100%",
-                        // padding: "10px",
                         borderRadius: "5px",
-                        // border: "1px solid #ddd",
-                        backgroundColor: "white",
                         border: "none",
+                        backgroundColor: isQuestionAnswered ? "#f5f5f5" : "white",
                         fontSize: "16px",
                         lineHeight: "1.5",
                         fontFamily: "Arial, sans-serif",
@@ -530,55 +514,14 @@ const QuestionCollapsible = () => {
                       }}
                     />
                   </SolutionBox>
-                  {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>
-                      Show Solution
-                    </Button>
-                  )}
-                  {showSolution && (
-                    <FeedbackBox
-                      correct={
-                        userAnswer.trim() === selectedQuestion.answer.trim()
-                      }
+                  {(userAnswer || isQuestionAnswered) && (
+                    <Button 
+                      onClick={handleShowSolution}
+                      disabled={isSubmitting}
                     >
-                      <Icon>
-                        {userAnswer.trim() ===
-                        selectedQuestion.answer.trim() ? (
-                          <FcOk />
-                        ) : (
-                          <GoX
-                            style={{
-                              color: "red",
-                              fontSize: "24px",
-                              marginTop: "5px",
-                            }}
-                          />
-                        )}
-                      </Icon>
-                      {userAnswer.trim() === selectedQuestion.answer.trim()
-                        ? "Your answer is correct"
-                        : "Your answer is incorrect"}
-                    </FeedbackBox>
-                  )}
-                  {showSolution && (
-                    <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
-                        Solution
-                      </p>
-                      <div className="correction">
-                        <p>{selectedQuestion.answer}</p>
-                        {/* <div className="thumbsup">
-                          <span>
-                            <GoThumbsup />
-                            Helpful
-                          </span>
-                          <span>
-                            <GoThumbsdown />
-                            Not Helpful
-                          </span>
-                        </div> */}
-                      </div>
-                    </SolutionBox>
+                      {isSubmitting ? "Submitting..." : 
+                       isQuestionAnswered ? "View Solution" : "Submit Answer"}
+                    </Button>
                   )}
                 </>
               ) : selectedQuestion.question_type === "approach" ? (
@@ -589,78 +532,89 @@ const QuestionCollapsible = () => {
                     }}
                   >
                     <textarea
-                      value={userAnswer}
-                      onChange={(e) => setUserAnswer(e.target.value)}
-                      placeholder="Your approach"
+                      value={isQuestionAnswered ? storedAnswer : userAnswer}
+                      onChange={(e) => !isQuestionAnswered && setUserAnswer(e.target.value)}
+                      placeholder={isQuestionAnswered ? "Your previous approach is shown above" : "Your approach"}
                       rows="5"
+                      disabled={isQuestionAnswered}
                       style={{
                         width: "100%",
-                        // marginTop: "10px",
-                        // padding: "10px",
                         borderRadius: "5px",
                         border: "none",
-                        backgroundColor: "white",
+                        backgroundColor: isQuestionAnswered ? "#f5f5f5" : "white",
                         fontSize: "16px",
                         lineHeight: "1.5",
                         resize: "vertical",
                       }}
                     />
                   </SolutionBox>
-                  {userAnswer && !showSolution && (
-                    <Button onClick={() => setShowSolution(true)}>
-                      Show Solution
-                    </Button>
-                  )}
-                  {showSolution && (
-                    <FeedbackBox
-                      correct={
-                        userAnswer.trim() === selectedQuestion.answer.trim()
-                      }
+                  {(userAnswer || isQuestionAnswered) && (
+                    <Button 
+                      onClick={handleShowSolution}
+                      disabled={isSubmitting}
                     >
-                      <Icon>
-                        {userAnswer.trim() ===
-                        selectedQuestion.answer.trim() ? (
-                          <FcOk />
-                        ) : (
-                          <GoX
-                            style={{
-                              color: "red",
-                              fontSize: "24px",
-                              marginTop: "5px",
-                            }}
-                          />
-                        )}
-                      </Icon>
-                      {userAnswer.trim() === selectedQuestion.answer.trim()
-                        ? "Your answer is correct"
-                        : "Your answer is incorrect"}
-                    </FeedbackBox>
-                  )}
-                  {showSolution && (
-                    <SolutionBox>
-                      <p style={{ fontWeight: "700", color: "#4CAF50" }}>
-                        Solution
-                      </p>
-                      <div className="correction">
-                        <p>{selectedQuestion.answer}</p>
-                        {/* <div className="thumbsup">
-                          <span>
-                            <GoThumbsup />
-                            Helpful
-                          </span>
-                          <span>
-                            <GoThumbsdown />
-                            Not Helpful
-                          </span>
-                        </div> */}
-                      </div>
-                    </SolutionBox>
+                      {isSubmitting ? "Submitting..." : 
+                       isQuestionAnswered ? "View Solution" : "Submit Answer"}
+                    </Button>
                   )}
                 </>
               ) : (
                 <MainWindow />
               )}
- 
+
+              {(showSolution || isQuestionAnswered) && (
+                <>
+                  <FeedbackBox
+                    correct={
+                      isQuestionAnswered
+                        ? selectedQuestion.question_type === "mcq"
+                          ? storedAnswer === selectedQuestion.correct_option
+                          : storedAnswer?.trim() === selectedQuestion.answer?.trim()
+                        : selectedQuestion.question_type === "mcq"
+                          ? selectedAnswer === selectedQuestion.correct_option
+                          : userAnswer?.trim() === selectedQuestion.answer?.trim()
+                    }
+                  >
+                    <Icon>
+                      {(isQuestionAnswered
+                        ? selectedQuestion.question_type === "mcq"
+                          ? storedAnswer === selectedQuestion.correct_option
+                          : storedAnswer?.trim() === selectedQuestion.answer?.trim()
+                        : selectedQuestion.question_type === "mcq"
+                          ? selectedAnswer === selectedQuestion.correct_option
+                          : userAnswer?.trim() === selectedQuestion.answer?.trim()) ? (
+                        <FcOk />
+                      ) : (
+                        <GoX
+                          style={{
+                            color: "red",
+                            fontSize: "24px",
+                            marginTop: "5px",
+                          }}
+                        />
+                      )}
+                    </Icon>
+                    {(isQuestionAnswered
+                      ? selectedQuestion.question_type === "mcq"
+                        ? storedAnswer === selectedQuestion.correct_option
+                        : storedAnswer?.trim() === selectedQuestion.answer?.trim()
+                      : selectedQuestion.question_type === "mcq"
+                        ? selectedAnswer === selectedQuestion.correct_option
+                        : userAnswer?.trim() === selectedQuestion.answer?.trim())
+                      ? "Your answer is correct"
+                      : "Your answer is incorrect"}
+                  </FeedbackBox>
+                  <SolutionBox>
+                    <p style={{ fontWeight: "700", color: "#4CAF50" }}>
+                      Solution
+                    </p>
+                    <div className="correction">
+                      <p>{selectedQuestion.answer}</p>
+                    </div>
+                  </SolutionBox>
+                </>
+              )}
+
               {showSolution && (
                 <NextButton onClick={handleNextQuestion}>
                   Next Question
@@ -669,12 +623,14 @@ const QuestionCollapsible = () => {
             </QuestionContainer>
           </>
         ) : (
-          <p>Loading ...</p>
+          <div style={{ padding: '20px' }}>
+            <ShimmerSectionHeader />
+            <ShimmerText line={4} gap={10} />
+          </div>
         )}
       </Content>
     </PageContainer>
   );
 };
- 
+
 export default QuestionCollapsible;
- 

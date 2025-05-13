@@ -500,7 +500,7 @@ const TryItYourself = () => {
             this, expanding your skills even further.
           </ExploreSubtitle>
           <ExploreButton onClick={handleExploreButtonClick}>
-            Question Back
+            Question bank
           </ExploreButton>
         </ExploreQuestionsContainer>
       </div>
