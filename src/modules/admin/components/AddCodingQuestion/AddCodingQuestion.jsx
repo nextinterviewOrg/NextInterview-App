@@ -45,7 +45,6 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
         topics: [],
         base_code: '',
         module_code: '',
-        topic_code: '',
         isTiyQuestion: false,
         isQbQuestion: false
     });

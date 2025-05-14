@@ -7,6 +7,7 @@ import {
   StyledForm,
 } from "../../../../pages/ModuleFileUpload/ModuleFileUpload.styles";
 import { uploadQuestionBankFile } from "../../../../../../api/FileProcessingApi"; // Adjust the import path as needed
+import { uploadAllQuestionsToMainQuestions } from "../../../../../../api/userMainQuestionBankApi";
 
 const FileUpload = () => {
   const [form] = Form.useForm();
@@ -62,7 +63,8 @@ const FileUpload = () => {
             console.log(key, value);
         }
 
-        const response = await uploadQuestionBankFile(formData);
+        const response = await uploadAllQuestionsToMainQuestions(formData);
+        console.log("File upload response:", response);
         
         notification.success({
             message: "Upload Successful",
