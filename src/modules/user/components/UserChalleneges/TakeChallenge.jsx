@@ -21,11 +21,11 @@ const Card = styled.div`
 const ChallengeTitle = styled.h2`
   font-family: ${(props) => props.theme.fonts.body};
   color: ${(props) => props.theme.colors.text};
-  font-size: 32px;
+  font-size: 24px;
   margin: ${(props) => props.theme.spacing(1)} 0;
 
   @media (max-width: 768px) {
-    font-size: 24px;
+    font-size: 20px;
   }
 `;
 
@@ -161,12 +161,14 @@ const LoadingMessage = styled.div`
   border: 1px solid #bbdefb;
 `;
 import { useUser } from "@clerk/clerk-react";
-import { getUserByClerkId } from "../../../../api/userApi";const TakeChallenge = () => {
+import { getUserByClerkId } from "../../../../api/userApi";
+const TakeChallenge = ({ questionType = "coding" }) => {
   const navigate = useNavigate();
+  const { user, isLoaded } = useUser();
+
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user, isLoaded } = useUser();
 
   useEffect(() => {
     if (!isLoaded) return;
@@ -175,44 +177,49 @@ import { getUserByClerkId } from "../../../../api/userApi";const TakeChallenge =
       try {
         setLoading(true);
         setError(null);
-        
-        // 1. Get user data
-        const userResponse = await getUserByClerkId(user.id);
-        if (!userResponse?.data?.user?._id) {
-          throw new Error("Failed to get user ID");
-        }
-        
-        // 2. Get challenges
-        const challengesResponse = await getTodaysUserChallenges(userResponse.data.user._id);
-        const challengesArray = challengesResponse?.data;
-        
-        if (Array.isArray(challengesArray)) {
-          // Filter out completed challenges
-          const filteredChallenges = challengesArray.filter(
-            challenge => challenge.userStatus !== 'answered'
-          );
-          setChallenges(filteredChallenges);
+
+        const userData = await getUserByClerkId(user.id);
+        const userId = userData.data.user._id;
+
+        const response = await getTodaysUserChallenges(userId, questionType);
+        const challengeList = response?.data;
+
+        if (Array.isArray(challengeList)) {
+          setChallenges(challengeList);
         } else {
-          throw new Error("Invalid challenges data format");
+          throw new Error("Invalid challenge data");
         }
-        
       } catch (err) {
         console.error("API Error:", err);
-        setError(err.response?.data?.message || err.message || "Failed to load data");
+        setError(err.response?.data?.message || err.message || "Failed to load challenges");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [user, isLoaded]);
+  }, [user, isLoaded, questionType]);
 
-  // ... (keep all your loading/error states as they are)
+  if (loading) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center" }}>
+        Loading today's challenges...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: "20px", textAlign: "center", color: "#e74c3c" }}>
+        {error}
+      </div>
+    );
+  }
 
   if (challenges.length === 0) {
     return (
       <div style={{ padding: "20px", textAlign: "center", color: "#7f8c8d" }}>
-        {loading ? "Loading..." : "No challenges available for today. Check back tomorrow!"}
+        No challenges available for today. Check back tomorrow!
       </div>
     );
   }
@@ -221,42 +228,39 @@ import { getUserByClerkId } from "../../../../api/userApi";const TakeChallenge =
     <>
       {challenges.map((challenge) => (
         <Card key={challenge._id}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <small style={badgeStyle}>
-              #Today's Challenge
-            </small>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <small style={badgeStyle}>#Today's Challenge</small>
             {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
-              {challenge.userStatus === 'completed' ? 'Completed' : 
-               challenge.userStatus === 'attempted' ? 'Attempted' : 'Not Attempted'}
+              {challenge.userStatus}
             </StatusBadge> */}
           </div>
-          
+
           <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
-          <ChallengeSubtitle>{challenge.description}</ChallengeSubtitle>
-          
+
+          <ChallengeSubtitle>
+            {challenge.description || "No description provided."}
+          </ChallengeSubtitle>
+
           <Tags>
-            <Tag>{challenge.programming_language}</Tag>
-            <Tag>{challenge.difficulty}</Tag>
-            {challenge.tags?.map((tag, index) => (
-              <Tag key={index}>{tag}</Tag>
-            ))}
+            {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}
+            {challenge.difficulty && <Tag>{challenge.difficulty}</Tag>}
+            {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
           </Tags>
-          
-          <MarginButton>
-            <Buttons>
-              <Button
-                secondary
-                onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
-              >
-                Challenge Info
-              </Button>
-            </Buttons>
-          </MarginButton>
+
+          <Buttons>
+            <Button
+              secondary
+              onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
+            >
+              Challenge Info
+            </Button>
+          </Buttons>
         </Card>
       ))}
     </>
   );
 };
+
 
 const badgeStyle = {
   color: "#2390ac",

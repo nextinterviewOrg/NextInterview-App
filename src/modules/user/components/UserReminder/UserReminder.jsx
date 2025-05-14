@@ -87,24 +87,44 @@ const UserReminder = () => {
   const card = flashcards[0]; // show one at a time
 
   return (
-    <UserReminderWrapper>
-      <div className="user-reminder-content">
-        <p>Understanding You better</p>
-        <div className="reminder-text">
-          <p className="reminder-text-description">
-            {card.cardContent}
-          </p>
-        </div>
-        <div className="reminder-actions">
-          <button className="dismiss-button" onClick={() => handleCardResponse(card._id, false)}>
-            <span>✖</span>
-          </button>
-          <button className="thanks-button" onClick={() => handleCardResponse(card._id, true)}>
-            I Know This
-          </button>
-        </div>
+ <UserReminderWrapper>
+      <div className="user-reminder-content-wrapper">
+        {flashcards.slice(0, 3).map((card, index) => (
+          <div
+            key={card._id}
+            className="user-reminder-content"
+            style={{
+              transform: `scale(${1 - index * 0.02}) translateX(${index * 30}px) translateY(${index * 10}px)`,
+              zIndex: flashcards.length - index,
+              pointerEvents: index === 0 ? 'auto' : 'none',
+              opacity: index === 0 ? 1 : 0.6,
+            }}
+          >
+            <div className="reminder-text">
+              <p className="reminder-text-description">{card.cardContent}</p>
+            </div>
+            {index === 0 && (
+              <div className="reminder-actions">
+                <button className="dismiss-button" onClick={() => handleCardResponse(card._id, false)}>
+                  ✖
+                </button>
+                <button className="thanks-button" onClick={() => handleCardResponse(card._id, true)}>
+                  I Know This
+                </button>
+              </div>
+            )}
+          </div>
+        ))}
+ 
+        {flashcards.length === 0 && (
+          <div className="user-reminder-completed">
+            <div className="tick-icon">✔</div>
+            <div className="completed-message">All caught up!</div>
+          </div>
+        )}
       </div>
     </UserReminderWrapper>
+ 
   );
 };
 

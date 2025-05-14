@@ -44,7 +44,7 @@ const NewChallenge = () => {
     fetchChallenge();
   }, [id]);
 
-  if (loading) return <div>Loading challenge...</div>;
+  if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   const iconList = [
@@ -54,7 +54,7 @@ const NewChallenge = () => {
   ];
 
   const handleGoBack = () => {
-    navigate("/user/takeChallenge");
+    navigate(`/user/challenges`);
   };
 
   const handleStartChallenge = () => {
@@ -82,10 +82,11 @@ const NewChallenge = () => {
         </Header>
 
         <hr className="hrtag" />
-
+<h3>Topics</h3>
         <TopicsList>
-          {challenge.hints?.map((hint, index) => (
-            <TopicItem key={index}>{hint.hint_text}</TopicItem>
+          {challenge.topics?.map((topic, index) => (
+        
+            <TopicItem key={index}>{topic.topic_name}</TopicItem>
           ))}
         </TopicsList>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MCQContainer,
   QuestionBlock,
@@ -6,75 +6,145 @@ import {
   OptionLabel,
   RadioInput,
   SubmitButton,
-  ResultText,
-  Title
+  Title,
+  ApproachContainer,
 } from "./MCQ.styles";
-
-const mcqData = [
-  {
-    id: 1,
-    question: "Which of the following is a JavaScript framework?",
-    options: ["Laravel", "Django", "React", "Spring Boot"],
-    answer: "React",
-  },
-  {
-    id: 2,
-    question: "What does CSS stand for?",
-    options: [
-      "Computer Style Sheets",
-      "Cascading Style Sheets",
-      "Creative Style Sheets",
-      "Colorful Style Sheets",
-    ],
-    answer: "Cascading Style Sheets",
-  },
-  {
-    id: 3,
-    question: "Which HTML tag is used to define an unordered list?",
-    options: ["<ul>", "<ol>", "<li>", "<list>"],
-    answer: "<ul>",
-  },
-];
+import { getTodaysUserChallenges, submitUserChallengeProgress } from "../../../../../api/challengesApi";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../../api/userApi";
+import { message } from "antd";
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 const MCQ = () => {
+  const [questions, setQuestions] = useState([]);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [userId, setUserId] = useState(null);
+  const { user } = useUser();
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchMCQs = async () => {
+      try {
+        const userData = await getUserByClerkId(user.id);
+        const uid = userData.data.user._id;
+        setUserId(uid);
+
+        const response = await getTodaysUserChallenges(uid, "mcq");
+        if (Array.isArray(response.data)) {
+          setQuestions(response.data);
+        } else {
+          throw new Error("Unexpected MCQ data format");
+        }
+      } catch (err) {
+        console.error("Error fetching MCQs:", err);
+        message.error("Failed to load MCQ questions.");
+      }finally{
+        setLoading(false);
+      } 
+    };
+
+    fetchMCQs();
+  }, [user.id]);
 
   const handleChange = (questionId, option) => {
     setSelectedAnswers((prev) => ({ ...prev, [questionId]: option }));
   };
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
+  const handleSubmit = async () => {
+    try {
+      for (const question of questions) {
+        const userAnswer = selectedAnswers[question._id];
+        if (!userAnswer) continue;
 
+        const payload = {
+          questionId: question._id,
+          userId,
+          choosen_option: userAnswer,
+          finalResult: userAnswer === question[question.answer], // e.g., "option_a" = "React"
+          skip: false,
+        };
+
+        await submitUserChallengeProgress(payload);
+        console.log("Submission successful:", payload);
+      }
+
+      setSubmitted(true);
+      message.success("Answers submitted successfully!");
+      setTimeout(() => navigate("/user/challenges"), 1500);
+    } catch (err) {
+      console.error("Submission error:", err);
+      message.error("Failed to submit answers. Please try again.");
+    }
+  };
+  if(loading){
+    return (
+      <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+        <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+          Loading questions...
+        </p>
+      </ApproachContainer>
+    );
+  }
+
+   if (questions.length === 0) {
+      return (
+        <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+          <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+            No questions found for today&nbsp;🎉
+          </p>
+        </ApproachContainer>
+      );
+    }
   return (
     <MCQContainer>
       <Title>MCQ Questions</Title>
-      {mcqData.map((q) => (
-        <QuestionBlock key={q.id}>
-          <QuestionText>{q.question}</QuestionText>
-          {q.options.map((opt) => (
-            <OptionLabel key={opt}>
-              <RadioInput
-                type="radio"
-                name={`question-${q.id}`}
-                value={opt}
-                checked={selectedAnswers[q.id] === opt}
-                onChange={() => handleChange(q.id, opt)}
-              />
-              {opt}
-            </OptionLabel>
-          ))}
+
+      {questions.map((q) => (
+        <QuestionBlock key={q._id}>
+          <QuestionText>{q.QuestionText}</QuestionText>
+
+          {["option_a", "option_b", "option_c", "option_d"].map((optKey) => {
+            const optVal = q[optKey];
+            return (
+              <OptionLabel key={optKey}>
+                <RadioInput
+                  type="radio"
+                  name={`question-${q._id}`}
+                  value={optVal}
+                  checked={selectedAnswers[q._id] === optVal}
+                  onChange={() => handleChange(q._id, optVal)}
+                  disabled={submitted}
+                />
+                {optVal}
+              </OptionLabel>
+            );
+          })}
+
           {submitted && (
-            <ResultText correct={selectedAnswers[q.id] === q.answer}>
-              {selectedAnswers[q.id] === q.answer
-                ? "✅ Correct!"
-                : `❌ Incorrect! Correct answer: ${q.answer}`}
-            </ResultText>
+            <div style={{ marginTop: "10px" }}>
+              <label style={{ fontWeight: "bold" }}>Correct Answer:</label>
+              <textarea
+                rows={2}
+                style={{
+                  width: "100%",
+                  marginTop: "5px",
+                  padding: "8px",
+                  borderRadius: "6px",
+                  border: "1px solid #ccc",
+                  backgroundColor: "#f9f9f9",
+                  resize: "none",
+                }}
+                readOnly
+                value={q[q.correct_option] || ""}
+              />
+            </div>
           )}
         </QuestionBlock>
       ))}
+
       {!submitted && (
         <SubmitButton onClick={handleSubmit}>Submit</SubmitButton>
       )}

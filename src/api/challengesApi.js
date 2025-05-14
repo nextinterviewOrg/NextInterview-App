@@ -79,6 +79,8 @@ export const getTodaysUserChallenges = async (userId,question_type) => {
 export const getAllChallengesWithUserResults =async (userId,question_type) => {
     try {
       //question_type can have value of ["mcq", "single-line", "multi-line", "approach","coding","case-study"],
+      console.log("question_type",question_type);
+      console.log("userId",userId);
       const response =await api.get(`/userChallenges/all-with-results/${userId}?question_type=${question_type}`);
       return response.data;
     } catch (error) {
@@ -98,3 +100,12 @@ export const submitUserChallengeProgress = async (data) => {
   }
 };
 
+export const getChallengesProgress =async (userId) => {
+  try {
+    const response =await api.get(`userChallengesProgress/check-response/${questionId}/${userId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-
+import theme from "../../../../../theme/Theme";
 export const ApproachContainer = styled.div`
   padding: 2rem;
 `;
@@ -80,7 +80,7 @@ export const SelectedQuestionTitle = styled.h2`
 export const Textarea = styled.textarea`
   width: 100%;
   padding: 12px;
-  border: 1px solid #ccc;
+  border:none;
   border-radius: 6px;
   margin-top: 1rem;
   resize: vertical;
@@ -89,16 +89,14 @@ export const Textarea = styled.textarea`
 
 export const SubmitButton = styled.button`
   padding: 10px 20px;
-  background-color: #4caf50;
+  background-color: ${({ theme }) => theme.colors.secondary};
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
 
-  &:hover {
-    background-color: #43a047;
-  }
+
 `;
 
 export const BackButton = styled.button`

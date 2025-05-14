@@ -13,7 +13,7 @@ import MultiLine from "../../components/UserChalleneges/MultiLine/MultiLine";
 import MCQ from "../../components/UserChalleneges/MCQ/MCQ";
 
 const UserChallenges = () => {
-    const [activeTab, setActiveTab] = useState("Approach Analysis");
+    const [activeTab, setActiveTab] = useState("Coding");
 
     return (
         <UserChallengesWrapper>
