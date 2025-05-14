@@ -126,11 +126,17 @@ function useGoogleAnalytics() {
   }, [location]);
 }
 
-function App() {
+// New component to use the hook inside <Router>
+function GoogleAnalyticsTracker() {
   useGoogleAnalytics();
+  return null;
+}
+
+function App() {
   return (
     <ThemeProvider theme={theme}>
       <Router>
+        <GoogleAnalyticsTracker />
         <GlobalStyle />
         <Routes>
           {/* <Route path="/landingpage" element={<LandingPage />} /> */}
