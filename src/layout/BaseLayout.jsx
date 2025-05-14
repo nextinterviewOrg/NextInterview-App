@@ -22,9 +22,10 @@ const BaseLayout = () => {
   // Determine layout based on path
   const isAdminPath = location.pathname.startsWith("/admin");
   const isUserPath = location.pathname.startsWith("/user");
-  const ModulePath =
-    location.pathname.startsWith("/user/learning/") &&
-    location.pathname.endsWith("/topic");
+  const [ModulePath, setModulePath] = useState(
+  location.pathname.startsWith("/user/learning/") &&
+    location.pathname.endsWith("/topic"));
+
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -36,6 +37,7 @@ const BaseLayout = () => {
     const apiCaller = async () => {
       if (isSignedIn && isLoaded && user) {
         try {
+
           const data = await getUserByClerkId(user.id);
           if (data.data.user.user_role === "user") {
             if (data.data.user.profile_status === true) {
@@ -53,6 +55,14 @@ const BaseLayout = () => {
     }
     apiCaller();
   }, [user])
+  useEffect(() => {
+    console.log("ModulePath 1111",  location.pathname.startsWith("/user/learning/") ,
+    location.pathname.endsWith("/topic"));
+    setModulePath(
+      location.pathname.startsWith("/user/learning/") &&
+        location.pathname.endsWith("/topic")
+    )
+  }, [navigate])
 
   // Close sidebar when clicking outside on mobile
   useEffect(() => {

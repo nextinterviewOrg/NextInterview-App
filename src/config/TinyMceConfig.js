@@ -1,4 +1,4 @@
-export const TinyMCEapiKey = "j39la2rc2o5w1wq17orwnn2y6t10lmjabd0tocrq1m957ccf";
+export const TinyMCEapiKey = "sv3o3ld048xiotsz9v7ssuj0shb5spyjqh9d313yb361e4s3";
  
 export const TinyMCEplugins = [
   // Core editing features

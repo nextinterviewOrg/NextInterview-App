@@ -129,6 +129,8 @@ const UserModuleTopic = () => {
   const [isModuleCompleted, setIsModuleCompleted] = useState(false);
   const [feedbackOrder, setFeedbackOrder] = useState(1);
   const [returnUrl, setReturnUrl] = useState(null);
+  const [moduleCODE, setModuleCODE] = useState(null)
+  const [topicCODE, setTopicCODE] = useState(null)
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -161,10 +163,10 @@ const UserModuleTopic = () => {
       finalSubTopicIndex = 0;
       const topicCompletionData = await getAllTopicsCompletionStatus(userData.data.user._id, module_code,);
       const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-      await Promise.all(userModuleProgressStats.ModuleProgress.map(async(item) => {
+      await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
         if (item.moduleCode === moduleResponse.data.module_code) {
-          
-          if(Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)>50){
+
+          if (Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0) > 50) {
             const statusData = await checkUserFeedBackExists({
               userId: userData.data.user._id,
               feedback_order: 1,
@@ -175,7 +177,7 @@ const UserModuleTopic = () => {
               /// logic for feedback
               setShowFeedbackModal(true);
               setFeedbackOrder(1);
-              
+
             }
 
           };
@@ -314,6 +316,7 @@ const UserModuleTopic = () => {
         const response = await getModuleById(moduleId);
         console.log("Module data received in UserModuleTopic:", response.data);
         setModuleName(response.data.moduleName);
+        setModuleCODE(response.data.module_code);
 
         const data = {
           title: response.data.moduleName,
@@ -406,6 +409,7 @@ const UserModuleTopic = () => {
             response.data.topicData.map(async (item, topicIndex) => {
               if (topicIndex === location.state.topicIndex) {
                 currentTopicCode = item.topic_code;
+                setTopicCODE(item.topic_code);
                 currentTopicId = item._id;
                 currentSubtopicCode = null;
               }
@@ -774,9 +778,17 @@ const UserModuleTopic = () => {
         </>
       ) : (
         <>
-          <TryItYourself>
-            <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
-          </TryItYourself>
+          <div style={{ display: "flex", justifyContent: "flex-end" }}>
+            <TryItYourself>
+              <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
+            </TryItYourself >
+            <TryItYourself >
+              <TryButton onClick={() => {
+                navigate(`/user/titcodinglist`, { state: { moduleCode: moduleCODE, topicCode: topicCODE, topicIndex: location.state?.topicIndex, subtopicIndex: location.state?.subtopicIndex, returnUrl: `/user/learning/${moduleId}/topic` } })
+              }}>Try Coding Questions</TryButton>
+            </TryItYourself>
+          </div>
+
 
           <div>
             {topicData && (

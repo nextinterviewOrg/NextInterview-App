@@ -269,7 +269,7 @@ const QuestionBank = () => {
             {filteredQuestions.length > 0 ? (
               filteredQuestions.map((item, index) => (
                 <Link
-                  to={`/user/questionBank/${item._id}`}
+                  to={`/user/mainQuestionBank/questionBank/${item._id}`}
                   key={index}
                   style={{ textDecoration: "none" }}
                   state={{ filteredQuestions }}

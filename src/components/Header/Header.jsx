@@ -124,15 +124,16 @@ const Header = ({ toggleMobileSidebar }) => {
     if (path.includes("learning")) return "Learning Module";
     if (path.includes("profile")) return "Profile ";
     if (path.includes("users")) return "Users";
-    if(path.includes("supportquery")) return "Support Query";
-    if(path.includes("flashcard")) return "Flashcard";
-    if(path.includes("notification")) return "Notifications";
-    if(path.includes("manage-mfa")) return "Manage MFA";
-    if(path.includes("real-world-scenario")) return "Real World Scenarios";
-    if(path.includes("challenges")) return "Challenges";
-    if(path.includes("userProfile")) return "User Profile";
-    if(path.includes("user-feedback")) return "User Feedback";
-    if(path.includes("settingspage")) return "Settings";
+    if (path.includes("supportquery")) return "Support Query";
+    if (path.includes("flashcard")) return "Flashcard";
+    if (path.includes("notification")) return "Notifications";
+    if (path.includes("manage-mfa")) return "Manage MFA";
+    if (path.includes("real-world-scenario")) return "Real World Scenarios";
+    if (path.includes("challenges")) return "Challenges";
+    if (path.includes("userProfile")) return "User Profile";
+    if (path.includes("user-feedback")) return "User Feedback";
+    if (path.includes("settingspage")) return "Settings";
+    if (path.includes("tiyqbcodingquestions")) return "Coding Questions";
     // Add more routes as needed
     return "Dashboard"; // Default title
   };
@@ -183,7 +184,7 @@ const Header = ({ toggleMobileSidebar }) => {
           </div>
           <Title>{title}</Title>
         </div>
-        
+
         <HeaderRight>
           <UserProfile>
             <UserDetails>

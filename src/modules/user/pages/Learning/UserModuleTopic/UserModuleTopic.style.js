@@ -18,7 +18,7 @@ export const TryItYourself = styled.div`
   padding: 20px 0;
   display: flex;
   justify-content: flex-end;
-  width: 100%;
+  // width: 30%;
 `;
 
 export const TryButton = styled.button`

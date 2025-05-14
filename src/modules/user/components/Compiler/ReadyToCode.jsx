@@ -7,7 +7,9 @@ import {
   OutputBox,
   OutputSection,
   LanguageSelect,
-  Buttons
+  Buttons,
+  InputBox,
+  TextBox
 } from './ReadyToCode.styles';
 
 const languageOptions = {
@@ -21,14 +23,14 @@ const languageOptions = {
   },
 };
 
-const ReadyToCode = ({selectLang, setSelectLang, output, setOutput, showCodeEditor, code, setCode}) => {
-
+const ReadyToCode = ({ selectLang, setSelectLang, output, setOutput, showCodeEditor, code, setCode,input, setInput }) => {
+  console.log("selectLang", selectLang, "output", output, "showCodeEditor", showCodeEditor,  "input", input);
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectLang(lang);
-    setCode(languageOptions[lang].defaultCode);
+    setCode('');
     setOutput('');
-  };
+  }; 
 
   const runCode = async () => {
     if (!selectLang || !code) {
@@ -44,7 +46,9 @@ const ReadyToCode = ({selectLang, setSelectLang, output, setOutput, showCodeEdit
           content: code,
         },
       ],
+      stdin:selectLang === 'python' ? input:''
     };
+    console.log("payload", payload);
 
     try {
       const res = await fetch('https://onecompiler-apis.p.rapidapi.com/api/v1/run', {
@@ -58,7 +62,7 @@ const ReadyToCode = ({selectLang, setSelectLang, output, setOutput, showCodeEdit
       });
 
       const result = await res.json();
-
+      console.log(result);
       if (result.status === 'success') {
         setOutput(result.stdout || result.stderr || 'No output');
       } else {
@@ -92,6 +96,17 @@ const ReadyToCode = ({selectLang, setSelectLang, output, setOutput, showCodeEdit
         </Buttons>
       </CodeBox>
 
+     {selectLang === 'python' && <InputBox>
+        <h4>Input</h4>
+        {/* <InputSection>{languageOptions[selectLang]?.defaultCode}</InputSection> */}
+        <TextBox
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Enter your code here..."
+          style={{ width: '100%', height: '50px', marginTop: '10px' }}
+        />
+      </InputBox>}
       <OutputBox>
         <h4>Output</h4>
         <OutputSection>{output}</OutputSection>

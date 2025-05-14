@@ -101,6 +101,14 @@ import ApproachQuestion from "./modules/user/components/UserChalleneges/Approach
 import CasestudyQuestion from "./modules/user/components/UserChalleneges/CaseStudy/CasestudyQuestion";
 import SinglelineQuestion from "./modules/user/components/UserChalleneges/SingleLine/SinglelineQuestion";
 import MultilineQuestion from "./modules/user/components/UserChalleneges/MultiLine/MultilineQuestion";
+import TIYQBCodingQuestions from "./modules/admin/pages/TIYQBCodingQuestions/TIYQBCodingQuestions";
+import TIYCodingList from "./modules/user/pages/TIYCodingList/TIYCodingList";
+import TIYCodingDetailPage from "./modules/user/pages/TIYCodingDetailPage/TIYCodingDetailPage";
+import TIYCodingPage from "./modules/user/pages/TIYCodingPage/TIYCodingPage";
+import QBCodingList from "./modules/user/pages/QBCodingList/QBCodingList";
+import QBCodingDetailPage from "./modules/user/pages/QBCodingDetailPage/QBCodingDetailPage";
+import QBCodingPage from "./modules/user/pages/QBCodingPage/QBCodingPage";
+import AllQuestionBank from "./modules/user/pages/AllQuestionBank/AllQuestionBank";
 
 
 function App() {
@@ -115,7 +123,7 @@ function App() {
           <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
           <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
           <Route path="/" element={<PublicRoutes Component={LandingPage} />} />
-          <Route path="/loginPhone" element={<PublicRoutes Component={Login}  />} />
+          <Route path="/loginPhone" element={<PublicRoutes Component={Login} />} />
           <Route path="/login" element={<PublicRoutes Component={SignUp} />} />
           <Route path="/signup" element={<PublicRoutes Component={SignUpPage} />} />
           <Route path="/personalinfo" element={<PersonalInfo />} />
@@ -186,6 +194,7 @@ function App() {
             <Route path="user-feedback" element={<UserFeedbackDisplay />} />
             <Route path="editquestionmodule" element={<EditQuestionModule />} />
             <Route path="settingspage" element={<SettingsPage />} />
+            <Route path="TIYQBCodingQuestions" element={<TIYQBCodingQuestions />} />
 
             {/* </Route> */}
           </Route>
@@ -213,8 +222,8 @@ function App() {
             <Route path="learning/:id/topic" element={<UserModuleTopic />} />
             <Route path="learning/:id/topic/sampleInterview" element={<UserSampleInterview />} />
             <Route path="learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
-            <Route path="questionbank" element={<QuestionBank />} />
-            <Route path="questionbank/:id" element={<QuestionCollapsible />} />
+            {/* <Route path="questionbank" element={<QuestionBank />} />
+            <Route path="questionbank/:id" element={<QuestionCollapsible />} /> */}
             <Route path="userfaq" element={<UserFAQ />} />
             <Route path="subscription" element={<UserSubscription />} />
             <Route path="interview" element={<InterviewPage />} />
@@ -224,6 +233,17 @@ function App() {
             <Route path="takeChallenge" element={<CodeEditorWindow />} />
             <Route path="takeChallenge/:id" element={<CodeEditorWindow />} />
             <Route path="interview/interview-feedback" element={<ProblemStatement />} />
+            <Route path="titcodinglist" element={<TIYCodingList />} />
+            <Route path="titcodingDetail" element={<TIYCodingDetailPage />} />
+            <Route path="titcodingRun" element={<TIYCodingPage />} />
+            <Route path="mainQuestionBank" element={<AllQuestionBank />} >
+              <Route index element={<QBCodingList />} />
+              <Route path="qbcodinglist" element={<QBCodingList />} />
+              <Route path="qbdetail" element={<QBCodingDetailPage />} />
+              <Route path="qbcodingpage" element={<QBCodingPage />} />
+              <Route path="questionbank" element={<QuestionBank />} />
+              <Route path="questionbank/:id" element={<QuestionCollapsible />} />
+            </Route>
           </Route>
           {/* <Route path="userfaq" element={<UserFAQ />} /> */}
           {/* <Route path="subscription" element={<UserSubscription />} /> */}
