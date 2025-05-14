@@ -82,10 +82,11 @@ const NewChallenge = () => {
         </Header>
 
         <hr className="hrtag" />
-
+<h3>Topics</h3>
         <TopicsList>
-          {challenge.hints?.map((hint, index) => (
-            <TopicItem key={index}>{hint.hint_text}</TopicItem>
+          {challenge.topics?.map((topic, index) => (
+        
+            <TopicItem key={index}>{topic.topic_name}</TopicItem>
           ))}
         </TopicsList>
 
