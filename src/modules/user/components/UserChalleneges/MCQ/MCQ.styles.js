@@ -60,3 +60,7 @@ export const ResultText = styled.p`
   margin-top: 0.8rem;
   color: ${(props) => (props.correct ? "green" : "red")};
 `;
+
+export const ApproachContainer = styled.div`
+  padding: 2rem;
+`;

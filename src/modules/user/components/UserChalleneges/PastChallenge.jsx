@@ -13,25 +13,37 @@ import {
   Status,
 } from "./PastChallenge.styles";
 import quicklyimage from "../../assets/quicklyimage.png";
+
 import { getAllChallengesWithUserResults } from "../../../../api/challengesApi";
 import { format } from "date-fns";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 
 const PastChallenge = () => {
+  const { user } = useUser();
   const [challenges, setChallenges] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useUser();
 
   useEffect(() => {
+    if (!user?.id) return;
+
     const fetchChallenges = async () => {
       try {
-        const userData = await getUserByClerkId(user.id);
-        const userId = userData.data.user._id;
+        const { data: userData } = await getUserByClerkId(user.id);
+        const userId = userData.user._id;
+console.log("Userid",userId);
+        /** -----------------------------------------------------------------
+         *  The API already returns the array of challenge objects we need.
+         *  If your backend nests it one level deeper (e.g. res.data.data),
+         *  just tweak the line below accordingly.
+         *  ----------------------------------------------------------------*/
+        const { data } = await getAllChallengesWithUserResults(
+          userId,
+          "coding"
+        );
+        console.log("data",data);
 
-        const response = await getAllChallengesWithUserResults(userId, "coding"); // or "mcq", etc.
-        setChallenges(response.data || []);
-        console.log("API response: track", response);
+        setChallenges(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error("Failed to fetch past challenges:", error);
       } finally {
@@ -40,25 +52,31 @@ const PastChallenge = () => {
     };
 
     fetchChallenges();
-  }, [user.id]);
+  }, [user?.id]);
+
+  /* ------------ Helpers ------------------------------------------------ */
 
   const getStatus = (challenge) => {
-    if (challenge.userStatus === "answered") {
-      return challenge.finalResult === true ? "Completed" : "Missed";
+    // hasAnswered → attempted; hasAnswered + finalResult → completed
+    if (challenge.hasAnswered) {
+      return challenge.finalResult ? "Completed" : "Attempted";
     }
     return "Not Attempted";
   };
 
+  // Map UI colour variants in <Status>
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
         return "completed";
-      case "Missed":
-        return "missed";
+      case "Attempted":
+        return "attempted";
       default:
         return "notAttempted";
     }
   };
+
+  /* --------------------------------------------------------------------- */
 
   if (loading) return <div>Loading past challenges...</div>;
 
@@ -75,7 +93,7 @@ const PastChallenge = () => {
             justifyContent: "center",
           }}
         >
-          <Image src={quicklyimage} alt="No any past challenges" />
+          <Image src={quicklyimage} alt="No past challenges" />
           <Text>No past challenges</Text>
         </div>
       ) : (
@@ -94,10 +112,14 @@ const PastChallenge = () => {
                     : "Not Attempted"}
                 </ChallengeDate>
 
-                <ChallengeTitle>{challenge.QuestionText || challenge.questionText}</ChallengeTitle>
+                <ChallengeTitle>
+                  {challenge.QuestionText || challenge.questionText}
+                </ChallengeTitle>
 
                 {challenge.description && (
-                  <ChallengeDescription>{challenge.description}</ChallengeDescription>
+                  <ChallengeDescription>
+                    {challenge.description}
+                  </ChallengeDescription>
                 )}
               </ChallengeDetails>
 
