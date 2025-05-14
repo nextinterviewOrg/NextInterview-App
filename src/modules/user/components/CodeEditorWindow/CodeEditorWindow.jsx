@@ -91,7 +91,7 @@ const CodeEditorWindow = () => {
     navigate(`/user/challengeInfo/${id}`);
   };
 
-  if (loading) return <div>Loading challenge...</div>;
+  if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (

@@ -317,12 +317,7 @@ const QuestionCollapsible = () => {
       <Content>
         {selectedQuestion ? (
           <>
-            {isLoadingStatus && (
-              <div style={{ padding: '10px', marginBottom: '15px' }}>
-                <ShimmerText line={1} gap={10} />
-              </div>
-            )}
-            
+           
         
 
             <MetaInfo1>

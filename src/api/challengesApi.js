@@ -98,3 +98,12 @@ export const submitUserChallengeProgress = async (data) => {
   }
 };
 
+export const getChallengesProgress =async (userId) => {
+  try {
+    const response =await api.get(`userChallengesProgress/check-response/${questionId}/${userId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}

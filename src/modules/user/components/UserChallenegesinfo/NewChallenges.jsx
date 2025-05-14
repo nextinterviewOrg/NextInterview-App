@@ -44,7 +44,7 @@ const NewChallenge = () => {
     fetchChallenge();
   }, [id]);
 
-  if (loading) return <div>Loading challenge...</div>;
+  if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   const iconList = [
@@ -54,7 +54,7 @@ const NewChallenge = () => {
   ];
 
   const handleGoBack = () => {
-    navigate("/user/takeChallenge");
+    navigate(`/user/challenges`);
   };
 
   const handleStartChallenge = () => {

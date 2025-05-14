@@ -45,7 +45,7 @@ export const Tabbuttons = styled.div`
       font-weight: 500;
 
       &.active {
-        background-color: #007bff;
+        background-color: ${({ theme }) => theme.colors.secondary};
         color: white;
       }
     }

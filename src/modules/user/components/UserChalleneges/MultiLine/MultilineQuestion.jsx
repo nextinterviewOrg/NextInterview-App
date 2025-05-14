@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   QuestionPageContainer,
@@ -8,52 +8,103 @@ import {
   BackButton,
 } from "./MultiLine.styles";
 
-const questions = [
-  {
-    id: 1,
-    title: "This is Multi line question?",
-    fullText: "Explain the reasons why React is widely adopted for frontend development.",
-  },
-  {
-    id: 2,
-    title: "Difference between var, let, and const",
-    fullText: "Discuss the differences between var, let, and const in JavaScript with examples.",
-  },
-  {
-    id: 3,
-    title: "What is Closure in JS?",
-    fullText: "Describe closures in JavaScript and provide a practical use case.",
-  },
-];
+import { getChallengeById, submitUserChallengeProgress } from "../../../../../api/challengesApi";
+import { useUser } from "@clerk/clerk-react";
+import { getUserByClerkId } from "../../../../../api/userApi";
+import { message } from "antd"; // Optional, for user-friendly feedback
 
 const MultilineQuestion = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const question = questions.find((q) => q.id === parseInt(id));
-  const [userAnswer, setUserAnswer] = useState("");
+  const { user } = useUser();
 
-  if (!question) {
-    return <div>Question not found</div>;
-  }
+  const [question, setQuestion] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [userAnswer, setUserAnswer] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    const fetchQuestionAndUser = async () => {
+      try {
+        const [userData, questionRes] = await Promise.all([
+          getUserByClerkId(user.id),
+          getChallengeById(id),
+        ]);
+
+        const internalUserId = userData.data.user._id;
+        setUserId(internalUserId);
+        setQuestion(questionRes.data);
+      } catch (err) {
+        console.error("Error loading data:", err);
+        setError("Failed to load question or user.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchQuestionAndUser();
+  }, [id, user.id]);
+
+  const handleSubmit = async () => {
+    if (!userAnswer.trim()) {
+      message.warning("Please type an answer before submitting.");
+      return;
+    }
+
+    if (!question?._id || !userId) {
+      message.error("User or question not loaded.");
+      return;
+    }
+
+    const payload = {
+      questionId: question._id,
+      userId: userId,
+      answer: userAnswer,
+      finalResult: true, // For now assuming true. Evaluate on server ideally.
+      skip: false,
+    };
+
+    try {
+      setSubmitting(true);
+      const result = await submitUserChallengeProgress(payload);
+      message.success("Answer submitted successfully!");
+      console.log("Submission Result:", result);
+
+      setTimeout(() => navigate("/user/challenges"), 1500); // Navigate after short delay
+    } catch (err) {
+      console.error("Submission failed:", err);
+      message.error("Failed to submit your answer.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) return <div>Loading question...</div>;
+  if (error) return <div>{error}</div>;
+  if (!question) return <div>Question not found</div>;
 
   return (
-    <>
-    {/* <UserChallenges/> */}
     <QuestionPageContainer>
       <BackButton onClick={() => navigate(-1)}>Back</BackButton>
-      <SelectedQuestionTitle>{question.title}</SelectedQuestionTitle>
-      <p>{question.fullText}</p>
+      <SelectedQuestionTitle>{question.QuestionText}</SelectedQuestionTitle>
+      <p>{question.description || question.answer || "No additional details provided."}</p>
+
       <Textarea
         rows="12"
         placeholder="Type your answer..."
         value={userAnswer}
         onChange={(e) => setUserAnswer(e.target.value)}
+        disabled={submitting}
       />
+
       <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
-        <SubmitButton onClick={() => alert("Answer Submitted!")}>Submit</SubmitButton>
+        <SubmitButton onClick={handleSubmit} disabled={submitting}>
+          {submitting ? "Submitting..." : "Submit"}
+        </SubmitButton>
       </div>
     </QuestionPageContainer>
-    </>
   );
 };
 
