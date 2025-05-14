@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styled, { ThemeProvider } from "styled-components";
 import GlobalStyle from "./theme/GlobalStyle";
 import theme from "./theme/Theme";
 import BaseLayout from "./layout/BaseLayout";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import SignUp from "./pages/SignUp/SignUp";
 import PersonalInfo from "./pages/PersonalInfo/PersonalInfo";
@@ -102,8 +102,32 @@ import CasestudyQuestion from "./modules/user/components/UserChalleneges/CaseStu
 import SinglelineQuestion from "./modules/user/components/UserChalleneges/SingleLine/SinglelineQuestion";
 import MultilineQuestion from "./modules/user/components/UserChalleneges/MultiLine/MultilineQuestion";
 
+// Google Analytics gtag script injection and route tracking
+function useGoogleAnalytics() {
+  const location = useLocation();
+  useEffect(() => {
+    // Inject gtag script only once
+    if (!window.gtagScriptLoaded) {
+      const script1 = document.createElement('script');
+      script1.async = true;
+      script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-Y84SM8YDQ9';
+      document.head.appendChild(script1);
+      const script2 = document.createElement('script');
+      script2.innerHTML = `window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-Y84SM8YDQ9');`;
+      document.head.appendChild(script2);
+      window.gtagScriptLoaded = true;
+    }
+    // Track page view on route change
+    if (window.gtag) {
+      window.gtag('config', 'G-Y84SM8YDQ9', {
+        page_path: location.pathname + location.search,
+      });
+    }
+  }, [location]);
+}
 
 function App() {
+  useGoogleAnalytics();
   return (
     <ThemeProvider theme={theme}>
       <Router>
