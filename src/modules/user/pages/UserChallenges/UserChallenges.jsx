@@ -1,97 +1,109 @@
 import React, { useState } from "react";
 import TakeChallenge from "../../components/UserChalleneges/TakeChallenge";
 import PastChallenge from "../../components/UserChalleneges/PastChallenge";
-import { 
+import {
     UserChallengesWrapper,
     Challengescontainer,
     Tabbuttons
- } from "./UserChallenges.styles";
+} from "./UserChallenges.styles";
 import ApproachAnalysis from "../../components/UserChalleneges/Approachanalysis/ApproachAnalysis";
+import CaseStudy from "../../components/UserChalleneges/CaseStudy/CaseStudy";
+import SingleLine from "../../components/UserChalleneges/SingleLine/SingleLine"
+import MultiLine from "../../components/UserChalleneges/MultiLine/MultiLine";
+import MCQ from "../../components/UserChalleneges/MCQ/MCQ";
 
 const UserChallenges = () => {
-  const [activeTab, setActiveTab] = useState("Approach Analysis");
+    const [activeTab, setActiveTab] = useState("Coding");
 
-  return (
-    <UserChallengesWrapper>
-      <Challengescontainer>
+    return (
+        <UserChallengesWrapper>
+            <Challengescontainer>
 
-        {/* Tab Navigation */}
-        <Tabbuttons>
-          <button
-            className={activeTab === "Coding" ? "active" : ""}
-            onClick={() => setActiveTab("Coding")}
-          >
-            Coding
-          </button>
-          <button
-            className={activeTab === "Approach Analysis" ? "active" : ""}
-            onClick={() => setActiveTab("Approach Analysis")}
-          >
-            Approach Analysis
-          </button>
-          <button
-            className={activeTab === "Case Study" ? "active" : ""}
-            onClick={() => setActiveTab("Case Study")}
-          >
-            Case Study
-          </button>
-          <button
-            className={activeTab === "Single-line" ? "active" : ""}
-            onClick={() => setActiveTab("Single-line")}
-          >
-            Single-line
-          </button>
-          <button
-            className={activeTab === "Multi-line" ? "active" : ""}
-            onClick={() => setActiveTab("Multi-line")}
-          >
-            Multi-line
-          </button>
-          <button
-            className={activeTab === "MCQ" ? "active" : ""}
-            onClick={() => setActiveTab("MCQ")}
-          >
-            MCQ
-          </button>
-         
-        </Tabbuttons>
+                {/* Tab Navigation */}
+                <Tabbuttons>
+                    <button
+                        className={activeTab === "Coding" ? "active" : ""}
+                        onClick={() => setActiveTab("Coding")}
+                    >
+                        Coding
+                    </button>
+                    <button
+                        className={activeTab === "Approach Analysis" ? "active" : ""}
+                        onClick={() => setActiveTab("Approach Analysis")}
+                    >
+                        Approach Analysis
+                    </button>
+                    <button
+                        className={activeTab === "Case Study" ? "active" : ""}
+                        onClick={() => setActiveTab("Case Study")}
+                    >
+                        Case Study
+                    </button>
+                    <button
+                        className={activeTab === "Single-line" ? "active" : ""}
+                        onClick={() => setActiveTab("Single-line")}
+                    >
+                        Single-line
+                    </button>
+                    <button
+                        className={activeTab === "Multi-line" ? "active" : ""}
+                        onClick={() => setActiveTab("Multi-line")}
+                    >
+                        Multi-line
+                    </button>
+                    <button
+                        className={activeTab === "MCQ" ? "active" : ""}
+                        onClick={() => setActiveTab("MCQ")}
+                    >
+                        MCQ
+                    </button>
 
-        <hr className="divider" />
+                </Tabbuttons>
 
-        {/* Tab Content */}
-        {activeTab === "Coding" && (
-          <>
-            <TakeChallenge />
-            <hr className="divider" />
-            <PastChallenge />
-          </>
-        )}
+                <hr className="divider" />
 
-        {activeTab === "Approach Analysis" && (
-            <>
-            <ApproachAnalysis/>
-            </>
-        )}
+                {/* Tab Content */}
+                {activeTab === "Coding" && (
+                    <>
+                        <TakeChallenge />
+                        <hr className="divider" />
+                        <PastChallenge />
+                    </>
+                )}
 
-        {activeTab === "Case Study" && (
-                  <div className="empty-tab">Approach Analysis content coming soon...</div>
-        )}
+                {activeTab === "Approach Analysis" && (
+                    <>
+                        <ApproachAnalysis />
+                    </>
+                )}
 
-        {activeTab === "Single-line" && (
-          <div className="empty-tab">Approach Analysis content coming soon...</div>
-        )}
+                {activeTab === "Case Study" && (
+                    <>
+                        <CaseStudy />
+                    </>
+                )}
 
-{activeTab === "Multi-line" && (
-          <div className="empty-tab">Approach Analysis content coming soon...</div>
-        )}
+                {activeTab === "Single-line" && (
+                    <>
+                    <SingleLine />
+                    </>
+                )}
 
-{activeTab === "MCQ" && (
-          <div className="empty-tab">Approach Analysis content coming soon...</div>
-        )}
+                {activeTab === "Multi-line" && (
+                    <>
+                    <MultiLine/>
+                    </>
+                )}
 
-      </Challengescontainer>
-    </UserChallengesWrapper>
-  );
+                {activeTab === "MCQ" && (
+                    <>
+                    <MCQ/>
+                    </>
+                )}
+
+            </Challengescontainer>
+        </UserChallengesWrapper>
+    );
 };
 
 export default UserChallenges;

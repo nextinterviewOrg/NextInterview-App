@@ -4,8 +4,6 @@ import api from "../config/axiosconfig";
 export const addChallenge = async (data) => {
   try {
     const response = await api.post(`/userChallenges/`, data);
-    console.log("[API] Response:", JSON.stringify(response.data, null, 2));
-    console.log("[API] Sending:", JSON.stringify(data, null, 2));
 
     
     if (response.data && response.data.success) {
@@ -53,9 +51,10 @@ export const editChallenge =async (id,data) => {
     
 }
 
-export const getTodaysUserChallenges = async (userId) => {
+export const getTodaysUserChallenges = async (userId,question_type) => {
   try {
-    const response = await api.get(`/userChallenges/today/${userId}`);
+    //question_type can have value of ["mcq", "single-line", "multi-line", "approach","coding","case-study"],
+    const response = await api.get(`/userChallenges/today/${userId}?question_type=${question_type}`);
     
     if (!response.data) {
       throw new Error("No data received from server");
@@ -77,9 +76,10 @@ export const getTodaysUserChallenges = async (userId) => {
   }
 };
 
-export const getAllChallengesWithUserResults =async (userId) => {
+export const getAllChallengesWithUserResults =async (userId,question_type) => {
     try {
-      const response =await api.get(`/userChallenges/all-with-results/${userId}`);
+      //question_type can have value of ["mcq", "single-line", "multi-line", "approach","coding","case-study"],
+      const response =await api.get(`/userChallenges/all-with-results/${userId}?question_type=${question_type}`);
       return response.data;
     } catch (error) {
         console.log(error);
@@ -98,3 +98,12 @@ export const submitUserChallengeProgress = async (data) => {
   }
 };
 
+export const getChallengesProgress =async (userId) => {
+  try {
+    const response =await api.get(`userChallengesProgress/check-response/${questionId}/${userId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}

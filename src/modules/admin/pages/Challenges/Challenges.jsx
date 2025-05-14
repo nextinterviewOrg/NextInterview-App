@@ -130,8 +130,14 @@ const Challenges = () => {
         {filteredChallenges.length > 0 ? (
           filteredChallenges.map((item) => (
             <RowContainer key={item._id}>
-              <Type>{item.programming_language}</Type>
-              <Question>{item.QuestionText}...</Question>
+              {/* <Type>{item.programming_language}</Type> */}
+              {/* it should be questiontype/ programming langiage  */}
+              <Type>{item.question_type}</Type>
+              {/* <Question><b>Question:</b>{item.QuestionText} <br /><b>Answer:</b> {item.answer}</Question> */}
+              {/* if the quuestion type is mcq then i want to show correct_option instead answer  */}
+              <Question>{item.QuestionText}</Question>
+
+              {/* <Answer>{item.answer}...</Answer> */}
               <Answer>{item.description}...</Answer>
               <Action>
                 <IconButton 

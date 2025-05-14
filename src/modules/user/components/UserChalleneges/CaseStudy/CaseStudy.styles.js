@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import theme from "../../../../../theme/Theme";
-
 export const ApproachContainer = styled.div`
   padding: 2rem;
 `;
@@ -86,8 +85,7 @@ export const CrossIcon = styled.button`
 //   cursor: pointer;
 // `;
 
-//asdfghjkl;'
-
+//CasestudyQuestion STYLES
 
 export const QuestionPageContainer = styled.div`
   max-width: 90%;
@@ -116,16 +114,14 @@ export const Textarea = styled.textarea`
 
 export const SubmitButton = styled.button`
   padding: 10px 20px;
-  background-color: ${({ theme }) => theme.colors.secondary};
+  background-color: ${theme.colors.secondary};
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 16px;
 
-  &:hover {
-    background-color:${({ theme }) => theme.colors.secondary};
-  }
+  
 `;
 
 export const BackButton = styled.button`

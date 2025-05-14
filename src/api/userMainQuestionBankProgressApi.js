@@ -11,7 +11,8 @@ export const checkUserAnswerStatusQuestion = async (data) => {
                    questionBankId: "67b9954dfd5023119cb12541"
                }
                */
-        const response = await api.get(`/mainQuestionBankProgress/checkQuestionAnswered`,data);
+              console.log("Checking status",data);
+        const response = await api.post(`/mainQuestionBankProgress/checkQuestionAnswered`,data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -32,6 +33,7 @@ export const addQuestionToQuestionProgress = async (data) => {
                     choosen_option: "option_a"
                 }
                 */
+               console.log("Storing data api",data);
         const response = await api.post(`/mainQuestionBankProgress`, data);
         return response.data;
     } catch (error) {

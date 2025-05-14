@@ -6,13 +6,13 @@ import {
   QuestionTitle,
   Textarea,
   SubmitButton,
-} from "./ApproachAnalysis.styles";
+} from "./CaseStudy.styles";
 import { getTodaysUserChallenges, submitUserChallengeProgress } from "../../../../../api/challengesApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { FaPlus, FaCheckCircle } from "react-icons/fa";
 
-const ApproachAnalysis = () => {
+const CaseStudy = () => {
   const { user } = useUser();
   const [questions, setQuestions] = useState([]);
   const [expandedId, setExpandedId] = useState(null);
@@ -27,15 +27,15 @@ const ApproachAnalysis = () => {
         const internalUserId = userData.data.user._id;
         setUserId(internalUserId);
 
-        const response = await getTodaysUserChallenges(internalUserId, "approach");
+        const response = await getTodaysUserChallenges(internalUserId, "case-study");
         if (Array.isArray(response.data)) {
           setQuestions(response.data);
         } else {
-          throw new Error("Unexpected response format");
+          throw new Error("Invalid question data received");
         }
       } catch (err) {
-        console.error("Failed to fetch questions:", err);
-        message.error("Failed to load approach analysis questions");
+        console.error("Error loading questions:", err);
+        message.error(err.message || "Failed to load questions");
       }
     };
 
@@ -58,7 +58,7 @@ const ApproachAnalysis = () => {
     }
 
     if (!userId) {
-      message.error("User ID not found.");
+      message.error("User not identified.");
       return;
     }
 
@@ -73,7 +73,8 @@ const ApproachAnalysis = () => {
         skip: false,
       };
 
-      await submitUserChallengeProgress(payload);
+      const res = await submitUserChallengeProgress(payload);
+      console.log("Submission response:", res);
       message.success("Answer submitted successfully!");
       const currentIndex = questions.findIndex((q) => q._id === question._id);
       const nextQuestion = questions[currentIndex + 1];
@@ -83,8 +84,8 @@ const ApproachAnalysis = () => {
         setExpandedId(null); // No more questions
       }
     } catch (err) {
-      console.error("Submission error:", err);
-      message.error("Failed to submit answer. Please try again.");
+      console.error("Submission failed:", err);
+      message.error("Failed to submit. Please try again.");
     } finally {
       setSubmitting((prev) => ({ ...prev, [question._id]: false }));
     }
@@ -94,6 +95,7 @@ const ApproachAnalysis = () => {
     <ApproachContainer>
       {questions.map((q) => {
         const isExpanded = expandedId === q._id;
+
         return (
           <QuestionCard key={q._id}>
             <div
@@ -105,19 +107,18 @@ const ApproachAnalysis = () => {
               }}
               onClick={() => handleToggle(q._id)}
             >
-              <QuestionTitle>{q.QuestionText || "Untitled Question"}</QuestionTitle>
+              <QuestionTitle>{q.QuestionText}</QuestionTitle>
               {isExpanded ? <FaCheckCircle color="#4caf50" /> : <FaPlus />}
             </div>
 
             {isExpanded && (
               <>
-               
+           
                 <Textarea
                   rows={10}
                   placeholder="Type your answer here..."
                   value={answers[q._id] || ""}
                   onChange={(e) => handleAnswerChange(q._id, e.target.value)}
-                  disabled={submitting[q._id]}
                 />
                 <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "1rem" }}>
                   <SubmitButton
@@ -136,4 +137,4 @@ const ApproachAnalysis = () => {
   );
 };
 
-export default ApproachAnalysis;
+export default CaseStudy;
