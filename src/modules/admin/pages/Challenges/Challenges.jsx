@@ -131,8 +131,8 @@ const Challenges = () => {
           filteredChallenges.map((item) => (
             <RowContainer key={item._id}>
               <Type>{item.programming_language}</Type>
-              <Question>{item.QuestionText.slice(0,30)}...</Question>
-              <Answer>{item.description.slice(0.32)}...</Answer>
+              <Question>{item.QuestionText}...</Question>
+              <Answer>{item.description}...</Answer>
               <Action>
                 <IconButton 
                   aria-label="Edit challenge"
