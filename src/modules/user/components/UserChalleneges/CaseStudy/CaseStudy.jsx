@@ -19,6 +19,7 @@ const CaseStudy = () => {
   const [answers, setAnswers] = useState({});
   const [submitting, setSubmitting] = useState({});
   const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -36,6 +37,8 @@ const CaseStudy = () => {
       } catch (err) {
         console.error("Error loading questions:", err);
         message.error(err.message || "Failed to load questions");
+      }finally{
+        setLoading(false);
       }
     };
 
@@ -90,6 +93,24 @@ const CaseStudy = () => {
       setSubmitting((prev) => ({ ...prev, [question._id]: false }));
     }
   };
+  if(loading){
+    return (
+      <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+        <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+          Loading questions...
+        </p>
+      </ApproachContainer>
+    );
+  }
+   if (questions.length === 0) {
+      return (
+        <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+          <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+            No questions found for today&nbsp;🎉
+          </p>
+        </ApproachContainer>
+      );
+    }
 
   return (
     <ApproachContainer>

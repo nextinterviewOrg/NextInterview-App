@@ -207,8 +207,8 @@ const ModuleFileUpload = () => {
               placeholder="Select File Type"
               onChange={(value) => setSelectedOption(value)}
             >
-              <Option value="1">Try It Yourself</Option>
-              <Option value="2">Question Bank</Option>
+              {/* <Option value="1">Try It Yourself</Option>
+              <Option value="2">Question Bank</Option> */}
               <Option value="3">Skill Assessment</Option>
             </StyledSelect>
           </Form.Item>

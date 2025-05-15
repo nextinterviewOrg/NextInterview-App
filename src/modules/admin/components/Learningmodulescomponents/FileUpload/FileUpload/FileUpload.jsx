@@ -6,12 +6,15 @@ import {
   ModuleUploadWrapper,
   StyledForm,
 } from "../../../../pages/ModuleFileUpload/ModuleFileUpload.styles";
+import { uploadQuestionBankFile } from "../../../../../../api/FileProcessingApi"; // Adjust the import path as needed
+import { uploadAllQuestionsToMainQuestions } from "../../../../../../api/userMainQuestionBankApi";
 
 const FileUpload = () => {
   const [form] = Form.useForm();
   const [fileList, setFileList] = useState([]);
   const [fileName, setFileName] = useState("");
-  const [selectedOption, setSelectedOption] = useState("dummy"); // Placeholder to avoid error
+  const [selectedOption, setSelectedOption] = useState("dummy");
+  const [isUploading, setIsUploading] = useState(false); // Add loading state
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
@@ -26,33 +29,65 @@ const FileUpload = () => {
 
   const handleSubmit = async (values) => {
     if (!selectedOption) {
-      notification.error({
-        message: "Please select a type of file",
-        description: "Failed to upload file.",
-        placement: "topRight",
-        duration: 3,
-      });
-      return;
+        notification.error({
+            message: "Please select a type of file",
+            description: "Failed to upload file.",
+            placement: "topRight",
+            duration: 3,
+        });
+        return;
     }
 
     if (fileList.length <= 0) {
-      notification.error({
-        message: "Please upload a file",
-        description: "Failed to upload file.",
-        placement: "topRight",
-        duration: 3,
-      });
-      return;
+        notification.error({
+            message: "Please upload a file",
+            description: "Failed to upload file.",
+            placement: "topRight",
+            duration: 3,
+        });
+        return;
     }
 
-    notification.success({
-      message: "Success",
-      description: "File ready to be uploaded.",
-    });
+    setIsUploading(true);
 
-    // Upload logic goes here
-    console.log("Submitting file:", fileList[0]);
-  };
+    try {
+        const formData = new FormData();
+        formData.append("file", fileList[0]);
+        
+        // Add any required additional fields
+        // formData.append("type", "questionbank"); // Example
+        
+        // Log what we're sending
+        console.log("FormData contents:");
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
+
+        const response = await uploadAllQuestionsToMainQuestions(formData);
+        console.log("File upload response:", response);
+        
+        notification.success({
+            message: "Upload Successful",
+            description: "File has been uploaded successfully.",
+            placement: "topRight",
+            duration: 5,
+        });
+        
+        setFileName("");
+        setFileList([]);
+        form.resetFields();
+    } catch (error) {
+        console.error("Detailed upload error:", error);
+        notification.error({
+            message: "Upload Failed",
+            description: error.message || "Failed to upload file. Please check the file format and try again.",
+            placement: "topRight",
+            duration: 5,
+        });
+    } finally {
+        setIsUploading(false);
+    }
+};
 
   return (
     <ModuleUploadWrapper>
@@ -65,6 +100,7 @@ const FileUpload = () => {
               multiple
               onChange={handleFileChange}
               style={{ display: "none" }}
+              id="file-upload-input"
             />
             <div className="upload-btn-container">
               <div className="upload-button-text">
@@ -87,8 +123,9 @@ const FileUpload = () => {
               <Button
                 className="upload-button"
                 onClick={() =>
-                  document.querySelector('input[type="file"]').click()
+                  document.getElementById('file-upload-input').click()
                 }
+                disabled={isUploading}
               >
                 <MdOutlineFileUpload />{" "}
                 {fileList.length > 0 ? "Replace" : "Upload"}{" "}
@@ -96,7 +133,12 @@ const FileUpload = () => {
             </div>
           </Form.Item>
           <Form.Item className="submit-button-box">
-            <Button type="primary" htmlType="submit">
+            <Button 
+              type="primary" 
+              htmlType="submit"
+              loading={isUploading}
+              disabled={isUploading || fileList.length === 0}
+            >
               Submit
             </Button>
           </Form.Item>

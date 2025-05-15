@@ -21,6 +21,13 @@ import {
 import { FiX } from "react-icons/fi";
 import Editor from "@monaco-editor/react";
 import { addChallenge } from "../../../../../api/challengesApi";
+import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
+import {
+  TinyMCEapiKey,
+  TinyMCEmergetags_list,
+  TinyMCEplugins,
+  TinyMCEToolbar,
+} from "../../../../../config/TinyMceConfig";
 
 const { Option } = Select;
 
@@ -54,7 +61,9 @@ const INITIAL_FORM = {
   hints: [],
   options: ["", "", "", ""],
   correctAnswer: "",
-  answer: ""
+  answer: "",
+  topics: [],
+  base_code: ""
 };
 
 const AddChallenge = ({ onClose, onChallengeAdded }) => {
@@ -62,15 +71,17 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [currentHint, setCurrentHint] = useState({ hint_text: "", explanation: "" });
   const [code, setCode] = useState("");
+  const [basecode, setBasecode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-
+  const [currentTopic, setCurrentTopic] = useState([]);
   const handleTypeChange = (value) => {
     setQuestionType(value);
     setFormData(INITIAL_FORM);
     setCode("");
+    setBasecode("");
     setError(null);
     setSuccess(null);
   };
@@ -221,7 +232,9 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
     const payload = {
       QuestionText: formData.QuestionText.trim(),
       question_type: typeMapping[questionType],
-      hints: questionType === "Coding" ? formData.hints : [] // Only include hints for coding questions
+      base_code: basecode,
+      hints: questionType === "Coding" ? formData.hints : [], // Only include hints for coding questions
+      topics: formData.topics,
     };
 
     switch (questionType) {
@@ -256,6 +269,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
 
     try {
       const response = await addChallenge(payload);
+      console.log("response", response);
 
       if (response.success) {
         setSuccess("Challenge added successfully!");
@@ -331,12 +345,32 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
 
             <FormGroup>
               <FormLabel>Description *</FormLabel>
-              <FormTextArea
+              {/* <FormTextArea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 placeholder="Enter detailed description"
                 rows={6}
+              /> */}
+              <TinyMCEEditor
+                apiKey={TinyMCEapiKey}
+                init={{
+                  plugins: TinyMCEplugins,
+                  toolbar: TinyMCEToolbar,
+                  tinycomments_mode: "embedded",
+                  tinycomments_author: "Author name",
+                  mergetags_list: TinyMCEmergetags_list,
+                  ai_request: (request, respondWith) =>
+                    respondWith.string(() =>
+                      Promise.reject("See docs to implement AI Assistant")
+                    ),
+                  branding: false,
+                }}
+                value={formData.description || ""}
+                onEditorChange={(newValue) => {
+                  setFormData({ ...formData, description: newValue });
+                }}
+                initialValue=""
               />
             </FormGroup>
 
@@ -347,6 +381,65 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 <option value="Medium">Medium</option>
                 <option value="Hard">Hard</option>
               </FormSelect>
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Topics</FormLabel>
+              <div style={{ position: 'relative' }}>
+                <FormInput
+                  name="topic_name"
+                  value={currentTopic}
+                  onChange={(e) => setCurrentTopic(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      if (currentTopic.trim()) {
+                        setFormData(prev => ({
+                          ...prev,
+                          topics: [...prev.topics, { topic_name: currentTopic.trim() }]
+                        }));
+                        setCurrentTopic('');
+                      }
+                    }
+                  }}
+                  placeholder="Type a topic and press Enter or comma"
+                />
+                <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                  {formData.topics.map((topic, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background: '#e2e8f0',
+                        padding: '4px 8px',
+                        borderRadius: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {topic.topic_name}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            topics: prev.topics.filter((_, i) => i !== index)
+                          }));
+                        }}
+                        style={{
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          marginLeft: '6px',
+                          color: '#64748b',
+                          fontSize: '12px'
+                        }}
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </FormGroup>
 
             <FormGroup>
@@ -388,6 +481,30 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 rows={3}
               />
             </FormGroup>
+
+            <FormGroup>
+              <FormLabel>Base code</FormLabel>
+              <div style={{ border: "1px solid #ccc", borderRadius: 4, marginBottom: 10 }}>
+                <Editor
+                  height="200px"
+                  language={formData.base_code.toLowerCase()}
+                  value={basecode}
+                  onChange={setBasecode}
+                  theme="vs-light"
+                  options={{ minimap: { enabled: false }, scrollBeyondLastLine: false }}
+                />
+              </div>
+            </FormGroup>
+            {/* <FormGroup>
+              <FormLabel>Base code</FormLabel>
+<FormTextArea
+  name="base_code"
+  value={formData.base_code}
+  onChange={handleChange}
+  placeholder="Enter base code"
+  rows={3}
+/>
+            </FormGroup> */}
 
             {/* Hints section - only for coding questions */}
             <FormGroup>

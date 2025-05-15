@@ -74,7 +74,7 @@ const NewChallenge = () => {
         <Header>
           <Tag>#Today's Challenge</Tag>
           <Title>{challenge.QuestionText}</Title>
-          <Description>{challenge.description}</Description>
+            <Description dangerouslySetInnerHTML={{ __html: challenge?.description }} />
           <Tags>
             <Tag>{challenge.programming_language}</Tag>
             <Tag>{challenge.difficulty}</Tag>
@@ -82,10 +82,11 @@ const NewChallenge = () => {
         </Header>
 
         <hr className="hrtag" />
-
+<h3>Topics</h3>
         <TopicsList>
-          {challenge.hints?.map((hint, index) => (
-            <TopicItem key={index}>{hint.hint_text}</TopicItem>
+          {challenge.topics?.map((topic, index) => (
+        
+            <TopicItem key={index}>{topic.topic_name}</TopicItem>
           ))}
         </TopicsList>
 

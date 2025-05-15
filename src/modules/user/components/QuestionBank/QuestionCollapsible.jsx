@@ -100,7 +100,7 @@ const QuestionCollapsible = () => {
           const currentQuestion = response.data.find(q => q._id === id) || response.data[0];
           setSelectedQuestion(currentQuestion);
           if (currentQuestion._id !== id) {
-            navigate(`/user/questionBank/${currentQuestion._id}`, {
+            navigate(`/user/mainQuestionBank/questionBank/${currentQuestion._id}`, {
               state: { filteredQuestions: response.data },
               replace: true
             });
@@ -263,7 +263,7 @@ const QuestionCollapsible = () => {
   
     if (nextIndex < filteredQuestions.length) {
       const nextQuestion = filteredQuestions[nextIndex];
-      navigate(`/user/questionBank/${nextQuestion._id}`, {
+      navigate(`/user/mainQuestionBank/questionBank/${nextQuestion._id}`, {
         state: { filteredQuestions },
         replace: true,
       });
@@ -299,7 +299,7 @@ const QuestionCollapsible = () => {
         {filteredQuestions.map((question, index) => (
           <Link
             key={index}
-            to={`/user/questionBank/${question._id}`}
+            to={`/user/mainQuestionBank/questionBank/${question._id}`}
             state={{ filteredQuestions }}
             style={{ textDecoration: "none", color: "black" }}
             onClick={() => window.innerWidth <= 860 && setSidebarOpen(false)}

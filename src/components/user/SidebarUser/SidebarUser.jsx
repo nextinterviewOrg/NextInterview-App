@@ -27,6 +27,7 @@ import quick from "../../../assets/quicklyrevise.svg";
 import question from "../../../assets/questionbank.svg";
 import challenge from "../../../assets/Challenges.svg";
 import world from "../../../modules/user/assets/world.svg";
+import blog from "../../../assets/blogging.svg";
 import { useRef } from "react";
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
   const location = useLocation();
@@ -61,7 +62,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     {
       id: 5,
       name: "Question Bank",
-      path: "/user/questionbank",
+      path: "/user/mainQuestionBank",
       icon: <img className="svgicon" src={question} alt="question" />,
     },
     {
@@ -80,7 +81,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       id: 9,
       name: "Blogs",
       path: "/user/blogs",
-     icon: <img className="svgicon" src={world} alt="Users Icon" />
+     icon: <img className="svgicon" width={20} height={20} src={blog} alt="Users Icon" />
     }
   ];
 

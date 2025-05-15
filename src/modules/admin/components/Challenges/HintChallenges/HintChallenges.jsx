@@ -5,80 +5,59 @@ import {
   HintContent,
   HintButton,
   HintDescription,
-  DropdownIcon,
   HintBox,
-  CarouselWrapper,
-  Arrow,
+  DropdownWrapper,
+  DropdownHeader,
+  DropdownText,
+  DropdownArrow,
+  DropdownContent,
 } from "../HintChallenges/HintChallenges.style";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { RxChevronDown, RxChevronUp } from "react-icons/rx";
 
 const HintChallenges = ({ hints }) => {
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [currentHintIndex, setCurrentHintIndex] = useState(0);
+  const [expandedIndex, setExpandedIndex] = useState(null);
+  const location = useLocation();
 
   const handleNavigate = () => {
-    navigate("/user/questionbank");
+    navigate("/user/mainQuestionBank");
   };
 
-  const toggleDropdown = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const handlePrev = () => {
-    setCurrentHintIndex((prev) => (prev > 0 ? prev - 1 : hints.length - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentHintIndex((prev) => (prev < hints.length - 1 ? prev + 1 : 0));
+  const toggleHint = (index) => {
+    setExpandedIndex(expandedIndex === index ? null : index);
   };
 
   return (
     <HintContainer>
-      <HintTitle onClick={toggleDropdown}>
+      <HintTitle>
         <span role="img" aria-label="info"></span> Hint
-        <DropdownIcon>
-          {isOpen ? <RxChevronUp /> : <RxChevronDown />}
-        </DropdownIcon>
       </HintTitle>
 
-      {isOpen && (
-       <HintBox>
-       {hints && hints.length > 0 ? (
-         <CarouselWrapper>
-           {hints.length > 1 && (
-             <Arrow
-               onClick={handlePrev}
-               disabled={currentHintIndex === 0}
-             >
-               &lt;
-             </Arrow>
-           )}
-     
-           <HintContent>
-             <strong>{hints[currentHintIndex].hint_text}</strong>
-             <br />
-             {hints[currentHintIndex].explanation || "No explanation provided"}
-           </HintContent>
-     
-           {hints.length > 1 && (
-             <Arrow
-               onClick={handleNext}
-               disabled={currentHintIndex === hints.length - 1}
-             >
-               &gt;
-             </Arrow>
-           )}
-         </CarouselWrapper>
-       ) : (
-         <p>No hints available for this challenge.</p>
-       )}
-     </HintBox>
-       
-      )}
+      <HintBox>
+        {hints && hints.length > 0 ? (
+          hints.map((hint, index) => (
+            <DropdownWrapper key={index}>
+              <DropdownHeader onClick={() => toggleHint(index)}>
+                <DropdownText>{hint.hint_text}</DropdownText>
+                <DropdownArrow isOpen={expandedIndex === index}>
+                  {expandedIndex === index ? <RxChevronUp /> : <RxChevronDown />}
+                </DropdownArrow>
+              </DropdownHeader>
+              {expandedIndex === index && (
+                <DropdownContent>
+                  {hint.explanation || "No explanation provided"}
+                </DropdownContent>
+              )}
+            </DropdownWrapper>
+          ))
+        ) : (
+          <p>No hints available for this challenge.</p>
+        )}
+      </HintBox>
 
-      <HintContent>
+      {(!location.pathname.includes("/mainQuestionBank")) &&
+        <HintContent>
         <HintDescription>
           <strong>Explore the question bank</strong>
           <p>
@@ -87,7 +66,7 @@ const HintChallenges = ({ hints }) => {
           </p>
         </HintDescription>
         <HintButton onClick={handleNavigate}>Question bank</HintButton>
-      </HintContent>
+      </HintContent>}
     </HintContainer>
   );
 };

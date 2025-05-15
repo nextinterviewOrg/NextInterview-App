@@ -24,7 +24,7 @@ const MultiLine = () => {
   const [submittedAnswers, setSubmittedAnswers] = useState({});
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState(null);
-
+const [loading, setLoading] = useState(true);
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -41,6 +41,8 @@ const MultiLine = () => {
       } catch (err) {
         console.error("Failed to fetch multi-line questions:", err);
         setError(err.message || "Error loading questions");
+      }finally{
+        setLoading(false);
       }
     };
 
@@ -101,6 +103,25 @@ const MultiLine = () => {
   };
 
   if (error) return <div>Error: {error}</div>;
+    if(loading){
+      return (
+        <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+          <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+            Loading questions...
+          </p>
+        </ApproachContainer>
+      );
+    }
+
+   if (questions.length === 0) {
+      return (
+        <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+          <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+            No questions found for today&nbsp;🎉
+          </p>
+        </ApproachContainer>
+      );
+    }
 
   return (
     <ApproachContainer>

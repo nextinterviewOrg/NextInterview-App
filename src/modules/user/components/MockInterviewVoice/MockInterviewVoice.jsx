@@ -31,17 +31,17 @@ import {
 } from "../../../../api/aiMockInterviewApi";
 import { getUserByClerkId } from "../../../../api/userApi";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
-
+ 
 const EXTERNAL_API_BASE = "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
-
+ 
 const MockInterview = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorderRef, setMediaRecorderRef] = useState(null);
   // const { isLoaded, user, isSignedIn } = useUser();
-
+ 
   let mediaRecorder = null;
   const [messages, setMessages] = useState([]);
-
+ 
   // const [input, setInput] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -54,10 +54,12 @@ const MockInterview = () => {
   const [selectLang, setSelectLang] = useState("python");
   const [output, setOutput] = useState("");
   const [showCodeEditor, setShowCodeEditor] = useState(false);
-
+  const [readyToCode, setReadyToCode] = useState(false);
+ 
   const session_id = location.state?.session_id;
-  const initialQuestion = location.state?.question;
-
+  const initialQuestion = location.state?.first_follow_up;
+  const baseQuestion = location.state?.question;
+ 
   useEffect(() => {
     if (session_id && initialQuestion) {
       setMessages([
@@ -70,7 +72,7 @@ const MockInterview = () => {
     }
     setProcessingData(false);
   }, [session_id, initialQuestion]);
-
+ 
   const handleSend = async (message) => {
     if (!message.trim() || !session_id) return;
     setProcessingData(true);
@@ -81,6 +83,9 @@ const MockInterview = () => {
         body: JSON.stringify({
           session_id,
           answer: message,
+          ready_to_code: readyToCode,
+          code_stub: code,
+          language: selectLang,
           clarification: clarificationMode,
         }),
       });
@@ -98,6 +103,18 @@ const MockInterview = () => {
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
         },
       ]);
+ 
+      if (data?.ready_to_code === true) {
+        setReadyToCode(true);
+      } else {
+        setReadyToCode(false);
+      }
+ 
+      if(data.language){
+        setSelectLang(data.language);
+        console.log("Language:", data.language);
+      }
+ 
       // Add AI response
       if (data.question) {
         setMessages((prev) => [
@@ -108,7 +125,15 @@ const MockInterview = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
           },
         ]);
+      }    
+     
+      if(data.code_stub){
+        setCode(data.code_stub);
+ 
+        console.log("Code:", code);
       }
+ 
+ 
       // Question loop logic
       if (!clarificationMode) {
         if (questionCount < 4) {
@@ -123,12 +148,12 @@ const MockInterview = () => {
       setProcessingData(false);
     }
   };
-
+ 
   // Start recording
   const startRecording = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-
+ 
       mediaRecorder = new RecordRTC(stream, {
         type: "audio",
         mimeType: "audio/webm",
@@ -136,7 +161,7 @@ const MockInterview = () => {
         numberOfAudioChannels: 1,
         desiredSampRate: 16000,
       });
-
+ 
       mediaRecorder.startRecording();
       setMediaRecorderRef(mediaRecorder);
       setIsRecording(true);
@@ -144,7 +169,7 @@ const MockInterview = () => {
       console.error("Error accessing the microphone:", error);
     }
   };
-
+ 
   // Stop recording
   const stopRecording = async () => {
     let returnData;
@@ -157,21 +182,21 @@ const MockInterview = () => {
       returnData = data.data;
       handleSend(data.data.text);
     });
-
+ 
     await mediaRecorderRef.getDataURL(async () => {
       // const audio = new Audio(audioUrl);
-
+ 
       // audio.play();
     });
     setIsRecording(false);
     return returnData;
   };
-
+ 
   // Convert WAV to MP3
   function convertWavToMp3(wavBlob) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
+ 
       reader.onload = function () {
         const arrayBuffer = this.result;
         const wavDecoder = lamejs.WavHeader.readHeader(
@@ -194,25 +219,25 @@ const MockInterview = () => {
         );
         mp3BufferWithHeader.set(mp3Buffer, 0);
         mp3BufferWithHeader.set(mp3Data, mp3Buffer.length);
-
+ 
         const mp3Blob = new Blob([mp3BufferWithHeader], { type: "audio/mp3" });
         resolve(mp3Blob);
       };
-
+ 
       reader.onerror = function (error) {
         reject(error);
       };
-
+ 
       // Read the input blob as an ArrayBuffer
       reader.readAsArrayBuffer(wavBlob);
     });
   }
-
+ 
   // Handle stop and upload flow
   const handleStopRecording = async () => {
     await stopRecording();
   };
-
+ 
   // const sendToBackend = async () => {
   //   if (mp3Data) {
   //     const formData = new FormData();
@@ -230,15 +255,15 @@ const MockInterview = () => {
   //     //   alert('Please record some audio first.');
   //   }
   // };
-
+ 
   const [timeLeft, setTimeLeft] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
-
+ 
   useEffect(() => {
     setTimeLeft(900);
     setIsRunning(true);
   }, []);
-
+ 
   useEffect(() => {
     let timer;
     if (isRunning && timeLeft > 0) {
@@ -254,7 +279,7 @@ const MockInterview = () => {
     }
     return () => clearInterval(timer);
   }, [isRunning, timeLeft]);
-
+ 
   const handleEndInterview = async () => {
     if (!session_id) return;
     setProcessingData(true);
@@ -275,12 +300,12 @@ const MockInterview = () => {
       setProcessingData(false);
     }
   };
-
+ 
   if (feedback) {
     navigate("/user/interview/interview-feedback", { state: { feedback } });
     return null;
   }
-
+ 
   return (
     <>
     <div>
@@ -303,9 +328,28 @@ const MockInterview = () => {
           <hr style={{ margin: "0" }} />
           <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
         </Header>
-
+ 
+       
+        {initialQuestion && (
+    <div
+      style={{
+        backgroundColor: "#f5f5f5",
+        padding: "20px",
+        fontWeight: "bold",
+        fontSize: "1rem",
+        margin: "20px",
+        borderRadius: "8px",
+        paddingTop:"20px"
+      }}
+    >
+      Problem Statement:
+      <br />
+      <p style={{ fontSize: "16px", fontWeight: "600" }}>{baseQuestion}</p>
+    </div>
+  )}
+ 
         <Conversation> Conversation </Conversation>
-
+ 
         <ChatBox>
           {messages.map((msg, index) => {
             // if (index === messages.length - 1) {
@@ -357,7 +401,11 @@ const MockInterview = () => {
                 />
               </Sendicon>
               </Tab>
-              <SendButton>Ready to code</SendButton>
+              {readyToCode && (
+                <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>
+                  Ready to code
+                </SendButton>
+              )}
               </InputTab>
             </>
           ) : (
@@ -377,14 +425,18 @@ const MockInterview = () => {
                 />
               </Sendicon>
               </Tab>
-              <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>Ready to code</SendButton>
+              {readyToCode && (
+                <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>
+                  Ready to code
+                </SendButton>
+              )}
               </InputTab>
             </>
           )}
         </InputBox>
       </Container>
       </div>
-
+ 
       {showCodeEditor && (
         <div style={{width: "40%", height: "100%"}}>
           <ReadyToCode
@@ -396,12 +448,13 @@ const MockInterview = () => {
           setOutput={setOutput}
           showCodeEditor={showCodeEditor}
           />
-          
+         
         </div>
       )}
        </div>
     </>
   );
 };
-
+ 
 export default MockInterview;
+ 

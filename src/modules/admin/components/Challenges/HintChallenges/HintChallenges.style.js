@@ -5,17 +5,15 @@ export const HintContainer = styled.div`
   border: 1px solid #ccc;
   padding: 1rem;
   border-radius: 10px;
-  width: 350px;
+  width: 20%;
 `;
-
 export const HintTitle = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center; //only change this
   align-items: center;
   font-weight: bold;
   cursor: pointer;
 `;
-
 export const DropdownIcon = styled.div`
   font-size: 1.2rem;
 `;
@@ -85,3 +83,31 @@ export const HintContent = styled.div`
   text-align: center;
   word-break: break-word;
 `;
+
+export const DropdownWrapper = styled.div`
+  border-bottom: 1px solid #ddd;
+  padding: 8px 0;
+`;
+ 
+export const DropdownHeader = styled.div`
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`;
+ 
+export const DropdownText = styled.div`
+  font-weight: 600;
+`;
+ 
+export const DropdownArrow = styled.div`
+  transition: transform 0.2s ease;
+  transform: ${({ isOpen }) => (isOpen ? "rotate(180deg)" : "rotate(0deg)")};
+`;
+ 
+export const DropdownContent = styled.div`
+  margin-top: 6px;
+  color: #444;
+  font-size: 14px;
+`;
+

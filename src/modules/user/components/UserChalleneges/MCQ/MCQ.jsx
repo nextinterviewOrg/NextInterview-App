@@ -7,6 +7,7 @@ import {
   RadioInput,
   SubmitButton,
   Title,
+  ApproachContainer,
 } from "./MCQ.styles";
 import { getTodaysUserChallenges, submitUserChallengeProgress } from "../../../../../api/challengesApi";
 import { useUser } from "@clerk/clerk-react";
@@ -21,6 +22,7 @@ const MCQ = () => {
   const [submitted, setSubmitted] = useState(false);
   const [userId, setUserId] = useState(null);
   const { user } = useUser();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,7 +41,9 @@ const MCQ = () => {
       } catch (err) {
         console.error("Error fetching MCQs:", err);
         message.error("Failed to load MCQ questions.");
-      }
+      }finally{
+        setLoading(false);
+      } 
     };
 
     fetchMCQs();
@@ -75,7 +79,25 @@ const MCQ = () => {
       message.error("Failed to submit answers. Please try again.");
     }
   };
+  if(loading){
+    return (
+      <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+        <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+          Loading questions...
+        </p>
+      </ApproachContainer>
+    );
+  }
 
+   if (questions.length === 0) {
+      return (
+        <ApproachContainer style={{ textAlign: "center", padding: "2rem 0" }}>
+          <p style={{ fontSize: "1.1rem", opacity: 0.7 }}>
+            No questions found for today&nbsp;🎉
+          </p>
+        </ApproachContainer>
+      );
+    }
   return (
     <MCQContainer>
       <Title>MCQ Questions</Title>

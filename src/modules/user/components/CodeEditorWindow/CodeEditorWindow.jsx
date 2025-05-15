@@ -15,6 +15,7 @@ import ReadyToCode from "../Compiler/ReadyToCode";
 import HintChallenges from "../../../admin/components/Challenges/HintChallenges/HintChallenges";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
+import Editor from '@monaco-editor/react';
 
 const CodeEditorWindow = () => {
   const { id } = useParams();
@@ -27,20 +28,24 @@ const CodeEditorWindow = () => {
   const [output, setOutput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
+  const [input, setInput] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [showOptimiseBtn, setShowOptimiseBtn] = useState(false)
+  const [optimisedCode, setOptimisedCode] = useState(false)
 
   const handleSubmit = async () => {
     if (!challenge || !user || isSubmitting) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Get user data from Clerk ID
       const userData = await getUserByClerkId(user.id);
       const userId = userData.data.user._id;
-      
+
       const expectedOutput = challenge.output?.trim();
       const actualOutput = output?.trim();
-  
+
       // Only proceed if output matches
       if (expectedOutput === actualOutput) {
         // Prepare submission payload
@@ -51,12 +56,12 @@ const CodeEditorWindow = () => {
           finalResult: true,
           skip: false,
         };
-  
+
         console.log("payload", payload);
-        
+
         // Submit the challenge progress only if answer is correct
         const response = await submitUserChallengeProgress(payload);
-        
+
         console.log("Submitted response", response);
         alert("Congratulations! Your solution is correct and progress has been saved.");
         navigate("/user/challenges");
@@ -64,7 +69,7 @@ const CodeEditorWindow = () => {
         // Don't store wrong answers, just show error message
         alert("Your output doesn't match the expected result. Please try again.");
       }
-      
+
     } catch (err) {
       console.error("Submission error:", err);
       alert("Failed to submit your solution. Please try again.");
@@ -78,6 +83,9 @@ const CodeEditorWindow = () => {
       try {
         const response = await getChallengeById(id);
         setChallenge(response.data);
+        setCode(response.data?.base_code);
+        setInput(response.data?.input);
+        setSelectedLang(response.data.programming_language === 'Python' ? 'python' : 'mysql');
       } catch (err) {
         setError("Failed to load challenge data.");
       } finally {
@@ -86,6 +94,36 @@ const CodeEditorWindow = () => {
     };
     fetchChallenge();
   }, [id]);
+  useEffect(() => {
+    const apiCaller = async () => {
+
+      if ((output.trim() === question?.output.trim())) {
+        setShowOptimiseBtn(true)
+        const response = await fetch('https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: challenge?.QuestionText,
+            user_code: code,
+            sample_input: challenge?.input,
+            sample_output: challenge?.output
+          })
+        })
+        console.log("response", response);
+        const data = await response.json();
+        console.log("data", data);
+        setOptimisedCode(data.optimized_code)
+      } else {
+        setShowOptimiseBtn(false)
+      }
+
+
+    }
+    apiCaller();
+
+  }, [output])
 
   const handleGoBack = () => {
     navigate(`/user/challengeInfo/${id}`);
@@ -103,9 +141,15 @@ const CodeEditorWindow = () => {
         >
           <RxArrowLeft />
         </BackIcon>
-        <Button onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </Button>
+        <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+
+          {showOptimiseBtn &&
+            <Button onClick={handleOptimizeCode}>Optimise Code</Button>
+          }
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
       </Header>
 
       <Title>Question Type - Coding</Title>
@@ -113,23 +157,63 @@ const CodeEditorWindow = () => {
       <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
         <QuestionBox>
           <h3>{challenge.QuestionText}</h3>
-          <p><strong>Description:</strong> {challenge.description}</p>
+          <p><strong>Description:</strong>
+            <br>
+            </br>
+            <div dangerouslySetInnerHTML={{ __html: challenge?.description }} />
+          </p>
           <p><strong>Input:</strong> {challenge.input}</p>
           <p><strong>Output:</strong> {challenge.output}</p>
           <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
         </QuestionBox>
 
         <ReadyToCode
-          selectedLang={selectedLang}
-          setSelectedLang={setSelectedLang}
+          selectLang={selectedLang}
+          setSelectLang={setSelectedLang}
           code={code}
           setCode={setCode}
           output={output}
           setOutput={setOutput}
+          input={input}
+          setInput={setInput}
         />
 
         <HintChallenges hints={challenge.hints} />
       </div>
+      {modalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="close-button"
+            >
+              x
+            </button>
+            <h3>Optimised Code</h3>
+            <Editor
+              height="300px"
+              language={selectedLang || 'plaintext'}
+              value={optimisedCode}
+              // onChange={(value) => setCode(value || '')}
+              theme="vs-light"
+            />
+            <div className="button-group">
+              <button
+                className="modal-cancel-button"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button className="modal-button"
+                onClick={() => {
+                  setCode(optimisedCode);
+                  setModalOpen(false);
+                }}
+              >Apply Code</button>
+            </div>
+          </div>
+        </div>
+      )}
     </Wrapper>
   );
 };

@@ -16,9 +16,10 @@ import world from "../../../modules/user/assets/world.svg";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useRef } from "react";
-import Blogs  from "../../../assets/blogging.svg";
-import UserFeedback  from "../../../assets/userFeedback.svg";
-import Authentication  from "../../../assets/Authentication.svg";
+import Blogs from "../../../assets/blogging.svg";
+import UserFeedback from "../../../assets/userFeedback.svg";
+import Authentication from "../../../assets/Authentication.svg";
+import Coding from "../../../assets/coding.svg";
 // import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
@@ -89,85 +90,91 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       icon: <img className="svgicon" src={Blogs} alt="Blogs Icon" />,
     },
     {
-      id:11,
-      name:"User feeback",
-      path:"/admin/user-feedback",
-      icon:<img className="svgicon" src={UserFeedback} alt="User feedback Icon" />
-    
-      },
-      {
-          id: 12,
+      id: 11,
+      name: "User Feedback",
+      path: "/admin/user-feedback",
+      icon: <img className="svgicon" src={UserFeedback} alt="User feedback Icon" />
+
+    },
+    {
+      id: 12,
+      name: "Coding Questions",
+      path: "/admin/TIYQBCodingQuestions",
+      icon: <img className="svgicon" src={Coding} alt="Coding Icon" />,
+    },
+    {
+      id: 13,
       name: "Settings",
       path: "/admin/settingspage",
       icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
     }
   ];
 
-   useEffect(() => {
-     if (window.innerWidth <= 768) {
-       setIsSidebarOpen(false);
-     }
-   }, [location.pathname]);
- 
-   const sidebarRef = useRef(null); // Create a ref for the sidebar
- 
-   useEffect(() => {
-     const handleClickOutside = (event) => {
-       if (window.innerWidth <= 768 && 
-           isSidebarOpen && 
-           sidebarRef.current && 
-           !sidebarRef.current.contains(event.target)) {
-         setIsSidebarOpen(false);
-       }
-     };
- 
-     // Add event listener when sidebar is open in mobile view
-     if (isSidebarOpen && window.innerWidth <= 768) {
-       document.addEventListener('mousedown', handleClickOutside);
-     }
- 
-     return () => {
-       // Clean up the event listener
-       document.removeEventListener('mousedown', handleClickOutside);
-     };
-   }, [isSidebarOpen, setIsSidebarOpen]);
+  useEffect(() => {
+    if (window.innerWidth <= 768) {
+      setIsSidebarOpen(false);
+    }
+  }, [location.pathname]);
+
+  const sidebarRef = useRef(null); // Create a ref for the sidebar
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (window.innerWidth <= 768 &&
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    // Add event listener when sidebar is open in mobile view
+    if (isSidebarOpen && window.innerWidth <= 768) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      // Clean up the event listener
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen, setIsSidebarOpen]);
   return (
     <SideBarwrapper
-    ref={sidebarRef}
-          onMouseEnter={() => setIsExpanded(true)}
-          onMouseLeave={() => setIsExpanded(false)}
-          isExpanded={isExpanded}
-          isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
-        >
-          <div className="logo">
-            <img src={isExpanded ? LogoBig : LogoSmall} alt="logo" />
-          </div>
-          <div className="menu">
-            <ul className="menu-list">
-              {SidebarItem.map((item) => (
-                <li className="menu-item" key={item.id}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      isActive ? "menu-link active" : "menu-link"
-                    }
-                    onClick={() => {
-                      setTitle(item.name);
-                      localStorage.setItem("title", JSON.stringify(item.name));
-                    }}
-                    end
-                  >
-                    <span className="menu-link-icon">{item.icon}</span>
-                    <span className="menu-link-text">{item.name}</span>
-                  </NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-    
-         
-        </SideBarwrapper>
-      );
-    };
+      ref={sidebarRef}
+      onMouseEnter={() => setIsExpanded(true)}
+      onMouseLeave={() => setIsExpanded(false)}
+      isExpanded={isExpanded}
+      isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
+    >
+      <div className="logo">
+        <img src={isExpanded ? LogoBig : LogoSmall} alt="logo" />
+      </div>
+      <div className="menu">
+        <ul className="menu-list">
+          {SidebarItem.map((item) => (
+            <li className="menu-item" key={item.id}>
+              <NavLink
+                to={item.path}
+                className={({ isActive }) =>
+                  isActive ? "menu-link active" : "menu-link"
+                }
+                onClick={() => {
+                  setTitle(item.name);
+                  localStorage.setItem("title", JSON.stringify(item.name));
+                }}
+                end
+              >
+                <span className="menu-link-icon">{item.icon}</span>
+                <span className="menu-link-text">{item.name}</span>
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+
+    </SideBarwrapper>
+  );
+};
 
 export default Sidebar;
