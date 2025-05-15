@@ -85,6 +85,7 @@ const MockInterview = () => {
           answer: message,
           ready_to_code: readyToCode,
           code_stub: code,
+          language: selectLang,
           clarification: clarificationMode,
         }),
       });
@@ -108,6 +109,12 @@ const MockInterview = () => {
       } else {
         setReadyToCode(false);
       }
+ 
+      if(data.language){
+        setSelectLang(data.language);
+        console.log("Language:", data.language);
+      }
+ 
       // Add AI response
       if (data.question) {
         setMessages((prev) => [
@@ -118,15 +125,15 @@ const MockInterview = () => {
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true })
           },
         ]);
-      }     
-      
+      }    
+     
       if(data.code_stub){
         setCode(data.code_stub);
-
+ 
         console.log("Code:", code);
       }
-
-
+ 
+ 
       // Question loop logic
       if (!clarificationMode) {
         if (questionCount < 4) {
@@ -450,3 +457,4 @@ const MockInterview = () => {
 };
  
 export default MockInterview;
+ 

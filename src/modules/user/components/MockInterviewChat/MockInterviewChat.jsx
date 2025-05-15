@@ -127,6 +127,7 @@ const MockInterview = () => {
           answer: input,
           ready_to_code: readyToCode,
           code_stub: code,
+          language: selectLang,
           clarification: clarificationMode,
         }),
       });
@@ -141,7 +142,7 @@ const MockInterview = () => {
         return;
       }
       const data = await response.json();
-
+ 
       console.log("Data:", data);
       // Add user message
       setMessages((prev) => [
@@ -178,11 +179,16 @@ const MockInterview = () => {
           },
         ]);
       }
-
+ 
       if(data.code_stub){
         setCode(data.code_stub);
-
+ 
         console.log("Code:", code);
+      }
+ 
+      if (data.language) {
+        setSelectLang(data.language);
+        console.log("Language:", selectLang);
       }
       // Question loop logic
       if (!clarificationMode) {
@@ -348,3 +354,4 @@ const MockInterview = () => {
 };
  
 export default MockInterview;
+ 

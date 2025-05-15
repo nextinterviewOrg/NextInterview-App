@@ -19,7 +19,7 @@ import { useRef } from "react";
 import Blogs from "../../../assets/blogging.svg";
 import UserFeedback from "../../../assets/userFeedback.svg";
 import Authentication from "../../../assets/Authentication.svg";
-import Coding from "../../../assets/Coding.svg";
+import Coding from "../../../assets/coding.svg";
 // import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
