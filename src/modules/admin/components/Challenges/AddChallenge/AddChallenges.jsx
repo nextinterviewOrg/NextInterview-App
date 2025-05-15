@@ -226,7 +226,8 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
       QuestionText: formData.QuestionText.trim(),
       question_type: typeMapping[questionType],
       base_code: basecode,
-      hints: questionType === "Coding" ? formData.hints : [] // Only include hints for coding questions
+      hints: questionType === "Coding" ? formData.hints : [], // Only include hints for coding questions
+      topics: formData.topics,
     };
 
     switch (questionType) {

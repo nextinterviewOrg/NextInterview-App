@@ -77,20 +77,20 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
   const [isRunning, setIsRunning] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [basecode,setBasecode] = useState("");
-  
-    const [currentTopic, setCurrentTopic] = useState([]);
+  const [basecode, setBasecode] = useState("");
+
+  const [currentTopic, setCurrentTopic] = useState([]);
 
   useEffect(() => {
     if (challenge) {
       const questionTypeUI = typeMapping[challenge.question_type] || "";
       setQuestionType(questionTypeUI);
-      
+
       const baseData = {
         QuestionText: challenge.QuestionText || "",
         difficulty: challenge.difficulty || "Easy",
         hints: challenge.hints || [],
-          topics: challenge.topics || [] 
+        topics: challenge.topics || []
       };
 
       let specificData = {};
@@ -282,14 +282,14 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
     if (missingFields.length > 0) {
       setError(`Please fill in the following fields: ${missingFields.join(", ")}`);
       return;
-    }
+    } 
 
     const payload = {
       QuestionText: formData.QuestionText.trim(),
       question_type: reverseTypeMapping[questionType],
       base_code: basecode,
       topics: formData.topics || [],
-      hints: questionType === "Coding" ? formData.hints : [] // Only include hints for coding questions
+      hints: questionType === "Coding" ? formData.hints : [],// Only include hints for coding questions
     };
 
     switch (questionType) {
@@ -325,7 +325,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
 
     try {
       const response = await editChallenge(challenge._id, payload);
-
+      console.log("response", response);
       if (response.success) {
         setSuccess("Challenge updated successfully!");
         onChallengeUpdated(response.data);
@@ -413,64 +413,64 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
             </FormGroup>
 
             <FormGroup>
-                <FormLabel>Topics</FormLabel>
-                <div style={{ position: 'relative' }}>
-                  <FormInput
-                    name="topic_name"
-                    value={currentTopic}
-                    onChange={(e) => setCurrentTopic(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ',') {
-                        e.preventDefault();
-                        if (currentTopic.trim()) {
+              <FormLabel>Topics</FormLabel>
+              <div style={{ position: 'relative' }}>
+                <FormInput
+                  name="topic_name"
+                  value={currentTopic}
+                  onChange={(e) => setCurrentTopic(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                      e.preventDefault();
+                      if (currentTopic.trim()) {
+                        setFormData(prev => ({
+                          ...prev,
+                          topics: [...prev.topics, { topic_name: currentTopic.trim() }]
+                        }));
+                        setCurrentTopic('');
+                      }
+                    }
+                  }}
+                  placeholder="Type a topic and press Enter or comma"
+                />
+                <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
+                  {formData.topics.map((topic, index) => (
+                    <div
+                      key={index}
+                      style={{
+                        background: '#e2e8f0',
+                        padding: '4px 8px',
+                        borderRadius: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        fontSize: '14px'
+                      }}
+                    >
+                      {topic.topic_name}
+                      <button
+                        type="button"
+                        onClick={() => {
                           setFormData(prev => ({
                             ...prev,
-                            topics: [...prev.topics, { topic_name: currentTopic.trim() }]
+                            topics: prev.topics.filter((_, i) => i !== index)
                           }));
-                          setCurrentTopic('');
-                        }
-                      }
-                    }}
-                    placeholder="Type a topic and press Enter or comma"
-                  />
-                  <div style={{ marginTop: '8px', display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
-                    {formData.topics.map((topic, index) => (
-                      <div 
-                        key={index} 
+                        }}
                         style={{
-                          background: '#e2e8f0',
-                          padding: '4px 8px',
-                          borderRadius: '16px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          fontSize: '14px'
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          marginLeft: '6px',
+                          color: '#64748b',
+                          fontSize: '12px'
                         }}
                       >
-                        {topic.topic_name}
-                        <button 
-                          type="button"
-                          onClick={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              topics: prev.topics.filter((_, i) => i !== index)
-                            }));
-                          }}
-                          style={{
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            marginLeft: '6px',
-                            color: '#64748b',
-                            fontSize: '12px'
-                          }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+                        ×
+                      </button>
+                    </div>
+                  ))}
                 </div>
-              </FormGroup>
+              </div>
+            </FormGroup>
 
             {/* <FormGroup>
               <FormLabel>Sample Output</FormLabel>
@@ -525,20 +525,20 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
               />
             </FormGroup>
             <FormGroup>
-                          <FormLabel>Base code</FormLabel>
-                          <div style={{ border: "1px solid #ccc", borderRadius: 4, marginBottom: 10 }}>
-                            <Editor
-                              height="200px"
-                              // language={formData.base_code.toLowerCase()}
+              <FormLabel>Base code</FormLabel>
+              <div style={{ border: "1px solid #ccc", borderRadius: 4, marginBottom: 10 }}>
+                <Editor
+                  height="200px"
+                  // language={formData.base_code.toLowerCase()}
 
-language={(formData.programming_language || "plaintext").toLowerCase()}
-                              value={basecode}
-                              onChange={setBasecode}
-                              theme="vs-light"
-                              options={{ minimap: { enabled: false }, scrollBeyondLastLine: false }}
-                            />
-                          </div>
-                        </FormGroup>
+                  language={(formData.programming_language || "plaintext").toLowerCase()}
+                  value={basecode}
+                  onChange={setBasecode}
+                  theme="vs-light"
+                  options={{ minimap: { enabled: false }, scrollBeyondLastLine: false }}
+                />
+              </div>
+            </FormGroup>
 
             {/* Hints section - only for coding questions */}
             <FormGroup>
