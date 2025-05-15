@@ -109,6 +109,8 @@ import QBCodingList from "./modules/user/pages/QBCodingList/QBCodingList";
 import QBCodingDetailPage from "./modules/user/pages/QBCodingDetailPage/QBCodingDetailPage";
 import QBCodingPage from "./modules/user/pages/QBCodingPage/QBCodingPage";
 import AllQuestionBank from "./modules/user/pages/AllQuestionBank/AllQuestionBank";
+import TermsofService from "./pages/TermsofService/TermsofService";
+import PrivacyandPolicy from "./pages/PrivacyandPolicy/PrivacyandPolicy";
 
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
@@ -149,6 +151,8 @@ function App() {
         <Routes>
           {/* <Route path="/landingpage" element={<LandingPage />} /> */}
           <Route path="/about" element={<PublicRoutes Component={AboutPage} />} />
+          <Route path="/termsandconditions" element={<TermsofService/>} />
+          <Route path="/privacypolicy" element={<PrivacyandPolicy />} />
           <Route path="/course" element={<PublicRoutes Component={LandingCourse} />} />
           <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
           <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
