@@ -26,10 +26,10 @@ import UserHeader from "../../../../components/UserHeader/UserHeader";
 import HeaderWithLogo from "../../../../components/HeaderWithLogo/HeaderWithLogo";
 import { message as antdMessage } from "antd";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
-
+ 
 const EXTERNAL_API_BASE =
   "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
-
+ 
 const MockInterview = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -42,14 +42,17 @@ const MockInterview = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const session_id = location.state?.session_id;
-  const initialQuestion = location.state?.question;
+  const initialQuestion = location.state?.first_follow_up;
+  const baseQuestion = location.state?.question;
   const [timeLeft, setTimeLeft] = useState(null);
   const [isRunning, setIsRunning] = useState(false);
   const [showCodeEditor, setShowCodeEditor] = useState(false);
   const [code, setCode] = useState("");
   const [selectLang, setSelectLang] = useState("python");
   const [output, setOutput] = useState("");
-
+  const [readyToCode, setReadyToCode] = useState(false);
+ 
+ 
   // On mount, show the initial question
   useEffect(() => {
     if (session_id && initialQuestion) {
@@ -67,13 +70,13 @@ const MockInterview = () => {
     }
     setProcessingData(false);
   }, [session_id, initialQuestion]);
-
+ 
   // Timer logic (unchanged)
   useEffect(() => {
     setTimeLeft(900);
     setIsRunning(true);
   }, []);
-
+ 
   useEffect(() => {
     let timer;
     if (isRunning && timeLeft > 0) {
@@ -90,18 +93,18 @@ const MockInterview = () => {
     }
     return () => clearInterval(timer);
   }, [isRunning, timeLeft]);
-
+ 
   const countWords = (text) => {
     return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
   };
-
+ 
   const handleInputChange = (e) => {
     const newText = e.target.value;
     if (countWords(newText) <= MAX_WORDS) {
       setInput(newText);
     }
   };
-
+ 
   // Add this handler
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -109,7 +112,7 @@ const MockInterview = () => {
       handleSend();
     }
   };
-
+ 
   // Handle sending an answer or clarification
   const handleSend = async () => {
     if (!input.trim() || !session_id) return;
@@ -122,9 +125,13 @@ const MockInterview = () => {
         body: JSON.stringify({
           session_id,
           answer: input,
+          ready_to_code: readyToCode,
+          code_stub: code,
           clarification: clarificationMode,
         }),
       });
+ 
+      console.log("Response:", response);
       if (!response.ok) {
         if (response.status === 404) setError("Session not found.");
         else if (response.status === 422)
@@ -134,6 +141,8 @@ const MockInterview = () => {
         return;
       }
       const data = await response.json();
+
+      console.log("Data:", data);
       // Add user message
       setMessages((prev) => [
         ...prev,
@@ -148,6 +157,12 @@ const MockInterview = () => {
         },
       ]);
       setInput("");
+ 
+      if (data?.ready_to_code === true) {
+        setReadyToCode(true);
+      } else {
+        setReadyToCode(false);
+      }
       // Add AI response
       if (data.question) {
         setMessages((prev) => [
@@ -163,6 +178,12 @@ const MockInterview = () => {
           },
         ]);
       }
+
+      if(data.code_stub){
+        setCode(data.code_stub);
+
+        console.log("Code:", code);
+      }
       // Question loop logic
       if (!clarificationMode) {
         if (questionCount < 4) {
@@ -177,7 +198,7 @@ const MockInterview = () => {
       setProcessingData(false);
     }
   };
-
+ 
   // Handle end interview and fetch feedback
   const handleEndInterview = async () => {
     if (!session_id) return;
@@ -204,13 +225,13 @@ const MockInterview = () => {
       setProcessingData(false);
     }
   };
-
+ 
   // If feedback is present, show feedback summary
   if (feedback) {
     navigate("/user/interview/interview-feedback", { state: { feedback } });
     return null;
   }
-
+ 
   return (
     <>
     <div>
@@ -220,10 +241,10 @@ const MockInterview = () => {
         <UserHeader />
       </div>
       </div>
-
+ 
       <div style={{ display:"flex", height:"calc(100vh - 108px)"}}>
       <div style ={{width: showCodeEditor ? "60%" : "100%", transsition: "width 0.3s", overflowY:"auto"}}>
-
+ 
       <Container>
         <Header>
           <TimerBtn isRunning={isRunning}>
@@ -235,9 +256,27 @@ const MockInterview = () => {
           <hr style={{ margin: "0" }} />
           <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
         </Header>
-
+ 
+        {initialQuestion && (
+    <div
+      style={{
+        backgroundColor: "#f5f5f5",
+        padding: "20px",
+        fontWeight: "bold",
+        fontSize: "1rem",
+        margin: "20px",
+        borderRadius: "8px",
+        paddingTop:"20px"
+      }}
+    >
+      Problem Statement:
+      <br />
+      <p style={{ fontSize: "16px", fontWeight: "600" }}>{baseQuestion}</p>
+    </div>
+  )}
+ 
         <Conversation> Conversation </Conversation>
-
+ 
         <ChatBox>
           {messages.map((msg, index) => (
             <Message key={index} sender={msg.sender}>
@@ -279,11 +318,16 @@ const MockInterview = () => {
             {countWords(input)} / {MAX_WORDS}
           </CharCount>
           </InputTab>
-          <SendButton  show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>Ready to code</SendButton>
+          {readyToCode && (
+  <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>
+    Ready to code
+  </SendButton>
+)}
+ 
         </InputBox>
       </Container>
       </div>
-
+ 
       {showCodeEditor && (
         <div style={{width: "40%", height: "100%"}}>
           <ReadyToCode
@@ -295,12 +339,12 @@ const MockInterview = () => {
           setOutput={setOutput}
           showCodeEditor={showCodeEditor}
           />
-          
+         
         </div>
       )}
     </div>
     </>
   );
 };
-
+ 
 export default MockInterview;
