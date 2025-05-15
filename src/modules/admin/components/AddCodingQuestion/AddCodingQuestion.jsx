@@ -168,8 +168,9 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
 
 
             const result = await res.json();
+            console.log(result);
             if (result.status === 'success') {
-                setFormData(prev => ({ ...prev, output: result?.stdout?.trim() }));
+                setFormData(prev => ({ ...prev, output: result?.stdout?.trim()||result?.stderr?.trim() }));
             } else {
                 setError(result.exception || 'Execution failed');
             }

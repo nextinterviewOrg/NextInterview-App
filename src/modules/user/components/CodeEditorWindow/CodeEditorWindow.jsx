@@ -95,9 +95,10 @@ const CodeEditorWindow = () => {
     fetchChallenge();
   }, [id]);
   useEffect(() => {
+    console.log("output", output);
     const apiCaller = async () => {
-
-      if ((output.trim() === question?.output.trim())) {
+      console.log("output", output, "challenge", challenge);
+      if ((output.trim() === challenge?.output.trim())) {
         setShowOptimiseBtn(true)
         const response = await fetch('https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code', {
           method: 'POST',
@@ -131,6 +132,11 @@ const CodeEditorWindow = () => {
 
   if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
+  const handleOptimizeCode = () => {
+    // Call the API to optimize the code
+    console.log("Optimizing code...");
+    setModalOpen(true);
+  };
 
   return (
     <Wrapper>

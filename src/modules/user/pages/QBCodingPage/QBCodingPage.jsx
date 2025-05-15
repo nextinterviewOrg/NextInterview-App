@@ -54,7 +54,7 @@ const QBCodingPage = () => {
                     questionID,
                     userData.data?.user?._id
                 );
-                console.log("data", data);
+                console.log("data user Results", data);
                 setQuestion(data.data.question);
                 let codingData;
                 if (data.data.userProgress) {
