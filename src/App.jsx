@@ -101,6 +101,8 @@ import ApproachQuestion from "./modules/user/components/UserChalleneges/Approach
 import CasestudyQuestion from "./modules/user/components/UserChalleneges/CaseStudy/CasestudyQuestion";
 import SinglelineQuestion from "./modules/user/components/UserChalleneges/SingleLine/SinglelineQuestion";
 import MultilineQuestion from "./modules/user/components/UserChalleneges/MultiLine/MultilineQuestion";
+import TermsofService from "./pages/TermsofService/TermsofService";
+import PrivacyandPolicy from "./pages/PrivacyandPolicy/PrivacyandPolicy";
 
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
@@ -141,6 +143,8 @@ function App() {
         <Routes>
           {/* <Route path="/landingpage" element={<LandingPage />} /> */}
           <Route path="/about" element={<PublicRoutes Component={AboutPage} />} />
+          <Route path="/termsandconditions" element={<TermsofService/>} />
+          <Route path="/privacypolicy" element={<PrivacyandPolicy />} />
           <Route path="/course" element={<PublicRoutes Component={LandingCourse} />} />
           <Route path="/product" element={<PublicRoutes Component={LandingProduct} />} />
           <Route path="/pricing" element={<PublicRoutes Component={Pricing} />} />
