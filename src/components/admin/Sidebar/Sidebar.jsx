@@ -19,6 +19,7 @@ import { useRef } from "react";
 import Blogs from "../../../assets/blogging.svg";
 import UserFeedback from "../../../assets/userFeedback.svg";
 import Authentication from "../../../assets/Authentication.svg";
+import Coding from "../../../assets/Coding.svg";
 // import { FaBars } from "react-icons/fa"; // Importing the hamburger icon
 
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
@@ -90,7 +91,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     },
     {
       id: 11,
-      name: "User feeback",
+      name: "User Feedback",
       path: "/admin/user-feedback",
       icon: <img className="svgicon" src={UserFeedback} alt="User feedback Icon" />
 
@@ -99,7 +100,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       id: 12,
       name: "Coding Questions",
       path: "/admin/TIYQBCodingQuestions",
-      icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
+      icon: <img className="svgicon" src={Coding} alt="Coding Icon" />,
     },
     {
       id: 13,
