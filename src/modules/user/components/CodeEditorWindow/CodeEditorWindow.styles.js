@@ -23,7 +23,7 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
-  width: 60%;
+  width: 40%;
 `;
  
 export const EditorContainer = styled.div`

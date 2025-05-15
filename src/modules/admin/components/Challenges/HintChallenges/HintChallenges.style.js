@@ -5,7 +5,7 @@ export const HintContainer = styled.div`
   border: 1px solid #ccc;
   padding: 1rem;
   border-radius: 10px;
-  width: 350px;
+  width: 20%;
 `;
 export const HintTitle = styled.div`
   display: flex;

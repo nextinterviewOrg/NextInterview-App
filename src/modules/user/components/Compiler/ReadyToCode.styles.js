@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   padding: 2rem;
-  width: ${({isCodeEditorVisible}) => (isCodeEditorVisible ? "unset" : "60%")};
+  width: ${({isCodeEditorVisible}) => (isCodeEditorVisible ? "unset" : "40%")};
   box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
 `;
 

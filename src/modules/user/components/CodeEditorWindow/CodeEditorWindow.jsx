@@ -27,20 +27,21 @@ const CodeEditorWindow = () => {
   const [output, setOutput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
+  const [input, setInput] = useState('');
 
   const handleSubmit = async () => {
     if (!challenge || !user || isSubmitting) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       // Get user data from Clerk ID
       const userData = await getUserByClerkId(user.id);
       const userId = userData.data.user._id;
-      
+
       const expectedOutput = challenge.output?.trim();
       const actualOutput = output?.trim();
-  
+
       // Only proceed if output matches
       if (expectedOutput === actualOutput) {
         // Prepare submission payload
@@ -51,12 +52,12 @@ const CodeEditorWindow = () => {
           finalResult: true,
           skip: false,
         };
-  
+
         console.log("payload", payload);
-        
+
         // Submit the challenge progress only if answer is correct
         const response = await submitUserChallengeProgress(payload);
-        
+
         console.log("Submitted response", response);
         alert("Congratulations! Your solution is correct and progress has been saved.");
         navigate("/user/challenges");
@@ -64,7 +65,7 @@ const CodeEditorWindow = () => {
         // Don't store wrong answers, just show error message
         alert("Your output doesn't match the expected result. Please try again.");
       }
-      
+
     } catch (err) {
       console.error("Submission error:", err);
       alert("Failed to submit your solution. Please try again.");
@@ -78,6 +79,9 @@ const CodeEditorWindow = () => {
       try {
         const response = await getChallengeById(id);
         setChallenge(response.data);
+        setCode(response.data?.base_code);
+        setInput(response.data?.input);
+        setSelectedLang(response.data.programming_language === 'Python' ? 'python' : 'mysql');
       } catch (err) {
         setError("Failed to load challenge data.");
       } finally {
@@ -103,9 +107,15 @@ const CodeEditorWindow = () => {
         >
           <RxArrowLeft />
         </BackIcon>
-        <Button onClick={handleSubmit} disabled={isSubmitting}>
-          {isSubmitting ? "Submitting..." : "Submit"}
-        </Button>
+        <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
+
+          <Button  >
+            Optimise Code
+          </Button>
+          <Button onClick={handleSubmit} disabled={isSubmitting}>
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
       </Header>
 
       <Title>Question Type - Coding</Title>
@@ -113,19 +123,25 @@ const CodeEditorWindow = () => {
       <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
         <QuestionBox>
           <h3>{challenge.QuestionText}</h3>
-          <p><strong>Description:</strong> {challenge.description}</p>
+          <p><strong>Description:</strong>
+            <br>
+            </br>
+            <div dangerouslySetInnerHTML={{ __html: challenge?.description }} />
+          </p>
           <p><strong>Input:</strong> {challenge.input}</p>
           <p><strong>Output:</strong> {challenge.output}</p>
           <p><strong>Difficulty:</strong> {challenge.difficulty}</p>
         </QuestionBox>
 
         <ReadyToCode
-          selectedLang={selectedLang}
-          setSelectedLang={setSelectedLang}
+          selectLang={selectedLang}
+          setSelectLang={setSelectedLang}
           code={code}
           setCode={setCode}
           output={output}
           setOutput={setOutput}
+          input={input}
+          setInput={setInput}
         />
 
         <HintChallenges hints={challenge.hints} />

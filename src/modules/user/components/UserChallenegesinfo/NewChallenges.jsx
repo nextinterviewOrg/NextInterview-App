@@ -74,7 +74,7 @@ const NewChallenge = () => {
         <Header>
           <Tag>#Today's Challenge</Tag>
           <Title>{challenge.QuestionText}</Title>
-          <Description>{challenge.description}</Description>
+            <Description dangerouslySetInnerHTML={{ __html: challenge?.description }} />
           <Tags>
             <Tag>{challenge.programming_language}</Tag>
             <Tag>{challenge.difficulty}</Tag>
