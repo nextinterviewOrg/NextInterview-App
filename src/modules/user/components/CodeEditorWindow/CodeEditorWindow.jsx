@@ -15,6 +15,7 @@ import ReadyToCode from "../Compiler/ReadyToCode";
 import HintChallenges from "../../../admin/components/Challenges/HintChallenges/HintChallenges";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
+import Editor from '@monaco-editor/react';
 
 const CodeEditorWindow = () => {
   const { id } = useParams();
@@ -28,6 +29,9 @@ const CodeEditorWindow = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useUser();
   const [input, setInput] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [showOptimiseBtn, setShowOptimiseBtn] = useState(false)
+  const [optimisedCode, setOptimisedCode] = useState(false)
 
   const handleSubmit = async () => {
     if (!challenge || !user || isSubmitting) return;
@@ -90,6 +94,36 @@ const CodeEditorWindow = () => {
     };
     fetchChallenge();
   }, [id]);
+  useEffect(() => {
+    const apiCaller = async () => {
+
+      if ((output.trim() === question?.output.trim())) {
+        setShowOptimiseBtn(true)
+        const response = await fetch('https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            question: challenge?.QuestionText,
+            user_code: code,
+            sample_input: challenge?.input,
+            sample_output: challenge?.output
+          })
+        })
+        console.log("response", response);
+        const data = await response.json();
+        console.log("data", data);
+        setOptimisedCode(data.optimized_code)
+      } else {
+        setShowOptimiseBtn(false)
+      }
+
+
+    }
+    apiCaller();
+
+  }, [output])
 
   const handleGoBack = () => {
     navigate(`/user/challengeInfo/${id}`);
@@ -109,9 +143,9 @@ const CodeEditorWindow = () => {
         </BackIcon>
         <div style={{ display: "flex", flexDirection: "row", gap: "20px" }}>
 
-          <Button  >
-            Optimise Code
-          </Button>
+          {showOptimiseBtn &&
+            <Button onClick={handleOptimizeCode}>Optimise Code</Button>
+          }
           <Button onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit"}
           </Button>
@@ -146,6 +180,40 @@ const CodeEditorWindow = () => {
 
         <HintChallenges hints={challenge.hints} />
       </div>
+      {modalOpen && (
+        <div className="modal">
+          <div className="modal-content">
+            <button
+              onClick={() => setModalOpen(false)}
+              className="close-button"
+            >
+              x
+            </button>
+            <h3>Optimised Code</h3>
+            <Editor
+              height="300px"
+              language={selectedLang || 'plaintext'}
+              value={optimisedCode}
+              // onChange={(value) => setCode(value || '')}
+              theme="vs-light"
+            />
+            <div className="button-group">
+              <button
+                className="modal-cancel-button"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </button>
+              <button className="modal-button"
+                onClick={() => {
+                  setCode(optimisedCode);
+                  setModalOpen(false);
+                }}
+              >Apply Code</button>
+            </div>
+          </div>
+        </div>
+      )}
     </Wrapper>
   );
 };

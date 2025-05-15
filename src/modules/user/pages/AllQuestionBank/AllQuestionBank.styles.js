@@ -8,6 +8,7 @@ export const TabsWrapper = styled.div`
   display: flex;
   gap: 20px;
   margin-bottom: 24px;
+  margin-left: 30px;
 `;
 
 export const TabButton = styled.button`
