@@ -276,6 +276,7 @@ const QBCodingPage = () => {
                             <button className="modal-button"
                                 onClick={() => {
                                     setCode(optimisedCode);
+                                    setOutput(null);
                                     setModalOpen(false);
                                 }}
                             >Apply Code</button>
