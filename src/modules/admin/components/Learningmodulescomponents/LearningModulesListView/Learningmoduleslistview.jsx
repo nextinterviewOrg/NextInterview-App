@@ -12,7 +12,7 @@ import {
 import { RiDeleteBinLine } from "react-icons/ri";
 import { FiEdit3 } from "react-icons/fi";
 import { IoSearch } from "react-icons/io5";
-import { deleteModule, getModule } from "../../../../../api/addNewModuleApi";
+import { deleteModule, getModule, softModuleDelete } from "../../../../../api/addNewModuleApi";
 import DeleteModule from "../../../components/DeleteModule/DeleteModule"; // Import Delete Modal
 import { message } from "antd";
 
@@ -53,7 +53,8 @@ const LearningModulesListView = () => {
 
   const handleDeleteConfirm = async () => {
     if (selectedModuleId) {
-      await deleteModule(selectedModuleId);
+      // await deleteModule(selectedModuleId);
+      await softModuleDelete(selectedModuleId);
       message.success("Module deleted successfully!");
       fetchModules(); // Refresh the list after deletion
     }
