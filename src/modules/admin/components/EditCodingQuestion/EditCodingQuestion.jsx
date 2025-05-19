@@ -107,13 +107,13 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                 body: JSON.stringify({
                     language: formData.programming_language.toLowerCase(),
                     files: [{ name: formData.programming_language === 'Python' ? 'index.py' : 'main.sql', content: code }],
-                    stdin: formData.input||''
+                    stdin: formData.input || ''
                 })
             });
             const result = await res.json();
             console.log("result", result);
             if (result.status === 'success') {
-                setFormData(prev => ({ ...prev, output: result.stdout.trim() }));
+                setFormData(prev => ({ ...prev, output: result.stdout.trim() || result?.stderr?.trim() }));
             }
         } catch (err) {
             notification.error({ message: 'Code execution failed', description: err.message });
