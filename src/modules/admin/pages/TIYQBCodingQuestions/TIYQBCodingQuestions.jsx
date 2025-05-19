@@ -26,6 +26,13 @@ import { getAllQBCodingQuestions, getAllTIYCodingQuestions, getAllTiyQbCodingQue
 import AddCodingQuestion from "../../components/AddCodingQuestion/AddCodingQuestion";
 import EditCodingQuestion from "../../components/EditCodingQuestion/EditCodingQuestion";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
+import {
+    TinyMCEapiKey,
+    TinyMCEmergetags_list,
+    TinyMCEplugins,
+    TinyMCEToolbar,
+} from "../../../../config/TinyMceConfig";
 
 const TIYQBCodingQuestions = () => {
     const [showAddModal, setShowAddModal] = useState(false);

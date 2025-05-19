@@ -21,9 +21,16 @@ import {
 import { Select, notification } from 'antd';
 import { getModuleCode, getTopicCode } from '../../../../api/addNewModuleApi';
 import { updateTiyQbCodingQuestion } from '../../../../api/tiyQbCodingQuestionApi';
-
+import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
+import {
+    TinyMCEapiKey,
+    TinyMCEmergetags_list,
+    TinyMCEplugins,
+    TinyMCEToolbar,
+} from "../../../../config/TinyMceConfig";
 
 const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
+    console.log("questionData", questionData);
     const [formData, setFormData] = useState({ ...questionData, topics: questionData.topics.map((topic) => topic.topic_name) });
     const [code, setCode] = useState(questionData.base_code || '');
     const [newTopic, setNewTopic] = useState('');
@@ -100,10 +107,11 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                 body: JSON.stringify({
                     language: formData.programming_language.toLowerCase(),
                     files: [{ name: formData.programming_language === 'Python' ? 'index.py' : 'main.sql', content: code }],
-                    stdin: formData.input
+                    stdin: formData.input||''
                 })
             });
             const result = await res.json();
+            console.log("result", result);
             if (result.status === 'success') {
                 setFormData(prev => ({ ...prev, output: result.stdout.trim() }));
             }
@@ -241,7 +249,27 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Description</FormLabel>
-                    <FormTextArea name="description" value={formData.description} onChange={handleChange} />
+                    <TinyMCEEditor
+                        apiKey={TinyMCEapiKey}
+                        init={{
+                            plugins: TinyMCEplugins,
+                            toolbar: TinyMCEToolbar,
+                            tinycomments_mode: "embedded",
+                            tinycomments_author: "Author name",
+                            mergetags_list: TinyMCEmergetags_list,
+                            ai_request: (request, respondWith) =>
+                                respondWith.string(() =>
+                                    Promise.reject("See docs to implement AI Assistant")
+                                ),
+                            branding: false,
+                        }}
+                        value={formData.description || ""}
+                        onEditorChange={(newValue) => {
+                            setFormData({ ...formData, description: newValue });
+                        }}
+                        initialValue=""
+                    />
+                    {/* <FormTextArea name="description" value={formData.description} onChange={handleChange} /> */}
                 </FormGroup>
 
                 <FormGroup>
