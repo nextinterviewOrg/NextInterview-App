@@ -261,7 +261,7 @@ const TryItYourself = () => {
   })();
 
   const handleExploreButtonClick = () => {
-    navigate(`/user/questionBank`);
+    navigate(`/user/mainQuestionBank`);
   };
 
   if (loading) {
