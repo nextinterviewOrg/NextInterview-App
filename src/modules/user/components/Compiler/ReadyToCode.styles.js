@@ -1,71 +1,77 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 export const Container = styled.div`
-  padding: 2rem;
-  width: ${({isCodeEditorVisible}) => (isCodeEditorVisible ? "unset" : "40%")};
-  box-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 `;
 
 export const CodeBox = styled.div`
-  margin-bottom: 1rem;
-`;
-
-export const RunButton = styled.button`
-  padding: 10px 16px;
-  background-color: ${({ theme }) => theme.colors.secondary};
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-`;
-
-export const OutputBox = styled.div`
-  background: #f1f1f1;
-  padding: 1rem;
-  border-radius: 5px;
-`;
-
-export const OutputSection = styled.pre`
-  white-space: pre-wrap;
-`;
-
-export const LanguageSelect = styled.select`
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
 `;
 
 export const Buttons = styled.div`
   display: flex;
-  gap: 1rem;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
 `;
-export const InputBox = styled.div`
-  background: #f1f1f1;
-  padding: 1rem;
-  border-radius: 5px;
-  margin-bottom: 1rem;
- 
-  h4 {
-    margin: 0 0 10px 0;
-  }
-`;
- 
-export const InputSection = styled.pre`
-  white-space: pre-wrap;
-`;
- 
-export const TextBox = styled.input`
-  width: 100%;
-  height: 50px;
-  margin-top: 10px;
-  padding: 10px;
+
+export const LanguageSelect = styled.select`
+  padding: 6px;
+  border-radius: 4px;
   border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-  outline: none;
-  box-sizing: border-box;
 `;
- 
+
+export const RunButton = styled.button`
+  padding: 6px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+export const InputBox = styled.div`
+  margin-top: 16px;
+`;
+
+export const TextBox = styled.input`
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+`;
+
+export const OutputBox = styled.div`
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+`;
+
+export const OutputSection = styled.pre`
+  white-space: pre-wrap;
+  word-wrap: break-word;
+`;
+
+export const OptimiseButton = styled.button`
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+export const SubmitButton = styled.button`
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;

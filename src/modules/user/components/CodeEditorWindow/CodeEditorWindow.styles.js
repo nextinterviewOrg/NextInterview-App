@@ -1,5 +1,167 @@
+// import styled from 'styled-components';
+
+// export const BackButton = styled.button`
+//   border: none;
+//   color: #007bff;
+//   font-size: 16px;
+//   cursor: pointer;
+//   margin-bottom: 16px;
+//   display: flex;
+//   justify-content: flex-start;
+//   align-items: center;
+//   gap: 5px;
+//   background-color: #f0f0f0;
+//   width: 100%;
+//   padding: 10px;
+//   margin-left: 40px;
+// `;
+
+// export const Container = styled.div`
+//   margin-left: 60px;
+//   padding: 1rem;
+//   font-family: 'Segoe UI', sans-serif;
+// `;
+
+// export const MainQuestion = styled.h2`
+//   font-size: 1.25rem;
+//   font-weight: 600;
+//   color: #1f2937;
+//     background-color: #f9fafb;
+//     padding: 20px;
+//     display: flex;
+//     justify-content: space-between;
+//     align-items: center;
+// `;
+
+// export const Question = styled.p`
+//   font-size: 1rem;
+//   font-weight: 400;
+//   color: #000000;
+//   margin: 0;
+// `;
+
+// export const Difficulty = styled.span`
+//   background-color: #fee2e2;
+//   color: #b91c1c;
+//   font-size: 14px;
+//   padding: 0.25rem 0.5rem;
+//   border-radius: 6px;
+// `;
+
+// export const Qusnandeditor = styled.h2`
+// display: flex;
+//   flex-direction: row;
+//   gap: 1rem;
+//   font-size: 1.25rem;
+//   font-weight: 600;
+//   color: #1f2937;
+//   position: relative;
+//   width: 100%;
+// `;
+
+// export const QusnandDesc = styled.div`
+//   gap: 1rem;
+//   font-size: 16px;
+//   font-weight: 600;
+//   color: #1f2937;
+//   position: relative;
+//   width: 40%;
+// `;
+
+// export const QuestionBox = styled.div`
+//   background-color: white;
+//   padding: 1rem;
+//   margin-top: 1rem;
+//   border: 1px solid #e5e7eb;
+//   border-radius: 0.5rem;
+// `;
+
+// export const QuestionTitle = styled.h3`
+//   font-size: 1rem;
+//   font-weight: 600;
+//   color: #111827;
+// `;
+
+// export const QuestionText = styled.p`
+//   margin-top: 0.5rem;
+//   color: #374151;
+//   line-height: 1.6;
+// `;
+
+// export const Description = styled.div`
+//   margin-top: 1rem;
+//   color: #4b5563;
+
+//   ul {
+//     padding-left: 1.25rem;
+//   }
+
+//   li {
+//     margin-bottom: 0.25rem;
+//   }
+// `;
+
+// export const HintSection = styled.div`
+//   margin-top: 2rem;
+//   width: 60%;
+// `;
+
+// export const HintHeader = styled.div`
+//   font-weight: 600;
+//   color: #2563eb;
+//   margin-bottom: 0.5rem;
+// `;
+
+// export const CodeEditor = styled.div`
+//   background-color: #f3f4f6;
+//   border: 1px solid #d1d5db;
+//   border-radius: 0.5rem;
+//   padding: 1rem;
+// `;
+
+// export const CodeBlock = styled.pre`
+//   font-family: 'Courier New', monospace;
+//   font-size: 0.875rem;
+//   white-space: pre-wrap;
+//   color: #111827;
+// `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import styled from 'styled-components';
 import theme from '../../../../theme/Theme';
+
+export const BackButton = styled.button`
+  border: none;
+  color: #007bff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  background-color: #f0f0f0;
+  width: 100%;
+  padding: 10px;
+    padding-left: 60px;
+
+`;
+
 export const Wrapper = styled.div`
   max-width: 100%;
   margin: 0 auto;
@@ -91,15 +253,57 @@ export const Title = styled.h2`
   margin-bottom: 1rem;
 `;
 
+export const QusnType = styled.h2`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1rem;
+    background-color: #e2e3e5;
+  padding: 6px;
+  border-radius: 5px;
+`;
+
+export const QusnText = styled.h2`
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  // margin-bottom: 1rem;
+  padding: 6px;
+`;
+
+export const QusnDifficulty = styled.h2`
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  // margin-bottom: 1rem;
+   background-color: ${({ difficulty }) =>
+    difficulty === 'Easy'
+      ? '#d1fae5'      
+      : difficulty === 'Medium'
+      ? '#fff3cd'     
+      : difficulty === 'Hard'
+      ? '#f8d7da'     
+      : '#e2e3e5'};   
+padding: 6px;
+`;
+
+export const QuestionContainer = styled.div`
+  padding: 1rem;
+   width: 40%;
+`;
+
 export const QuestionBox = styled.div`
-  background-color: ${({ theme }) => theme.colors.lightgreen};
+    background-color: #e2e3e5;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
   font-size: 16px;
   line-height: 1.6;
   color: #444;
-  width: 40%;
+ 
 `;
 
 export const EditorContainer = styled.div`
@@ -152,4 +356,75 @@ export const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
-`
+`;
+
+export const TabsWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+`;
+
+export const TabButton = styled.button`
+  padding: 10px 16px;
+  border: ${({ active }) => (active ? 'none' : '1px solid #ccc')};
+  background-color: ${({ active }) => (active ? '#555' : '#fff')};
+  color: ${({ active }) => (active ? '#fff' : '#777')};
+  border-radius: 20px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+`;
+
+export const TimerText = styled.span`
+  color: #2962ff;
+  font-size: 13px;
+  margin-left: 5px;
+`;
+
+export const HintWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+export const HintButton = styled.button`
+  background-color: #e3fcef;
+  color: #007e66;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 500;
+`;
+
+export const HintTooltip = styled.div`
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: #f4f4f4;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #333;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  white-space: pre-line;
+  z-index: 100;
+  width: 220px;
+`;
+
+export const LanguageSelectWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const Select = styled.select`
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background-color: #f8f8f8;
+  font-weight: 500;
+  cursor: pointer;
+`;

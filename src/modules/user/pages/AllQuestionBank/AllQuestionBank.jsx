@@ -17,7 +17,7 @@ const AllQuestionBank = () => {
   return (
     <Container>
       <TabsWrapper>
-        <TabButton
+        {/* <TabButton
           active={isQuestionsActive}
           onClick={() => navigate('questionbank')}
         >
@@ -28,7 +28,7 @@ const AllQuestionBank = () => {
           onClick={() => navigate('qbcodinglist')}
         >
           Coding
-        </TabButton>
+        </TabButton> */}
       </TabsWrapper>
 
       <ContentWrapper>

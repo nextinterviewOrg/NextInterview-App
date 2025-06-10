@@ -62,7 +62,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     {
       id: 5,
       name: "Question Bank",
-      path: "/user/mainQuestionBank",
+      path: "/user/mainQuestionBank/questionbank",
       icon: <img className="svgicon" src={question} alt="question" />,
     },
     {

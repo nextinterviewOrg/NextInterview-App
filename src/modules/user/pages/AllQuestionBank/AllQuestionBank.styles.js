@@ -1,14 +1,16 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
-  padding: 20px 40px;
+  // padding: 20px 40px;
+    margin-left: 60px;
+    border-top: 2px solid #f0f0f0;
 `;
 
 export const TabsWrapper = styled.div`
   display: flex;
   gap: 20px;
   margin-bottom: 24px;
-  margin-left: 30px;
+  // margin-left: 30px;
 `;
 
 export const TabButton = styled.button`
@@ -31,7 +33,7 @@ export const TabButton = styled.button`
 
 export const ContentWrapper = styled.div`
   background-color: #fff;
-  padding: 20px;
+  // padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+  // box-shadow: 0 0 10px rgba(0,0,0,0.05);
 `;

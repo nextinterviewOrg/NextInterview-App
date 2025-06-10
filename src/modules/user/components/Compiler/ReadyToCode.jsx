@@ -1,5 +1,5 @@
-import React from 'react';
-import Editor from '@monaco-editor/react';
+import React from "react";
+import Editor from "@monaco-editor/react";
 import {
   Container,
   CodeBox,
@@ -9,32 +9,49 @@ import {
   LanguageSelect,
   Buttons,
   InputBox,
-  TextBox
-} from './ReadyToCode.styles';
+  TextBox,
+  OptimiseButton,
+  SubmitButton,
+} from "./ReadyToCode.styles";
 
 const languageOptions = {
   python: {
-    filename: 'index.py',
-    defaultCode: `import sys\nname = sys.stdin.readline()\nprint('Hello ' + name.strip())`
+    filename: "index.py",
+    defaultCode: `import sys\nname = sys.stdin.readline()\nprint('Hello ' + name.strip())`,
   },
   mysql: {
-    filename: 'main.sql',
-    defaultCode: `SELECT 'Hello Peter';`
+    filename: "main.sql",
+    defaultCode: `SELECT 'Hello Peter';`,
   },
 };
 
-const ReadyToCode = ({ selectLang, setSelectLang, output, setOutput, showCodeEditor, code, setCode,input, setInput }) => {
-  console.log("selectLang", selectLang, "output", output, "showCodeEditor", showCodeEditor,  "input", input);
+const ReadyToCode = ({
+  selectLang,
+  setSelectLang,
+  code,
+  setCode,
+  output,
+  setOutput,
+  input,
+  setInput,
+  setRunClicked,
+  showOptimiseBtn,
+  handleOptimizeCode,
+  optimizeClicked,
+  handleSubmit,
+  isSubmitting,
+}) => {
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
     setSelectLang(lang);
-    setCode('');
-    setOutput('');
-  }; 
+    setCode("");
+    setOutput("");
+    setRunClicked(false);
+  };
 
   const runCode = async () => {
     if (!selectLang || !code) {
-      setOutput('Please select a language and write some code.');
+      setOutput("Please select a language and write some code.");
       return;
     }
 
@@ -46,41 +63,40 @@ const ReadyToCode = ({ selectLang, setSelectLang, output, setOutput, showCodeEdi
           content: code,
         },
       ],
-      stdin:selectLang === 'python' ? input:''
+      stdin: selectLang === "python" ? input : "",
     };
-    console.log("payload", payload);
 
     try {
-      const res = await fetch('https://onecompiler-apis.p.rapidapi.com/api/v1/run', {
-        method: 'POST',
+      const res = await fetch("https://onecompiler-apis.p.rapidapi.com/api/v1/run", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'x-rapidapi-key': 'e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c',
-          'x-rapidapi-host': 'onecompiler-apis.p.rapidapi.com',
+          "Content-Type": "application/json",
+          "x-rapidapi-key": "e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c",
+          "x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
         },
         body: JSON.stringify(payload),
       });
 
       const result = await res.json();
-      console.log(result);
-      if (result.status === 'success') {
-        setOutput(result.stdout || result.stderr || 'No output');
+      setRunClicked(true);
+      if (result.status === "success") {
+        setOutput(result.stdout || result.stderr || "No output");
       } else {
-        setOutput('Error: ' + (result.exception || 'Unknown error'));
+        setOutput("Error: " + (result.exception || "Unknown error"));
       }
     } catch (err) {
-      setOutput('Request failed: ' + err.message);
+      setOutput("Request failed: " + err.message);
     }
   };
 
   return (
-    <Container isCodeEditorVisible={showCodeEditor}>
+    <Container>
       <CodeBox>
         <Editor
           height="300px"
-          language={selectLang || 'plaintext'}
+          language={selectLang || "plaintext"}
           value={code}
-          onChange={(value) => setCode(value || '')}
+          onChange={(value) => setCode(value || "")}
           theme="vs-light"
         />
         <Buttons>
@@ -96,21 +112,39 @@ const ReadyToCode = ({ selectLang, setSelectLang, output, setOutput, showCodeEdi
         </Buttons>
       </CodeBox>
 
-     {selectLang === 'python' && <InputBox>
-        <h4>Input</h4>
-        {/* <InputSection>{languageOptions[selectLang]?.defaultCode}</InputSection> */}
-        <TextBox
-          type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Enter your code here..."
-          style={{ width: '100%', height: '50px', marginTop: '10px' }}
-        />
-      </InputBox>}
-      <OutputBox>
-        <h4>Output</h4>
-        <OutputSection>{output}</OutputSection>
-      </OutputBox>
+      {selectLang === "python" && (
+        <InputBox>
+          <h4>Input</h4>
+          <TextBox
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Enter your input..."
+            style={{ width: "100%", height: "50px", marginTop: "10px" }}
+          />
+        </InputBox>
+      )}
+
+      {output !== "" && (
+        <OutputBox>
+          <h4>Output</h4>
+          <OutputSection>{output}</OutputSection>
+
+          {/* Show “Optimise Code” if it matches and hasn’t been clicked yet */}
+          {showOptimiseBtn && !optimizeClicked && (
+            <OptimiseButton onClick={handleOptimizeCode}>
+              Optimise Code
+            </OptimiseButton>
+          )}
+
+          {/* Once “Apply Code” has been clicked, show “Submit” here */}
+          {optimizeClicked && (
+            <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </SubmitButton>
+          )}
+        </OutputBox>
+      )}
     </Container>
   );
 };

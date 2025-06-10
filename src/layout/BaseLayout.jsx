@@ -7,7 +7,7 @@ import Header from "../components/Header/Header";
 import NavBar from "../components/admin/Navbar/Navbar";
 import UserHeader from "../components/UserHeader/UserHeader";
 import ModuleSidebar from "../components/ModuleSidebar/ModuleSidebar";
-import { useUser, useSession } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react';
 import { getUserByClerkId } from "../api/userApi";
 
 const BaseLayout = () => {
@@ -16,28 +16,28 @@ const BaseLayout = () => {
   const [title, setTitle] = useState(
     JSON.parse(localStorage.getItem("title")) || ""
   );
+
   const location = useLocation();
-  const { isSignedIn, user, isLoaded, sessionId } = useUser();
   const navigate = useNavigate();
-  // Determine layout based on path
+
+  const { isSignedIn, user, isLoaded, sessionId } = useUser();
+
   const isAdminPath = location.pathname.startsWith("/admin");
   const isUserPath = location.pathname.startsWith("/user");
-  const [ModulePath, setModulePath] = useState(
-  location.pathname.startsWith("/user/learning/") &&
-    location.pathname.endsWith("/topic"));
-
+  const isModulePath = location.pathname.startsWith("/user/learning/") &&
+                       location.pathname.endsWith("/topic");
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
     if (window.innerWidth <= 768) {
-      setIsExpanded(true); // Force expanded view on mobile when opened
+      setIsExpanded(true);
     }
   };
+
   useEffect(() => {
     const apiCaller = async () => {
       if (isSignedIn && isLoaded && user) {
         try {
-
           const data = await getUserByClerkId(user.id);
           if (data.data.user.user_role === "user") {
             if (data.data.user.profile_status === true) {
@@ -52,25 +52,16 @@ const BaseLayout = () => {
           console.log(error);
         }
       }
-    }
+    };
     apiCaller();
-  }, [user])
-  useEffect(() => {
-    console.log("ModulePath 1111",  location.pathname.startsWith("/user/learning/") ,
-    location.pathname.endsWith("/topic"));
-    setModulePath(
-      location.pathname.startsWith("/user/learning/") &&
-        location.pathname.endsWith("/topic")
-    )
-  }, [navigate])
+  }, [user]);
 
-  // Close sidebar when clicking outside on mobile
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (window.innerWidth <= 768 && isMobileSidebarOpen) {
         const sidebar = document.querySelector('.sidebar-wrapper');
         if (sidebar && !sidebar.contains(event.target) &&
-          !event.target.closest('.mobile-hamburger')) {
+            !event.target.closest('.mobile-hamburger')) {
           setIsMobileSidebarOpen(false);
         }
       }
@@ -94,15 +85,12 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <Header
-              title={title}
-              toggleMobileSidebar={toggleMobileSidebar}
-            />
+            <Header title={title} toggleMobileSidebar={toggleMobileSidebar} />
             <NavBar />
             <Outlet />
           </ContentWrapper>
         </>
-      ) : ModulePath ? (
+      ) : isModulePath ? (
         <>
           <ModuleSidebar
             isExpanded={isExpanded}
@@ -112,10 +100,7 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <UserHeader
-              title={title}
-              toggleMobileSidebar={toggleMobileSidebar}
-            />
+            <UserHeader title={title} toggleMobileSidebar={toggleMobileSidebar} />
             <Outlet />
           </ContentWrapper>
         </>
@@ -129,10 +114,7 @@ const BaseLayout = () => {
             setIsSidebarOpen={setIsMobileSidebarOpen}
           />
           <ContentWrapper isExpanded={isExpanded}>
-            <UserHeader
-              title={title}
-              toggleMobileSidebar={toggleMobileSidebar}
-            />
+            <UserHeader title={title} toggleMobileSidebar={toggleMobileSidebar} />
             <Outlet />
           </ContentWrapper>
         </>
