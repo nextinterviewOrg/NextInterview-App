@@ -17,7 +17,8 @@ import {
     HintList,
     HintItem,
     RemoveHintButton,
-    RunCodeButton
+    RunCodeButton,
+    
 } from './AddCodingQuestion.styles';
 import { Select, notification } from 'antd';
 import { getModuleCode, getTopicCode } from '../../../../api/addNewModuleApi';
@@ -29,24 +30,28 @@ import {
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
 import { addTiyQbCodingQuestion } from '../../../../api/tiyQbCodingQuestionApi';
+import { addMainQBCodingQuestion } from '../../../../api/userMainQuestionBankApi';
 // import { addChallenge } from '../../../../../api/challengesApi';
 
 const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
     const [formData, setFormData] = useState({
         programming_language: 'Python',
-        QuestionText: '',
+        question: '',
         description: '',
-        module_code: '',
         topic_code: '',
         input: '',
         output: '',
-        difficulty: 'Easy',
+        level: 'easy',
         hints: [],
         topics: [],
         base_code: '',
         module_code: '',
-        isTiyQuestion: false,
-        isQbQuestion: false
+        isTIYQustion: false,
+        isQuestionBank: false,
+        dbSetupCommands: "",
+        question_type: "coding",
+        solutionCode: '',
+        solutionExplanation: '',
     });
 
     const [code, setCode] = useState('');
@@ -78,6 +83,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
 
                 const topicCodeData = await getTopicCode(selectedModuleCode);
                 const preparedTopicData = topicCodeData.data.map((topic) => { return ({ value: topic.topic_code, label: topic.topic_name }) })
+                console.log("preparedTopicData", preparedTopicData);
                 setTopicOptions(preparedTopicData);
                 setSelectedTopicCode(preparedTopicData.length > 0 ? preparedTopicData[0].value : null);
                 setFormData(prev => ({ ...prev, topic_code: preparedTopicData.length > 0 ? preparedTopicData[0].value : null }));
@@ -168,9 +174,9 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
 
 
             const result = await res.json();
-            console.log(result);
+            console.log("result", result);
             if (result.status === 'success') {
-                setFormData(prev => ({ ...prev, output: result?.stdout?.trim()||result?.stderr?.trim() }));
+                setFormData(prev => ({ ...prev, output: result?.stdout?.trim() || result?.stderr?.trim() || '' }));
             } else {
                 setError(result.exception || 'Execution failed');
             }
@@ -190,14 +196,14 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
         try {
 
 
-            const requiredFields = ['programming_language', 'QuestionText', 'description', 'output'];
+            const requiredFields = ['programming_language', 'question', 'description', 'output'];
             const missing = requiredFields.filter(field => !formData[field]?.trim());
-
+            console.log("missing", missing, "formData", formData);
             if (missing.length > 0) {
                 setError(`Please fill in: ${missing.join(', ')}`);
                 return;
             }
-            if (!formData.isTiyQuestion && !formData.isQbQuestion) {
+            if (!formData.isTIYQustion && !formData.isQuestionBank) {
                 notification.error({
                     message: 'Please select at least one question type',
                     placement: 'topRight',
@@ -205,7 +211,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                 })
                 return;
             }
-            if(formData.isTiyQuestion && (!formData.topic_code)) {
+            if (formData.isTIYQustion && (!formData.topic_code)) {
                 notification.error({
                     message: 'Please select a topic',
                     placement: 'topRight',
@@ -213,7 +219,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                 })
                 return;
             }
-            
+
 
             setIsSubmitting(true);
 
@@ -222,8 +228,9 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                 topics: formData.topics.map(topic => { return ({ topic_name: topic.trim() }) })
             }
             try {
-                const response = await addTiyQbCodingQuestion(submitData);
+                const response = await addMainQBCodingQuestion(submitData);
                 if (response) {
+                    console.log("response", response);
                     notification.success({
                         message: 'Question added successfully',
                         placement: 'topRight',
@@ -333,7 +340,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
 
                 <FormGroup>
                     <FormLabel>Question *</FormLabel>
-                    <FormTextArea name="QuestionText" value={formData.QuestionText} onChange={handleChange} />
+                    <FormTextArea name="question" value={formData.question} onChange={handleChange} />
                     {/* <TinyMCEEditor
                         apiKey={TinyMCEapiKey}
                         init={{
@@ -398,13 +405,13 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                                 .toLowerCase()
                                 .includes(input.toLowerCase());
                         }}
-                        value={formData.difficulty}
+                        value={formData.level}
                         options={[
-                            { value: 'Easy', label: 'Easy' },
-                            { value: 'Medium', label: 'Medium' },
-                            { value: 'Hard', label: 'Hard' },
+                            { value: 'easy', label: 'Easy' },
+                            { value: 'medium', label: 'Medium' },
+                            { value: 'hard', label: 'Hard' },
                         ]}
-                        onChange={(e) => { setFormData({ ...formData, difficulty: e }); }}
+                        onChange={(e) => { setFormData({ ...formData, level: e }); }}
                     />
                 </FormGroup>
 
@@ -445,6 +452,37 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                     />
                     {/* <FormTextArea name="base_code" value={formData.base_code} onChange={handleChange} /> */}
                 </FormGroup>
+                {
+                    formData.programming_language === "MySQL" &&
+                    <FormGroup>
+                        <FormLabel>DB Creation Commands</FormLabel>
+                        <Editor
+                            height="200px"
+                            language={formData.programming_language.toLowerCase()}
+                            value={formData.dbSetupCommands}
+                            onChange={(e) => { setFormData({ ...formData, dbSetupCommands: e }); }}
+                            theme="vs-light"
+
+                        />
+                    </FormGroup>
+                }
+
+                <FormGroup>
+                    <FormLabel>Code Solution</FormLabel>
+                    <Editor
+                        height="200px"
+                        language={formData.programming_language.toLowerCase()}
+                        value={formData.solutionCode}
+                        onChange={(e) => { setFormData({ ...formData, solutionCode: e }); }}
+                        theme="vs-light"
+
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <FormLabel>Solution Explanation</FormLabel>
+                    <FormTextArea name="solutionExplanation" value={formData.solutionExplanation} onChange={handleChange} />
+                </FormGroup>
+
 
                 <FormGroup>
                     <FormLabel>Topics</FormLabel>
@@ -482,16 +520,16 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                     <FormLabel>
                         <input
                             type="checkbox"
-                            name="isTiyQuestion"
-                            checked={formData.isTiyQuestion}
+                            name="isTIYQustion"
+                            checked={formData.isTIYQustion}
                             onChange={handleCheckboxChange}
                         /> Try It Yourself Question
                     </FormLabel>
                     <FormLabel>
                         <input
                             type="checkbox"
-                            name="isQbQuestion"
-                            checked={formData.isQbQuestion}
+                            name="isQuestionBank"
+                            checked={formData.isQuestionBank}
                             onChange={handleCheckboxChange}
                         /> Question Bank Question
                     </FormLabel>

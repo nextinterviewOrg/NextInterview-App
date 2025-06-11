@@ -54,7 +54,7 @@ const typeMapping = {
 const INITIAL_FORM = {
   programming_language: "",
   QuestionText: "",
-  description: "",
+  description: "ssss",
   input: "",
   output: "",
   difficulty: "Easy",
@@ -63,7 +63,11 @@ const INITIAL_FORM = {
   correctAnswer: "",
   answer: "",
   topics: [],
-  base_code: ""
+  base_code: "",
+  dbSetupCommands: "",
+  solutionCode: "",
+  challenge_date: null,
+  solutionExplanation: "",
 };
 
 const AddChallenge = ({ onClose, onChallengeAdded }) => {
@@ -331,7 +335,15 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 <option value="MySQL">MySQL</option>
               </FormSelect>
             </FormGroup>
-
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
             <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
@@ -487,13 +499,43 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
               <div style={{ border: "1px solid #ccc", borderRadius: 4, marginBottom: 10 }}>
                 <Editor
                   height="200px"
-                  language={formData.base_code.toLowerCase()}
+                  language={formData.programming_language.toLowerCase()}
                   value={basecode}
                   onChange={setBasecode}
                   theme="vs-light"
                   options={{ minimap: { enabled: false }, scrollBeyondLastLine: false }}
                 />
               </div>
+            </FormGroup>
+            {
+              formData.programming_language === "MySQL" &&
+              <FormGroup>
+                <FormLabel>DB Creation Commands</FormLabel>
+                <Editor
+                  height="200px"
+                  language={formData.programming_language.toLowerCase()}
+                  value={formData.dbSetupCommands}
+                  onChange={(e) => { setFormData({ ...formData, dbSetupCommands: e }); }}
+                  theme="vs-light"
+
+                />
+              </FormGroup>
+            }
+
+            <FormGroup>
+              <FormLabel>Code Solution</FormLabel>
+              <Editor
+                height="200px"
+                language={formData.programming_language.toLowerCase()}
+                value={formData.solutionCode}
+                onChange={(e) => { setFormData({ ...formData, solutionCode: e }); }}
+                theme="vs-light"
+
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Solution Explanation</FormLabel>
+              <FormTextArea name="solutionExplanation" value={formData.solutionExplanation} onChange={handleChange} />
             </FormGroup>
             {/* <FormGroup>
               <FormLabel>Base code</FormLabel>
@@ -554,6 +596,15 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
 
         {questionType === "MCQ" && (
           <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
             <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
@@ -621,6 +672,15 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         {questionType === "Single-line" && (
           <>
             <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
                 name="QuestionText"
@@ -645,6 +705,15 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         {questionType === "Multi-line" && (
           <>
             <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
                 name="QuestionText"
@@ -668,29 +737,53 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         )}
 
         {questionType === "Approach Analysis" && (
-          <FormGroup>
-            <FormLabel>Question *</FormLabel>
-            <FormTextArea
-              name="QuestionText"
-              value={formData.QuestionText}
-              onChange={handleInputChange}
-              placeholder="Enter the question"
-              rows={6}
-            />
-          </FormGroup>
+          <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Question *</FormLabel>
+              <FormTextArea
+                name="QuestionText"
+                value={formData.QuestionText}
+                onChange={handleInputChange}
+                placeholder="Enter the question"
+                rows={6}
+              />
+            </FormGroup>
+          </>
+
         )}
 
         {questionType === "Case Study" && (
-          <FormGroup>
-            <FormLabel>Question *</FormLabel>
-            <FormTextArea
-              name="QuestionText"
-              value={formData.QuestionText}
-              onChange={handleInputChange}
-              placeholder="Enter the question"
-              rows={8}
-            />
-          </FormGroup>
+          <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Question *</FormLabel>
+              <FormTextArea
+                name="QuestionText"
+                value={formData.QuestionText}
+                onChange={handleInputChange}
+                placeholder="Enter the question"
+                rows={8}
+              />
+            </FormGroup>
+          </>
+
         )}
 
         <SaveButton type="submit" disabled={isSubmitting} onClick={handleSubmit}>

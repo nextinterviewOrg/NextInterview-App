@@ -28,6 +28,7 @@ import {
     TinyMCEplugins,
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
+import { editMainQBCodingQuestion } from '../../../../api/userMainQuestionBankApi';
 
 const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
     console.log("questionData", questionData);
@@ -123,12 +124,12 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
     };
 
     const handleSubmit = async () => {
-        if (!formData.isTiyQuestion && !formData.isQbQuestion) {
+        if (!formData.isTIYQustion && !formData.isQuestionBank) {
             notification.error({ message: 'Please select at least one question type' });
             return;
         }
 
-        const requiredFields = ['programming_language', 'QuestionText', 'description', 'output'];
+        const requiredFields = ['programming_language', 'question', 'description', 'output'];
         const missing = requiredFields.filter(f => !formData[f]?.trim());
         if (missing.length > 0) {
             notification.error({ message: `Missing fields: ${missing.join(', ')}` });
@@ -142,7 +143,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                 topics: formData.topics.map(topic => { return ({ topic_name: topic.trim() }) })
             }
 
-            const response = await updateTiyQbCodingQuestion(formData._id, submitData);
+            const response = await editMainQBCodingQuestion(formData._id, submitData);
             console.log("response", response);
             if (response) {
                 notification.success({ message: 'Question updated successfully' });
@@ -164,8 +165,8 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Questions to be included in </FormLabel>
-                    <FormLabel><input type="checkbox" name="isTiyQuestion" checked={formData.isTiyQuestion} onChange={handleCheckboxChange} /> Try It Yourself</FormLabel>
-                    <FormLabel><input type="checkbox" name="isQbQuestion" checked={formData.isQbQuestion} onChange={handleCheckboxChange} /> Question Bank</FormLabel>
+                    <FormLabel><input type="checkbox" name="isTIYQustion" checked={formData.isTIYQustion} onChange={handleCheckboxChange} /> Try It Yourself</FormLabel>
+                    <FormLabel><input type="checkbox" name="isQuestionBank" checked={formData.isQuestionBank} onChange={handleCheckboxChange} /> Question Bank</FormLabel>
                 </FormGroup>
 
                 <FormGroup>
@@ -244,7 +245,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Question</FormLabel>
-                    <FormTextArea name="QuestionText" value={formData.QuestionText} onChange={handleChange} />
+                    <FormTextArea name="question" value={formData.question} onChange={handleChange} />
                 </FormGroup>
 
                 <FormGroup>
@@ -289,11 +290,11 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                                 .toLowerCase()
                                 .includes(input.toLowerCase());
                         }}
-                        value={formData.difficulty}
+                        value={formData.level}
                         options={[
-                            { value: 'Easy', label: 'Easy' },
-                            { value: 'Medium', label: 'Medium' },
-                            { value: 'Hard', label: 'Hard' },
+                            { value: 'easy', label: 'Easy' },
+                            { value: 'medium', label: 'Medium' },
+                            { value: 'hard', label: 'Hard' },
                         ]}
                         onChange={(e) => { setFormData({ ...formData, difficulty: e }); }}
                     />
@@ -320,7 +321,35 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                     <FormLabel>Base Code</FormLabel>
                     <Editor height="200px" language={formData.programming_language.toLowerCase()} value={formData.base_code} onChange={(val) => setFormData({ ...formData, base_code: val })} theme="vs-light" />
                 </FormGroup>
+                {
+                    formData.programming_language === "MySQL" &&
+                    <FormGroup>
+                        <FormLabel>DB Creation Commands</FormLabel>
+                        <Editor
+                            height="200px"
+                            language={formData.programming_language.toLowerCase()}
+                            value={formData.dbSetupCommands}
+                            onChange={(e) => { setFormData({ ...formData, dbSetupCommands: e }); }}
+                            theme="vs-light"
 
+                        />
+                    </FormGroup>
+                }
+                <FormGroup>
+                    <FormLabel>Code Solution</FormLabel>
+                    <Editor
+                        height="200px"
+                        language={formData.programming_language.toLowerCase()}
+                        value={formData.solutionCode}
+                        onChange={(e) => { setFormData({ ...formData, solutionCode: e }); }}
+                        theme="vs-light"
+
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <FormLabel>Solution Explanation</FormLabel>
+                    <FormTextArea name="solutionExplanation" value={formData.solutionExplanation} onChange={handleChange} />
+                </FormGroup>
                 <FormGroup>
                     <FormLabel>Topics</FormLabel>
                     <HintContainer>

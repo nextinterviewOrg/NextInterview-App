@@ -33,6 +33,7 @@ import {
     TinyMCEplugins,
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
+import { getAllMainbqQBCodingQuestions, getAllMainQBCodingQuestions, getAllMainQbQBCodingQuestionsByModule, getAllMainTIYQBCodingQuestions, getAllMainTIYQBCodingQuestionsByModule } from "../../../../api/userMainQuestionBankApi";
 
 const TIYQBCodingQuestions = () => {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -48,11 +49,12 @@ const TIYQBCodingQuestions = () => {
     const [selectedType, setSelectedType] = useState("All");
     const [moduleOptions, setModuleOptions] = useState([]);
     const [typeOptions, setTypeOptions] = useState([
+        // { value: 'All', label: 'All' },
         { value: 'tiy', label: 'Try It Yourself' },
         { value: 'qb', label: 'Question Bank' },
     ]);
     const [selectedModuleCode, setSelectedModuleCode] = useState(null);
-    const [selectedTypeOption, setSelectedTypeOption] = useState(null);
+    const [selectedTypeOption, setSelectedTypeOption] = useState('All');
     // const moduleOptions = ["All", "Module 1", "Module 2", "Module 3"];
     // const typeOptions = ["All", "TIY", "QB"];
 
@@ -64,9 +66,10 @@ const TIYQBCodingQuestions = () => {
             setModuleOptions(preparedModuleOptions);
             setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
             setSelectedTypeOption('tiy');
-            const response = await getAllTiyQbCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
+            const response = await getAllMainTIYQBCodingQuestionsByModule(preparedModuleOptions[0].value);
+            console.log("response", response);
+            setChallenges(response.data);
+            setFilteredChallenges(response.data);
             setError(null);
         } catch (err) {
             setError(err.message || "Failed to fetch questions.");
@@ -80,8 +83,9 @@ const TIYQBCodingQuestions = () => {
     }, [fetchChallenges]);
 
     useEffect(() => {
-        let filtered = [...challenges];
 
+        let filtered = [...challenges];
+        console.log("selectedModule", selectedModule, "filtered", filtered);
         if (searchQuery.trim()) {
             filtered = filtered.filter(q =>
                 q.QuestionText.toLowerCase().includes(searchQuery.toLowerCase())
@@ -89,12 +93,14 @@ const TIYQBCodingQuestions = () => {
         }
 
         if (selectedModule !== "All") {
+            console.log("selectedModule", selectedModule, "filtered", filtered);
             filtered = filtered.filter(q => q.module === selectedModule);
+            console.log("filtered", filtered);
         }
 
         if (selectedType !== "All") {
             filtered = filtered.filter(q =>
-                selectedType === "TIY" ? q.isTiyQuestion : q.isQbQuestion
+                selectedType === "TIY" ? q.isTIYQustion : q.isQuestionBank
             );
         }
 
@@ -122,8 +128,8 @@ const TIYQBCodingQuestions = () => {
             setModuleOptions(preparedModuleOptions);
             setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
             setSelectedTypeOption('tiy');
-            
-            const response = await getAllTiyQbCodingQuestions();
+
+            const response = await getAllMainQBCodingQuestions();
             setChallenges(response);
             setFilteredChallenges(response);
             setError(null);
@@ -135,19 +141,20 @@ const TIYQBCodingQuestions = () => {
     }, []);
     useEffect(() => {
         const apiCaller = async () => {
-           if(selectedTypeOption === 'tiy'){
-            const response = await getAllTIYCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
-           }
-           else if(selectedTypeOption === 'qb'){
-            const response = await getAllQBCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
-           }
+            console.log("selectedTypeOption", selectedModuleCode  );
+            if (selectedTypeOption === 'tiy') {
+                const response = await getAllMainTIYQBCodingQuestionsByModule(selectedModuleCode);
+                setChallenges(response.data);
+                setFilteredChallenges(response.data);
+            }
+            else if (selectedTypeOption === 'qb') {
+                const response = await getAllMainQbQBCodingQuestionsByModule(selectedModuleCode);
+                setChallenges(response.data);
+                setFilteredChallenges(response.data);
+            }
         }
         apiCaller();
-    },[selectedTypeOption])
+    }, [selectedTypeOption,selectedModuleCode]);
 
     const handleChallengeUpdated = useCallback(async (updatedChallenge) => {
         try {
@@ -157,9 +164,9 @@ const TIYQBCodingQuestions = () => {
             setModuleOptions(preparedModuleOptions);
             setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
             setSelectedTypeOption('tiy');
-            const response = await getAllTiyQbCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
+            const response = await getAllMainTIYQBCodingQuestionsByModule(preparedModuleOptions[0].value);
+            setChallenges(response.data);
+            setFilteredChallenges(response.data);
             setError(null);
         } catch (err) {
             setError(err.message || "Failed to fetch questions.");
@@ -176,9 +183,9 @@ const TIYQBCodingQuestions = () => {
             setModuleOptions(preparedModuleOptions);
             setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
             setSelectedTypeOption('tiy');
-            const response = await getAllTiyQbCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
+            const response = await getAllMainQBCodingQuestions();
+            setChallenges(response.data);
+            setFilteredChallenges(response.data);
             setError(null);
         } catch (err) {
             setError(err.message || "Failed to fetch questions.");
@@ -251,7 +258,7 @@ const TIYQBCodingQuestions = () => {
                     filteredChallenges.map((item) => (
                         <RowContainer key={item._id}>
                             <Type>{item.programming_language}</Type>
-                            <Question>{item.QuestionText}</Question>
+                            <Question>{item.question}</Question>
                             {/* <Answer>{item.description?.slice(0, 32)}...</Answer> */}
                             <Action>
                                 <IconButton onClick={() => handleOpenEditModal(item)}>

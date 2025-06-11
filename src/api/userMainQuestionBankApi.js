@@ -108,3 +108,70 @@ export const uploadAllQuestionsToMainQuestions = async (file) => {
         throw error;
     }
 }
+
+export const addMainQBCodingQuestion=async(data)=>{
+    try {
+        const response = await api.post(`/mainQuestionBank/addcodingquestion`,data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export const getAllMainQBCodingQuestions  = async () => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/AllCodingQuestions`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getAllMainTIYQBCodingQuestions  = async () => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/AllCodingQuestions/tiy`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getAllMainbqQBCodingQuestions  = async () => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/AllCodingQuestions/qb`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const editMainQBCodingQuestion = async (id, data) => {
+    try {
+        const response = await api.put(`/mainQuestionBank/updatecodingquestion/${id}`, data);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getAllMainTIYQBCodingQuestionsByModule  = async (module_code) => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/AllCodingQuestions/tiy/${module_code}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+export const getAllMainQbQBCodingQuestionsByModule  = async (module_code) => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/AllCodingQuestions/qb/${module_code}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
