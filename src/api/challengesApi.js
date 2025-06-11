@@ -109,3 +109,12 @@ export const getChallengesProgress =async (userId) => {
       throw error;
   }
 }
+export const getPastChallengesWithUserResults =async (userId) => {
+  try {
+    const response =await api.get(`/userChallenges/allPastChallengesWithResults/${userId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}

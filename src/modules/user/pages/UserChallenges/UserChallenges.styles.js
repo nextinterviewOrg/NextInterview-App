@@ -94,7 +94,8 @@ export const CardDesc = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-width: 0;
+  // min-width: 0;
+  width:60%;
 `;
 
 export const CardStatus = styled.div`
@@ -135,15 +136,28 @@ export const CardSubtitle = styled.p`
 
 
 export const Status = styled.span`
-  background: #ffe6e6;
-  color: #d32f2f;
   font-size: 0.75rem;
   padding: 0.25rem 0.5rem;
   border-radius: 6px;
   font-weight: 600;
   display: flex;
+  width: 100px;
   align-items: center;
   justify-content: center;
+
+  background-color: ${({ status }) =>
+    status === 'Completed' || status === 'attempted'
+      ? '#d1fae5' // light green
+      : status === 'viewed'
+      ? '#fef9c3' // light yellow
+      : '#ffe6e6'}; // red for pending or unknown
+
+  color: ${({ status }) =>
+    status === 'Completed' || status === 'attempted'
+      ? '#1e4620' // dark green
+      : status === 'viewed'
+      ? '#854f16' // dark yellow
+      : '#d32f2f'}; // dark red
 `;
 
 export const Date = styled.span`
@@ -178,191 +192,3 @@ export const Label = styled.span`
     '#e2e8f0'};                             // default gray
 `;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import styled from 'styled-components';
-
-// export const Card = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   background: #fff;
-//   border-bottom: 1px solid #eee;
-//   padding: 1.25rem 1rem;
-//   position: relative;
-//   max-width: 1700px;
-//   width: 100%;
-//   margin-left: 50px;
-//   border-radius: 8px;
-// `;
-
-// export const Header = styled.div`
-//   display: flex;
-//   justify-content: space-between;
-//   align-items: center;
-// `;
-
-// export const Tags = styled.div`
-//   display: flex;
-//   gap: 0.5rem;
-// `;
-
-// export const Tag = styled.span`
-//   font-size: 0.7rem;
-//   padding: 0.2rem 0.5rem;
-//   border-radius: 6px;
-//   font-weight: 500;
-//   color: #333;
-//   background-color: ${({ type }) =>
-//     type === 'difficulty'
-//       ? '#fff5cc'
-//       : type === 'category'
-//       ? '#e6f4ea'
-//       : '#eee'};
-// `;
-
-// export const Title = styled.h3`
-//   font-size: 1rem;
-//   font-weight: 600;
-//   margin: 0.75rem 0 0.25rem;
-// `;
-
-// export const Description = styled.p`
-//   font-size: 0.85rem;
-//   color: #666;
-//   margin: 0;
-// `;
-
-// export const StatusDate = styled.div`
-//   display: flex;
-//   align-items: center;
-//   gap: 0.75rem;
-// `;
-
-// export const Status = styled.span`
-//   background: #ffe6e6;
-//   color: #d32f2f;
-//   font-size: 0.75rem;
-//   padding: 0.25rem 0.5rem;
-//   border-radius: 6px;
-//   font-weight: 600;
-// `;
-
-// export const DateText = styled.span`
-//   font-size: 0.75rem;
-//   color: #999;
-// `;
-
-// export const Icon = styled.div`
-//   position: absolute;
-//   top: 1.25rem;
-//   left: 0.5rem;
-//   background: #f4f4f4;
-//   padding: 0.4rem;
-//   border-radius: 50%;
-// `;
-
-// export const Challenges = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   gap: 1rem;
-// `;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import styled from "styled-components";
-
-// export const UserChallengesWrapper = styled.div`    
-
-//   .divider {
-//     border: 1px solid #F5F5F5;
-//     margin-top: 50px;
-//   }
-
-//   .empty-tab {
-//     text-align: center;
-//     font-style: italic;
-//     color: gray;
-//     margin-top: 30px;
-//   }
-// `;
-
-// export const Challengescontainer = styled.div`
-//   margin-left: 60px;
-
-//   @media (max-width: 1024px) {
-//     margin-left: 40px;
-// }
-
-// @media (max-width: 768px) {
-//     margin-left: 20px;
-// }
-
-// @media (max-width: 480px) {
-//     margin-left: 10px;
-// }
-// `;
-
-// export const Tabbuttons = styled.div`
-//   display: flex;
-//     gap: 10px;
-//     margin-bottom: 10px;
-
-//      button {
-//       padding: 8px 16px;
-//       border: none;
-//       background-color: #eee;
-//       cursor: pointer;
-//       border-radius: 4px;
-//       font-weight: 500;
-
-//       &.active {
-//         background-color: ${({ theme }) => theme.colors.secondary};
-//         color: white;
-//       }
-//     }
-// `;
