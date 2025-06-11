@@ -6,13 +6,15 @@ import {
   RunButton,
   OutputBox,
   OutputSection,
-  LanguageSelect,
-  Buttons,
-  InputBox,
-  TextBox,
   OptimiseButton,
   SubmitButton,
+  Output,
+  TryHarderButton,
+  HardandOptimise,
+  Buttons,
+  LanguageSelect
 } from "./ReadyToCode.styles";
+import { PiStarFour } from "react-icons/pi";
 
 const languageOptions = {
   python: {
@@ -100,19 +102,19 @@ const ReadyToCode = ({
           theme="vs-light"
         />
         <Buttons>
-          <LanguageSelect value={selectLang} onChange={handleLanguageChange}>
+          {/* <LanguageSelect value={selectLang} onChange={handleLanguageChange}>
             <option value="">Select Language</option>
             {Object.keys(languageOptions).map((lang) => (
               <option key={lang} value={lang}>
                 {lang.toUpperCase()}
               </option>
             ))}
-          </LanguageSelect>
+          </LanguageSelect> */}
           <RunButton onClick={runCode}>Run code</RunButton>
         </Buttons>
       </CodeBox>
 
-      {selectLang === "python" && (
+      {/* {selectLang === "python" && (
         <InputBox>
           <h4>Input</h4>
           <TextBox
@@ -123,27 +125,38 @@ const ReadyToCode = ({
             style={{ width: "100%", height: "50px", marginTop: "10px" }}
           />
         </InputBox>
-      )}
+      )} */}
 
       {output !== "" && (
-        <OutputBox>
+        <Output>
           <h4>Output</h4>
-          <OutputSection>{output}</OutputSection>
+          <OutputBox>
+            <OutputSection>{output}</OutputSection>
 
-          {/* Show “Optimise Code” if it matches and hasn’t been clicked yet */}
-          {showOptimiseBtn && !optimizeClicked && (
-            <OptimiseButton onClick={handleOptimizeCode}>
-              Optimise Code
-            </OptimiseButton>
-          )}
+            {showOptimiseBtn && (
+              <HardandOptimise>
+                <TryHarderButton>
+                  <PiStarFour /> Try Harder Question
+                </TryHarderButton>
 
-          {/* Once “Apply Code” has been clicked, show “Submit” here */}
-          {optimizeClicked && (
-            <SubmitButton onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : "Submit"}
-            </SubmitButton>
-          )}
-        </OutputBox>
+                {!optimizeClicked ? (
+                  <OptimiseButton
+                    onClick={handleOptimizeCode}
+                  >
+                    Optimise Code
+                  </OptimiseButton>
+                ) : (
+                  <SubmitButton
+                    onClick={handleSubmit}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? "Submitting..." : "Submit"}
+                  </SubmitButton>
+                )}
+              </HardandOptimise>
+            )}
+          </OutputBox>
+        </Output>
       )}
     </Container>
   );

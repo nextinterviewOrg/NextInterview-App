@@ -50,11 +50,27 @@ const Tags = styled.div`
 
 const Tag = styled.span`
   background-color: ${(props) => props.theme.colors.backgray};
-  color: ${(props) => props.theme.colors.borderblue};
-  padding: ${(props) => props.theme.spacing(0.2)}
+  // color: ${(props) => props.theme.colors.borderblue};
+  color: #333;
+  padding: ${(props) => props.theme.spacing(0.4)}
     ${(props) => props.theme.spacing(1)};
   border-radius: 4px;
   font-size: 11px;
+
+    background-color: ${({ difficulty }) => {
+    switch (difficulty) {
+      case "easy":
+        return "#d1fae5"; 
+      case "medium":
+        return "#fff3cd";
+      case "hard":
+        return "#f8d7da"; 
+      default:
+        return "#ccc";
+    }
+  }};
+
+
   @media (max-width: 768px) {
     font-size: 9px;
   }
@@ -243,7 +259,11 @@ const TakeChallenge = ({ questionType = "coding" }) => {
 
           <Tags>
             {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}
-            {challenge.difficulty && <Tag>{challenge.difficulty}</Tag>}
+{challenge.difficulty && (
+  <Tag difficulty={challenge.difficulty.toLowerCase()}>
+    {challenge.difficulty}
+  </Tag>
+)}
             {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
           </Tags>
 

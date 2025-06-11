@@ -14,7 +14,7 @@ export const CodeBox = styled.div`
 
 export const Buttons = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   margin-top: 8px;
 `;
 
@@ -25,12 +25,14 @@ export const LanguageSelect = styled.select`
 `;
 
 export const RunButton = styled.button`
-  padding: 6px 12px;
-  background-color: #4caf50;
+  padding: 8px 16px;
+  background-color: #2290ac;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  margin-right: 20px;
+  margin-bottom: 20px;
 `;
 
 export const InputBox = styled.div`
@@ -43,12 +45,15 @@ export const TextBox = styled.input`
   border-radius: 4px;
 `;
 
+export const Output = styled.div`
+  margin: 0px;
+`;
+
 export const OutputBox = styled.div`
-  margin-top: 16px;
+  margin-top: 0px;
   padding: 12px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  background-color: #f9f9f9;
+  border-radius: 8px;
+  background-color:rgba(189, 178, 178, 0.33);
 `;
 
 export const OutputSection = styled.pre`
@@ -59,7 +64,7 @@ export const OutputSection = styled.pre`
 export const OptimiseButton = styled.button`
   margin-top: 12px;
   padding: 6px 12px;
-  background-color: #007bff;
+  background-color: #2290ac;
   color: white;
   border: none;
   border-radius: 4px;
@@ -68,10 +73,39 @@ export const OptimiseButton = styled.button`
 
 export const SubmitButton = styled.button`
   margin-top: 12px;
-  padding: 6px 12px;
-  background-color: #28a745;
+  padding: 10px 14px;
+  background-color: #2290ac;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  display: flex;
+  font-size: 14px;
+`;
+
+export const HardandOptimise = styled.div`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+  margin-top: 12px;
+  // padding: 6px 12px;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+`;
+
+export const TryHarderButton = styled.div`
+display: flex;
+align-items: center;
+gap: 4px;
+  margin-top: 10px;
+  padding: 8px 0px;
+  border: none;
+  // background-color: #ff7043;
+  color: #2290ac;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 `;

@@ -253,7 +253,7 @@
 
 
 
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 export const Container = styled.div`
   // padding: 24px;
@@ -275,6 +275,10 @@ export const BackButton = styled.button`
   background-color: #f0f0f0;
   width: 100%;
   padding: 10px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
 `;
 
 export const QuestionBox = styled.div`
@@ -307,11 +311,19 @@ export const QusnandType = styled.div`
     box-sizing: border-box;
     max-width: 100%;
     width: 100%;
+
+    @media (max-width: 768px) {
+      padding: 16px;
+    }
 `;
 
 export const QuestionText = styled.h3`
   font-size: 18px;
   margin: 0 0 12px;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
 `;
 
 export const DifficultyTag = styled.span`
@@ -322,8 +334,16 @@ export const DifficultyTag = styled.span`
     level === 'Easy' ? '#155724' :
     level === 'Medium' ? '#856404' : '#721c24'};
   padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+
+  @media (max-width: 1024px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 4px 8px;
+  }
 `;
 
 export const AnswerInput = styled.textarea`
@@ -331,11 +351,15 @@ export const AnswerInput = styled.textarea`
   padding: 12px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 15px;
+  font-size: 16px;
   resize: none;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'text')};
   background-color: ${({ disabled }) => (disabled ? '#f0f0f0' : '#fff')};
   box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
 `;
 
 export const RadioInput = styled.input`
@@ -345,9 +369,13 @@ export const RadioInput = styled.input`
 export const Label = styled.label`
   display: block;
   margin-bottom: 8px;
-  font-size: 15px;
+  font-size: 16px;
   cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
   opacity: ${({ $disabled }) => ($disabled ? 0.6 : 1)};
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
 `;
 
 export const Footer = styled.div`
@@ -383,6 +411,19 @@ export const SolutionBox = styled.div`
 
   p {
     margin: 8px 0 0 0;
+
+    @media (max-width: 768px) {
+      margin: 4px 0 0 0;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
   }
 `;
 
@@ -390,6 +431,14 @@ export const SolutionText = styled.span`
   color: #007bff;
   padding: 5px;
   font-size: 18px;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
 `;
 
 export const SolutionAnswer = styled.span`
@@ -399,6 +448,10 @@ export const SolutionAnswer = styled.span`
   font-size: 16px;
   word-break: break-word;
   line-height: 1.5;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
 `;
 
 export const HelpIcons = styled.div`
@@ -408,6 +461,10 @@ export const HelpIcons = styled.div`
   gap: 10px;
   margin-top: 10px;
   font-size: 16px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
 `;  
 
 export const CodeMeta = styled.div`
@@ -442,6 +499,7 @@ export const ViewMore = styled.button`
 export const TopicsCovered = styled.div`
   margin: 20px 10px;
   font-size: 14px;
+  line-height: 1.5;
 `;
 
 export const TopicItem = styled.li`
@@ -458,6 +516,12 @@ export const TryCodingButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   margin: 20px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+    padding: 10px 16px;
+    margin: 16px;
+  }
 `;
 
 export const TextAnswer = styled.textarea`
@@ -466,9 +530,18 @@ export const TextAnswer = styled.textarea`
   margin: 12px;
   border-radius: 5px;
   border: 1px solid #cccccc;
-  font-size: 15px;
+  font-size: 16px;
   resize: none;
   cursor: text;
   background-color: #fff;
   box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 12px;
+    width: 95%;
+  }
 `;
