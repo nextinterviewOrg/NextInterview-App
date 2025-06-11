@@ -647,7 +647,6 @@
 // export default QuestionCollapsible;
 
 
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
@@ -676,88 +675,70 @@ import { IoChevronBackSharp } from "react-icons/io5";
 import { PiStarFour } from "react-icons/pi";
 import { PiThumbsUpLight } from "react-icons/pi";
 import { PiThumbsDownLight } from "react-icons/pi";
-
-const questions = [
-  {
-    category: 'Machine learning',
-    difficulty: 'Medium',
-    text: 'Data analytics, in general, is a subjective concept?',
-    type: 'code',
-    completed: false,
-    description: 'Short description about data analytics subjectivity...',
-    longDescription: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ducimus consectetur dolores atque natus ipsam earum quidem voluptas beatae fugiat nulla nihil, minus corrupti reprehenderit magni maxime incidunt consequuntur rerum tempora quibusdam expedita autem facilis. Qui similique exercitationem dolorem culpa ut nesciunt neque, inventore ea enim beatae nam architecto maxime consectetur!',
-    topics: ['Data Analysis', 'Conceptual'],
-    solution: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!'
-  },
-  {
-    category: 'Deep learning',
-    difficulty: 'Hard',
-    text: 'What is the difference between CNN and RNN?',
-    type: 'text',
-    completed: false,
-    description: 'CNNs are mainly used for images, RNNs for sequences.',
-    longDescription: 'CNNs (Convolutional Neural Networks) focus on spatial features while RNNs (Recurrent Neural Networks) handle temporal data...',
-    topics: ['Neural Networks', 'Deep Learning'],
-    solution: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!.Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!.Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!.Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!.Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!.Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus, quisquam asperiores? Qui molestiae dolorem natus velit enim est ab nesciunt quos iusto eos. Labore quae incidunt eligendi aperiam aliquid. Facere!'
-  },
-  {
-    category: 'Python',
-    difficulty: 'Easy',
-    text: 'Explain list comprehensions in Python.',
-    type: 'code',
-    completed: false,
-    description: 'List comprehensions provide a concise way to create lists.',
-    longDescription: 'They consist of brackets containing an expression followed by a for clause, then zero or more for or if clauses...',
-    topics: ['Python', 'Programming'],
-    solution: '[x * 2 for x in range(5)] creates a list [0,2,4,6,8]'
-  },
-  {
-    category: 'Python',
-    difficulty: 'Easy',
-    text: 'What is the use of `zip()` in Python?',
-    type: 'text',
-    completed: true,
-    description: '`zip()` combines multiple iterables element-wise.',
-    longDescription: 'This function returns an iterator of tuples, where the i-th tuple contains the i-th element from each iterable.',
-    topics: ['Python', 'Programming'],
-    solution: '`zip([1,2],[3,4])` results in [(1,3),(2,4)]'
-  },
-  {
-    category: 'Deep learning',
-    difficulty: 'Hard',
-    text: 'Explain the vanishing gradient problem.',
-    type: 'code',
-    completed: true,
-    description: 'Vanishing gradients occur when gradients become too small during backpropagation.',
-    longDescription: 'Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ducimus consectetur dolores atque natus ipsam earum quidem voluptas beatae fugiat nulla nihil, minus corrupti reprehenderit magni maxime incidunt consequuntur rerum tempora quibusdam expedita autem facilis. Qui similique exercitationem dolorem culpa ut nesciunt neque, inventore ea enim beatae nam architecto maxime consectetur!',
-    topics: ['Deep Learning', 'Training Issues'],
-    solution: 'It causes early layers to learn very slowly or not at all.'
-  }
-];
-
-
+import { getQuestionBankById } from '../../../../api/questionBankApi';
 
 const QuestionCollapsible = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // This is the question ID from URL
   const navigate = useNavigate();
-  // const question = questions[parseInt(id)];
-  const index = parseInt(id);
-const question = Number.isInteger(index) && index >= 0 && index < questions.length ? questions[index] : null;
-
+  const [question, setQuestion] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
   const [showSolution, setShowSolution] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [textAnswer, setTextAnswer] = useState('');
 
- useEffect(() => {
-  setShowSolution(false);
-  setTextAnswer('');
-  setShowMore(false);
-  window.scrollTo(0, 0);
-}, [id]);
+  // Load question by ID from API
+  useEffect(() => {
+    const fetchQuestion = async () => {
+      try {
+        setLoading(true);
+        setError(false);
+        const response = await getQuestionBankById(id);
+        if (response?.success && response.data) {
+          const q = response.data;
 
+          // Map backend fields to expected format
+          const mappedQuestion = {
+            id: q._id,
+            category: q.programming_language || "Other",
+            difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
+            text: q.question || "Untitled",
+            type: q.isTIYQustion ? 'code' : 'text',
+            completed: q.attempted || false,
+            description: q.description || '',
+            longDescription: q.description || '',
+            topics: q.topics?.map(t => t.topic_name) || [],
+            solution: q.output || ''
+          };
 
-  if (!question) return <p>Question not found</p>;
+          setQuestion(mappedQuestion);
+          setShowSolution(false);
+          setTextAnswer('');
+          setShowMore(false);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Error fetching question:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchQuestion();
+    }
+  }, [id]);
+
+  if (loading) {
+    return <Container>Loading...</Container>;
+  }
+
+  if (error || !question) {
+    return <Container>Question not found</Container>;
+  }
 
   return (
     <>
@@ -790,7 +771,6 @@ const question = Number.isInteger(index) && index >= 0 && index < questions.leng
                 ) : (
                   <ViewMore onClick={() => setShowMore(true)}>View More</ViewMore>
                 )}
-
               </CodeDescription>
 
               <div className='break'></div>
@@ -803,16 +783,15 @@ const question = Number.isInteger(index) && index >= 0 && index < questions.leng
                 </ul>
               </TopicsCovered>
 
-{question.type === 'code' && (
-<TryCodingButton
-  onClick={() => {
-    console.log(`Navigating to /user/takeChallenge/${id}`);
-    navigate(`/user/takeChallenge/${id}`);
-  }}
->
-  Try Coding
-</TryCodingButton>
-)}
+              {question.type === 'code' && (
+                <TryCodingButton
+                  onClick={() => {
+                    navigate(`/user/takeChallenge/${question.id}`);
+                  }}
+                >
+                  Try Coding
+                </TryCodingButton>
+              )}
             </>
           ) : (
             <TextAnswer
@@ -821,8 +800,7 @@ const question = Number.isInteger(index) && index >= 0 && index < questions.leng
               onChange={(e) => setTextAnswer(e.target.value)}
               placeholder="Type your answer here..."
               rows={2}
-            >
-            </TextAnswer>
+            />
           )}
         </QuestionBox>
 
@@ -838,18 +816,14 @@ const question = Number.isInteger(index) && index >= 0 && index < questions.leng
             </SolutionAnswer>
           </SolutionBox>
         )}
+
         {question.type === 'text' && (
           <Footer>
             <Button
               onClick={() => {
                 if (showSolution) {
-                  const nextId = parseInt(id) + 1;
-                  if (nextId < questions.length) {
-                    navigate(`/user/mainQuestionBank/questionBank/${nextId}`);
-                    setShowSolution(false);
-                    setTextAnswer('');
-                    setShowMore(false);
-                  }
+                  // Navigate to next question (if available)
+                  // You can implement this logic later if needed
                 } else {
                   setShowSolution(true);
                 }
@@ -858,14 +832,12 @@ const question = Number.isInteger(index) && index >= 0 && index < questions.leng
             >
               {showSolution ? 'Next question' : 'Show solution'}
             </Button>
-            
             <TryHarder href="#"><PiStarFour /> Try harder question</TryHarder>
           </Footer>
         )}
       </Container>
     </>
   );
-
 };
 
 export default QuestionCollapsible;
