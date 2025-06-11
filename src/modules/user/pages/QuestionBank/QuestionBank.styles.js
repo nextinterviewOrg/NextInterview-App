@@ -4,6 +4,10 @@ export const Container = styled.div`
   // padding: 24px;
   margin: 0;
   width: 98%;
+
+  @media (max-width: 480px) {
+    width: 100%;
+  }
 `;
 
 export const FilterBar = styled.div`
@@ -13,6 +17,14 @@ export const FilterBar = styled.div`
   align-items: center;
   margin-bottom: 24px;
   margin-top: 0px;
+
+  @media (max-width: 1360px) {
+  gap: 8px;
+  }
+
+  @media (max-width: 480px) {
+    gap: 4px;
+  }
 `;
 
 export const FilterButton = styled.button`
@@ -27,6 +39,16 @@ export const FilterButton = styled.button`
   &:hover {
     background-color: #2290ac90;
   }
+
+  @media (max-width: 1360px) {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
 `;
 
 export const FilterIcon = styled.span`
@@ -40,6 +62,16 @@ export const FilterIcon = styled.span`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  @media (max-width: 1360px) {
+    padding: 8px;
+    font-size: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 6px;
+    font-size: 14px;
+  }
 `; 
 
 export const ApplyFilter = styled.button`
@@ -56,8 +88,17 @@ export const ApplyFilter = styled.button`
     background-color: ${({ variant }) =>
       variant === 'clear' ? 'rgba(90, 136, 148, 0.1)' : '#1a7c94'};
   }
-`;
 
+  @media (max-width: 1360px) {
+    padding: 6px 16px;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 4px 8px;
+    font-size: 10px;
+  }
+`;
 
 
 export const QuestionCard = styled.div`
@@ -68,6 +109,14 @@ export const QuestionCard = styled.div`
   background-color: #fff;
   border-top: 1px solid #ccc;
   // box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+
+  @media (max-width: 1360px) {
+    padding: 12px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 8px 4px;
+  }
 `;
 
 export const Icon = styled.div`
@@ -81,6 +130,13 @@ export const Icon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  @media (max-width: 1360px) {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    margin-top: 6px;
+  }
 `;
 
 export const Content = styled.div`
@@ -104,12 +160,21 @@ export const Tag = styled.span`
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 6px;
+
+  @media (max-width: 1360px) {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
 `;
 
 export const Title = styled.div`
   font-size: 15px;
   font-weight: 500;
   color: #333;
+
+  @media (max-width: 1360px) {
+    font-size: 13px;
+  }
 `;
 
 export const DropdownContainer = styled.div`
@@ -122,6 +187,19 @@ export const DropdownContainer = styled.div`
   padding: 16px;
   z-index: 100;
   width: 280px;
+
+  @media (max-width: 1360px) {
+    top: 85px;
+    right: 16px;
+    width: 250px;
+    padding: 12px;
+  }
+
+  @media (max-width: 768px) {
+    top: 90px;
+    right: 8px;
+    padding: 8px;
+  }
 `;
 
 export const FilterHeader = styled.div`
@@ -136,6 +214,10 @@ export const SearchInput = styled.input`
   border-radius: 6px;
   border: 1px solid #ccc;
   margin-right: 8px;
+
+  @media (max-width: 1360px) {
+    padding: 4px 8px;
+  }
 `;
 
 export const CloseFilterButton = styled.button`
@@ -152,6 +234,14 @@ export const SubText = styled.div`
   font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
+
+  @media (max-width: 1360px) {
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 10px;
+  }
 `;
 
 export const CheckboxLabel = styled.label`
@@ -163,6 +253,10 @@ export const CheckboxLabel = styled.label`
 
   input {
     margin-right: 8px;
+  }
+
+  @media (max-width: 1360px) {
+    font-size: 12px;
   }
 `;
 

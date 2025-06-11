@@ -288,6 +288,7 @@ export const QusnDifficulty = styled.h2`
       ? '#f8d7da'     
       : '#e2e3e5'};   
 padding: 6px;
+border-radius: 5px;
 `;
 
 export const QuestionContainer = styled.div`
@@ -360,15 +361,17 @@ export const Header = styled.div`
 
 export const TabsWrapper = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  // justify-content: space-between;
+  // align-items: center;
   margin-bottom: 20px;
+  gap: 10px;
 `;
 
 export const TabButton = styled.button`
   padding: 10px 16px;
   border: ${({ active }) => (active ? 'none' : '1px solid #ccc')};
-  background-color: ${({ active }) => (active ? '#555' : '#fff')};
+  background-color: ${({ active }) => (active ? '#808080' : '#fff')};
   color: ${({ active }) => (active ? '#fff' : '#777')};
   border-radius: 20px;
   font-weight: 500;
@@ -379,8 +382,12 @@ export const TabButton = styled.button`
 
 export const TimerText = styled.span`
   color: #2962ff;
-  font-size: 13px;
+  font-size: 14px;
   margin-left: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 `;
 
 export const HintWrapper = styled.div`
@@ -397,27 +404,71 @@ export const HintButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
 `;
 
 export const HintTooltip = styled.div`
   position: absolute;
   top: 110%;
   left: 0;
-  background: #f4f4f4;
+  background: #fff;
   padding: 10px;
   border-radius: 8px;
   font-size: 13px;
   color: #333;
   box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  white-space: pre-line;
+  // white-space: pre-line;
   z-index: 100;
-  width: 220px;
+  width: 250px;
+`;
+
+export const HintCard = styled.div`
+  display: flex;
+  align-items: flex-start;
+  // background: #f9f9f9;
+  // border-radius: 8px;
+  // padding: 12px 16px;
+  margin-bottom: 10px;
+  // box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  gap: 12px;
+`;
+
+export const HintIcon = styled.div`
+  color: #000;
+  margin-top: 4px;
+  background-color: #fff3cd;
+  border-radius: 50%;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+`;
+
+export const HintContent = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const HintTitle = styled.div`
+  font-weight: 600;
+  margin-bottom: 4px;
+`;
+
+export const HintExplanation = styled.div`
+  font-size: 14px;
+  color: #555;
 `;
 
 export const LanguageSelectWrapper = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   gap: 10px;
+  margin-top: 10px;
 `;
 
 export const Select = styled.select`
@@ -427,4 +478,83 @@ export const Select = styled.select`
   background-color: #f8f8f8;
   font-weight: 500;
   cursor: pointer;
+  width: 200px;
+`;
+
+export const LanguageSelect = styled.div` 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 10px;
+  position: relative;
+
+  /* Hide scrollbar border and make it thin */
+::-webkit-scrollbar {
+  width: 6px; /* thin scrollbar */
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* no border or background */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+  border: none; /* removes scrollbar "border" effect */
+}
+
+`;
+
+export const CloseButton = styled.button`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+export const ModalButton = styled.button`
+  padding: 10px 15px;
+  background-color: #2290ac;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2290ac90
+  }
 `;

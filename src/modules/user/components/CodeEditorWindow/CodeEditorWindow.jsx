@@ -22,12 +22,27 @@ import {
   HintTooltip,
   LanguageSelectWrapper,
   Select,
+  LanguageSelect,
+  ModalOverlay,
+  ModalContent,
+  CloseButton,
+  ButtonGroup,
+  ModalButton,
+  HintCard,
+  HintIcon,
+  HintContent,
+  HintTitle,
+  HintExplanation
 } from "./CodeEditorWindow.styles";
 import ReadyToCode from "../Compiler/ReadyToCode";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import Editor from "@monaco-editor/react";
-import { IoChevronBackSharp } from "react-icons/io5";
+import { IoChevronBackSharp, IoClose } from "react-icons/io5";
+import { VscInfo } from "react-icons/vsc";
+import { PiTimer } from "react-icons/pi";
+import { HiOutlineLightBulb } from "react-icons/hi2";
+// ... (imports remain unchanged)
 
 const CodeEditorWindow = () => {
   const { id } = useParams();
@@ -52,6 +67,9 @@ const CodeEditorWindow = () => {
 
   const [activeTab, setActiveTab] = useState("mycode");
   const [showHint, setShowHint] = useState(false);
+
+  const [timeLeft, setTimeLeft] = useState(20);
+  const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
 
   const handleGoBack = () => {
     navigate(`/user/challengeInfo/${id}`);
@@ -117,10 +135,6 @@ const CodeEditorWindow = () => {
     }
   };
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
-
   useEffect(() => {
     const fetchChallenge = async () => {
       try {
@@ -132,7 +146,7 @@ const CodeEditorWindow = () => {
           response.data.programming_language === "Python" ? "python" : "mysql"
         );
       } catch (err) {
-        setError("Failed to load challenge data.");
+        setError("Failed to load challenge data.", err);
       } finally {
         setLoading(false);
       }
@@ -148,6 +162,26 @@ const CodeEditorWindow = () => {
       setShowOptimiseBtn(false);
     }
   }, [output, runClicked, challenge]);
+
+  useEffect(() => {
+    let timer;
+
+    if (activeTab === "mycode" && !solutionTimeExpired) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setSolutionTimeExpired(true);
+            return 0;
+          }
+
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [activeTab, solutionTimeExpired]);
 
   if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
@@ -172,39 +206,68 @@ const CodeEditorWindow = () => {
                 <strong>Description:</strong>
                 <div dangerouslySetInnerHTML={{ __html: challenge?.description }} />
               </p>
-              <p>
-                <strong>Input:</strong> {challenge.input}
-              </p>
-              <p>
-                <strong>Output:</strong> {challenge.output}
-              </p>
+              <p><strong>Input:</strong> {challenge.input}</p>
+              <p><strong>Output:</strong> {challenge.output}</p>
             </QuestionBox>
           </QuestionContainer>
 
           <div style={{ flex: 1 }}>
             <TabsWrapper>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <TabButton active={activeTab === 'mycode'} onClick={() => handleTabClick('mycode')}>
+                <TabButton active={activeTab === 'mycode'} onClick={() => setActiveTab('mycode')}>
                   My Code
                 </TabButton>
-                <TabButton active={activeTab === 'solution'} onClick={() => handleTabClick('solution')}>
-                  Show Solution <TimerText>⏱ 60s</TimerText>
-                </TabButton>
-                <HintWrapper onMouseEnter={() => setShowHint(true)} onMouseLeave={() => setShowHint(false)}>
-                  <HintButton>Hint ℹ️</HintButton>
-                  {showHint && <HintTooltip>{challenge.hints}</HintTooltip>}
-                </HintWrapper>
-              </div>
-              <LanguageSelectWrapper>
-                <label htmlFor="lang">Select Language</label>
-                <Select
-                  id="lang"
-                  value={selectedLang}
-                  onChange={(e) => setSelectedLang(e.target.value)}
+
+                <TabButton
+                  active={activeTab === 'solution'}
+                  onClick={() => solutionTimeExpired && setActiveTab('solution')}
+                  disabled={!solutionTimeExpired}
+                  style={{
+                    opacity: solutionTimeExpired ? 1 : 0.6,
+                    cursor: solutionTimeExpired ? 'pointer' : 'not-allowed',
+                  }}
                 >
-                  <option value="python">Python</option>
-                  <option value="mysql">MySQL</option>
-                </Select>
+                  Show Solution
+                  <TimerText>
+                    <PiTimer style={{ marginRight: "5px" }} />
+                    {timeLeft}secs
+                  </TimerText>
+                </TabButton>
+              </div>
+
+              <LanguageSelectWrapper>
+                <HintWrapper onMouseEnter={() => setShowHint(true)} onMouseLeave={() => setShowHint(false)}>
+                  <HintButton>Hint <VscInfo /></HintButton>
+                  {showHint && (
+                    <HintTooltip>
+                      {Array.isArray(challenge.hints) && challenge.hints.length > 0 ? (
+                        challenge.hints.map((hintObj, index) => (
+                          <HintCard key={hintObj._id || index}>
+                            <HintIcon><HiOutlineLightBulb /></HintIcon>
+                            <HintContent>
+                              <HintTitle>{hintObj.hint_text}</HintTitle>
+                              <HintExplanation>{hintObj.explanation}</HintExplanation>
+                            </HintContent>
+                          </HintCard>
+                        ))
+                      ) : (
+                        "No hints available for this question."
+                      )}
+                    </HintTooltip>
+                  )}
+                </HintWrapper>
+
+                <LanguageSelect>
+                  <label htmlFor="lang">Select Language</label>
+                  <Select
+                    id="lang"
+                    value={selectedLang}
+                    onChange={(e) => setSelectedLang(e.target.value)}
+                  >
+                    <option value="python">Python</option>
+                    <option value="mysql">MySQL</option>
+                  </Select>
+                </LanguageSelect>
               </LanguageSelectWrapper>
             </TabsWrapper>
 
@@ -224,6 +287,7 @@ const CodeEditorWindow = () => {
                 optimizeClicked={optimizeClicked}
                 handleSubmit={handleSubmit}
                 isSubmitting={isSubmitting}
+                solutionTimeExpired={solutionTimeExpired}
               />
             )}
 
@@ -247,9 +311,11 @@ const CodeEditorWindow = () => {
         </div>
 
         {modalOpen && (
-          <div className="modal">
-            <div className="modal-content">
-              <button onClick={() => setModalOpen(false)} className="close-button">x</button>
+          <ModalOverlay>
+            <ModalContent>
+              <CloseButton onClick={() => setModalOpen(false)}>
+                <IoClose />
+              </CloseButton>
               <h3>Optimised Code</h3>
               <Editor
                 height="300px"
@@ -257,21 +323,19 @@ const CodeEditorWindow = () => {
                 value={optimisedCode}
                 theme="vs-light"
               />
-              <div className="button-group">
-                <button onClick={() => setModalOpen(false)} className="modal-cancel-button">Cancel</button>
-                <button
-                  className="modal-button"
+              <ButtonGroup>
+                <ModalButton
                   onClick={() => {
-                    setCode((prev) => `${prev}\n\n// --- Optimised Version ---\n${optimisedCode}`);
+                    setCode(optimisedCode); // ✅ replaces old code
                     setModalOpen(false);
                     setOptimizeClicked(true);
                   }}
                 >
-                  Apply Code
-                </button>
-              </div>
-            </div>
-          </div>
+                  Apply to your Code
+                </ModalButton>
+              </ButtonGroup>
+            </ModalContent>
+          </ModalOverlay>
         )}
       </Wrapper>
     </>

@@ -8,6 +8,11 @@ export const Wrapper = styled.div`
   margin-left: 60px;
   background-color: #ffffff;
   border-bottom: 1px solid #eee;
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+    padding: 0 10px;
+  }
 `;
 
 export const Title = styled.h2`
@@ -15,6 +20,10 @@ export const Title = styled.h2`
   margin-top: 2rem;
   color: #1e293b; 
   font-weight: 600;
+
+  @media (max-width: 1024px) {
+    font-size: 1.25rem;
+  }
 `;
 
 export const Card = styled.div`
@@ -27,6 +36,10 @@ export const Card = styled.div`
   border-top: 1px solid #eee;
   gap: 1rem;
   margin-top: 0rem;
+
+  @media (max-width: 1024px) {
+    gap: 0.25rem;
+  }
 `;
 
 
@@ -38,6 +51,10 @@ export const IconWrapper = styled.div`
   color: #64748b;
   flex-shrink: 0;
   margin-right: 0.75rem;
+
+  @media (max-width: 1024px) {
+    font-size: 1.5rem;
+  }
 `;
 
 export const Icon = styled.div`
@@ -55,7 +72,20 @@ export const Icon = styled.div`
     background-color: #f3f4f6;
     padding: 0.5rem;
     border-radius: 50%;   
-    margin-top: 1rem;                   
+    margin-top: 1rem;    
+    
+    @media (max-width: 1024px) {
+      font-size: 1.25rem;
+    }
+
+    @media (max-width: 768px) {
+      font-size: 1rem;
+    }
+
+    @media (max-width: 480px) {
+      font-size: 1.5rem;
+      margin-top: 2rem;
+    }
 `;
 
 
@@ -75,6 +105,10 @@ export const CardStatus = styled.div`
   gap: 0.25rem;
   min-width: 150px;
   text-align: right;
+
+  @media (max-width: 1024px) {
+    gap: 0rem;
+  }
 `;
 
 
@@ -83,6 +117,10 @@ export const CardTitle = styled.h3`
   margin: 0;
   color: #1e293b; 
   font-weight: 600;
+
+  @media (max-width: 480px) {
+    font-size: 0.875rem;
+  }
 `;
 
 export const CardSubtitle = styled.p`

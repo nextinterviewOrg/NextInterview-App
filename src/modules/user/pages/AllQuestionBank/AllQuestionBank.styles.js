@@ -4,6 +4,11 @@ export const Container = styled.div`
   // padding: 20px 40px;
     margin-left: 60px;
     border-top: 2px solid #f0f0f0;
+
+    @media (max-width: 768px) {
+      margin-left: 0px;
+      padding: 20px;
+    }
 `;
 
 export const TabsWrapper = styled.div`
@@ -11,6 +16,11 @@ export const TabsWrapper = styled.div`
   gap: 20px;
   margin-bottom: 24px;
   // margin-left: 30px;
+
+  @media (max-width: 480px) {
+    gap: 10px;
+    margin-bottom: 4px;
+  }
 `;
 
 export const TabButton = styled.button`
