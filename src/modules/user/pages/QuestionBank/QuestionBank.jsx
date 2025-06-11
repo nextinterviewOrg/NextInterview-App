@@ -306,11 +306,9 @@
 //   );
 // };
 
-// export default QuestionBank;
+// export default QuestionBank;import React, { useState, useEffect } from 'react';
 
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Container,
   FilterBar,
@@ -338,76 +336,25 @@ import { IoClose } from 'react-icons/io5';
 import { TfiFilter } from 'react-icons/tfi';
 import { LuPencil } from 'react-icons/lu';
 
-const questions = [
-  {
-    category: 'Machine learning',
-    difficulty: 'Medium',
-    text: 'Data analytics, in general, is a subjective concept?',
-    type: 'code',
-    completed: false,
-    description: 'Short description about data analytics subjectivity...',
-    longDescription: 'Longer explanation about subjectivity in data analytics...',
-    topics: ['Data Analysis', 'Conceptual'],
-    solution: 'There is no absolute measure; it depends on context.'
-  },
-  {
-    category: 'Deep learning',
-    difficulty: 'Hard',
-    text: 'What is the difference between CNN and RNN?',
-    type: 'text',
-    completed: false,
-    description: 'CNNs are mainly used for images, RNNs for sequences.',
-    longDescription: 'CNNs (Convolutional Neural Networks) focus on spatial features while RNNs (Recurrent Neural Networks) handle temporal data...',
-    topics: ['Neural Networks', 'Deep Learning'],
-    solution: 'CNNs use convolution layers; RNNs use recurrence.'
-  },
-  {
-    category: 'Python',
-    difficulty: 'Easy',
-    text: 'Explain list comprehensions in Python.',
-    type: 'code',
-    completed: false,
-    description: 'List comprehensions provide a concise way to create lists.',
-    longDescription: 'They consist of brackets containing an expression followed by a for clause, then zero or more for or if clauses...',
-    topics: ['Python', 'Programming'],
-    solution: '[x * 2 for x in range(5)] creates a list [0,2,4,6,8]'
-  },
-  {
-    category: 'Python',
-    difficulty: 'Easy',
-    text: 'What is the use of `zip()` in Python?',
-    type: 'text',
-    completed: true,
-    description: '`zip()` combines multiple iterables element-wise.',
-    longDescription: 'This function returns an iterator of tuples, where the i-th tuple contains the i-th element from each iterable.',
-    topics: ['Python', 'Programming'],
-    solution: '`zip([1,2],[3,4])` results in [(1,3),(2,4)]'
-  },
-  {
-    category: 'Deep learning',
-    difficulty: 'Hard',
-    text: 'Explain the vanishing gradient problem.',
-    type: 'code',
-    completed: true,
-    description: 'Vanishing gradients occur when gradients become too small during backpropagation.',
-    longDescription: 'This leads to very slow learning or failure to learn in deep networks, especially RNNs.',
-    topics: ['Deep Learning', 'Training Issues'],
-    solution: 'It causes early layers to learn very slowly or not at all.'
-  }
-];
+// API calls
+import { getAllCategory } from '../../../../api/categoryApi';
+import { getQuestionByCategoryIdandUserId, getAllQuestionsUsingUserId } from '../../../../api/questionBankApi';
+import { useUser } from '@clerk/clerk-react';
+import { getUserByClerkId } from '../../../../api/userApi';
 
-const difficultyLevels = ['Easy', 'Medium', 'Hard'];
-const moduleCodes = [
-  { module_name: 'Machine learning', module_code: 'ML' },
-  { module_name: 'Deep learning', module_code: 'DL' },
-  { module_name: 'SQL', module_code: 'SQL' },
-  { module_name: 'Python', module_code: 'PY' },
-];
+const difficultyLevels = ['Easy', 'Medium', 'Hard']; // For filter UI only
 
 const QuestionBank = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filterSearchQuery, setFilterSearchQuery] = useState('');
+  const [topics, setTopics] = useState([]);
+  const [moduleCodes, setModuleCodes] = useState([]);
+  const [categories, setCategories] = useState([]); // Dynamic categories
+  const [questions, setQuestions] = useState([]); // Current filtered questions
+  const [allQuestions, setAllQuestions] = useState([]); // Store all questions for reuse
+  const { user } = useUser();
+  const [userId, setUserId] = useState(null);
 
   const emptyFilterState = {
     easy: false,
@@ -419,6 +366,123 @@ const QuestionBank = () => {
 
   const [selectedFilters, setSelectedFilters] = useState(emptyFilterState);
   const [tempFilters, setTempFilters] = useState(emptyFilterState);
+
+  // Load user ID on mount
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const userData = await getUserByClerkId(user.id);
+        setUserId(userData.data.user._id);
+      } catch (err) {
+        console.error("Failed to fetch user ID", err);
+      }
+    };
+    if (user?.id) fetchUserId();
+  }, [user]);
+
+  // Load categories and all questions initially
+  useEffect(() => {
+    const loadInitialData = async () => {
+      if (!userId) return;
+
+      try {
+        const categoryRes = await getAllCategory();
+        if (categoryRes?.success) {
+          const categoryList = categoryRes.data || [];
+          setCategories(categoryList);
+
+          const allQuestionsRes = await getAllQuestionsUsingUserId(userId);
+          let allQuestions = [];
+
+          if (allQuestionsRes?.success && Array.isArray(allQuestionsRes.data)) {
+            allQuestions = allQuestionsRes.data;
+          }
+
+          // Extract unique topics
+          const topicSet = new Set();
+          allQuestions.forEach(q => {
+            if (Array.isArray(q.topics)) {
+              q.topics.forEach(t => topicSet.add(t.topic_name));
+            }
+          });
+          setTopics(Array.from(topicSet));
+
+          // Generate module codes
+          const categoryMap = {};
+          categoryList.forEach(cat => {
+            if (!categoryMap[cat.category_name]) {
+              categoryMap[cat.category_name] = `CAT${Object.keys(categoryMap).length + 1}`;
+            }
+          });
+          const modCodes = Object.entries(categoryMap).map(([name, code]) => ({
+            module_name: name,
+            module_code: code,
+          }));
+          setModuleCodes(modCodes);
+
+          // Map questions
+          const mappedQuestions = allQuestions.map(q => ({
+            id: q._id,
+            category: q.programming_language || "Other",
+            difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
+            text: q.question || "Untitled",
+            type: q.isTIYQustion ? 'code' : 'text',
+            completed: q.attempted || false,
+            description: q.description || '',
+            longDescription: q.description || '',
+            topics: q.topics?.map(t => t.topic_name) || [],
+            solution: q.output || ''
+          }));
+
+          setAllQuestions(mappedQuestions);
+          setQuestions(mappedQuestions); // Initially show all
+        }
+      } catch (err) {
+        console.error("Error loading initial data", err);
+      }
+    };
+
+    loadInitialData();
+  }, [userId]);
+
+  // Load category-specific questions when activeTab changes
+  useEffect(() => {
+    const loadCategoryQuestions = async () => {
+      if (activeTab === 'all') {
+        // Reset to all questions
+        setQuestions(allQuestions);
+        return;
+      }
+
+      if (!userId) return;
+
+      try {
+        const res = await getQuestionByCategoryIdandUserId(activeTab, userId);
+        if (res?.success && Array.isArray(res.data)) {
+          const mappedQuestions = res.data.map(q => ({
+            id: q._id,
+            category: q.programming_language || "Other",
+            difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
+            text: q.question || "Untitled",
+            type: q.isTIYQustion ? 'code' : 'text',
+            completed: q.attempted || false,
+            description: q.description || '',
+            longDescription: q.description || '',
+            topics: q.topics?.map(t => t.topic_name) || [],
+            solution: q.output || ''
+          }));
+          setQuestions(mappedQuestions);
+        } else {
+          setQuestions([]);
+        }
+      } catch (err) {
+        console.error("Error fetching category questions", err);
+        setQuestions([]);
+      }
+    };
+
+    loadCategoryQuestions();
+  }, [activeTab, userId, allQuestions]); // Now depends on allQuestions
 
   const toggleDropdown = () => {
     setTempFilters(selectedFilters);
@@ -448,32 +512,35 @@ const QuestionBank = () => {
 
   const filteredQuestions = questions.filter((q) => {
     const matchesDifficulty =
-      !selectedFilters.easy && !selectedFilters.medium && !selectedFilters.hard ||
+      (!selectedFilters.easy && !selectedFilters.medium && !selectedFilters.hard) ||
       selectedFilters[q.difficulty.toLowerCase()];
-
     const matchesTopic =
-      selectedFilters.topics.length === 0 || selectedFilters.topics.includes(q.category);
-
+      selectedFilters.topics.length === 0 || selectedFilters.topics.some(t => q.topics.includes(t));
     const matchesStatus =
       (!selectedFilters.status.solved && !selectedFilters.status.unsolved) ||
       (selectedFilters.status.solved && q.completed) ||
       (selectedFilters.status.unsolved && !q.completed);
-
     return matchesDifficulty && matchesTopic && matchesStatus;
   });
 
   return (
     <Container>
       <FilterBar>
+        {/* Always show All */}
         <FilterButton active={activeTab === 'all'} onClick={() => setActiveTab('all')}>
           All
         </FilterButton>
-        <FilterButton active={activeTab === 'top50'} onClick={() => setActiveTab('top50')}>
-          Top 50 coding questions
-        </FilterButton>
-        <FilterButton active={activeTab === 'ml75'} onClick={() => setActiveTab('ml75')}>
-          Machine Learning 75
-        </FilterButton>
+
+        {/* Dynamic Category Tabs */}
+        {categories.map((cat) => (
+          <FilterButton
+            key={cat._id}
+            active={activeTab === cat._id}
+            onClick={() => setActiveTab(cat._id)}
+          >
+            {cat.category_name}
+          </FilterButton>
+        ))}
 
         <div style={{ marginLeft: 'auto' }}>
           <FilterIcon onClick={toggleDropdown}>
@@ -494,7 +561,6 @@ const QuestionBank = () => {
               >
                 Clear all
               </ApplyFilter>
-
               <ApplyFilter
                 onClick={() => {
                   setSelectedFilters(tempFilters);
@@ -577,27 +643,27 @@ const QuestionBank = () => {
         )}
       </FilterBar>
 
-      {['all', 'top50', 'ml75'].includes(activeTab) &&
-        filteredQuestions.map((q, index) => (
-          <Link
-            key={index}
-            to={`/user/mainQuestionBank/questionBank/${index}`}
-            style={{ textDecoration: 'none', color: 'inherit' }}
-          >
-            <QuestionCard>
-              <Icon>
-                {q.completed ? <FaCheck color="green" /> : q.type === 'code' ? <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
-              </Icon>
-              <Content>
-                <TagsRow>
-                  <Tag>{q.category}</Tag>
-                  <Tag difficulty={q.difficulty}>{q.difficulty}</Tag>
-                </TagsRow>
-                <Title>{q.text}</Title>
-              </Content>
-            </QuestionCard>
-          </Link>
-        ))}
+      {/* Render Questions Based on Active Tab */}
+      {filteredQuestions.map((q, index) => (
+        <Link
+          key={index}
+          to={`/user/mainQuestionBank/questionbank/${q.id}`}
+          style={{ textDecoration: 'none', color: 'inherit' }}
+        >
+          <QuestionCard>
+            <Icon>
+              {q.completed ? <FaCheck color="green" /> : q.type === 'code' ? <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
+            </Icon>
+            <Content>
+              <TagsRow>
+                <Tag>{q.category}</Tag>
+                <Tag difficulty={q.difficulty}>{q.difficulty}</Tag>
+              </TagsRow>
+              <Title>{q.text}</Title>
+            </Content>
+          </QuestionCard>
+        </Link>
+      ))}
     </Container>
   );
 };

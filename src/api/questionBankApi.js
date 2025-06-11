@@ -35,15 +35,7 @@ export const getQuestionBank = async (
   }
 };
 
-export const getQuestionBankById = async (id) => {
-  try {
-    const response = await api.get(`/questionBank/get/${id}`);
-    return response.data;
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-};
+
 export const getQuestionBankByModule = async (module_code) => {
   try {
     const response = await api.get(`/questionBank/get/module/${module_code}`);
@@ -72,3 +64,54 @@ export const editQuestionBank = async (id, data) => {
     throw error;
   }
 };
+
+
+export const getQuestionByCategoryIdandUserId = async (category_id, user_id) => {
+  try {
+    const response = await api.get(`/mainQuestionBank/get/qbQuestionBycategory/${category_id}/${user_id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const getAllQuestionsUsingUserId = async (user_id) => {
+  try {
+    const response = await api.get(`/mainQuestionBank/get/QBQuestions/withUserResponse/${user_id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export const getQuestionBankById = async (id) => {
+  try {
+    const response = await api.get(`/mainQuestionBank/get/questionByID/${id}`);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const markUserSubmission = async (data)=>{
+try{
+  const response = await api.post(`/mainQuestionBankProgress`,data);
+  return response.data;
+}catch(error){
+  console.log(error);
+  throw error;
+}
+}
+
+export const tryHarderQuestionBank = async (data)=>{
+  try{
+    const response = await api.post(`/mainQuestionBank/tryHarderQuestion`,data);
+    return response.data;
+  }catch(error){
+    console.log(error);
+    throw error;
+  }
+  }
