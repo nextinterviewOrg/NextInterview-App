@@ -11,39 +11,7 @@ import { FaAngleRight, FaAngleLeft } from "react-icons/fa6";
 import { getInterviewFavourites } from "../../../../api/aiMockInterviewApi";
 
 export default function UserHome() {
-  // const interviewFavoriteCardData = [
-  //   {
-  //     title: "Diagnosing and Investigating Metrics",
-  //     description: "Analyze data to gain insights and make smarter decisions.",
-  //     topics: 3,
-  //     duration: "Less than 2 hrs",
-  //     imgSrc: [
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     ],
-  //   },
-  //   {
-  //     title: "Optimizing System Performance",
-  //     description: "Learn how to enhance system efficiency and responsiveness.",
-  //     topics: 4,
-  //     duration: "2 to 3 hrs",
-  //     imgSrc: [
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     ],
-  //   },
-  //   {
-  //     title: "Building Scalable Systems",
-  //     description:
-  //       "Master the art of designing systems that handle growth seamlessly.",
-  //     topics: 5,
-  //     duration: "3+ hrs",
-  //     imgSrc: [
-  //       "https://th.bing.com/th/id/OIP.hfNK8S7ywtaPVr8WGTV4-wHaE7?rs=1&pid=ImgDetMain",
-  //     ],
-  //   },
-  // ];
+
   const [interviewFavoriteCardData, setInterviewFavoriteCardData] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
 
@@ -135,7 +103,7 @@ export default function UserHome() {
           </ArrowButton>
           <InterviewFavoriteCardContainer>
             {visibleCards.length>0 &&
-              visibleCards.map((cardData, index) => (
+              visibleCards.map((cardData, index) => ( 
                 <InterviewFavoriteCard
                   key={`${startIndex}-${index}`}
                   title={cardData.title}
