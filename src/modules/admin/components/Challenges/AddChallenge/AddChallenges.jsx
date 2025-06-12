@@ -54,7 +54,7 @@ const typeMapping = {
 const INITIAL_FORM = {
   programming_language: "",
   QuestionText: "",
-  description: "ssss",
+  description: "",
   input: "",
   output: "",
   difficulty: "Easy",
@@ -243,14 +243,18 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
 
     switch (questionType) {
       case "Coding":
-        Object.assign(payload, {
+        
+        break;Object.assign(payload, {
           programming_language: formData.programming_language,
           description: formData.description,
           input: formData.input,
           output: formData.output,
-          difficulty: formData.difficulty
+          difficulty: formData.difficulty,
+          dbSetupCommands: formData.dbSetupCommands,
+          solutionCode: formData.solutionCode,
+          solutionExplanation: formData.solutionExplanation,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
         });
-        break;
       case "MCQ":
         Object.assign(payload, {
           difficulty: formData.difficulty,

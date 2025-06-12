@@ -42,6 +42,7 @@ import { IoChevronBackSharp, IoClose } from "react-icons/io5";
 import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
+import { VscDebugRestart } from "react-icons/vsc";
 // ... (imports remain unchanged)
 
 const CodeEditorWindow = () => {
@@ -68,8 +69,53 @@ const CodeEditorWindow = () => {
   const [activeTab, setActiveTab] = useState("mycode");
   const [showHint, setShowHint] = useState(false);
 
-  const [timeLeft, setTimeLeft] = useState(20);
-  const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
+  // const [timeLeft, setTimeLeft] = useState(20);
+  // const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(() => {
+    // Get saved time from localStorage or use default (20)
+    const savedTime = localStorage.getItem(`challengeTimer_${id}`);
+    return savedTime ? parseInt(savedTime) : 60;
+  });
+
+  const [solutionTimeExpired, setSolutionTimeExpired] = useState(() => {
+    // Check if timer was previously expired
+    return localStorage.getItem(`challengeExpired_${id}`) === 'true';
+  });
+
+  useEffect(() => {
+  let timer;
+
+  if (activeTab === "mycode" && !solutionTimeExpired) {
+    timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        const newTime = prev - 1;
+        
+        // Save to localStorage on every change
+        localStorage.setItem(`challengeTimer_${id}`, newTime.toString());
+        
+        if (newTime <= 0) {
+          clearInterval(timer);
+          setSolutionTimeExpired(true);
+          localStorage.setItem(`challengeExpired_${id}`, 'true');
+          return 0;
+        }
+        
+        return newTime;
+      });
+    }, 1000);
+  }
+
+  return () => clearInterval(timer);
+}, [activeTab, solutionTimeExpired, id]);
+
+// Reset timer when needed (e.g., when changing challenges)
+useEffect(() => {
+  return () => {
+    // Cleanup when component unmounts or challenge changes
+    localStorage.removeItem(`challengeTimer_${id}`);
+    localStorage.removeItem(`challengeExpired_${id}`);
+  };
+}, [id]);
 
   const handleGoBack = () => {
     navigate(`/user/challengeInfo/${id}`);
@@ -95,7 +141,7 @@ const CodeEditorWindow = () => {
           skip: false,
         };
 
-        await submitUserChallengeProgress(payload);
+        const result = await submitUserChallengeProgress(payload);
         alert("Congratulations! Your solution is correct and progress has been saved.");
         navigate("/user/challenges");
       } else {
@@ -140,6 +186,7 @@ const CodeEditorWindow = () => {
       try {
         const response = await getChallengeById(id);
         setChallenge(response.data);
+        console.log("Fetched challenge:", response);
         setCode(response.data?.base_code);
         setInput(response.data?.input);
         setSelectedLang(
@@ -155,6 +202,7 @@ const CodeEditorWindow = () => {
   }, [id]);
 
   useEffect(() => {
+
     if (runClicked && output?.trim() === challenge?.output?.trim()) {
       setShowOptimiseBtn(true);
       fetchOptimizedCode();
@@ -207,7 +255,8 @@ const CodeEditorWindow = () => {
                 <div dangerouslySetInnerHTML={{ __html: challenge?.description }} />
               </p>
               <p><strong>Input:</strong> {challenge.input}</p>
-              <p><strong>Output:</strong> {challenge.output}</p>
+              <p><strong>Output:</strong>
+                <pre>{challenge.output}</pre> </p>
             </QuestionBox>
           </QuestionContainer>
 
@@ -258,6 +307,13 @@ const CodeEditorWindow = () => {
                 </HintWrapper>
 
                 <LanguageSelect>
+                  <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} onClick={() => {
+                    setCode(challenge.base_code);
+                    setSelectedLang(challenge.programming_language === "MySQL" ? "mysql" : "python");
+                  }}>
+                    <VscDebugRestart />
+                  </button>
+
                   <label htmlFor="lang">Select Language</label>
                   <Select
                     id="lang"
@@ -279,6 +335,7 @@ const CodeEditorWindow = () => {
                 setCode={setCode}
                 output={output}
                 setOutput={setOutput}
+                dbSetupCommands={challenge.dbSetupCommands}
                 input={input}
                 setInput={setInput}
                 setRunClicked={setRunClicked}
@@ -288,24 +345,36 @@ const CodeEditorWindow = () => {
                 handleSubmit={handleSubmit}
                 isSubmitting={isSubmitting}
                 solutionTimeExpired={solutionTimeExpired}
+                challenge={true}
               />
             )}
 
             {activeTab === "solution" && (
-              <div
-                style={{
-                  background: "#f4f4f4",
-                  padding: "20px",
-                  borderRadius: "8px",
-                  minHeight: "300px",
-                  whiteSpace: "pre-wrap",
-                  fontFamily: "monospace",
-                  fontSize: "14px",
-                }}
-              >
-                <h3>Solution Code:</h3>
-                <code>{challenge.solution || "No solution available."}</code>
-              </div>
+              <>
+                <Editor
+                  height="200px"
+                  language={setSelectedLang === "python" ? "python" : "mysql"}
+                  value={challenge.solutionCode}
+                  // onChange={setCode}
+                  theme="vs-light"
+
+                />
+
+                <div
+                  style={{
+                    background: "#f4f4f4",
+                    padding: "20px",
+                    borderRadius: "8px",
+                    minHeight: "300px",
+                    whiteSpace: "pre-wrap",
+                    fontFamily: "monospace",
+                    fontSize: "14px",
+                  }}
+                >
+                  <h3>Solution Explanation:</h3>
+                  <code>{challenge.solutionExplanation || "No solution available."}</code>
+                </div>
+              </>
             )}
           </div>
         </div>

@@ -12,6 +12,10 @@ const Card = styled.div`
   padding: ${(props) => props.theme.spacing(2)};
   box-shadow: 0 8px 12px #7090b018;
   font-family: ${(props) => props.theme.fonts.body};
+  display: flex;
+  
+  justify-content: space-between;
+  margin-left: ${(props) => props.theme.spacing(2)};
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -60,11 +64,11 @@ const Tag = styled.span`
     background-color: ${({ difficulty }) => {
     switch (difficulty) {
       case "easy":
-        return "#d1fae5"; 
+        return "#d1fae5";
       case "medium":
         return "#fff3cd";
       case "hard":
-        return "#f8d7da"; 
+        return "#f8d7da";
       default:
         return "#ccc";
     }
@@ -146,13 +150,13 @@ const PreviouslyAsked = styled.div`
 `;
 
 const StatusBadge = styled.span`
-  color: ${props => 
-    props.status === 'completed' ? '#2ecc71' : 
-    props.status === 'attempted' ? '#f39c12' : '#e74c3c'};
+  color: ${props =>
+    props.status === 'completed' ? '#2ecc71' :
+      props.status === 'attempted' ? '#f39c12' : '#e74c3c'};
   font-weight: bold;
-  background-color: ${props => 
-    props.status === 'completed' ? '#e8f8f0' : 
-    props.status === 'attempted' ? '#fef5e6' : '#fdedec'};
+  background-color: ${props =>
+    props.status === 'completed' ? '#e8f8f0' :
+      props.status === 'attempted' ? '#fef5e6' : '#fdedec'};
   border-radius: 4px;
   padding: 3px 8px;
   font-size: 0.75rem;
@@ -175,6 +179,34 @@ const LoadingMessage = styled.div`
   border-radius: 8px;
   margin: 20px 0;
   border: 1px solid #bbdefb;
+`;
+export const Status = styled.div`
+display: flex;
+align-items: center;
+justify-content: center;
+width: 100px;
+  font-size: 12px;
+  padding: 0.3rem 0.6rem;
+  border-radius: 5px;
+  font-weight: 400;
+  background-color: ${(props) =>
+    props.status === "Completed" ? "#efffeb" : "#ffebeb"};
+  color: ${(props) =>
+    props.status === "Completed" ? "#68c184" : "#843838"};
+  border: 1px solid
+    ${(props) =>
+    props.status === "Completed" ? "#defcd6" : "#fcd6d6"};
+
+      @media (max-width: 1024px) {
+        font-size: 0.7rem;
+        width: 80px;
+      }
+
+      @media (max-width: 480px) {
+        font-size: 0.6rem;
+        width: 100px;
+        margin-left: 0.5rem;
+      }
 `;
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
@@ -239,44 +271,73 @@ const TakeChallenge = ({ questionType = "coding" }) => {
       </div>
     );
   }
+  const getStatus = (challenge) => {
+    // hasAnswered → attempted; hasAnswered + finalResult → completed
+    if (challenge.userStatus==="answered") {
+      return challenge.finalResult ? "Completed" : "Attempted";
+    }
+    return "Not Attempted";
+  };
 
+  // Map UI colour variants in <Status>
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "Completed":
+        return "Completed";
+      case "Attempted":
+        return "attempted";
+      default:
+        return "notAttempted";
+    }
+  };
   return (
     <>
-      {challenges.map((challenge) => (
-        <Card key={challenge._id}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <small style={badgeStyle}>#Today's Challenge</small>
-            {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
+      {challenges.map((challenge) => {
+        const statusText = getStatus(challenge);
+        const statusKey = getStatusColor(statusText);
+       
+        return (
+          <Card key={challenge._id}>
+            <div>
+
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                <small style={badgeStyle}>#Today's Challenge</small>
+                {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
               {challenge.userStatus}
             </StatusBadge> */}
-          </div>
+              </div>
 
-          <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
+              <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
 
-          <ChallengeSubtitle>
-            {challenge.description || "No description provided."}
-          </ChallengeSubtitle>
+              <ChallengeSubtitle>
+                {challenge.question_type === "coding" ? "N/A" : (challenge.description || "No description provided.")}
+              </ChallengeSubtitle>
 
-          <Tags>
-            {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}
-{challenge.difficulty && (
-  <Tag difficulty={challenge.difficulty.toLowerCase()}>
-    {challenge.difficulty}
-  </Tag>
-)}
-            {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
-          </Tags>
+              <Tags>
+                {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}
+                {challenge.difficulty && (
+                  <Tag difficulty={challenge.difficulty.toLowerCase()}>
+                    {challenge.difficulty}
+                  </Tag>
+                )}
+                {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
+              </Tags>
 
-          <Buttons>
-            <Button
-              secondary
-              onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
-            >
-              Challenge Info
-            </Button>
-          </Buttons>
-        </Card>
-      ))}
+              <Buttons>
+                <Button
+                  secondary
+                  onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
+                >
+                  Challenge Info
+                </Button>
+              </Buttons>
+            </div>
+            <div>
+              <Status status={statusKey}>{statusText}</Status>
+            </div>
+          </Card>
+        )
+      })}
     </>
   );
 };

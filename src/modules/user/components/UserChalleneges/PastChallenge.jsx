@@ -41,7 +41,7 @@ console.log("Userid",userId);
           userId,
           "coding"
         );
-        console.log("data",data);
+        console.log("data hvhvhv",data);
 
         setChallenges(Array.isArray(data) ? data : []);
       } catch (error) {
@@ -104,7 +104,6 @@ console.log("Userid",userId);
           return (
             <ChallengeItem key={challenge._id || challenge.challengeId}>
               <ChallengeNumber>#{challenges.length - index}</ChallengeNumber>
-
               <ChallengeDetails>
                 <ChallengeDate>
                   {challenge.lastAttempted
@@ -118,7 +117,7 @@ console.log("Userid",userId);
 
                 {challenge.description && (
                   <ChallengeDescription>
-                    {challenge.description}
+                  {challenge.question_type==="coding" ?"N/A": (challenge.description || "No description provided.")}
                   </ChallengeDescription>
                 )}
               </ChallengeDetails>
