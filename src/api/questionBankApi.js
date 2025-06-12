@@ -89,6 +89,7 @@ export const getAllQuestionsUsingUserId = async (user_id) => {
 export const getQuestionBankById = async (id) => {
   try {
     const response = await api.get(`/mainQuestionBank/get/questionByID/${id}`);
+    console.log("Response from getQuestionBankById:", response.data);
     return response.data;
   } catch (error) {
     console.log(error);

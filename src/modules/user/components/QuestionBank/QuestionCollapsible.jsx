@@ -669,47 +669,55 @@ import {
   TryCodingButton,
   TextAnswer,
   SolutionText,
-  HelpIcons
+  HelpIcons,
+  TextInput
 } from './QuestionCollapsible.styles';
 import { IoChevronBackSharp } from "react-icons/io5";
-import { PiStarFour } from "react-icons/pi";
-import { PiThumbsUpLight } from "react-icons/pi";
-import { PiThumbsDownLight } from "react-icons/pi";
-import { getQuestionBankById } from '../../../../api/questionBankApi';
+import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
+import { getQuestionBankById, tryHarderQuestionBank } from '../../../../api/questionBankApi';
 
 const QuestionCollapsible = () => {
-  const { id } = useParams(); // This is the question ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [question, setQuestion] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   const [showSolution, setShowSolution] = useState(false);
   const [showMore, setShowMore] = useState(false);
   const [textAnswer, setTextAnswer] = useState('');
 
-  // Load question by ID from API
   useEffect(() => {
     const fetchQuestion = async () => {
       try {
         setLoading(true);
         setError(false);
+
         const response = await getQuestionBankById(id);
         if (response?.success && response.data) {
           const q = response.data;
 
-          // Map backend fields to expected format
+          // Collect options if MCQ
+          const options = [];
+          if (q.question_type === 'mcq') {
+            if (q.option_a) options.push(q.option_a);
+            if (q.option_b) options.push(q.option_b);
+            if (q.option_c) options.push(q.option_c);
+            if (q.option_d) options.push(q.option_d);
+            if (q.option_e) options.push(q.option_e);
+          }
+
           const mappedQuestion = {
             id: q._id,
             category: q.programming_language || "Other",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
-            type: q.isTIYQustion ? 'code' : 'text',
+            type: q.question_type,
             completed: q.attempted || false,
             description: q.description || '',
             longDescription: q.description || '',
             topics: q.topics?.map(t => t.topic_name) || [],
-            solution: q.output || ''
+            solution: q.output || '',
+            options: options
           };
 
           setQuestion(mappedQuestion);
@@ -727,18 +735,121 @@ const QuestionCollapsible = () => {
       }
     };
 
-    if (id) {
-      fetchQuestion();
-    }
+    if (id) fetchQuestion();
   }, [id]);
 
-  if (loading) {
-    return <Container>Loading...</Container>;
-  }
+  const handleNextQuestion = () => {
+    navigate(`/user/mainQuestionBank/questionbank/${id}`, {
+      state: { questionbank: [] }
+    });
+  };
 
-  if (error || !question) {
-    return <Container>Question not found</Container>;
-  }
+  const handleTryHarderQuestion = async () => {
+    try {
+      const response = await tryHarderQuestionBank({
+        questionId: question.id,
+        isTIYQuestion: false,
+        isQBQuestion: true,
+      });
+
+      if (response?.success && response?.data?._id) {
+        navigate(`/user/mainQuestionBank/questionbank/${response.data._id}`);
+      } else {
+        alert('No harder question found.');
+      }
+    } catch (error) {
+      console.error("Error fetching harder question:", error);
+      alert('Something went wrong. Please try again later.');
+    }
+  };
+
+  if (loading) return <Container>Loading...</Container>;
+  if (error || !question) return <Container>Question not found</Container>;
+
+  const renderInput = () => {
+    switch (question.type) {
+      case 'coding':
+        return (
+          <>
+            <CodeMeta>{question.description}</CodeMeta>
+            <CodeDescription>
+              Description:
+              <p>
+                {showMore
+                  ? question.longDescription
+                  : question.longDescription.length > 150
+                    ? question.longDescription.substring(0, 150) + '...'
+                    : question.longDescription}
+              </p>
+              {question.longDescription.length > 150 && (
+                <ViewMore onClick={() => setShowMore(!showMore)}>
+                  {showMore ? 'View Less' : 'View More'}
+                </ViewMore>
+              )}
+            </CodeDescription>
+            <TopicsCovered>
+              <strong>Topics Covered</strong>
+              <ul style={{ paddingLeft: '0' }}>
+                {question.topics.map((topic, idx) => (
+                  <TopicItem key={idx}>• {topic}</TopicItem>
+                ))}
+              </ul>
+            </TopicsCovered>
+            <TryCodingButton
+              onClick={() => navigate(`/user/mainQuestionBank/qbcodingpage/${question.id}`)}
+            >
+              Try Coding
+            </TryCodingButton>
+          </>
+        );
+
+      case 'mcq':
+        return (
+          <div>
+            {question.options.map((option, idx) => (
+              <div key={idx} style={{ marginBottom: '8px' }}>
+                <label>
+                  <input
+                    type="radio"
+                    name="mcq"
+                    value={option}
+                    checked={textAnswer === option}
+                    onChange={(e) => setTextAnswer(e.target.value)}
+                  />{' '}
+                  {option}
+                </label>
+              </div>
+            ))}
+          </div>
+        );
+
+      case 'single-line':
+        return (
+          <TextInput
+            type="text"
+            value={textAnswer}
+            onChange={(e) => setTextAnswer(e.target.value)}
+            placeholder="Type your answer here..."
+          />
+        );
+
+      case 'multi-line':
+      case 'approach':
+      case 'text':
+        return (
+          <TextAnswer
+            as="textarea"
+            value={textAnswer}
+            onChange={(e) => setTextAnswer(e.target.value)}
+            placeholder="Type your answer here..."
+            rows={4}
+          />
+        );
+
+      default:
+        return <div>Unsupported question type</div>;
+    }
+  };
 
   return (
     <>
@@ -746,84 +857,37 @@ const QuestionCollapsible = () => {
         <IoChevronBackSharp /> Back
       </BackButton>
       <Container>
-
         <QuestionBox>
           <QusnandType>
             <QuestionText>{question.text}</QuestionText>
-            <DifficultyTag level={question.difficulty}>{question.difficulty}</DifficultyTag>
+            <DifficultyTag level={question.difficulty}>
+              {question.difficulty}
+            </DifficultyTag>
           </QusnandType>
-
-          {question.type === 'code' ? (
-            <>
-              <CodeMeta>{question.description}</CodeMeta>
-
-              <CodeDescription>
-                Description:
-                <p>
-                  {showMore
-                    ? question.longDescription
-                    : question.longDescription.length > 150
-                      ? question.longDescription.substring(0, 150) + '...'
-                      : question.longDescription}
-                </p>
-                {showMore ? (
-                  <ViewMore onClick={() => setShowMore(false)}>View Less</ViewMore>
-                ) : (
-                  <ViewMore onClick={() => setShowMore(true)}>View More</ViewMore>
-                )}
-              </CodeDescription>
-
-              <div className='break'></div>
-              <TopicsCovered>
-                <strong>Topics Covered</strong>
-                <ul style={{ paddingLeft: '0' }}>
-                  {question.topics && question.topics.map((topic, idx) => (
-                    <TopicItem key={idx}>• {topic}</TopicItem>
-                  ))}
-                </ul>
-              </TopicsCovered>
-
-              {question.type === 'code' && (
-                <TryCodingButton
-                  onClick={() => {
-                    navigate(`/user/takeChallenge/${question.id}`);
-                  }}
-                >
-                  Try Coding
-                </TryCodingButton>
-              )}
-            </>
-          ) : (
-            <TextAnswer
-              type="textarea"
-              value={textAnswer}
-              onChange={(e) => setTextAnswer(e.target.value)}
-              placeholder="Type your answer here..."
-              rows={2}
-            />
-          )}
+          {renderInput()}
         </QuestionBox>
 
-        {question.type === 'text' && showSolution && (
-          <SolutionBox>
-            <SolutionText>Solution:</SolutionText>
-            <SolutionAnswer>
-              {question.solution}
-              <HelpIcons>
-                <PiThumbsUpLight /> Helpful
-                <PiThumbsDownLight /> Not helpful
-              </HelpIcons>
-            </SolutionAnswer>
-          </SolutionBox>
-        )}
+{/* Correctly check for all types where solution should be shown */}
+{['text', 'multi-line', 'approach', 'mcq', 'single-line'].includes(question.type) && showSolution && (
+  <SolutionBox>
+    <SolutionText>Solution:</SolutionText>
+    <SolutionAnswer>
+      {question.solution}
+      <HelpIcons>
+        <PiThumbsUpLight /> Helpful
+        <PiThumbsDownLight /> Not helpful
+      </HelpIcons>
+    </SolutionAnswer>
+  </SolutionBox>
+)}
 
-        {question.type === 'text' && (
+
+        {['text', 'multi-line', 'approach', 'mcq', 'single-line'].includes(question.type) && (
           <Footer>
             <Button
               onClick={() => {
                 if (showSolution) {
-                  // Navigate to next question (if available)
-                  // You can implement this logic later if needed
+                  handleNextQuestion();
                 } else {
                   setShowSolution(true);
                 }
@@ -832,7 +896,9 @@ const QuestionCollapsible = () => {
             >
               {showSolution ? 'Next question' : 'Show solution'}
             </Button>
-            <TryHarder href="#"><PiStarFour /> Try harder question</TryHarder>
+            <TryHarder onClick={handleTryHarderQuestion}>
+              <PiStarFour /> Try harder question
+            </TryHarder>
           </Footer>
         )}
       </Container>
@@ -841,3 +907,4 @@ const QuestionCollapsible = () => {
 };
 
 export default QuestionCollapsible;
+

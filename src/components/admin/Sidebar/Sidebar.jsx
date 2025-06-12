@@ -107,7 +107,13 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       name: "Settings",
       path: "/admin/settingspage",
       icon: <img className="svgicon" src={Settings} alt="Settings Icon" />,
-    }
+    },
+    {
+      id: 14,
+      name: "Payment History",
+      path: "/admin/payment-history",
+      icon: <img className="svgicon" src={world} alt="World Icon" />,
+    },
   ];
 
   useEffect(() => {

@@ -346,6 +346,24 @@ export const DifficultyTag = styled.span`
   }
 `;
 
+
+export const TextInput = styled.input`
+  width: 100%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  resize: none;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'text')};
+  background-color: ${({ disabled }) => (disabled ? '#f0f0f0' : '#fff')};
+  box-sizing: border-box;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;
+
+
 export const AnswerInput = styled.textarea`
   // width: 100%;
   padding: 12px;

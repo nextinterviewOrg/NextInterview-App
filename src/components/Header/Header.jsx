@@ -134,6 +134,7 @@ const Header = ({ toggleMobileSidebar }) => {
     if (path.includes("user-feedback")) return "User Feedback";
     if (path.includes("settingspage")) return "Settings";
     if (path.includes("tiyqbcodingquestions")) return "Coding Questions";
+    if (path.includes("payment-history")) return "Payment History";
     // Add more routes as needed
     return "Dashboard"; // Default title
   };

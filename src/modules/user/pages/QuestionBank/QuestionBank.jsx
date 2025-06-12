@@ -356,6 +356,8 @@ const QuestionBank = () => {
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
 
+  console.log("All Questions:", allQuestions);
+
   const emptyFilterState = {
     easy: false,
     medium: false,
@@ -392,6 +394,7 @@ const QuestionBank = () => {
           setCategories(categoryList);
 
           const allQuestionsRes = await getAllQuestionsUsingUserId(userId);
+          console.log("All Questions Response:", allQuestionsRes);
           let allQuestions = [];
 
           if (allQuestionsRes?.success && Array.isArray(allQuestionsRes.data)) {
@@ -426,7 +429,7 @@ const QuestionBank = () => {
             category: q.programming_language || "Other",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
-            type: q.isTIYQustion ? 'code' : 'text',
+            type: q.question_type ,
             completed: q.attempted || false,
             description: q.description || '',
             longDescription: q.description || '',
@@ -464,7 +467,7 @@ const QuestionBank = () => {
             category: q.programming_language || "Other",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
-            type: q.isTIYQustion ? 'code' : 'text',
+            type:  q.question_type,
             completed: q.attempted || false,
             description: q.description || '',
             longDescription: q.description || '',
@@ -522,6 +525,8 @@ const QuestionBank = () => {
       (selectedFilters.status.unsolved && !q.completed);
     return matchesDifficulty && matchesTopic && matchesStatus;
   });
+
+  console.log ("dbhfsdfg",filteredQuestions )
 
   return (
     <Container>
@@ -644,7 +649,7 @@ const QuestionBank = () => {
       </FilterBar>
 
       {/* Render Questions Based on Active Tab */}
-      {filteredQuestions.map((q, index) => (
+      {allQuestions.map((q, index) => (
         <Link
           key={index}
           to={`/user/mainQuestionBank/questionbank/${q.id}`}
@@ -652,7 +657,7 @@ const QuestionBank = () => {
         >
           <QuestionCard>
             <Icon>
-              {q.completed ? <FaCheck color="green" /> : q.type === 'code' ? <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
+              {q.completed ? <FaCheck color="green" /> : q.type === 'coding' ? <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
             </Icon>
             <Content>
               <TagsRow>

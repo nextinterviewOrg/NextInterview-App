@@ -111,6 +111,7 @@ import QBCodingPage from "./modules/user/pages/QBCodingPage/QBCodingPage";
 import AllQuestionBank from "./modules/user/pages/AllQuestionBank/AllQuestionBank";
 import TermsofService from "./pages/TermsofService/TermsofService";
 import PrivacyandPolicy from "./pages/PrivacyandPolicy/PrivacyandPolicy";
+import PaymentHistory from "./modules/admin/pages/PaymentHistory/PaymentHistory";
 
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
@@ -229,6 +230,7 @@ function App() {
             <Route path="editquestionmodule" element={<EditQuestionModule />} />
             <Route path="settingspage" element={<SettingsPage />} />
             <Route path="TIYQBCodingQuestions" element={<TIYQBCodingQuestions />} />
+            <Route path="payment-history" element={<PaymentHistory />} />
 
             {/* </Route> */}
           </Route>
@@ -274,7 +276,7 @@ function App() {
               <Route index element={<QBCodingList />} />
               <Route path="qbcodinglist" element={<QBCodingList />} />
               <Route path="qbdetail" element={<QBCodingDetailPage />} />
-              <Route path="qbcodingpage" element={<QBCodingPage />} />
+              <Route path="qbcodingpage/:id" element={<QBCodingPage />} />
               <Route path="questionbank" element={<QuestionBank />} />
               <Route path="questionbank/:id" element={<QuestionCollapsible />} />
             </Route>
