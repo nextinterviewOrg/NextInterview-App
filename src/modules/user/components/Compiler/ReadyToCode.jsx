@@ -42,6 +42,8 @@ const ReadyToCode = ({
   optimizeClicked,
   handleSubmit,
   isSubmitting,
+  dbSetupCommands,
+  challenge = false
 }) => {
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -56,13 +58,12 @@ const ReadyToCode = ({
       setOutput("Please select a language and write some code.");
       return;
     }
-
     const payload = {
       language: selectLang,
       files: [
         {
           name: languageOptions[selectLang].filename,
-          content: code,
+          content: selectLang === "python" ? code : dbSetupCommands + code,
         },
       ],
       stdin: selectLang === "python" ? input : "",
@@ -135,24 +136,29 @@ const ReadyToCode = ({
 
             {showOptimiseBtn && (
               <HardandOptimise>
-                <TryHarderButton>
-                  <PiStarFour /> Try Harder Question
-                </TryHarderButton>
-
-                {!optimizeClicked ? (
+                {!challenge ?
+                  <TryHarderButton>
+                    <PiStarFour /> Try Harder Question
+                  </TryHarderButton> :
+                  <div>
+                  </div>}
+                <div style={{ display: "flex", gap: "10px" }}>
+                  {/* {!optimizeClicked ? ( */}
                   <OptimiseButton
                     onClick={handleOptimizeCode}
                   >
                     Optimise Code
                   </OptimiseButton>
-                ) : (
+                  {/* ) : ( */}
                   <SubmitButton
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
                   </SubmitButton>
-                )}
+                  {/* )} */}
+                </div>
+
               </HardandOptimise>
             )}
           </OutputBox>

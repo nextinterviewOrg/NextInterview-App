@@ -68,3 +68,13 @@ export const gettiy = async (module_code, topic_code, subtopic_code, question_ty
       throw error;
     }
   };
+
+  export const gettiyquestions = async (module_code,topic_code,userId) => {
+    try {
+      const response = await api.get(`/mainQuestionBank/get/questionByfilter/userResponse/${userId}?module_code=${module_code}&topic_code=${topic_code}&question_category=tiy`);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };

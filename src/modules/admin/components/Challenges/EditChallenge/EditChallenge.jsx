@@ -21,7 +21,13 @@ import {
 import { FiX } from "react-icons/fi";
 import Editor from "@monaco-editor/react";
 import { editChallenge } from "../../../../../api/challengesApi";
-
+import {
+  TinyMCEapiKey,
+  TinyMCEmergetags_list,
+  TinyMCEplugins,
+  TinyMCEToolbar,
+} from "../../../../../config/TinyMceConfig";
+import { Editor as TinyMCEEditor } from "@tinymce/tinymce-react";
 const { Option } = Select;
 
 const languageOptions = {
@@ -65,7 +71,11 @@ const INITIAL_FORM = {
   correctAnswer: "",
   answer: "",
   base_code: "",
-  topics: []
+  topics: [],
+  dbSetupCommands: "",
+  solutionCode: "",
+  challenge_date: null,
+  solutionExplanation: "",
 };
 
 const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
@@ -101,8 +111,15 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
             description: challenge.description || "",
             input: challenge.input || "",
             output: challenge.output || "",
+            solutionCode: challenge.solutionCode || "",
+            solutionExplanation: challenge.solutionExplanation || "",
+            dbSetupCommands: challenge.dbSetupCommands || "",
+            challenge_date: challenge.challenge_date.split("T")[0] || null,
+            base_code: challenge.base_code || ""
           };
+         
           setCode(challenge.code || "");
+          setBasecode(challenge.base_code || "");
           break;
         case "mcq":
           specificData = {
@@ -282,7 +299,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
     if (missingFields.length > 0) {
       setError(`Please fill in the following fields: ${missingFields.join(", ")}`);
       return;
-    } 
+    }
 
     const payload = {
       QuestionText: formData.QuestionText.trim(),
@@ -300,7 +317,11 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
           input: formData.input,
           output: formData.output,
           difficulty: formData.difficulty,
-          code: code
+          dbSetupCommands: formData.dbSetupCommands,
+          solutionCode: formData.solutionCode,
+          solutionExplanation: formData.solutionExplanation,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+
         });
         break;
       case "MCQ":
@@ -391,15 +412,36 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 rows={4}
               />
             </FormGroup>
-
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
             <FormGroup>
               <FormLabel>Description *</FormLabel>
-              <FormTextArea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                placeholder="Enter detailed description"
-                rows={6}
+              <TinyMCEEditor
+                apiKey={TinyMCEapiKey}
+                init={{
+                  plugins: TinyMCEplugins,
+                  toolbar: TinyMCEToolbar,
+                  tinycomments_mode: "embedded",
+                  tinycomments_author: "Author name",
+                  mergetags_list: TinyMCEmergetags_list,
+                  ai_request: (request, respondWith) =>
+                    respondWith.string(() =>
+                      Promise.reject("See docs to implement AI Assistant")
+                    ),
+                  branding: false,
+                }}
+                value={formData.description || ""}
+                onEditorChange={(newValue) => {
+                  setFormData({ ...formData, description: newValue });
+                }}
+                initialValue=""
               />
             </FormGroup>
 
@@ -538,6 +580,35 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                   options={{ minimap: { enabled: false }, scrollBeyondLastLine: false }}
                 />
               </div>
+            </FormGroup>
+            {
+              formData.programming_language === "MySQL" &&
+              <FormGroup>
+                <FormLabel>DB Creation Commands</FormLabel>
+                <Editor
+                  height="200px"
+                  language={formData.programming_language.toLowerCase()}
+                  value={formData.dbSetupCommands}
+                  onChange={(e) => { setFormData({ ...formData, dbSetupCommands: e }); }}
+                  theme="vs-light"
+
+                />
+              </FormGroup>
+            }
+            <FormGroup>
+              <FormLabel>Code Solution</FormLabel>
+              <Editor
+                height="200px"
+                language={formData.programming_language.toLowerCase()}
+                value={formData.solutionCode}
+                onChange={(e) => { setFormData({ ...formData, solutionCode: e }); }}
+                theme="vs-light"
+
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Solution Explanation</FormLabel>
+              <FormTextArea name="solutionExplanation" value={formData.solutionExplanation} onChange={handleChange} />
             </FormGroup>
 
             {/* Hints section - only for coding questions */}

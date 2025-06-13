@@ -45,7 +45,6 @@ const UserChallenges = () => {
 
                 // Fetch past challenges
                 const challengesRes = await getPastChallengesWithUserResults(userId);
-console.log("challengesRes",challengesRes);
                 if (challengesRes?.success && Array.isArray(challengesRes.data)) {
                     const mappedChallenges = challengesRes.data.map((challenge) => {
                         // Safely parse challenge date
@@ -71,7 +70,8 @@ console.log("challengesRes",challengesRes);
                             difficulty: challenge.difficulty ? capitalizeFirstLetter(challenge.difficulty) : "Easy",
                             type: challenge.type === 'text' ? 'text' : 'code',
                             status: challenge.isCompleted ? 'Completed' : (challenge.userStatus || 'Pending'),
-                            date: formattedChallengeDate
+                            date: formattedChallengeDate,
+                            question_type: challenge.question_type
                         };
                     });
 
@@ -86,7 +86,14 @@ console.log("challengesRes",challengesRes);
             loadUserDataAndChallenges();
         }
     }, [user]);
-
+    const questionTypeDisplayNames = {
+        'mcq': 'MCQ',
+        'single-line': 'Single Line',
+        'multi-line': 'Multi Line',
+        'approach': 'Approach',
+        'coding': 'Coding',
+        'case-study': 'Case Study'
+    };
     return (
         <Wrapper>
             <TakeChallenge />
@@ -94,42 +101,47 @@ console.log("challengesRes",challengesRes);
             <Title>Past Challenges</Title>
 
             {challenges.length > 0 ? (
-                challenges.map((challenge) => (
-                    <Card
-                        key={challenge.id}
-                        onClick={() => navigate(`/user/challengeInfo/${challenge.id}`)}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <IconWrapper>
-                            <Icon type={challenge.type} status={challenge.status}>
-                                {challenge.status === 'Completed' ? (
-                                    <FaCheck />
-                                ) : challenge.type === 'text' ? (
-                                    <MdOutlineModeEditOutline />
-                                ) : (
-                                    <FaCode />
-                                )}
-                            </Icon>
-                        </IconWrapper>
+                challenges.map((challenge) => {
+                    return (
+                        <Card
+                            key={challenge.id}
+                            onClick={() => navigate(`/user/challengeInfo/${challenge.id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <IconWrapper>
+                                <Icon type={challenge.type} status={challenge.status}>
+                                    {challenge.userStatus === 'attempted' ? (
+                                        <FaCheck />
+                                    ) : challenge.question_type === 'coding' ? (
+                                        <FaCode />
+                                    ) : (
+                                        <MdOutlineModeEditOutline />
 
-                        <CardDesc>
-                            <CardLabels>
-                                <Label>{challenge.category}</Label>
-                                <Label difficulty={challenge.difficulty.toLowerCase()}>
-                                    {challenge.difficulty}
-                                </Label>
-                            </CardLabels>
-                            <CardTitle>{challenge.title}</CardTitle>
-                            <CardSubtitle>{challenge.description}</CardSubtitle>
-                        </CardDesc>
+                                    )}
+                                </Icon>
+                            </IconWrapper>
 
-                        <CardStatus>
-                            <Status status={challenge.status}>
-                                {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
-                            </Status> <Date>{challenge.date}</Date>
-                        </CardStatus>
-                    </Card>
-                ))
+                            <CardDesc>
+                                <CardLabels>
+                                    <Label>{questionTypeDisplayNames[challenge.question_type] || challenge.question_type}</Label>
+                                    <Label difficulty={challenge.difficulty.toLowerCase()}>
+                                        {challenge.difficulty}
+                                    </Label>
+                                </CardLabels>
+                                <CardTitle>{challenge.title}</CardTitle>
+                                <CardSubtitle>
+                                    {challenge.question_type === "coding" ? "N/A" : (challenge.description || "No description provided.")}
+                                </CardSubtitle>
+                            </CardDesc>
+
+                            <CardStatus>
+                                <Status status={challenge.status}>
+                                    {challenge.status.charAt(0).toUpperCase() + challenge.status.slice(1)}
+                                </Status> <Date>{challenge.date}</Date>
+                            </CardStatus>
+                        </Card>
+                    )
+                })
             ) : (
                 <p>No past challenges found.</p>
             )}
