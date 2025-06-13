@@ -50,6 +50,7 @@ import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
 import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
+import { VscDebugRestart } from "react-icons/vsc";
 
 const QBCodingPage = () => {
   const navigate = useNavigate();
@@ -70,11 +71,13 @@ const QBCodingPage = () => {
   const [showOptimiseBtn, setShowOptimiseBtn] = useState(false);
   const [optimisedCode, setOptimisedCode] = useState("");
   const [activeTab, setActiveTab] = useState("mycode");
-  const [timeLeft, setTimeLeft] = useState(20);
   const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [hint, setHint] = useState(null);
-  const [hintIndex, setHintIndex] = useState(null);
+const [timeLeft, setTimeLeft] = useState(() => {
+  const savedTime = localStorage.getItem(`challengeTimer_${id}`);
+  const parsedTime = savedTime ? parseInt(savedTime) : 60;
+  return parsedTime > 0 ? parsedTime : 60;
+});
 
   // Get question ID from location.state
   useEffect(() => {
@@ -130,6 +133,8 @@ const QBCodingPage = () => {
               })) || [],
           });
           setCode(q.base_code || "");
+          setInput(q.input || "");
+          setSelectedLang(q.programming_language || "python");
         } else {
           notification.error({ message: "Failed to load question" });
         }
@@ -178,6 +183,28 @@ const QBCodingPage = () => {
 
     optimizeCode();
   }, [output, question, code]);
+
+useEffect(() => {
+  if (activeTab !== "mycode" || solutionTimeExpired) return;
+
+  const timer = setInterval(() => {
+    setTimeLeft((prev) => {
+      if (prev <= 1) {
+        clearInterval(timer);
+        setSolutionTimeExpired(true);
+        localStorage.removeItem(`challengeTimer_${id}`);
+        return 0;
+      }
+
+      const updatedTime = prev - 1;
+      localStorage.setItem(`challengeTimer_${id}`, updatedTime.toString());
+      return updatedTime;
+    });
+  }, 1000);
+
+  return () => clearInterval(timer);
+}, [activeTab, solutionTimeExpired]);
+
 
   useEffect(() => {
     if (timeLeft === 0) {
@@ -273,7 +300,15 @@ const QBCodingPage = () => {
                     <strong>
                       Output:
                       <br />
-                      <pre >{question?.output}</pre>
+                      {question?.programming_language === "Python"? (
+                        <p> {question?.output}</p>
+                      ) : (
+                        <pre   style={{
+    maxwidth: '300px',
+    overflowX: 'auto',
+    wordBreak: 'break-word'
+  }} > {question?.output}</pre>
+                      )}
                     </strong>
                   </p>
                 </QuestionBox>
@@ -350,6 +385,12 @@ const QBCodingPage = () => {
                     </HintWrapper>
 
                     <LanguageSelect>
+                      <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} onClick={() => {
+                        setCode(question.base_code);
+                        setSelectedLang(challenge.programming_language === "MySQL" ? "mysql" : "python");
+                      }}>
+                        <VscDebugRestart />
+                      </button>
                       <label htmlFor="lang">Select Language</label>
                       <Select
                         id="lang"
@@ -357,7 +398,7 @@ const QBCodingPage = () => {
                         onChange={(e) => setSelectedLang(e.target.value)}
                       >
                         <option value="python">Python</option>
-                        <option value="mysql">MySQL</option>
+                        <option value="MySQL">MySQL</option>
                       </Select>
                     </LanguageSelect>
                   </LanguageSelectWrapper>
@@ -365,8 +406,8 @@ const QBCodingPage = () => {
 
                 {activeTab === "mycode" && (
                   <ReadyToCode
-                    selectLang={selectedLang}
-                    setSelectLang={setSelectedLang}
+                    selectedLang={selectedLang}
+                    setSelectedLang={setSelectedLang}
                     code={code}
                     setCode={setCode}
                     output={output}
@@ -378,33 +419,26 @@ const QBCodingPage = () => {
                     handleOptimizeCode={() => setModalOpen(true)}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
+                    solutionTimeExpired={solutionTimeExpired}
                   />
                 )}
 
                 {activeTab === "solution" && (
                   <>
-                    <div
-                      style={{
-                        background: "#f4f4f4",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        minHeight: "300px",
-                        whiteSpace: "pre-wrap",
-                        fontFamily: "monospace",
-                        fontSize: "14px",
-                      }}
-                    >
-                      <h3>Solution Code:</h3>
-                      <code>
-                        {question?.solution || "No solution available."}
-                      </code>
-                    </div>
+                <Editor
+                  height="200px"
+                  language={setSelectedLang === "python" ? "python" : "mysql"}
+                  value={question?.solutionCode}
+                  // onChange={setCode}
+                  theme="vs-light"
+
+                />
 
                     <CardContainer>
                       <TitleforSolution>Code Explaination</TitleforSolution>
 
                       <Paragraph>
-                        Data analytics
+                        {question?.solutionExplanation || "No code explaination available."}
                       </Paragraph>
 
                       <Footer>

@@ -17,12 +17,17 @@ import {
   TextArea,
   OptionWrapper,
   BackButton,
+    SolutionBox,
+  SolutionAnswer,
+  SolutionText,
+  HelpIcons,
 } from "./NewChallenges.style"; // You’ll need to add these styled components if not already
 // import { RxArrowLeft } from "react-icons/rx";
 import amazon from "../../../../assets/Avatar.svg";
 import flipkart from "../../../../assets/PersonPhoto.svg";
 import google from "../../../../assets/image.svg";
 import { IoChevronBackSharp } from "react-icons/io5";
+import { PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi"; // Adjust the import path if needed
 
 const NewChallenge = () => {
   const { id } = useParams();
@@ -161,57 +166,36 @@ const NewChallenge = () => {
       </BackButton>
 
       <Card>
+        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
          <Tag>
                 {isToday(challenge.createdAt) ? "# Today's Challenge" : "# Past Challenge"}
               </Tag>
-        {/* {!["mcq", "single-line", "multi-line", "approach", "text"].includes(challenge.question_type) && (
-          <>
-            <Header>
-              <Title>{challenge.QuestionText}</Title>
-              <Description dangerouslySetInnerHTML={{ __html: challenge?.description }} />
-              <Tags>
-                <Tag>{challenge.programming_language}</Tag>
-                <Tag>{challenge.difficulty}</Tag>
-              </Tags>
-            </Header>
-
-
-            <hr className="hrtag" />
-            <h3>Topics</h3>
-            <TopicsList>
-              {challenge.topics?.map((topic, index) => (
-                <TopicItem key={index}>{topic.topic_name}</TopicItem>
-              ))}
-            </TopicsList>
-            <hr className="hrtag" />
-          </>
-        )} */}
-
-        {/* <hr className="hrtag" /> */}
-        {/* <h3>{challenge.question_type === "coding" ? "Your Respone" : ""}</h3> */}
+                      <Tag>
+                {challenge.question_type === "coding" ? `# ${challenge.programming_language}` : `# ${challenge.question_type}`}
+              </Tag>
+              </div>
         <Title>{challenge.QuestionText}</Title>
         {renderInput()}
 
         {["text", "multi-line", "approach", "mcq", "single-line"].includes(challenge.question_type) && (
           <>
-            {showSolution && (
-              <>
-                <h4 style={{ marginTop: "20px" }}>Solution</h4>
-                <p style={{ background: "#f0f0f0", padding: "12px", borderRadius: "5px" }}>
-                  {challenge?.correct_option}
-                </p>
-              </>
+          {showSolution && (
+          <SolutionBox>
+            <SolutionText>Solution:</SolutionText>
+            <SolutionAnswer>
+              {challenge.question_type === "mcq" ? (
+                <span>{challenge.correct_option}</span>
+              ) : (
+                <span>{challenge.answer || "No solution provided."}</span>
+              )}
+              <HelpIcons>
+                <PiThumbsUpLight /> Helpful
+                <PiThumbsDownLight /> Not helpful
+              </HelpIcons>
+            </SolutionAnswer>
+          </SolutionBox>
             )}
             <Footer>
-                        {/* <Button onClick={handleStartChallenge}>Take Challenge</Button>
-          <Icons>
-            <div className="icons-container">
-              <span>Previously Asked In</span>
-              {iconList.map((icon, index) => (
-                <img key={index} src={icon.src} alt={icon.alt} style={{ right: `${index * 10}px` }} />
-              ))}
-            </div>
-          </Icons> */}
 
               <Button
                 onClick={() => {

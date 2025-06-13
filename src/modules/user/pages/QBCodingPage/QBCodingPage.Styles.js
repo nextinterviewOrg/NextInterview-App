@@ -123,6 +123,8 @@ justify-content: space-between;
     background-color: #e2e3e5;
   padding: 6px;
   border-radius: 5px;
+  width: 4
+  0%;
 `;
 
 export const QusnText = styled.h2`
@@ -152,7 +154,7 @@ border-radius: 5px;
 
 export const QuestionContainer = styled.div`
   padding: 1rem;
-  //  width: 50%; 
+   width: 50%; 
 `;
 
 export const QuestionBox = styled.div`

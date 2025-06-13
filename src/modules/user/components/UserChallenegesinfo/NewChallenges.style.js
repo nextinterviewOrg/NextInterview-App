@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const BackButton = styled.button`
   border: none;
-  color: #007bff;
+  color: #2290ac;
   font-size: 16px;
   cursor: pointer;
   margin-bottom: 16px;
@@ -10,7 +10,7 @@ export const BackButton = styled.button`
   justify-content: flex-start;
   align-items: center;
   gap: 5px;
-  background-color: #f0f0f0;
+  background-color: #f0f8f1;
   width: 100%;
   padding: 10px;
     padding-left: 50px;
@@ -21,8 +21,8 @@ export const BackButton = styled.button`
 `;
 
 export const Card = styled.div`
-  width: 90%;
-  margin-left: 70px;
+  // width: 90%;
+  margin-left: 50px;
   padding: 20px;
   background: #fff;
   border-radius: 12px;
@@ -155,6 +155,72 @@ export const Icons = styled.div`
     }
   }
 `;
+
+export const SolutionBox = styled.div`
+  margin-top: 24px;
+  padding: 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  display: flex;
+  flex-direction: column;
+
+  p {
+    margin: 8px 0 0 0;
+
+    @media (max-width: 768px) {
+      margin: 4px 0 0 0;
+    }
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  @media (max-width: 768px) {
+    padding: 8px;
+  }
+`;
+
+export const SolutionText = styled.span`
+  color: #2290ac;
+  padding: 5px;
+  font-size: 18px;
+
+  @media (max-width: 1024px) {
+    font-size: 16px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+`;
+
+export const SolutionAnswer = styled.span`
+  background-color: #f0f8f1;
+  padding: 20px;
+  border-radius: 6px;
+  font-size: 16px;
+  word-break: break-word;
+  line-height: 1.5;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;
+
+export const HelpIcons = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;  
 
 
 export const Tags = styled.div`
