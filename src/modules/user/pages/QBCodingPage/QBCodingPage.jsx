@@ -40,7 +40,7 @@ import {
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
 import { IoChevronBackSharp, IoClose } from "react-icons/io5";
 import HintChallenges from "../../../admin/components/Challenges/HintChallenges/HintChallenges";
-import { getQuestionBankById } from "../../../../api/questionBankApi";
+import { getQuestionBankById, tryHarderQuestionBank } from "../../../../api/questionBankApi";
 import { addQuestionToQuestionProgressTIYQB } from "../../../../api/tiyQbCodingQuestionProgressApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
@@ -50,6 +50,8 @@ import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
 import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
+import { VscDebugRestart } from "react-icons/vsc";
+import { addQuestionToQuestionProgress } from "../../../../api/userMainQuestionBankProgressApi";
 
 const QBCodingPage = () => {
   const navigate = useNavigate();
@@ -70,11 +72,14 @@ const QBCodingPage = () => {
   const [showOptimiseBtn, setShowOptimiseBtn] = useState(false);
   const [optimisedCode, setOptimisedCode] = useState("");
   const [activeTab, setActiveTab] = useState("mycode");
-  const [timeLeft, setTimeLeft] = useState(20);
   const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [hint, setHint] = useState(null);
-  const [hintIndex, setHintIndex] = useState(null);
+  const [timeLeft, setTimeLeft] = useState(() => {
+    const savedTime = localStorage.getItem(`challengeTimer_${id}`);
+    const parsedTime = savedTime ? parseInt(savedTime) : 60;
+    return parsedTime > 0 ? parsedTime : 60;
+  });
+  const [runClicked, setRunClicked] = useState(false);
 
   // Get question ID from location.state
   useEffect(() => {
@@ -89,8 +94,9 @@ const QBCodingPage = () => {
       if (user?.id) {
         try {
           const res = await getUserByClerkId(user.id);
+          console.log("Fetched user ID:", res);
           if (res.success) {
-            setUserId(res.data._id);
+            setUserId(res.data.user._id);
           }
         } catch (err) {
           console.error("Error fetching user ID:", err);
@@ -99,6 +105,15 @@ const QBCodingPage = () => {
     };
     fetchUserId();
   }, [user]);
+  useEffect(() => {
+
+    if (runClicked && output?.trim() === question?.output?.trim()) {
+      setShowOptimiseBtn(true);
+      // fetchOptimizedCode();
+    } else {
+      setShowOptimiseBtn(false);
+    }
+  }, [output, runClicked]);
 
   // Fetch question details
   useEffect(() => {
@@ -128,8 +143,11 @@ const QBCodingPage = () => {
                 hint_text: h.hint_text,
                 explanation: h.explanation,
               })) || [],
+            module_code: q.module_code
           });
           setCode(q.base_code || "");
+          setInput(q.input || "");
+          setSelectedLang(q.programming_language === "MySQL" ? "mysql" : "python");
         } else {
           notification.error({ message: "Failed to load question" });
         }
@@ -180,6 +198,28 @@ const QBCodingPage = () => {
   }, [output, question, code]);
 
   useEffect(() => {
+    if (activeTab !== "mycode" || solutionTimeExpired) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setSolutionTimeExpired(true);
+          localStorage.removeItem(`challengeTimer_${id}`);
+          return 0;
+        }
+
+        const updatedTime = prev - 1;
+        localStorage.setItem(`challengeTimer_${id}`, updatedTime.toString());
+        return updatedTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [activeTab, solutionTimeExpired]);
+
+
+  useEffect(() => {
     if (timeLeft === 0) {
       setSolutionTimeExpired(true);
       return;
@@ -207,19 +247,21 @@ const QBCodingPage = () => {
     setIsSubmitting(true);
     try {
       const submissionData = {
-        questionId: questionID,
+        questionBankId: questionID,
+        moduleId: question.module_code,
         userId,
         answer: code,
         finalResult: output.trim() === question.output.trim(),
         output,
         skip: false,
+        question_type: "coding"
       };
 
-      const res = await addQuestionToQuestionProgressTIYQB(submissionData);
+      const res = await addQuestionToQuestionProgress(submissionData);
 
       if (res.success) {
         notification.success({ message: "Question submitted successfully" });
-        navigate("/user/mainQuestionBank", { state: location.state });
+        navigate("/user/mainQuestionBank/questionbank", { state: location.state });
       } else {
         notification.error({ message: "Submission failed" });
       }
@@ -228,6 +270,28 @@ const QBCodingPage = () => {
       notification.error({ message: "Unexpected error during submission" });
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleTryHarderQuestion = async () => {
+    try {
+      console.log('Fetching harder question...');
+      const response = await tryHarderQuestionBank({
+        questionId: questionID,
+        isTIYQuestion: false,
+        isQBQuestion: true
+      });
+
+      if (response?.success && response?.data?._id) {
+        navigate(`/user/mainQuestionBank/questionbank/${response.data._id}`);
+      } else {
+        notification.info({ message: "No harder question found." });
+        // alert('No harder question found.');
+        navigate(`/user/mainQuestionBank`)
+      }
+    } catch (error) {
+      console.error('Error fetching harder question:', error);
+      alert('Something went wrong. Please try again later.');
     }
   };
   return (
@@ -246,7 +310,7 @@ const QBCodingPage = () => {
               <QusnDifficulty difficulty={question?.difficulty}>
                 {question?.difficulty}
               </QusnDifficulty>
-              
+
             </QusnType>
 
             <div
@@ -261,7 +325,8 @@ const QBCodingPage = () => {
                 <Title>Question</Title>
                 <QuestionBox>
                   <p>
-                    <strong>Description:</strong>
+                    <strong>
+                      Description:</strong>
                   </p>
                   <div
                     dangerouslySetInnerHTML={{ __html: question?.description }}
@@ -273,7 +338,15 @@ const QBCodingPage = () => {
                     <strong>
                       Output:
                       <br />
-                      <pre >{question?.output}</pre>
+                      {question?.programming_language === "Python" ? (
+                        <p> {question?.output}</p>
+                      ) : (
+                        <pre style={{
+                          maxwidth: '300px',
+                          overflowX: 'auto',
+                          wordBreak: 'break-word'
+                        }} > {question?.output}</pre>
+                      )}
                     </strong>
                   </p>
                 </QuestionBox>
@@ -350,6 +423,13 @@ const QBCodingPage = () => {
                     </HintWrapper>
 
                     <LanguageSelect>
+                      <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} onClick={() => {
+                        setCode(question.base_code);
+                        setSelectedLang(question.programming_language === "MySQL" ? "mysql" : "python");
+                        setOutput(null)
+                      }}>
+                        <VscDebugRestart />
+                      </button>
                       <label htmlFor="lang">Select Language</label>
                       <Select
                         id="lang"
@@ -378,42 +458,38 @@ const QBCodingPage = () => {
                     handleOptimizeCode={() => setModalOpen(true)}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
+                    solutionTimeExpired={solutionTimeExpired}
+                    challenge={false}
+                    setRunClicked={setRunClicked}
+                    tryHarderQuestion={handleTryHarderQuestion}
                   />
                 )}
 
                 {activeTab === "solution" && (
                   <>
-                    <div
-                      style={{
-                        background: "#f4f4f4",
-                        padding: "20px",
-                        borderRadius: "8px",
-                        minHeight: "300px",
-                        whiteSpace: "pre-wrap",
-                        fontFamily: "monospace",
-                        fontSize: "14px",
-                      }}
-                    >
-                      <h3>Solution Code:</h3>
-                      <code>
-                        {question?.solution || "No solution available."}
-                      </code>
-                    </div>
+                    <Editor
+                      height="200px"
+                      language={setSelectedLang === "python" ? "python" : "mysql"}
+                      value={question?.solutionCode}
+                      // onChange={setCode}
+                      theme="vs-light"
+
+                    />
 
                     <CardContainer>
                       <TitleforSolution>Code Explaination</TitleforSolution>
 
                       <Paragraph>
-                        Data analytics
+                        {question?.solutionExplanation || "No code explaination available."}
                       </Paragraph>
 
                       <Footer>
-                        <TryHarderLink href="#"><PiStarFour/> Try harder question</TryHarderLink>
+                        <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink>
 
-                        <FeedBacks>
-                        <FeedbackButton><PiThumbsUpLight /> Helpful</FeedbackButton>
-                        <FeedbackButton><PiThumbsDownLight/> Not helpful</FeedbackButton>
-                        </FeedBacks>
+                        {/* <FeedBacks>
+                          <FeedbackButton><PiThumbsUpLight /> Helpful</FeedbackButton>
+                          <FeedbackButton><PiThumbsDownLight /> Not helpful</FeedbackButton>
+                        </FeedBacks> */}
                       </Footer>
                     </CardContainer>
                   </>

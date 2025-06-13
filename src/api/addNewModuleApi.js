@@ -96,7 +96,6 @@ export const getSubTopicCode = async (module_code,topic_code) => {
 export const getLastTopicByModuleCode = async (data) => {
     try {
         const response = await api.post(`/addNewModule/getModuleLastTopic`,data);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -107,7 +106,6 @@ export const getLastTopicByModuleCode = async (data) => {
 export const getLastSubTopicByTopicCode = async (data) => {
     try {
         const response = await api.post(`/addNewModule/getModuleTopicLastSubtopic`,data);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -117,7 +115,6 @@ export const getLastSubTopicByTopicCode = async (data) => {
 export const getModuleByModuleCode = async (moduleCode) => {
     try {
         const response = await api.get(`/addNewModule/getModule/${moduleCode}`);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log(error);
@@ -127,7 +124,6 @@ export const getModuleByModuleCode = async (moduleCode) => {
 export const getTopicCodeAndNameByModuleCode = async (moduleId) => {
     try {
         const response = await api.get(`/addNewModule/moduleTopics/${moduleId}`);
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log(error);

@@ -356,8 +356,6 @@ const QuestionBank = () => {
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
 
-  console.log("All Questions:", allQuestions);
-
   const emptyFilterState = {
     easy: false,
     medium: false,
@@ -429,7 +427,7 @@ const QuestionBank = () => {
             category: q.programming_language || "Other",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
-            type: q.question_type ,
+            type: q.question_type || "text",
             completed: q.attempted || false,
             description: q.description || '',
             longDescription: q.description || '',
@@ -467,7 +465,7 @@ const QuestionBank = () => {
             category: q.programming_language || "Other",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
-            type:  q.question_type,
+            type: q.question_type || 'text',
             completed: q.attempted || false,
             description: q.description || '',
             longDescription: q.description || '',
@@ -649,7 +647,7 @@ const QuestionBank = () => {
       </FilterBar>
 
       {/* Render Questions Based on Active Tab */}
-      {allQuestions.map((q, index) => (
+      {filteredQuestions.map((q, index) => (
         <Link
           key={index}
           to={`/user/mainQuestionBank/questionbank/${q.id}`}
@@ -661,7 +659,7 @@ const QuestionBank = () => {
             </Icon>
             <Content>
               <TagsRow>
-                <Tag>{q.category}</Tag>
+                <Tag>{q.type}</Tag>
                 <Tag difficulty={q.difficulty}>{q.difficulty}</Tag>
               </TagsRow>
               <Title>{q.text}</Title>
@@ -674,3 +672,9 @@ const QuestionBank = () => {
 };
 
 export default QuestionBank;
+
+// 67e39c46f4ef735e4fc83cfa
+
+// 68104bbf0e8f15d8b199583d
+
+// 67c6c5b4c83761e02b32725a

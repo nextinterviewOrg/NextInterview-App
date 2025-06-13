@@ -100,6 +100,7 @@ export const getQuestionBankById = async (id) => {
 export const markUserSubmission = async (data)=>{
 try{
   const response = await api.post(`/mainQuestionBankProgress`,data);
+  console.log("Response from markUserSubmission:", response.data);
   return response.data;
 }catch(error){
   console.log(error);
@@ -116,3 +117,16 @@ export const tryHarderQuestionBank = async (data)=>{
     throw error;
   }
   }
+
+export const getNextQuestion = async (questionId, categoryId) => {
+  try {
+    const response = await api.post(`/mainQuestionBank/nextQuestion`, {
+      questionId,
+      categoryId
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error in getNextQuestion:', error);
+    throw error;
+  }
+};

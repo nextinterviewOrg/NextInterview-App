@@ -256,7 +256,15 @@ useEffect(() => {
               </p>
               <p><strong>Input:</strong> {challenge.input}</p>
               <p><strong>Output:</strong>
-                <pre>{challenge.output}</pre> </p>
+                {challenge.programming_language === "Python" ? (
+<p> {challenge?.output}</p>
+                      ) : (
+                        <pre   style={{
+    maxwidth: '300px',
+    overflowX: 'auto',
+    wordBreak: 'break-word'
+  }} > {challenge?.output}</pre>
+                      )} </p>
             </QuestionBox>
           </QuestionContainer>
 
@@ -310,6 +318,7 @@ useEffect(() => {
                   <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} onClick={() => {
                     setCode(challenge.base_code);
                     setSelectedLang(challenge.programming_language === "MySQL" ? "mysql" : "python");
+                    setOutput("");
                   }}>
                     <VscDebugRestart />
                   </button>

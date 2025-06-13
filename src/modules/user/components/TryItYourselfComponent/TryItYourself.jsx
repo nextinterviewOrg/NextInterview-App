@@ -122,7 +122,7 @@ const handleNextQuestion = () => {
   })();
 
   const handleExploreButtonClick = () => {
-    navigate(`/user/mainQuestionBank`);
+    navigate(`/user/mainQuestionBank/questionbank`);
   };
 
   if (loading) {

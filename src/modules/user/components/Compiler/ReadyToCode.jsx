@@ -68,7 +68,6 @@ const ReadyToCode = ({
       ],
       stdin: selectLang === "python" ? input : "",
     };
-
     try {
       const res = await fetch("https://onecompiler-apis.p.rapidapi.com/api/v1/run", {
         method: "POST",
