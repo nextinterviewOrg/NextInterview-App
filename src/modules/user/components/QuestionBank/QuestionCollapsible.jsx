@@ -298,12 +298,9 @@ const handleSolutionButton = async () => {
         <QuestionBox>
           <QusnandType>
             <QuestionText>{question.text}</QuestionText>
-            <QusnStatus>
-              <PrmngLang>{question?.programming_language}</PrmngLang>
             <DifficultyTag level={question.difficulty}>
               {question.difficulty}
             </DifficultyTag>
-            </QusnStatus>
           </QusnandType>
           {renderInput()}
         </QuestionBox>
