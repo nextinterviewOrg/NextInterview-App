@@ -6,7 +6,7 @@ import theme from '../../../../theme/Theme';
 
 export const BackButton = styled.button`
   border: none;
-  color: #007bff;
+  color: #2290ac;
   font-size: 16px;
   cursor: pointer;
   margin-bottom: 16px;
@@ -14,7 +14,7 @@ export const BackButton = styled.button`
   justify-content: flex-start;
   align-items: center;
   gap: 5px;
-  background-color: #f0f0f0;
+  background-color: #f5f5f5;
   width: 100%;
   padding: 10px;
     // padding-left: 60px;
@@ -120,7 +120,7 @@ justify-content: space-between;
   font-weight: 500;
   color: #333;
   margin-bottom: 1rem;
-    background-color: #e2e3e5;
+    background-color: #EDF1F3;
   padding: 6px;
   border-radius: 5px;
   width: 4
@@ -158,7 +158,7 @@ export const QuestionContainer = styled.div`
 `;
 
 export const QuestionBox = styled.div`
-    background-color: #e2e3e5;
+    background-color: #F5F5F5;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
@@ -232,7 +232,7 @@ export const TabsWrapper = styled.div`
 export const TabButton = styled.button`
   padding: 10px 16px;
   border: ${({ active }) => (active ? 'none' : '1px solid #ccc')};
-  background-color: ${({ active }) => (active ? '#808080' : '#fff')};
+  background-color: ${({ active }) => (active ? '#1A1C1E99' : '#fff')};
   color: ${({ active }) => (active ? '#fff' : '#777')};
   border-radius: 20px;
   font-weight: 500;
@@ -335,11 +335,11 @@ export const LanguageSelectWrapper = styled.div`
 export const Select = styled.select`
   padding: 6px 12px;
   border-radius: 10px;
-  border: 1px solid #ddd;
-  background-color: #f8f8f8;
+  border: none;
+  background-color: #f5f5f5;
   font-weight: 500;
   cursor: pointer;
-  width: 200px;
+  width: 150px;
 `;
 
 export const LanguageSelect = styled.div` 

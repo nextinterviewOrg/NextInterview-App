@@ -28,9 +28,13 @@ import flipkart from "../../../../assets/PersonPhoto.svg";
 import google from "../../../../assets/image.svg";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi"; // Adjust the import path if needed
+import { submitUserChallengeProgress} from "../../../../api/challengesApi"; // Adjust the path if needed
+import { getUserByClerkId } from "../../../../api/userApi";
+import { useUser } from "@clerk/clerk-react"; // Adjust the import path if needed
 
 const NewChallenge = () => {
   const { id } = useParams();
+  const { user } = useUser(); // Get the current user from Clerk
   const [challenge, setChallenge] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,30 +78,32 @@ const NewChallenge = () => {
 
   console.log("Question Type:", challenge?.question_type);
 
-  const renderInput = () => {
+const renderInput = () => {
   const type = challenge?.question_type?.trim().toLowerCase();
   console.log("Question Type:", type);
 
   switch (type) {
-    case "mcq": {
-      const options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
-        .map(key => challenge[key])
-        .filter(Boolean);
-      return options.map((option, index) => (
-        <OptionWrapper key={index}>
-          <label>
-            <input
-              type="radio"
-              name="mcq"
-              value={option}
-              checked={textAnswer === option}
-              onChange={(e) => setTextAnswer(e.target.value)}
-            />
-            {" "}{option}
-          </label>
-        </OptionWrapper>
-      ));
-    }
+   case "mcq": {
+  const options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
+    .map(key => challenge[key])
+    .filter(Boolean);
+  return options.map((option, index) => (
+    <OptionWrapper key={index}>
+      <label>
+        <input
+          type="radio"
+          name="mcq"
+          value={option}
+          checked={textAnswer === option}
+          disabled={showSolution} // 🔒 Disable after submission
+          onChange={(e) => setTextAnswer(e.target.value)}
+        />
+        {" "}{option}
+      </label>
+    </OptionWrapper>
+  ));
+}
+
 
     case "single-line":
       return (
@@ -106,6 +112,7 @@ const NewChallenge = () => {
           placeholder="Type your answer..."
           value={textAnswer}
           onChange={(e) => setTextAnswer(e.target.value)}
+          disabled={showSolution} // 🔒 Disable after submission
         />
       );
 
@@ -118,6 +125,7 @@ const NewChallenge = () => {
           rows={4}
           value={textAnswer}
           onChange={(e) => setTextAnswer(e.target.value)}
+          disabled={showSolution} // 🔒 Disable after submission
         />
       );
 
@@ -133,7 +141,7 @@ const NewChallenge = () => {
               <li key={idx}>{topic.topic_name}</li>
             ))}
           </ul>
-          <Button style={{ marginTop: '10px' }} onClick={() => handleStartChallenge()}>
+          <Button style={{ marginTop: '10px' }} onClick={() => handleStartChallenge()} disabled={showSolution}>
             Try Coding
           </Button>
         </>
@@ -144,6 +152,68 @@ const NewChallenge = () => {
       return <div style={{ marginTop: '1rem' }}>Unsupported or missing question type.</div>;
   }
 };
+
+const handleSolutionClick = async () => {
+    if(!textAnswer.trim()) {
+      setError("Please provide an answer before viewing the solution.");
+      return;
+    }
+
+    const userRes = await getUserByClerkId(user.id);
+    console.log("User response from getUserByClerkId:", userRes);
+    const userId = userRes?.data?.user?._id;
+
+
+
+    if( !userId ) {
+      setError("User not found. Please log in again.");
+      return;
+    }
+
+
+    try {
+      const payload = {
+        userId: userId,
+        questionId: challenge._id,
+        question_type: challenge.question_type,
+        answer: textAnswer,
+        finalResult: true,
+        skip: false
+      };
+if (challenge.question_type === "mcq") {
+  const options = ["option_a", "option_b", "option_c", "option_d", "option_e"]
+    .map(key => challenge[key])
+    .filter(Boolean); // exclude undefined or null
+
+  const optionIndex = options.findIndex(
+    (option) => option === textAnswer
+  );
+
+  const optionMap = ["option_a", "option_b", "option_c", "option_d", "option_e"];
+  if (optionIndex !== -1) {
+    payload.answer = optionMap[optionIndex];
+    payload.choosen_option = optionMap[optionIndex]; // if required by your backend
+  }
+}
+
+      console.log("Submitting user challenge progress with payload:", payload);
+
+      const response = await submitUserChallengeProgress(payload);
+      console.log("Response from submitUserChallengeProgress:", response);
+
+if (response?.data && response.data._id) {
+  console.log("Answer submitted successfully:", response.data);
+  setShowSolution(true);
+  setError(null); // clear any existing error
+} else {
+  console.error("Unexpected response structure:", response.data);
+  setError("Unexpected response. Please try again.");
+}
+    } catch (err) {
+      console.error("Error submitting answer:", err);
+      setError("An error occurred while submitting your answer. Please try again.");
+    }
+  };
 
   const isToday = (dateString) => {
     const today = new Date();
@@ -177,39 +247,37 @@ const NewChallenge = () => {
         <Title>{challenge.QuestionText}</Title>
         {renderInput()}
 
-        {["text", "multi-line", "approach", "mcq", "single-line"].includes(challenge.question_type) && (
-          <>
-          {showSolution && (
-          <SolutionBox>
-            <SolutionText>Solution:</SolutionText>
-            <SolutionAnswer>
-              {challenge.question_type === "mcq" ? (
-                <span>{challenge.correct_option}</span>
-              ) : (
-                <span>{challenge.answer || "No solution provided."}</span>
-              )}
-              <HelpIcons>
-                <PiThumbsUpLight /> Helpful
-                <PiThumbsDownLight /> Not helpful
-              </HelpIcons>
-            </SolutionAnswer>
-          </SolutionBox>
-            )}
-            <Footer>
+{["text", "multi-line", "approach", "mcq", "single-line"].includes(challenge.question_type) && (
+  <>
+    {showSolution && (
+      <SolutionBox>
+        <SolutionText>Solution:</SolutionText>
+        <SolutionAnswer>
+          {challenge.question_type === "mcq" ? (
+            <span>{challenge.correct_option}</span>
+          ) : (
+            <span>{challenge.answer || "No solution provided."}</span>
+          )}
+        </SolutionAnswer>
+      </SolutionBox>
+    )}
+  </>
+)}
 
-              <Button
-                onClick={() => {
-                  if (!showSolution) {
-                    setShowSolution(true);
-                  }
-                }}
-                disabled={!showSolution && textAnswer.trim().length === 0}
-              >
-                {showSolution ? "Next Question" : "Show Solution"}
-              </Button>
-            </Footer>
-          </>
-        )}
+{/* ✅ Always visible button */}
+
+{!showSolution && challenge.question_type !== "coding" && (
+  <Footer>
+    <Button
+      onClick={handleSolutionClick}
+      disabled={textAnswer.trim().length === 0}
+    >
+      Show Solution
+    </Button>
+  </Footer>
+)}
+
+
       </Card>
     </>
   );

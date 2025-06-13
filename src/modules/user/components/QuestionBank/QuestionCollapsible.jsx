@@ -245,6 +245,7 @@ const handleSolutionButton = async () => {
                     name="mcq"
                     value={option}
                     checked={textAnswer === option}
+                    disabled={showSolution} // 🔒 Disable after submission
                     onChange={e => setTextAnswer(e.target.value)}
                   />{' '}
                   {option}
@@ -260,6 +261,7 @@ const handleSolutionButton = async () => {
             type="text"
             value={textAnswer}
             onChange={e => setTextAnswer(e.target.value)}
+            disabled={showSolution} // 🔒 Disable after submission
             placeholder="Type your answer here..."
           />
         );
@@ -272,6 +274,7 @@ const handleSolutionButton = async () => {
             as="textarea"
             value={textAnswer}
             onChange={e => setTextAnswer(e.target.value)}
+            disabled={showSolution} // 🔒 Disable after submission
             placeholder="Type your answer here..."
             rows={4}
           />
