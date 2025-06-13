@@ -563,3 +563,20 @@ export const TextAnswer = styled.textarea`
     width: 95%;
   }
 `;
+
+export const QusnStatus = styled.div`
+  font-size: 14px;
+  color: #007bff;
+  margin: 20px 10px;
+  text-align: right;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const PrmngLang = styled.div`
+  font-size: 14px;
+  color: black;
+  margin: 20px 10px;
+  text-align: right;
+`;

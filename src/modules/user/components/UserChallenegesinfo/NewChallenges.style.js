@@ -81,12 +81,22 @@ export const Title = styled.h2`
   margin-bottom: 10px;
   background-color: #f0f8f1;
   padding: 10px;
+  display: flex;
+  justify-content: space-between;
 
   @media (max-width: 1024px) {
     font-size: 18px;
   }
     @media (max-width: 768px) {
       font-size: 16px;
+    }
+
+    .language{
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px;
     }
 `;
 

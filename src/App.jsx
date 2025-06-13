@@ -112,6 +112,7 @@ import AllQuestionBank from "./modules/user/pages/AllQuestionBank/AllQuestionBan
 import TermsofService from "./pages/TermsofService/TermsofService";
 import PrivacyandPolicy from "./pages/PrivacyandPolicy/PrivacyandPolicy";
 import PaymentHistory from "./modules/admin/pages/PaymentHistory/PaymentHistory";
+import QusnsTryitYourself from "./modules/user/components/QusnsTryitYourself/QusnsTryitYourself";
 
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
@@ -256,6 +257,7 @@ function App() {
             <Route path="learning" element={<UserLearning />} />
             <Route path="learning/:id" element={<UserLearningModule />} />
             <Route path="learning/:id/topic" element={<UserModuleTopic />} />
+            <Route path="qusnsTryitYourself" element={<QusnsTryitYourself/>} />
             <Route path="learning/:id/topic/sampleInterview" element={<UserSampleInterview />} />
             <Route path="learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
             {/* <Route path="questionbank" element={<QuestionBank />} />

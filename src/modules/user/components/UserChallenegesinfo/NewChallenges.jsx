@@ -189,7 +189,12 @@ const NewChallenge = () => {
 
         {/* <hr className="hrtag" /> */}
         {/* <h3>{challenge.question_type === "coding" ? "Your Respone" : ""}</h3> */}
-        <Title>{challenge.QuestionText}</Title>
+
+
+        <Title><p style={{margin:"0px"}}>{challenge.QuestionText} </p>
+           <p className="language">{challenge?.programming_language}</p>
+        </Title>
+        
         {renderInput()}
 
         {["text", "multi-line", "approach", "mcq", "single-line"].includes(challenge.question_type) && (

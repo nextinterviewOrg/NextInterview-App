@@ -670,7 +670,9 @@ import {
   TextAnswer,
   SolutionText,
   HelpIcons,
-  TextInput
+  TextInput,
+  QusnStatus,
+  PrmngLang
 } from './QuestionCollapsible.styles';
 import { IoChevronBackSharp } from "react-icons/io5";
 import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
@@ -693,6 +695,7 @@ const QuestionCollapsible = () => {
         setError(false);
 
         const response = await getQuestionBankById(id);
+        console.log("Response from getQuestionBankById:", response);
         if (response?.success && response.data) {
           const q = response.data;
 
@@ -709,6 +712,7 @@ const QuestionCollapsible = () => {
           const mappedQuestion = {
             id: q._id,
             category: q.programming_language || "Other",
+              programming_language: q.programming_language || "",
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
             type: q.question_type,
@@ -860,9 +864,12 @@ const QuestionCollapsible = () => {
         <QuestionBox>
           <QusnandType>
             <QuestionText>{question.text}</QuestionText>
+            <QusnStatus>
+              <PrmngLang>{question?.programming_language}</PrmngLang>
             <DifficultyTag level={question.difficulty}>
               {question.difficulty}
             </DifficultyTag>
+            </QusnStatus>
           </QusnandType>
           {renderInput()}
         </QuestionBox>
