@@ -29,6 +29,13 @@ import {
   HintContent,
   HintTitle,
   HintExplanation,
+  CardContainer,
+  TitleforSolution,
+  Paragraph,
+  TryHarderLink,
+  Footer,
+  FeedbackButton,
+  FeedBacks
 } from "./QBCodingPage.Styles";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
 import { IoChevronBackSharp, IoClose } from "react-icons/io5";
@@ -42,6 +49,7 @@ import Editor from "@monaco-editor/react";
 import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
+import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
 
 const QBCodingPage = () => {
   const navigate = useNavigate();
@@ -171,6 +179,20 @@ const QBCodingPage = () => {
     optimizeCode();
   }, [output, question, code]);
 
+  useEffect(() => {
+    if (timeLeft === 0) {
+      setSolutionTimeExpired(true);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setTimeLeft((prevTime) => prevTime - 1);
+    }, 1000);
+
+    return () => clearInterval(timer); // cleanup
+  }, [timeLeft]);
+
+
   const handleGoBack = () => navigate(-1);
 
   const handleSubmit = async () => {
@@ -224,6 +246,7 @@ const QBCodingPage = () => {
               <QusnDifficulty difficulty={question?.difficulty}>
                 {question?.difficulty}
               </QusnDifficulty>
+              
             </QusnType>
 
             <div
@@ -274,9 +297,11 @@ const QBCodingPage = () => {
 
                     <TabButton
                       active={activeTab === "solution"}
-                      onClick={() =>
-                        solutionTimeExpired && setActiveTab("solution")
-                      }
+                      onClick={() => {
+                        if (solutionTimeExpired) {
+                          setActiveTab("solution");
+                        }
+                      }}
                       disabled={!solutionTimeExpired}
                       style={{
                         opacity: solutionTimeExpired ? 1 : 0.6,
@@ -284,11 +309,14 @@ const QBCodingPage = () => {
                       }}
                     >
                       Show Solution
-                      <TimerText>
-                        <PiTimer style={{ marginRight: "5px" }} />
-                        {timeLeft}secs
-                      </TimerText>
+                      {!solutionTimeExpired && (
+                        <TimerText>
+                          <PiTimer style={{ marginRight: "5px" }} />
+                          {timeLeft}secs
+                        </TimerText>
+                      )}
                     </TabButton>
+
                   </div>
 
                   <LanguageSelectWrapper>
@@ -302,20 +330,20 @@ const QBCodingPage = () => {
                       {showHint && (
                         <HintTooltip>
                           {Array.isArray(question?.hints) &&
-                          question?.hints.length > 0
+                            question?.hints.length > 0
                             ? question.hints.map((hintObj, index) => (
-                                <HintCard key={hintObj._id || index}>
-                                  <HintIcon>
-                                    <HiOutlineLightBulb />
-                                  </HintIcon>
-                                  <HintContent>
-                                    <HintTitle>{hintObj.hint_text}</HintTitle>
-                                    <HintExplanation>
-                                      {hintObj.explanation}
-                                    </HintExplanation>
-                                  </HintContent>
-                                </HintCard>
-                              ))
+                              <HintCard key={hintObj._id || index}>
+                                <HintIcon>
+                                  <HiOutlineLightBulb />
+                                </HintIcon>
+                                <HintContent>
+                                  <HintTitle>{hintObj.hint_text}</HintTitle>
+                                  <HintExplanation>
+                                    {hintObj.explanation}
+                                  </HintExplanation>
+                                </HintContent>
+                              </HintCard>
+                            ))
                             : "No hints available for this question."}
                         </HintTooltip>
                       )}
@@ -354,23 +382,43 @@ const QBCodingPage = () => {
                 )}
 
                 {activeTab === "solution" && (
-                  <div
-                    style={{
-                      background: "#f4f4f4",
-                      padding: "20px",
-                      borderRadius: "8px",
-                      minHeight: "300px",
-                      whiteSpace: "pre-wrap",
-                      fontFamily: "monospace",
-                      fontSize: "14px",
-                    }}
-                  >
-                    <h3>Solution Code:</h3>
-                    <code>
-                      {question?.solution || "No solution available."}
-                    </code>
-                  </div>
+                  <>
+                    <div
+                      style={{
+                        background: "#f4f4f4",
+                        padding: "20px",
+                        borderRadius: "8px",
+                        minHeight: "300px",
+                        whiteSpace: "pre-wrap",
+                        fontFamily: "monospace",
+                        fontSize: "14px",
+                      }}
+                    >
+                      <h3>Solution Code:</h3>
+                      <code>
+                        {question?.solution || "No solution available."}
+                      </code>
+                    </div>
+
+                    <CardContainer>
+                      <TitleforSolution>Code Explaination</TitleforSolution>
+
+                      <Paragraph>
+                        Data analytics
+                      </Paragraph>
+
+                      <Footer>
+                        <TryHarderLink href="#"><PiStarFour/> Try harder question</TryHarderLink>
+
+                        <FeedBacks>
+                        <FeedbackButton><PiThumbsUpLight /> Helpful</FeedbackButton>
+                        <FeedbackButton><PiThumbsDownLight/> Not helpful</FeedbackButton>
+                        </FeedBacks>
+                      </Footer>
+                    </CardContainer>
+                  </>
                 )}
+
               </div>
             </div>
           </>

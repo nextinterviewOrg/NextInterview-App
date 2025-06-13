@@ -42,7 +42,7 @@ const ChallengeSubtitle = styled.p`
 const Tags = styled.div`
   display: flex;
   gap: ${(props) => props.theme.spacing(1)};
-  margin-bottom: ${(props) => props.theme.spacing(3)};
+  margin-bottom: ${(props) => props.theme.spacing(1)};
   @media (max-width: 768px) {
     flex-direction: row;
   }
@@ -199,7 +199,7 @@ const TakeChallenge = ({ questionType = "coding" }) => {
 
         const response = await getTodaysUserChallenges(userId, questionType);
         const challengeList = response?.data;
-
+        console.log("challengeList",challengeList);
         if (Array.isArray(challengeList)) {
           setChallenges(challengeList);
         } else {
@@ -251,11 +251,13 @@ const TakeChallenge = ({ questionType = "coding" }) => {
             </StatusBadge> */}
           </div>
 
-          <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
+          <ChallengeTitle>{challenge.QuestionText} </ChallengeTitle>
 
-          <ChallengeSubtitle>
-            {challenge.description || "No description provided."}
-          </ChallengeSubtitle>
+          {challenge.question_type === "coding" && (
+  <ChallengeSubtitle>
+    {challenge.description || "No description provided."}
+  </ChallengeSubtitle>
+)}
 
           <Tags>
             {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}

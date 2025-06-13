@@ -1,5 +1,25 @@
 import styled from "styled-components";
 
+export const BackButton = styled.button`
+  border: none;
+  color: #007bff;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 5px;
+  background-color: #f0f0f0;
+  width: 100%;
+  padding: 10px;
+    padding-left: 50px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+`;
+
 export const Card = styled.div`
   width: 90%;
   margin-left: 70px;
@@ -59,6 +79,8 @@ export const Title = styled.h2`
   font-size: 22px;
   color: #333;
   margin-bottom: 10px;
+  background-color: #f0f8f1;
+  padding: 10px;
 
   @media (max-width: 1024px) {
     font-size: 18px;
@@ -101,9 +123,10 @@ export const Button = styled.button`
   font-size: 16px;
   cursor: pointer;
   transition: 0.3s;
+  margin-top: 20px;
 
   &:hover {
-    background: #00796b;
+    background: #2290ac90;
   }
 `;
 
@@ -154,3 +177,55 @@ export const Tags = styled.div`
 //     font-size: 9px;
 //   }
 // `;
+
+export const OptionWrapper = styled.div`
+  padding: 0.25rem 0rem;
+  // border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  margin-bottom: 0.75rem;
+  cursor: pointer;
+  // background-color: #f9f9f9;
+
+  // &:hover {
+  //   background-color: #eef;
+  // }
+
+  &.selected {
+    border-color: #00796b;
+    // background-color: #e0f7fa;
+  }
+`;
+
+export const TextArea = styled.textarea`
+  width: 98%;
+  min-height: 120px;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  resize: none;
+  background-color: #fff;
+  color: #333;
+
+  &:focus {
+    outline: none;
+    // border-color: #00796b;
+    // background-color: #f0fdfd;
+  }
+`;
+
+export const TextInput = styled.input`
+  width: 98%;
+  padding: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  color: #333;
+
+  &:focus {
+    outline: none;
+    // border-color: #00796b;
+    // background-color: #f0fdfd;
+  }
+`;

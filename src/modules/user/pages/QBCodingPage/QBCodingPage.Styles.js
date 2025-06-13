@@ -17,7 +17,7 @@ export const BackButton = styled.button`
   background-color: #f0f0f0;
   width: 100%;
   padding: 10px;
-    padding-left: 60px;
+    // padding-left: 60px;
 
 `;
 
@@ -25,7 +25,7 @@ export const Wrapper = styled.div`
   max-width: 100%;
   margin: 0 auto;
   padding: 1rem;
-  margin-left: 40px;
+  // margin-left: 40px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
    .modal {
     display: flex;
@@ -139,11 +139,11 @@ export const QusnDifficulty = styled.h2`
   color: #333;
   // margin-bottom: 1rem;
    background-color: ${({ difficulty }) =>
-    difficulty === 'Easy'
+    difficulty === 'easy'
       ? '#d1fae5'      
-      : difficulty === 'Medium'
+      : difficulty === 'medium'
       ? '#fff3cd'     
-      : difficulty === 'Hard'
+      : difficulty === 'hard'
       ? '#f8d7da'     
       : '#e2e3e5'};   
 padding: 6px;
@@ -415,5 +415,57 @@ export const ModalButton = styled.button`
 
   &:hover {
     background-color: #2290ac90
+  }
+`;
+
+export const CardContainer = styled.div`
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+`;
+
+export const TitleforSolution = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  margin: 12px 0;
+`;
+
+export const Paragraph = styled.p`
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.5;
+`;
+
+export const TryHarderLink = styled.a`
+  font-size: 14px;
+  color: #007bce;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 8px;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+`;
+
+export const FeedBacks = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+
+export const FeedbackButton = styled.button`
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 14px;
+  cursor: pointer;
+  &:hover {
+    color: #000;
   }
 `;
