@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Container,
   QuestionCard,
@@ -11,59 +11,43 @@ import {
 import { HiOutlineCode } from 'react-icons/hi';
 import { FaCheck } from 'react-icons/fa6';
 import { LuPencil } from 'react-icons/lu';
-
-const questions = [
-  {
-    id: 1,
-    completed: false,
-    type: 'coding',
-    category: 'Algorithms',
-    difficulty: 'Easy',
-    text: 'Write a function to reverse a string.',
-  },
-  {
-    id: 2,
-    completed: false,
-    type: 'mcq',
-    category: 'Data Structures',
-    difficulty: 'Medium',
-    text: 'What is the time complexity of inserting an element into a heap?',
-  },
-  {
-    id: 3,
-    completed: false,
-    type: 'multi line',
-    category: 'System Design',
-    difficulty: 'Hard',
-    text: 'Design a scalable URL shortening service.',
-  },
-  {
-    id: 4,
-    completed: false,
-    type: 'approach',
-    category: 'Approach',
-    difficulty: 'Medium',
-    text: 'This is approach question.',
-  },
-   {
-    id: 5,
-    completed: false,
-    type: 'singleline',
-    category: 'single line',
-    difficulty: 'Medium',
-    text: 'What is the time complexity of inserting an element into a heap?',
-  },
-];
+import { useParams } from 'react-router-dom';
+import { gettiyquestions } from '../../../../api/tiyApi';
+import { useUser } from '@clerk/clerk-react';
+import { getUserByClerkId } from '../../../../api/userApi';
 
 const QusnsTryitYourself = () => {
+  const [questions, setQuestions] = useState([]);
+  const { module_code, topic_code } = useParams();
+  const { user } = useUser();
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const userRes = await getUserByClerkId(user.id);
+        const userId = userRes._id;
+console.log(userId);
+        const res = await gettiyquestions(module_code, topic_code, userId);
+        console.log("res.data", res.data);
+        setQuestions(res.data);
+      } catch (error) {
+        console.error('Failed to fetch coding questions:', error);
+      }
+    };
+
+    if (user?.id && module_code && topic_code) {
+      fetchQuestions();
+    }
+  }, [user, module_code, topic_code]);
+
   return (
     <Container>
       {questions.map((q) => (
-        <QuestionCard key={q.id}>
+        <QuestionCard key={q._id}>
           <Icon>
             {q.completed ? (
               <FaCheck color="green" />
-            ) : q.type === 'coding' ? (
+            ) : q.question_type === 'coding' ? (
               <HiOutlineCode color="purple" />
             ) : (
               <LuPencil color="darkblue" />
@@ -71,10 +55,10 @@ const QusnsTryitYourself = () => {
           </Icon>
           <Content>
             <TagsRow>
-              <Tag>{q.type}</Tag>
-              <Tag difficulty={q.difficulty}>{q.difficulty}</Tag>
+              <Tag>{q.question_type}</Tag>
+              <Tag difficulty={q.level}>{q.level}</Tag>
             </TagsRow>
-            <Title>{q.text}</Title>
+            <Title>{q.question}</Title>
           </Content>
         </QuestionCard>
       ))}

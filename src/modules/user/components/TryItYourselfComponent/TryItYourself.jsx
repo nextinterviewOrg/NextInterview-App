@@ -58,10 +58,12 @@ useEffect(() => {
       const moduleResponse = await getModuleCode();
       if (moduleResponse?.data) {
         setModuleCodes(moduleResponse.data);
+        console.log("moduleResponse.data:", moduleResponse.data);
         const currentModule = moduleResponse.data.find(m => m.module_name === module_name);
         if (currentModule) {
           // Now call gettiyquestions AFTER userId is set
           const tiyQuestions = await gettiyquestions(currentModule.module_code, "", uid);
+   
           setAllQuestions(tiyQuestions?.data || []);
           setSelectedQuestion(tiyQuestions?.data?.[0] || null);
           console.log("tiyQuestions:", tiyQuestions);

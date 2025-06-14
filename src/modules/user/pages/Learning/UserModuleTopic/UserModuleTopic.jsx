@@ -706,7 +706,7 @@ const UserModuleTopic = () => {
   };
 
   const handleTryButton = () => {
-    navigate(`/user/learning/QusnsTryitYourself`)
+    navigate(`/user/QusnsTryitYourself`)
     // navigate(`/user/learning/${moduleName}/topic/tryityourself`);
   };
 
