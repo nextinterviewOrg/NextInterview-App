@@ -57,6 +57,7 @@ const QuestionCollapsible = () => {
         setError(false);
 
         const response = await getQuestionBankById(id);
+        console.log("Response from getQuestionBankById:", response);
         if (response?.success && response.data) {
           const q = response.data;
 

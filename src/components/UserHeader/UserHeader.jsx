@@ -161,7 +161,6 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
 
 
 
-
   const getTitleFromPath = (pathname) => {
       const path = pathname.toLowerCase();
       if (path.includes("dashboard")) return "Dashboard";
@@ -176,6 +175,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if(path.includes("subscription")) return "Subscription";
       if (path.includes("questionbank")) return "Question Bank"; // Add this line
       if (path.includes("interview")) return "Mock Interview";
+      if (path.includes("qusnstryityourself")) return "Try It Yourself";
  
       // Add more routes as needed
       return "Dashboard"; // Default title
