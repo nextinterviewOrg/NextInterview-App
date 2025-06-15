@@ -1,17 +1,22 @@
 import React from 'react';
 import { SubscriptionCardWrapper } from './SubscriptionCard.styles';
+import SubscribeButton from '../../../../pages/RazorpaySubscribeButton/SubscribeButton';
 
 
-const SubscriptionCard = ({ title, duration, price, features, isSuggested, onSubscribe }) => {
+const SubscriptionCard = ({ title, currency
+    , duration, price, interval, features, isSuggested, onSubscribe, planId, showSubscription, handleUnsubscribe, currentPlanId }) => {
+
     return (
         <SubscriptionCardWrapper>
             <div className={`subscription-card`}>
-                {isSuggested && <div className="suggested-badge">Suggested</div>}
+                {(isSuggested && currentPlanId === planId) && <div className="suggested-badge">Active Plan</div>}
                 <div className="subscription-card-header">
-                    <h2 className='subscription-card-header-title'>{duration}</h2>
+                    <h1 className='subscription-card-header-title' style={{ color: "black", fontWeight: "bold", textDecoration: "Capitalize" }}>{title}</h1>
+                    <h2 className='subscription-card-header-title'>{interval}</h2>
                 </div>
                 <div className="subscription-card-body">
-                    <h3 className='subscription-card-body-price'>{price}</h3>
+                    <h3 className='subscription-card-body-price'>{currency} {" "}
+                        {price}</h3>
                     <ul className="features-list">
                         {features.map((feature, index) => (
                             <li key={index}>
@@ -21,9 +26,36 @@ const SubscriptionCard = ({ title, duration, price, features, isSuggested, onSub
                     </ul>
                 </div>
                 <div className="subscription-card-footer">
-                    <button className="subscribe-button" onClick={onSubscribe}>
-                        Subscribe Now
-                    </button>
+                    {/* <SubscribeButton/> */}
+                    {
+                        (showSubscription) ?
+                            <> {
+                                currentPlanId === planId ?
+                                    <button className="subscribe-button" onClick={handleUnsubscribe} style={{ backgroundColor: "#DA2C43" }}>
+                                        Cancel Subscription
+                                    </button>
+                                    :
+                                    <>
+                                        <button className="subscribe-button" onClick={handleUnsubscribe}>
+                                            <div style={{ display: "none" }}>
+                                                <SubscribeButton planId={planId} />
+
+                                            </div>
+                                            Subscipe to this plan
+                                        </button>
+
+                                    </>
+
+                            }
+
+                            </>
+
+                            :
+                            <SubscribeButton planId={planId} />
+
+
+                    }
+
                 </div>
             </div>
         </SubscriptionCardWrapper>

@@ -27,6 +27,7 @@ const ProtectedRoute = ({ Component, roles }) => {
 
         const userResponse = await getUserByClerkId(user.id);
         const userRole = userResponse.data.user.user_role;
+        console.log("userRole jbjashgjh", userResponse.data.user.subscription_status);
         // console.log("userRole", userRole, "roles", roles, "roles && !roles.includes(userRole)", roles.length > 0 && !roles.includes(userRole));
         if (roles.length > 0 && !roles.includes(userRole)) {
           // console.log("Not authorized");
@@ -34,7 +35,13 @@ const ProtectedRoute = ({ Component, roles }) => {
           if (userRole === "admin") {
             setRedirectPath("/admin");
           } else if (userRole === "user") {
-            setRedirectPath("/user");
+            console.log("userResponse.data.user.subscription_status", userResponse.data.user.subscription_status);
+            if(userResponse.data.user.subscription_status === "active"){
+              setRedirectPath("/user");
+            }else{
+              setRedirectPath("/subscription");
+            }
+            
           } else {
             await signOut();
             setRedirectPath("/login");

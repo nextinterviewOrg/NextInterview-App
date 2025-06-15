@@ -113,6 +113,8 @@ import TermsofService from "./pages/TermsofService/TermsofService";
 import PrivacyandPolicy from "./pages/PrivacyandPolicy/PrivacyandPolicy";
 import PaymentHistory from "./modules/admin/pages/PaymentHistory/PaymentHistory";
 
+import SubscriptionPage from "./modules/user/pages/SubscriptionPage/SubscriptionPage";
+
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
   const location = useLocation();
@@ -196,6 +198,7 @@ function App() {
           <Route path="/backtosignIn" element={<BacktoSignIn />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/resetsuccessful" element={<ResetSuccessful />} />
+          <Route path="/subscription" element={<SubscriptionPage />} />
           <Route
             path="/admin"
             element={<ProtectedRoute Component={BaseLayout} roles={["admin"]} />}

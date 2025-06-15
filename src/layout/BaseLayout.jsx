@@ -25,7 +25,7 @@ const BaseLayout = () => {
   const isAdminPath = location.pathname.startsWith("/admin");
   const isUserPath = location.pathname.startsWith("/user");
   const isModulePath = location.pathname.startsWith("/user/learning/") &&
-                       location.pathname.endsWith("/topic");
+    location.pathname.endsWith("/topic");
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -41,6 +41,11 @@ const BaseLayout = () => {
           const data = await getUserByClerkId(user.id);
           if (data.data.user.user_role === "user") {
             if (data.data.user.profile_status === true) {
+              if (data.data.user.subscription_status === "active") {
+                // setRedirectPath("/user");
+              } else {
+                navigate("/subscription");
+              }
               // navigate("/user", { state: sessionId });
             } else {
               navigate("/personalInfo");
@@ -61,7 +66,7 @@ const BaseLayout = () => {
       if (window.innerWidth <= 768 && isMobileSidebarOpen) {
         const sidebar = document.querySelector('.sidebar-wrapper');
         if (sidebar && !sidebar.contains(event.target) &&
-            !event.target.closest('.mobile-hamburger')) {
+          !event.target.closest('.mobile-hamburger')) {
           setIsMobileSidebarOpen(false);
         }
       }

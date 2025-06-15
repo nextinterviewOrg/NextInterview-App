@@ -9,7 +9,7 @@ const api = axios.create({
   baseURL: "https://next-interview-backend-develop.vercel.app/", // production/development-branch
   // baseURL: "http://localhost:3000/",     // Just a PUSH
 
-  timeout: 30000, // Optional: Timeout after 10 seconds
+  timeout: 100000, // Optional: Timeout after 10 seconds
   headers: {
     "Content-Type": "application/json",
   },

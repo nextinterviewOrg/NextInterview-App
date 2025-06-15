@@ -184,15 +184,15 @@ export const StatusBadge = styled.p`
   font-size: 12px;
   font-weight: 500;
   color: ${({ status }) =>
-    status === "Success"
+    status === "captured"
       ? "#00AC4F"    
-      : status === "Failed"
+      : status === "failed"
       ? "#D0004B"
       : "#926F24"};
   background-color: ${({ status }) =>
-    status === "Success"
+    status === "captured"
       ? "#F0F8F1"
-      : status === "Failed"
+      : status === "failed"
       ? "#FFEBEB"
       : "#FFEBCA"};
       text-align: center;

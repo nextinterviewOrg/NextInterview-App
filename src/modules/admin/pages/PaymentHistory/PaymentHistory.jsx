@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Container,
   Header,
@@ -38,138 +38,179 @@ import SalesAmount from "../../../../assets/sales-amount.svg";
 import cardIcon from "../../../../assets/card-icon.jpg";
 import netBanking from "../../../../assets/net-banking.jpg";
 import upiIcon from "../../../../assets/upi-icon.png";
+import api from "../../../../config/axiosconfig";
+import { getAllPayments, getPaymentSummary } from "../../../../api/subscriptionApi";
+import { use } from "react";
 
 const PaymentHistory = () => {
   const [selectedTab, setSelectedTab] = useState("month");
   const [currentPage, setCurrentPage] = useState(1);
+  const [payments, setPayments] = useState([]);
+  const [summary, setSummary] = useState([]);
+  const [LoadingData, setLoadingData] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const invoicesPerPage = 10;
-
-  const cardData = [
-    {
-      icon: (
-        <img
-          src={transaction}
-          alt="Transaction Icon"
-          style={{ width: "64px", height: "64px" }}
-        />
-      ),
-      iconType: "transaction",
-      title: "Total Successful Payments",
-      value: 100,
-      previous: 70,
-      change: 16,
-      isPositive: true
-    },
-    {
-      icon: <GoPeople style={{ fontSize: "64px" }} />,
-      iconType: "people",
-      title: "Total Unique Subscribers",
-      value: 80,
-      previous: 90,
-      change: 11,
-      isPositive: false
-    },
-    {
-      icon: (
-        <img
-          src={SalesAmount}
-          alt="Sales Amount Icon"
-          style={{ width: "64px", height: "64px" }}
-        />
-      ),
-      iconType: "sales",
-      title: "Total Payments",
-      value: "₹30,899",
-      previous: "₹20,899",
-      change: 16,
-      isPositive: true
+  useEffect(() => {
+    const fetchData = async () => {
+      const summaryData = await getPaymentSummary();
+      console.log("summaryData", summaryData);
+      setLoadingData(summaryData);
     }
-  ];
+    fetchData();
+  }, []);
 
-  const invoices = [
-    {
-      name: "Jane Cooper",
-      mode: "UPI",
-      date: "20/05/25",
-      amount: "₹1,899",
-      status: "Success"
-    },
-    {
-      name: "Albert Stephan",
-      mode: "Net Banking",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Failed"
-    },
-    {
-      name: "John Doe",
-      mode: "Debit card",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Processing"
-    },
-    {
-      name: "Albert Jain",
-      mode: "Visa Card",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Failed"
-    },
-    {
-      name: "Jane Cooper",
-      mode: "Net Banking",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Success"
-    },
-    {
-      name: "Jane Cooper",
-      mode: "UPI",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Success"
-    },
-    {
-      name: "Jane Cooper",
-      mode: "Master Card",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Processing"
-    },
-    {
-      name: "Jane Cooper",
-      mode: "American Express",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Failed"
-    },
-    {
-      name: "Steve Smith",
-      mode: "UPI",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Success"
-    },
-    {
-      name: "Mary Jane",
-      mode: "Net Banking",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Failed"
-    },
-    {
-      name: "Jake Long",
-      mode: "UPI",
-      date: "20/10/24",
-      amount: "₹1,899",
-      status: "Success"
+  useEffect(() => {
+    const apiCall = async () => {
+      try {
+        console.log("api call");
+        setSummary([]);
+        setPayments([]);
+        if (selectedTab === "month") {
+          const paymentsData = await getAllPayments("monthly");
+          setPayments(paymentsData.payments);
+
+          const setData = [{
+            icon: (
+              <img
+                src={transaction}
+                alt="Transaction Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "transaction",
+            title: "Total Successful Payments",
+            value: LoadingData.data.month.successCount,
+            previous: LoadingData.data.month.previousSuccessCount,
+            change: LoadingData.data.month.successChangePercentage.toFixed(2),
+            text:"Previous Month",
+            isPositive: LoadingData.data.month.successChangePercentage > 0 ? true : false
+          },
+          {
+            icon: (
+              <img
+                src={SalesAmount}
+                alt="Sales Amount Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "sales",
+            title: "Total Payments",
+            value: `₹${LoadingData.data.month.current / 100}`,
+            previous: `₹${LoadingData.data.month.previous / 100}`,
+            change: LoadingData.data.month.change_percentage.toFixed(2),
+            text:"Previous Month",
+            isPositive: LoadingData.data.month.change_percentage > 0 ? true : false
+          }]
+          console.log("setData", setData);
+          setSummary(setData);
+        } else if (selectedTab === "year") {
+          const paymentsData = await getAllPayments("yearly");
+          setPayments(paymentsData.payments);
+          setPayments(paymentsData.payments);
+          
+          const setData = [{
+            icon: (
+              <img
+                src={transaction}
+                alt="Transaction Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "transaction",
+            title: "Total Successful Payments",
+            value: LoadingData.data.year.successCount,
+            previous: LoadingData.data.year.previousSuccessCount,
+            change: LoadingData.data.year.successChangePercentage.toFixed(2),
+            text:"Previous Year",
+            isPositive: LoadingData.data.year.successChangePercentage > 0 ? true : false
+          },
+          {
+            icon: (
+              <img
+                src={SalesAmount}
+                alt="Sales Amount Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "sales",
+            title: "Total Payments",
+            value: `₹${LoadingData.data.year.current / 100}`,
+            previous: `₹${LoadingData.data.year.previous / 100}`,
+            change: LoadingData.data.year?.change_percentage.toFixed(2),
+            text:"Previous Year",
+            isPositive: LoadingData.data.year.change_percentage > 0 ? true : false
+          }]
+          console.log("setData", setData);
+          setSummary(setData);
+        } else if (selectedTab === "week") {
+          const paymentsData = await getAllPayments("weekly");
+          setPayments(paymentsData.payments);
+          console.log("paymentsData", paymentsData);
+          const setData = [{
+            icon: (
+              <img
+                src={transaction}
+                alt="Transaction Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "transaction",
+            title: "Total Successful Payments",
+            value: LoadingData.data.week.successCount,
+            previous: LoadingData.data.week.previousSuccessCount,
+            change: LoadingData.data.week.successChangePercentage.toFixed(2),
+            text:"Previous Week",
+            isPositive: LoadingData.data.week.successChangePercentage > 0 ? true : false
+          },
+          {
+            icon: (
+              <img
+                src={SalesAmount}
+                alt="Sales Amount Icon"
+                style={{ width: "64px", height: "64px" }}
+              />
+            ),
+            iconType: "sales",
+            title: "Total Payments",
+            value: `₹${LoadingData.data.week.current / 100}`,
+            previous: `₹${LoadingData.data.week.previous / 100}`,
+            change: LoadingData.data.week.change_percentage.toFixed(2),
+            text:"Previous Week",
+            isPositive: LoadingData.data.week.change_percentage > 0 ? true : false
+          }]
+          console.log("setData", setData);
+          setSummary(setData);
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
-  ];
+    apiCall();
+  }, [selectedTab,LoadingData]);
 
-  const totalPages = Math.ceil(invoices.length / invoicesPerPage);
+  // Filter payments based on search term
+  const filteredPayments = payments.filter(payment => {
+    if (!payment) return false;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      (payment.email && payment.email.toLowerCase().includes(searchLower)) ||
+      (payment.method && payment.method.toLowerCase().includes(searchLower)) ||
+      (payment.status && payment.status.toLowerCase().includes(searchLower)) ||
+      (payment.amount && payment.amount.toString().includes(searchTerm)) ||
+      (payment.created_at && new Date(payment.created_at).toLocaleString().toLowerCase().includes(searchLower))
+    );
+  });
+
+  // Update pagination to use filtered payments
+  const totalPages = Math.ceil(filteredPayments.length / invoicesPerPage);
   const indexOfLastInvoice = currentPage * invoicesPerPage;
   const indexOfFirstInvoice = indexOfLastInvoice - invoicesPerPage;
-  const currentInvoices = invoices.slice(indexOfFirstInvoice, indexOfLastInvoice);
+  const currentInvoices = filteredPayments.slice(indexOfFirstInvoice, indexOfLastInvoice);
+
+  // Reset to first page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   return (
     <Container>
@@ -183,7 +224,7 @@ const PaymentHistory = () => {
       </Wrapper>
 
       <CardsContainer>
-        {cardData.map((card, index) => (
+        {summary.length > 0 && summary.map((card, index) => (
           <Card key={index}>
             <IconCircle iconType={card.iconType}>{card.icon}</IconCircle>
             <CardDesc>
@@ -198,7 +239,7 @@ const PaymentHistory = () => {
               <SubTitle>
                 <SubNumber>{card.previous}</SubNumber>
                 <div className='line'></div>
-                <SubText>Previous Month</SubText>
+                <SubText>{card.text}</SubText>
               </SubTitle>
             </CardDesc>
           </Card>
@@ -209,14 +250,19 @@ const PaymentHistory = () => {
         <Title>All Invoices</Title>
         <div className="search">
           <FiSearch />
-          <input type="text" placeholder="Search" />
+          <input
+            type="text"
+            placeholder="Search by name, mode, amount..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
       </SearchSortRow>
 
       <InvoiceTable>
         <thead>
           <tr>
-            <Th>Customer Name</Th>
+            <Th>Customer Email</Th>
             <Th>Payment Mode</Th>
             <Th>Payment Date</Th>
             <Th>Payment Amount</Th>
@@ -229,7 +275,7 @@ const PaymentHistory = () => {
               <Td>
                 <UserCell>
                   <Avatar><IoPersonOutline /></Avatar>
-                  {item.name}
+                  {item.email}
                 </UserCell>
               </Td>
               <Td>
@@ -237,23 +283,23 @@ const PaymentHistory = () => {
                   <ModeCell>
                     <img
                       src={
-                        item.mode.toLowerCase().includes("upi")
+                        item.method.toLowerCase().includes("upi")
                           ? upiIcon
-                          : item.mode.toLowerCase().includes("card")
-                          ? cardIcon
-                          : item.mode.toLowerCase().includes("net")
-                          ? netBanking
-                          : netBanking
+                          : item.method.toLowerCase().includes("card")
+                            ? cardIcon
+                            : item.method.toLowerCase().includes("net")
+                              ? netBanking
+                              : netBanking
                       }
                       alt="mode"
                       style={{ width: "30px", height: "30px", borderRadius: "50%" }}
                     />
                   </ModeCell>
-                  {item.mode}
+                  {item.method}
                 </UserCell>
               </Td>
-              <Td>{item.date}</Td>
-              <Td>{item.amount}</Td>
+              <Td>{item?.created_at ? (new Date(item?.created_at)).toLocaleString() : ""}</Td>
+              <Td>₹{item.amount / 100}</Td>
               <Td>
                 <StatusBadge status={item.status}>{item.status}</StatusBadge>
               </Td>
@@ -265,7 +311,7 @@ const PaymentHistory = () => {
       <Pagination>
         <div>
           <span style={{ color: "#1A1C1E99" }}>
-            Showing data {indexOfFirstInvoice + 1}-{Math.min(indexOfLastInvoice, invoices.length)} of {invoices.length}
+            Showing data {indexOfFirstInvoice + 1}-{Math.min(indexOfLastInvoice, filteredPayments.length)} of {filteredPayments.length}
           </span>
         </div>
         <div>

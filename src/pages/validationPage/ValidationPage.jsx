@@ -27,8 +27,12 @@ export default function ValidationPage() {
             localStorage.setItem("sessionId", JSON.stringify(session.id));
             if (data.data.user.user_role === "user") {
               if (data.data.user.profile_status === true) {
+                if (data.data.user.subscription_status === "active") {
+                  navigate("/user", { state: session.id });
+                } else {
+                  navigate("/subscription");
+                }
 
-                navigate("/user", { state: session.id });
               } else {
                 navigate("/personalInfo");
               }
