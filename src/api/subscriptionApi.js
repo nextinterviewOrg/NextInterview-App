@@ -63,3 +63,27 @@ export const getPaymentSummary = async () => {
         throw err;
     }
 };
+
+export const createPlan = async (planData) => {
+  try {
+    const response = await api.post("/subscription/createPlan", planData);
+    console.log("createPlan API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("createPlan API Error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+export const getAllPlans = async () => {
+  try {
+    const { data } = await api.get('/subscription/getAllPlans');
+    console.log(data); 
+    // If backend shape is { success, plans: [...] }
+    return data.plans ?? data;   // ← always an array
+  } catch (err) {
+    console.error('Error fetching plans:', err);
+    throw err;
+  }
+};
