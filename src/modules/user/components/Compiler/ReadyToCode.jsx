@@ -43,7 +43,8 @@ const ReadyToCode = ({
   handleSubmit,
   isSubmitting,
   dbSetupCommands,
-  challenge = false
+  challenge = false,
+  tryHarderQuestion
 }) => {
   const handleLanguageChange = (e) => {
     const lang = e.target.value;
@@ -136,7 +137,7 @@ const ReadyToCode = ({
             {showOptimiseBtn && (
               <HardandOptimise>
                 {!challenge ?
-                  <TryHarderButton>
+                  <TryHarderButton onClick={()=>{ console.log('clicked');tryHarderQuestion()}}>
                     <PiStarFour /> Try Harder Question
                   </TryHarderButton> :
                   <div>

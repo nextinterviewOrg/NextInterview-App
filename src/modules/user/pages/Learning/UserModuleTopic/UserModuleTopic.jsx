@@ -706,7 +706,7 @@ const UserModuleTopic = () => {
   };
 
   const handleTryButton = () => {
-    navigate(`/user/QusnsTryitYourself`)
+    navigate(`/user/QusnsTryitYourself/${moduleCODE}/${topicCODE}`);
     // navigate(`/user/learning/${moduleName}/topic/tryityourself`);
   };
 
@@ -783,11 +783,11 @@ const UserModuleTopic = () => {
             <TryItYourself>
               <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
             </TryItYourself >
-            <TryItYourself >
+            {/* <TryItYourself >
               <TryButton onClick={() => {
                 navigate(`/user/titcodinglist`, { state: { moduleCode: moduleCODE, topicCode: topicCODE, topicIndex: location.state?.topicIndex, subtopicIndex: location.state?.subtopicIndex, returnUrl: `/user/learning/${moduleId}/topic` } })
               }}>Try Coding Questions</TryButton>
-            </TryItYourself>
+            </TryItYourself> */}
           </div>
 
 

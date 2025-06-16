@@ -175,3 +175,32 @@ export const getAllMainQbQBCodingQuestionsByModule  = async (module_code) => {
         throw error;
     }
 };
+export const getAllMainQuestionBankQuestionWithFilter  = async (module_code,topic_code,question_category,userId) => {
+    try {
+        const response = await api.get(`/mainQuestionBank/get/questionByfilter/userResponse/${userId}?module_code=${module_code}&topic_code=${topic_code}&question_category=${question_category}`);
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export const nextTiyQuestion = async (id) => {
+    try {
+        const response = await api.post(`/mainQuestionBank/nextTiyQuestion`,{questionId:id});
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};
+
+export const getTiyHarderQuestion = async (id) => {
+    try {
+        const response = await api.post(`/mainQuestionBank/tiyHarderQuestion`,{questionId:id,isTIYQuestion:true,isQBQuestion:false});
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+};

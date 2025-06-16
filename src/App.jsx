@@ -115,6 +115,8 @@ import PaymentHistory from "./modules/admin/pages/PaymentHistory/PaymentHistory"
 import QusnsTryitYourself from "./modules/user/components/QusnsTryitYourself/QusnsTryitYourself";
 
 import SubscriptionPage from "./modules/user/pages/SubscriptionPage/SubscriptionPage";
+import TIyQuestion from "./modules/user/components/TiyQuestion/TIyQuestion";
+import TiyCodingPage from "./modules/user/components/TiyCodingPage/TiyCodingPage";
 
 // Google Analytics gtag script injection and route tracking
 function useGoogleAnalytics() {
@@ -260,7 +262,9 @@ function App() {
             <Route path="learning" element={<UserLearning />} />
             <Route path="learning/:id" element={<UserLearningModule />} />
             <Route path="learning/:id/topic" element={<UserModuleTopic />} />
-            <Route path="qusnsTryitYourself" element={<QusnsTryitYourself/>} />
+            <Route path="qusnsTryitYourself/:module_code/:topic_code" element={<QusnsTryitYourself/>} />
+            <Route path="tiyQuestion/:id" element={<TIyQuestion />} />
+            <Route path="tiycodingpage/:id" element={<TiyCodingPage />} />
             <Route path="learning/:id/topic/sampleInterview" element={<UserSampleInterview />} />
             <Route path="learning/:module_name/topic/tryityourself" element={<TryItYourself />} />
             {/* <Route path="questionbank" element={<QuestionBank />} />
@@ -275,7 +279,7 @@ function App() {
             <Route path="takeChallenge/:id" element={<CodeEditorWindow />} />
             <Route path="interview/interview-feedback" element={<ProblemStatement />} />
             <Route path="titcodinglist" element={<TIYCodingList />} />
-            <Route path="titcodingDetail" element={<TIYCodingDetailPage />} />
+            <Route path="titcodingDetail/:questionID" element={<TIYCodingDetailPage />} />
             <Route path="titcodingRun" element={<TIYCodingPage />} />
             <Route path="mainQuestionBank" element={<AllQuestionBank />} >
               <Route index element={<QBCodingList />} />

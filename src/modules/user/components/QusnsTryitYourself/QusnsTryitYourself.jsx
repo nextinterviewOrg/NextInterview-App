@@ -11,23 +11,24 @@ import {
 import { HiOutlineCode } from 'react-icons/hi';
 import { FaCheck } from 'react-icons/fa6';
 import { LuPencil } from 'react-icons/lu';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { gettiyquestions } from '../../../../api/tiyApi';
 import { useUser } from '@clerk/clerk-react';
 import { getUserByClerkId } from '../../../../api/userApi';
+import { getAllMainQuestionBankQuestionWithFilter } from '../../../../api/userMainQuestionBankApi';
 
 const QusnsTryitYourself = () => {
   const [questions, setQuestions] = useState([]);
   const { module_code, topic_code } = useParams();
   const { user } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
         const userRes = await getUserByClerkId(user.id);
-        const userId = userRes._id;
-console.log(userId);
-        const res = await gettiyquestions(module_code, topic_code, userId);
+        const userId = userRes.data.user._id;
+        const res = await getAllMainQuestionBankQuestionWithFilter(module_code, topic_code, 'tiy', userId);
         console.log("res.data", res.data);
         setQuestions(res.data);
       } catch (error) {
@@ -43,9 +44,13 @@ console.log(userId);
   return (
     <Container>
       {questions.map((q) => (
-        <QuestionCard key={q._id}>
+        <QuestionCard key={q._id} onClick={() => {
+
+          navigate(`/user/tiyQuestion/${q._id}`);
+
+        }}>
           <Icon>
-            {q.completed ? (
+            {q.attempted ? (
               <FaCheck color="green" />
             ) : q.question_type === 'coding' ? (
               <HiOutlineCode color="purple" />

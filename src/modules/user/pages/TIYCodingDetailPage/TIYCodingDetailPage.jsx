@@ -12,25 +12,24 @@ import {
     BackIcon
 } from './TIYCodingDetailPage.styles';
 import { getTiyQbCodingQuestionById } from '../../../../api/tiyQbCodingQuestionApi';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { use } from 'react';
 import { RxArrowLeft } from "react-icons/rx";
+import { getmainQuestionById } from '../../../../api/userMainQuestionBankApi';
 
 const TIYCodingDetailPage = () => {
     const [question, setQuestion] = useState(null);
-    const [questionID, setQuestionID] = useState(null);
+    // const [questionID, setQuestionID] = useState(null);
     const location = useLocation();
     const navigate = useNavigate();
-    useEffect(() => {
-        if (!location.state.questionID) return;
-        setQuestionID(location.state.questionID);
-    }, []);
+   const { questionID } = useParams();
     useEffect(() => {
         const apiCaller = async () => {
             if (!questionID) return;
-            const data = await getTiyQbCodingQuestionById(questionID);
+            const data = await getmainQuestionById(questionID);
+            console.log("data", data);
             console.log(data);
-            setQuestion(data);
+            setQuestion(data.data);
         }
         apiCaller();
     }, [questionID]);
@@ -45,7 +44,7 @@ const TIYCodingDetailPage = () => {
                     <RxArrowLeft />
                 </BackIcon>
 
-                <Title>{question.QuestionText}</Title>
+                <Title>{question.question}</Title>
                 <Description dangerouslySetInnerHTML={{ __html: question?.description }} />
 
                 <Divider />
