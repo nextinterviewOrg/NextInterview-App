@@ -200,10 +200,90 @@ export const Cell = styled.div`
   }
 `;
 
+/* Category Table Styles */
+export const TableWrapperCategory = styled.div`
+  width: 100%;
+  margin-top: 24px;
+  overflow-x: auto;
+`;
+
+export const TableCategory = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', sans-serif;
+    min-width: 600px;
+`;
+
+export const TableHeaderCategory = styled.thead`
+  background-color: ${(props) => props.theme.colors.sidebarBgColor};
+`;
+
+export const TableBodyCategory = styled.tbody``;
+
+export const TableRowCategory = styled.tr`
+  border-bottom: 1px solid #e0e0e0;
+
+  &:hover {
+    background-color: #f9f9f9;
+  }
+`;
+
+export const TCell = styled.th`
+  text-align: left;
+  padding: 12px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  background-color:${(props) => props.theme.colors.sidebarBgColor};
+
+  &:first-child {
+    width: 20%; /* Adjust width for the first cell */
+  }
+
+  &:nth-child(2) {
+    width: 40%; /* Adjust width for the second cell */
+    text-align: center;
+  }
+
+  &:last-child {
+    width: 40%; /* Adjust width for the last cell */
+  }
+`;
+
+export const CellCategory = styled.td`
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #444;
+
+  a {
+    color: #007bff;
+    text-decoration: none;
+    margin-right: 10px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &:first-child {
+    width: 20%; /* Adjust width for the first cell */
+  }
+  &:nth-child(2) {
+    width: 40%; /* Adjust width for the second cell */
+    text-align: center;
+  }
+  &:last-child {
+    width: 40%; /* Adjust width for the last cell */
+  }
+`;
+
+
+
 export const ActionIcons = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 30px;
   align-items: center;
+  justify-content: center;
 `;
 
 // Modal styles
@@ -227,13 +307,26 @@ export const ModalContent = styled.div`
   border-radius: 5px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  // align-items: center;
   gap: 10px;
   width: 350px;
   text-align: center;
   position: relative;
 `;
 
+
+export const CategaryModalContent = styled.div`
+  background-color: #fff;
+  padding: 20px 20px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  gap: 10px;
+  width: 350px;
+  text-align: center;
+  position: relative;
+`;
 export const CloseButton = styled.button`
   position: absolute;
   top: 10px;
@@ -245,10 +338,36 @@ export const CloseButton = styled.button`
   cursor: pointer;
 `;
 
+
+export const DeleteCloseButton = styled.button`
+  font-size: 24px;
+  color: #000;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+`;
+
+
 export const ModalTitle = styled.div`
   font-size: 18px;
-  font-weight: bold;
+  font-weight: 600;
   margin-bottom: 20px;
+
+`;
+
+export const ModalTextTitle = styled.div`
+  font-size: 18px;
+  font-weight: 500;
+  
+`;
+
+
+
+export const ModelTextHeader  = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 `;
 
 export const ModalButtons = styled.div`
@@ -277,5 +396,144 @@ export const ModalButtons = styled.div`
     }
   }
 `;
+
+
+/* ────────────── “Create Category” modal styles ────────────── */
+
+export const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
+
+export const CreateModal = styled.div`
+  background: #fff;
+  width: 420px;
+  max-width: 90%;
+  border-radius: 8px;
+  padding: 24px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+`;
+
+export const CreateModalHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+`;
+
+export const CreateModalTitle = styled.h3`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+`;
+
+export const CreateModalClose = styled.span`
+  cursor: pointer;
+  font-size: 24px;
+  line-height: 24px;
+`;
+
+export const CreateModalBody = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+`;
+
+export const CreateModalFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+export const Label = styled.label`
+  font-size: 14px;
+  font-weight: bold;
+  color: #333;
+  display: block;
+
+
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  &:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+`;
+
+export const BtnPrimary = styled.button`
+  background: #2290ac;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+`;
+
+export const BtnSecondary = styled.button`
+  background: #f4f4f4;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 8px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+`;
+
+/* ────────────── Category table anchor styling ────────────── */
+
+/* If CellCategory already existed, just add the inner a‑tag styles */
+
+
+export const ActionButtons = styled.div`
+  display: flex;
+  gap: 30px;
+  align-items: center;
+  }
+`;
+
+export const AddButton = styled.button`
+  background: #2290ac;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+
+  &:hover {
+    color: #0056b3;
+  }
+`;
+
+export const RemoveButton = styled.button`
+  background: #dc3545;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 16px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #c82333;
+  }
+`;
+
+
 
 
