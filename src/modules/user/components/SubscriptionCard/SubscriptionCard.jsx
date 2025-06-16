@@ -1,6 +1,8 @@
 import React from 'react';
 import { SubscriptionCardWrapper } from './SubscriptionCard.styles';
 import SubscribeButton from '../../../../pages/RazorpaySubscribeButton/SubscribeButton';
+import UpgradeSubscription from '../../../../pages/UpgradeSubscription/UpgradeSubscription';
+
 
 
 const SubscriptionCard = ({ title, currency
@@ -36,13 +38,7 @@ const SubscriptionCard = ({ title, currency
                                     </button>
                                     :
                                     <>
-                                        <button className="subscribe-button" onClick={handleUnsubscribe}>
-                                            <div style={{ display: "none" }}>
-                                                <SubscribeButton planId={planId} />
-
-                                            </div>
-                                            Subscipe to this plan
-                                        </button>
+                                        <UpgradeSubscription planId={planId} />
 
                                     </>
 

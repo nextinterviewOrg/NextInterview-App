@@ -87,3 +87,13 @@ export const getAllPlans = async () => {
     throw err;
   }
 };
+
+export const upgradeSubscription = async (userId, planId) => {
+    try {
+        if (!userId) throw new Error("User id is required");
+        const res = await api.post(`/subscription/upgradePlan`, { userId: userId, newPlanId: planId });
+        return res.data;
+    } catch (err) {
+        throw err;
+    }
+};
