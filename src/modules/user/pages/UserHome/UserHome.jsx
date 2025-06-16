@@ -106,12 +106,12 @@ export default function UserHome() {
               visibleCards.map((cardData, index) => ( 
                 <InterviewFavoriteCard
                   key={`${startIndex}-${index}`}
-                  title={cardData.title}
+                  title={cardData?.title}
                   // description={cardData.description}
-                  topics={cardData.topics}
+                  topics={cardData?.topics}
                   // duration={cardData.duration}
-                  imgSrc={cardData.imgSrc}
-                  moduleId={cardData.moduleId}
+                  imgSrc={cardData?.imgSrc}
+                  moduleId={cardData?.moduleId}
                 />
               ))}
           </InterviewFavoriteCardContainer>
