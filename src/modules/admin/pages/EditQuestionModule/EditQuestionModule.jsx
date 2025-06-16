@@ -1,31 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Container,
-  TopBar,
-  SearchInput,
-  ModuleWrapper,
-  DropdownIcon,
-  CustomSelectWrapper,
-  CustomSelectBox,
-  CustomOptionsDropdown,
-  CustomOption,
-  Tabs,
-  Tab,
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  Cell,
-  ActionIcons,
-  SearchWrapper,
-  ConfirmationModal,
-  ModalContent,
-  CloseButton,
-  ModalTitle,
-  ModalButtons,
-  TableWrapper
+    Container, TopBar, SearchInput, ModuleWrapper, Tabs, Tab, Table,
+  TableHeader, TableBody, TableRow, Cell, TCell, ActionIcons, SearchWrapper,
+  ConfirmationModal, ModalContent, CloseButton, ModalTitle, ModalButtons,
+  TableWrapper, TableWrapperCategory, TableCategory, TableHeaderCategory,
+  TableBodyCategory, TableRowCategory, CellCategory, Overlay, CreateModal,
+  CreateModalHeader, CreateModalTitle, CreateModalClose, CreateModalBody,
+  CreateModalFooter, Label, Input, BtnPrimary, BtnSecondary,
+  ActionButtons, AddButton, RemoveButton,ModalTextTitle, ModelTextHeader, 
+  DeleteCloseButton, CategaryModalContent
 } from './EditQuestionModule.styles';
-import { Select } from 'antd';
+import { Select, message } from 'antd';
 import Lottie from "lottie-react";
 import dataNot from "../../../../assets/Lottie/5nvMVE1u7L.json";
 
@@ -33,72 +18,63 @@ import { FaSearch } from 'react-icons/fa';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
 import EditQuestion from '../../components/Learningmodulescomponents/EditQuestion/EditQuestion';
 import { RiDeleteBinLine } from "react-icons/ri";
-import { FiEdit3 } from "react-icons/fi";
+import { FiEdit3, FiEdit } from "react-icons/fi";
 import { getModule } from '../../../../api/addNewModuleApi';
 import { getSkillAssessment, getSkillAssessmentByModule, softDeleteSkillAssessment } from '../../../../api/skillAssessmentApi';
 import { editTiy, gettiyByModule, softDeleteTiy } from '../../../../api/tiyApi';
 import { editQuestionBank, getQuestionBankByModule, softDeleteQuestionBank } from '../../../../api/questionBankApi';
 import { editMainQuestion, getMainQuestionByModule, softDeleteMainQuestion } from '../../../../api/userMainQuestionBankApi';
+import {
+  createCategory, getAllCategory, updateCategory,
+  deleteCategory, addQuestionsToCategory, getQuestionsToAddToCategory,
+  removeQuestionsFromCategory
+} from '../../../../api/categaryApi';
 
-const TABS = ['Skill Assessment', 'Try-it-Yourself', 'Question Bank'];
-
-const mockQuestions = [
-  {
-    _id: "67bd913a6b57ee4256118031",
-    module_code: "MCA0001",
-    topic_code: "MCA0001A001",
-    subtopic_code: "MCA0001A001A001",
-    question_type: "mcq",
-    level: "easy",
-    question: "2+2=?",
-    answer: "",
-    option_a: "1",
-    option_b: "2",
-    option_c: "3",
-    option_d: "4",
-    correct_option: "option_d",
-    isDeleted: false,
-    __v: 0,
-  },
-  {
-    _id: "67bd913a6b57ee4256118032",
-    module_code: "MCA0001",
-    topic_code: "MCA0001A002",
-    subtopic_code: "MCA0001A002A001",
-    question_type: "single line",
-    level: "medium",
-    question: "What is the capital of France?",
-    answer: "Paris",
-    isDeleted: false,
-    __v: 0,
-  },
-  {
-    _id: "67bd913a6b57ee4256118033",
-    module_code: "MCA0002",
-    topic_code: "MCA0002A001",
-    subtopic_code: "MCA0002A001A001",
-    question_type: "multi line",
-    level: "hard",
-    question: "Explain the significance of the Turing Machine in computation.",
-    answer: "A Turing Machine is a theoretical model that defines an abstract machine capable of manipulating symbols on a strip of tape according to a set of rules. It is used to understand the limits of what can be computed.",
-    isDeleted: false,
-    __v: 0,
-  },
-];
+const TABS = ['Skill Assessment', 'Try-it-Yourself', 'Question Bank', 'Category'];
+const normalizeCategoryList = (raw) => (Array.isArray(raw) ? raw : (raw?.data ?? []));
 
 const EditQuestionModule = () => {
-  const [activeTab, setActiveTab] = useState('Skill Assessment');
-  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-  const [currentQuestion, setCurrentQuestion] = useState(null);
-  const [questions, setQuestions] = useState([]);
-  const [moduleOptions, setModuleOptions] = useState([]);
-  const [selectedModuleCode, setSelectedModuleCode] = useState(
-    moduleOptions.length > 0 ? moduleOptions[0].value : null
-  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedModule, setSelectedModule] = useState('Modules');
+
+
+    /* ---------- state ---------- */
+  const [activeTab, setActiveTab] = useState('Skill Assessment');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  /* module dropdown */
+  const [moduleOptions, setModuleOptions] = useState([]);
+  const [selectedModuleCode, setSelectedModuleCode] = useState(moduleOptions.length > 0 ? moduleOptions[0].value : null);
+
+  /* questions */
+  const [questions, setQuestions] = useState([]);
+  const [currentQuestion, setCurrentQuestion] = useState(null);
+  const [isQEditOpen, setIsQEditOpen] = useState(false);
+  const [isQDeleteOpen, setIsQDeleteOpen] = useState(false);
+
+  /* categories */
+  const [categories, setCategories] = useState([]);
+  const [catLoading, setCatLoading] = useState(false);
+  const [editingCategoryId, setEditingCategoryId] = useState(null);
+  const [catForm, setCatForm] = useState({ name: '', count: '' });
+  const [catSaving, setCatSaving] = useState(false);
+
+  /* create / edit category modal */
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  /* delete category confirm */
+  const [isCatDeleteOpen, setIsCatDeleteOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
+
+  /* ------- NEW: add‑question modal ------- */
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [addCatId, setAddCatId] = useState(null);
+  const [questionOptions, setQuestionOptions] = useState([]);
+  const [selectedQIds, setSelectedQIds] = useState([]);
+  const  [ isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const [removeCatId, setRemoveCatId] = useState(null);
 
 
   useEffect(() => {
@@ -141,6 +117,190 @@ const EditQuestionModule = () => {
     }
     apiCaller();
   }, [selectedModuleCode, activeTab]);
+
+   const loadCategories = async () => {
+    setCatLoading(true);
+    try {
+      const raw = await getAllCategory();
+      console.log('Categories:', raw);
+      setCategories(normalizeCategoryList(raw));
+    } catch (err) {
+      console.error(err);
+      setCategories([]);
+    } finally {
+      setCatLoading(false);
+    }
+  };
+  useEffect(() => { if (activeTab === 'Category') loadCategories(); }, [activeTab]);
+
+
+  /* questions (non‑category tabs) */
+  useEffect(() => {
+    if (activeTab === 'Category' || !selectedModuleCode) return setQuestions([]);
+    (async () => {
+      const map = {
+        'Skill Assessment': () => getSkillAssessmentByModule(selectedModuleCode),
+        'Try-it-Yourself': () => getMainQuestionByModule(selectedModuleCode, 'tiy'),
+        'Question Bank': () => getMainQuestionByModule(selectedModuleCode, 'questionBank'),
+      };
+      const res = await map[activeTab]();
+      setQuestions(res.data ?? []);
+    })().catch(() => setQuestions([]));
+  }, [activeTab, selectedModuleCode]);
+
+  useEffect(() => {
+    if (!isAddModalOpen || !addCatId) return;
+    (async () => {
+      try {
+        const res = await getQuestionsToAddToCategory(addCatId);
+        console.log(res);
+        const opts = (res?.data ?? []).map((q) => ({ label: q.question, value: q._id }));
+        setQuestionOptions(opts);
+      } catch (err) {
+        console.error(err);
+        setQuestionOptions([]);
+      }
+    })();
+  }, [isAddModalOpen, addCatId]);
+
+  /* ------------- question handlers ------------- */
+  const openQEdit = (q, idx) => { setCurrentQuestion({ ...q, index: idx }); setIsQEditOpen(true); };
+  const saveQEdit = async (upd) => {
+    if (activeTab !== 'Skill Assessment') await editMainQuestion(upd._id, { question: upd.question, answer: upd.answer });
+    setQuestions((p) => p.map((q, i) => (i === upd.index ? upd : q)));
+    setIsQEditOpen(false);
+  };
+  const confirmQDelete = (q, idx) => { setCurrentQuestion({ ...q, index: idx }); setIsQDeleteOpen(true); };
+  const doQDelete = async () => {
+    await softDeleteMainQuestion(currentQuestion._id);
+    setQuestions((p) => p.filter((_, i) => i !== currentQuestion.index));
+    setIsQDeleteOpen(false);
+  };
+
+  /* ------------- category handlers ------------- */
+  const openCatCreate = () => { setEditingCategoryId(null); setCatForm({ name: '', count: '' }); setIsCreateModalOpen(true); };
+  const openCatEdit = (cat) => { setEditingCategoryId(cat._id); setCatForm({ name: cat.category_name, count: cat.numberOfQuestions }); setIsCreateModalOpen(true); };
+
+  
+const saveCategory = async () => {
+  const { name, count } = catForm;
+  if (!name.trim() || !Number(count)) return;
+
+  setCatSaving(true);
+  try {
+    const payload = {
+      category_name: name.trim(),
+      numberOfQuestions: Number(count),
+    };
+
+    if (editingCategoryId) {
+      await updateCategory(editingCategoryId, payload);      // PUT
+      message.success('Category updated');
+    } else {
+      await createCategory(payload);                         // POST
+      message.success('Category created');
+    }
+
+    await loadCategories();          // refresh table first
+    setIsCreateModalOpen(false);     // then close modal
+  } catch (err) {
+    console.error(err);
+    message.error(err.response?.data?.message || 'Failed to save category');
+  } finally {
+    setCatSaving(false);
+  }
+};
+  /* delete category */
+  const confirmCatDelete = (cat) => { setCategoryToDelete(cat); setIsCatDeleteOpen(true); };
+  const doCatDelete = async () => {
+    await deleteCategory(categoryToDelete._id);
+    await loadCategories();
+    setIsCatDeleteOpen(false);
+  };
+
+  /* --------- NEW: add‑question handlers --------- */
+const openAddModal = async (cat) => {
+  setAddCatId(cat._id);
+  setSelectedQIds([]);
+
+  // Existing questions in the category to disable
+  const alreadyAddedQIds = cat.questions?.map((q) => q._id || q) || [];
+
+  try {
+    let allQuestions = [];
+
+    if (!questions.length) {
+      const bank = await getMainQuestionByModule(selectedModuleCode, 'questionBank');
+      allQuestions = bank.data ?? [];
+    } else {
+      allQuestions = questions;
+    }
+
+    // Build question options with "disabled" flag
+    const options = allQuestions.map((q) => ({
+      label: q.question,
+      value: q._id,
+      disabled: alreadyAddedQIds.includes(q._id),
+    }));
+
+    setQuestionOptions(options);
+  } catch (e) {
+    console.error("Failed to fetch questions", e);
+    setQuestionOptions([]);
+  }
+
+  setIsAddModalOpen(true);
+};
+
+
+  /* remove question from category */
+
+const openRemoveModal = (cat) => {
+  setRemoveCatId(cat._id);
+  setSelectedQIds([]);
+  
+  const questionList = (cat.questions || []).map(q => ({
+    label: q.question || q.question_text || 'Untitled', // adjust if needed
+    value: typeof q === 'string' ? q : q._id,
+  }));
+
+  setQuestionOptions(questionList);
+  setIsRemoveModalOpen(true);
+};
+
+const removeQuestions = async () => {
+  if (!removeCatId || !selectedQIds.length) return;
+
+  try {
+    await removeQuestionsFromCategory({
+      category_id: removeCatId,
+      question_ids: selectedQIds,
+    });
+
+    message.success('Questions removed from category');
+    await loadCategories();
+    setIsRemoveModalOpen(false);
+  } catch (err) {
+    console.error(err);
+    message.error('Failed to remove questions');
+  }
+};
+ 
+
+
+  const addQuestions = async () => {
+    if (!addCatId || !selectedQIds.length) return;
+    try {
+      await addQuestionsToCategory({ category_id: addCatId, question_ids: selectedQIds });
+      message.success('Questions added');
+      await loadCategories();
+      setIsAddModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      message.error('Failed to add questions');
+    }
+  };
+
 
   const handleEditClick = (q, idx) => {
     setCurrentQuestion({ ...q, index: idx });
@@ -241,6 +401,30 @@ const EditQuestionModule = () => {
     return q.answer || "N/A";
   };
 
+   const renderCategoryRows = () => {
+    if (catLoading)     return <TableRowCategory><CellCategory colSpan={3}>Loading…</CellCategory></TableRowCategory>;
+    if (!categories.length) return <TableRowCategory><CellCategory colSpan={3}>No categories</CellCategory></TableRowCategory>;
+    return categories.map((cat) => (
+      <TableRowCategory key={cat._id}>
+        <CellCategory>{cat.category_name}</CellCategory>
+        <CellCategory>
+          <ActionIcons>
+            <FiEdit onClick={() => openCatEdit(cat)} color='#2290ac' style={{ cursor: 'pointer' }}  size={20}/>
+            <RiDeleteBinLine onClick={() => confirmCatDelete(cat)} color='#dc3545' style={{ cursor: 'pointer' }} size={20} />
+          </ActionIcons>
+        </CellCategory>
+        <CellCategory>
+          <ActionButtons>
+            <AddButton onClick={() => openAddModal(cat)}>Add Question</AddButton>
+            <RemoveButton onClick = {() => openRemoveModal(cat)}>Remove Questions</RemoveButton>
+          </ActionButtons>
+        </CellCategory>
+      </TableRowCategory>
+    ));
+  };
+
+
+
   return (
     <Container>
       <TopBar>
@@ -252,6 +436,8 @@ const EditQuestionModule = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </SearchWrapper>
+
+        {activeTab !== 'Category' && (
 
         <ModuleWrapper>
           {/* <DropdownIcon>
@@ -284,27 +470,9 @@ const EditQuestionModule = () => {
             value={selectedModuleCode}
             onChange={(value) => setSelectedModuleCode(value)}
           />
-          {/* <CustomSelectBox onClick={() => setIsDropdownOpen((prev) => !prev)}>
-              {selectedModule}
-              <MdOutlineKeyboardArrowDown />
-            </CustomSelectBox> */}
-          {/* {isDropdownOpen && (
-              <CustomOptionsDropdown>
-                {moduleOptions.map((opt, index) => (
-                  <CustomOption
-                    key={index}
-                    onClick={() => {
-                      setSelectedModule(opt.module_code);
-                      setIsDropdownOpen(false);
-                    }}
-                  >
-                    {opt.moduleName}
-                  </CustomOption>
-                ))}
-              </CustomOptionsDropdown>
-            )} */}
           {/* </CustomSelectWrapper> */}
         </ModuleWrapper>
+        )}  
       </TopBar>
 
       <Tabs>
@@ -318,26 +486,23 @@ const EditQuestionModule = () => {
           </Tab>
         ))}
       </Tabs>
-      {
-        questions.length === 0 ?
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}> <Lottie
-            className="Lottie"
-            animationData={dataNot}
-            loop={true}
-            style={{
-              // width: "100%", height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100vw",
-              height: "50vh",      // full viewport height
-              margin: 0,            // ensure no default margins
-              padding: 0,
-            }}
-          /></div>
-          :
-
-
+       {activeTab === 'Category'
+        ? (
+          <div style={{ marginTop: 24 }}>
+            <div style={{ textAlign: 'right', marginBottom: 12 }}>
+              <BtnPrimary onClick={openCatCreate}>Create Categary</BtnPrimary>
+            </div>
+            <TableWrapperCategory>
+              <TableCategory>
+                <TableHeaderCategory>
+                  <TCell header>Categories</TCell><TCell header>Actions</TCell><TCell header>Questions Action</TCell>
+                </TableHeaderCategory>
+                <TableBodyCategory>{renderCategoryRows()}</TableBodyCategory>
+              </TableCategory>
+            </TableWrapperCategory>
+          </div>
+        )
+: questions.length ? (
           <TableWrapper>
             <Table>
               <TableHeader>
@@ -373,8 +538,23 @@ const EditQuestionModule = () => {
                 ))}
               </TableBody>
             </Table>
-          </TableWrapper>
-      }
+          </TableWrapper> ) :
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}> <Lottie
+            className="Lottie"
+            animationData={dataNot}
+            loop={true}
+            style={{
+              // width: "100%", height: "100%",
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100vw",
+              height: "50vh",      // full viewport height
+              margin: 0,            // ensure no default margins
+              padding: 0,
+            }}
+          /></div>
+        }
       <EditQuestion
         isOpen={isModalOpen}
         onClose={() => {
@@ -398,6 +578,177 @@ const EditQuestionModule = () => {
           </ModalContent>
         </ConfirmationModal>
       )}
+
+        {/* category delete confirm */}
+      {isCatDeleteOpen && (
+        <ConfirmationModal onClick={()=>setIsCatDeleteOpen(false)}>
+          <CategaryModalContent onClick={(e)=>e.stopPropagation()}>
+            <ModelTextHeader>
+              <ModalTextTitle>Delete Category</ModalTextTitle>        
+              <DeleteCloseButton onClick={()=>setIsCatDeleteOpen(false)}>×</DeleteCloseButton>
+            </ModelTextHeader>
+            <ModalTitle>Delete category “{categoryToDelete?.category_name}”?</ModalTitle>
+            <ModalButtons><button onClick={()=>setIsCatDeleteOpen(false)}>Cancel</button><button onClick={doCatDelete}>Delete</button></ModalButtons>
+          </CategaryModalContent>
+        </ConfirmationModal>
+      )}
+
+      {/* create / edit category */}
+      {isCreateModalOpen && (
+        <Overlay onClick={()=>setIsCreateModalOpen(false)}>
+          <CreateModal onClick={(e)=>e.stopPropagation()}>
+            <CreateModalHeader>
+              <CreateModalTitle>{editingCategoryId ? 'Edit Category' : 'Create Category'}</CreateModalTitle>
+              <CreateModalClose onClick={()=>setIsCreateModalOpen(false)}>×</CreateModalClose>
+            </CreateModalHeader>
+            <CreateModalBody>
+              <Label>Name</Label><Input value={catForm.name} onChange={(e)=>setCatForm({ ...catForm, name:e.target.value })}/>
+              <Label style={{ marginTop:24 }}>Number of questions</Label>
+              <Input type="number" min="1" value={catForm.count} onChange={(e)=>setCatForm({ ...catForm, count:e.target.value })}/>
+            </CreateModalBody>
+            <CreateModalFooter>
+              <BtnSecondary onClick={()=>setIsCreateModalOpen(false)}>Cancel</BtnSecondary>
+              <BtnPrimary onClick={saveCategory} disabled={catSaving}>{catSaving?'Saving…':editingCategoryId?'Update':'Create'}</BtnPrimary>
+            </CreateModalFooter>
+          </CreateModal>
+        </Overlay>
+      )}
+
+      {/* ---------- NEW: add‑question modal ---------- */}
+      {isAddModalOpen && (
+        <Overlay onClick={() => setIsAddModalOpen(false)}>
+          <CreateModal onClick={(e) => e.stopPropagation()}>
+            <CreateModalHeader>
+              <CreateModalTitle>
+                {questionOptions.length ? 'Select Questions' : 'No Eligible Questions'}
+              </CreateModalTitle>
+              <CreateModalClose onClick={() => setIsAddModalOpen(false)}>×</CreateModalClose>
+            </CreateModalHeader>
+<CreateModalBody style={{ gap: 16 }}>
+  <Label>Select questions</Label>
+  <Select
+    mode="multiple"
+    value={selectedQIds}
+    onChange={setSelectedQIds}
+    options={questionOptions}
+    style={{ width: '100%' }}
+    placeholder="Select questions to add"
+  />
+
+{selectedQIds.length > 0 && (
+  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+    {selectedQIds.map((id) => {
+      const label = questionOptions.find((opt) => opt.value === id)?.label || 'Unknown';
+      return (
+        <div
+          key={id}
+          style={{
+            border: '1px solid #91d5ff',
+            borderRadius: '8px',
+            padding: '8px 12px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <span style={{ flexGrow: 1 }}>{label}</span>
+          <span
+            onClick={() => setSelectedQIds((prev) => prev.filter((qId) => qId !== id))}
+            style={{
+              cursor: 'pointer',
+              fontWeight: 'bold',
+              color: '#ff4d4f',
+              marginLeft: '12px',
+            }}
+          >
+            ×
+          </span>
+        </div>
+      );
+    })}
+  </div>
+)}
+
+
+ 
+</CreateModalBody>
+
+            <CreateModalFooter>
+              <BtnSecondary onClick={() => setIsAddModalOpen(false)}>Cancel</BtnSecondary>
+              <BtnPrimary onClick={addQuestions} disabled={!selectedQIds.length}>
+                Add
+              </BtnPrimary>
+            </CreateModalFooter>
+          </CreateModal>
+        </Overlay>
+      )}
+
+      {isRemoveModalOpen && (
+  <Overlay onClick={() => setIsRemoveModalOpen(false)}>
+    <CreateModal onClick={(e) => e.stopPropagation()}>
+      <CreateModalHeader>
+        <CreateModalTitle>
+          {questionOptions.length ? 'Remove Questions from Category' : 'No Questions in Category'}
+        </CreateModalTitle>
+        <CreateModalClose onClick={() => setIsRemoveModalOpen(false)}>×</CreateModalClose>
+      </CreateModalHeader>
+
+      <CreateModalBody style={{ gap: 16 }}>
+        <Label>Select questions to remove</Label>
+        <Select
+          mode="multiple"
+          value={selectedQIds}
+          onChange={setSelectedQIds}
+          options={questionOptions}
+          style={{ width: '100%' }}
+          placeholder="Select questions to remove"
+        />
+
+        {selectedQIds.length > 0 && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+            {selectedQIds.map((id) => {
+              const label = questionOptions.find((opt) => opt.value === id)?.label || 'Unknown';
+              return (
+                <div
+                  key={id}
+                  style={{
+                    border: '1px solid #ffa39e',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <span style={{ flexGrow: 1 }}>{label}</span>
+                  <span
+                    onClick={() => setSelectedQIds((prev) => prev.filter((qId) => qId !== id))}
+                    style={{
+                      cursor: 'pointer',
+                      fontWeight: 'bold',
+                      color: '#ff4d4f',
+                      marginLeft: '12px',
+                    }}
+                  >
+                    ×
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </CreateModalBody>
+
+      <CreateModalFooter>
+        <BtnSecondary onClick={() => setIsRemoveModalOpen(false)}>Cancel</BtnSecondary>
+        <BtnPrimary onClick={removeQuestions} disabled={!selectedQIds.length}>
+          Remove
+        </BtnPrimary>
+      </CreateModalFooter>
+    </CreateModal>
+  </Overlay>
+)}
+
     </Container>
   );
 };
