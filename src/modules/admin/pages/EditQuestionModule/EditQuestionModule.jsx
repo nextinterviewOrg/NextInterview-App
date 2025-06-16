@@ -82,6 +82,7 @@ const EditQuestionModule = () => {
       try {
         const moduleResponse = await getModule();
         const data = moduleResponse.data.map((module) => { return ({ value: module.module_code, label: module.moduleName }) })
+        console.log("data", data);
         setModuleOptions(data);
         setSelectedModuleCode(data.length > 0 ? data[0].value : null);
       } catch (error) {
@@ -466,9 +467,11 @@ const removeQuestions = async () => {
                   ).toLowerCase(),
                 );
             }}
+             key={selectedModuleCode}
+              virtual={false} 
             options={moduleOptions}
             value={selectedModuleCode}
-            onChange={(value) => setSelectedModuleCode(value)}
+            onChange={(value) =>{ console.log("value", value);setSelectedModuleCode(value)}}
           />
           {/* </CustomSelectWrapper> */}
         </ModuleWrapper>
