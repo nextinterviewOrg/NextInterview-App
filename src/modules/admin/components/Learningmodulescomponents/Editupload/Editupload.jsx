@@ -391,7 +391,7 @@ const Editupload = () => {
             onClick={handleNext}
             disabled={buttonDisabled}
           >
-            <FaArrowRight size={16} /> Next
+            <FaArrowRight size={16} />Save and Next
           </NavButton>
         </ButtonGroup>
       </ButtonRow>
