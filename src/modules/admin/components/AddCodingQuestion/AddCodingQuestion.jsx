@@ -82,6 +82,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
 
 
                 const topicCodeData = await getTopicCode(selectedModuleCode);
+                console.log("topicCodeData", topicCodeData);
                 const preparedTopicData = topicCodeData.data.map((topic) => { return ({ value: topic.topic_code, label: topic.topic_name }) })
                 console.log("preparedTopicData", preparedTopicData);
                 setTopicOptions(preparedTopicData);

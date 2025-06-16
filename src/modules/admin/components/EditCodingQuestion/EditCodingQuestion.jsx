@@ -40,6 +40,8 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
     const [topicOptions, setTopicOptions] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
+    const [selectedModuleCode, setSelectedModuleCode] = useState(null);
+        const [selectedTopicCode, setSelectedTopicCode] = useState(null);
 
     useEffect(() => {
         const fetchModules = async () => {
@@ -49,6 +51,29 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
         };
         fetchModules();
     }, []);
+    // useEffect(() => {
+    //     const apiCaller = async () => {
+    //         try {
+
+
+    //             const topicCodeData = await getTopicCode(selectedModuleCode);
+    //             console.log("topicCodeData", topicCodeData);
+    //                 const preparedTopicData = topicCodeData.data.map((topic) => { return ({ value: topic.topic_code, label: topic.topic_name }) })
+    //                 console.log("preparedTopicData", preparedTopicData);
+    //                 setTopicOptions(preparedTopicData);
+    //                 setSelectedTopicCode(preparedTopicData.length > 0 ? preparedTopicData[0].value : null);
+    //                 setFormData(prev => ({ ...prev, topic_code: preparedTopicData.length > 0 ? preparedTopicData[0].value : null }));
+    //         } catch (e) {
+    //             if (e.response.status === 404) {
+    //                 setTopicOptions([]);
+    //                 setSelectedTopicCode(null);
+    //                 setFormData(prev => ({ ...prev, topic_code: null }));
+    //             }
+    //         }
+    //     }
+    //     apiCaller();
+
+    // }, [selectedModuleCode])
 
     useEffect(() => {
         const fetchTopics = async () => {
@@ -197,7 +222,8 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Module</FormLabel>
-                    <Select
+                      <FormTextArea   value={(moduleOptions?.find(e=>{  return e.value=== formData.module_code})?.label)} readOnly />
+                    {/* <Select
                         style={{ width: '100%' }}
                         showSearch
 
@@ -215,13 +241,14 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                         }}
                         options={moduleOptions}
                         value={formData.module_code}
-                        onChange={(e) => { setSelectedModuleCode(e); setFormData({ ...formData, module_code: e }); }}
-                    />
+                        onChange={(e) => { console.log("e", e); setSelectedModuleCode(e); setFormData({ ...formData, module_code: e }); }}
+                    /> */}
                 </FormGroup>
 
                 <FormGroup>
                     <FormLabel>Topic</FormLabel>
-                    <Select
+                      <FormTextArea  value={(topicOptions?.find(e=>{  return e.value=== formData.topic_code})?.label)} readOnly />
+                    {/* <Select
                         style={{ width: '100%' }}
                         showSearch
 
@@ -240,7 +267,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                         options={topicOptions}
                         value={formData.topic_code}
                         onChange={(e) => { setSelectedTopicCode(e); setFormData({ ...formData, topic_code: e }); }}
-                    />
+                    /> */}
                 </FormGroup>
 
                 <FormGroup>
