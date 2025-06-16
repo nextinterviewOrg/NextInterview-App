@@ -8,6 +8,7 @@ import {
 import SMTPSettings from '../../components/SMTPsettings/SMTPsettings';
 // import AISettings from '../../components/AIsettings/AIsettings';
 import UserAccessSettings from '../../components/UserAcess/UserAcess';
+import AdminSubcriptionPlan from '../../components/AdminSubcriptionPlan/AdminSubcriptionPlan';
  
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('user');
@@ -16,8 +17,8 @@ const SettingsPage = () => {
     switch (activeTab) {
       case 'user':
         return < UserAccessSettings/>;
-      // case 'ai':
-      //   return <AISettings />;
+      case 'payment':
+        return <AdminSubcriptionPlan />;
       case 'smtp':
         return <SMTPSettings />;
       default:
@@ -31,9 +32,9 @@ const SettingsPage = () => {
       <Tab active={activeTab === 'user'} onClick={() => setActiveTab('user')}>
           User Access
         </Tab>
-        {/* <Tab active={activeTab === 'ai'} onClick={() => setActiveTab('ai')}>
-          AI
-        </Tab> */}
+        <Tab active={activeTab === 'payment'} onClick={() => setActiveTab('payment')}>
+          Payment Details
+        </Tab>
         {/* <Tab active={activeTab === 'smtp'} onClick={() => setActiveTab('smtp')}>
           SMTP Server
         </Tab> */}
