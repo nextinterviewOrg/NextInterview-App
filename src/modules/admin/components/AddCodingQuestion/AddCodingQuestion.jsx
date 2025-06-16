@@ -237,7 +237,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                         duration: 3
                     })
                     setSuccess('Question added successfully');
-                    onChallengeAdded(response);
+                    onChallengeAdded(response.data);
                     setTimeout(onClose, 1500);
                 } else {
                     throw new Error(response.message || 'Save failed');

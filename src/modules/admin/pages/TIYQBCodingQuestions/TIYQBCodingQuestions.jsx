@@ -83,6 +83,7 @@ const TIYQBCodingQuestions = () => {
     }, [fetchChallenges]);
 
     useEffect(() => {
+        console.log("challenges", challenges);
 
         let filtered = [...challenges];
         console.log("selectedModule", selectedModule, "filtered", filtered);
@@ -130,8 +131,8 @@ const TIYQBCodingQuestions = () => {
             setSelectedTypeOption('tiy');
 
             const response = await getAllMainQBCodingQuestions();
-            setChallenges(response);
-            setFilteredChallenges(response);
+            setChallenges(response.data);
+            setFilteredChallenges(response.data);
             setError(null);
         } catch (err) {
             setError(err.message || "Failed to fetch questions.");
