@@ -266,9 +266,33 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         });
         break;
       case "Single-line":
-        payload.answer = formData.answer;
+    Object.assign(payload, {
+      QuestionText: formData.QuestionText.trim(),
+      answer: formData.answer,
+      challenge_date: new Date(formData.challenge_date).toISOString(),
+     description: formData.description
+    })
       case "Multi-line":
-        payload.answer = formData.answer;
+      Object.assign(payload, {
+        QuestionText: formData.QuestionText.trim(),
+        answer: formData.answer,
+        challenge_date: new Date(formData.challenge_date).toISOString(),
+        description: formData.description
+      })
+      case "Approach Analysis":
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
+        case "Case Study":
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
         break;
       default:
         break;
@@ -620,6 +644,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 rows={4}
               />
             </FormGroup>
+            
 
             <FormGroup>
               <FormLabel>Option A *</FormLabel>
@@ -747,6 +772,16 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 rows={6}
               />
             </FormGroup>
+            <FormGroup>
+              <FormLabel>Description</FormLabel>
+              <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
+              />
+            </FormGroup>
           </>
         )}
 
@@ -769,6 +804,26 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={6}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Answer*</FormLabel>
+              <FormTextArea
+                name="answer"
+                value={formData.answer}
+                onChange={handleInputChange}
+                placeholder="Enter the correct answer"
+                rows={6}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Description</FormLabel>
+              <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
               />
             </FormGroup>
           </>
@@ -794,6 +849,24 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={8}
+              />
+            </FormGroup>
+            <FormGroup><FormLabel>Description *</FormLabel>
+            <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
+              />
+            </FormGroup>
+            <FormGroup><FormLabel>Answer *</FormLabel>
+            <FormTextArea
+                name="answer"
+                value={formData.answer}
+                onChange={handleInputChange}
+                placeholder="Enter the correct answer"
+                rows={3}
               />
             </FormGroup>
           </>

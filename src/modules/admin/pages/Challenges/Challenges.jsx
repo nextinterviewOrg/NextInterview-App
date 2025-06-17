@@ -36,6 +36,7 @@ const Challenges = () => {
     try {
       setLoading(true);
       const response = await getChallenges();
+      console.log("All challenegs from admin side", response.data);
       setChallenges(response.data);
       setFilteredChallenges(response.data);
       setError(null);

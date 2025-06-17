@@ -100,7 +100,10 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
         QuestionText: challenge.QuestionText || "",
         difficulty: challenge.difficulty || "Easy",
         hints: challenge.hints || [],
-        topics: challenge.topics || []
+        topics: challenge.topics || [],
+        description: challenge.description || "",
+        answer: challenge.answer || "",
+        challenge_date: challenge.challenge_date.split("T")[0] || null
       };
 
       let specificData = {};
@@ -117,7 +120,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
             challenge_date: challenge.challenge_date.split("T")[0] || null,
             base_code: challenge.base_code || ""
           };
-         
+
           setCode(challenge.code || "");
           setBasecode(challenge.base_code || "");
           break;
@@ -335,8 +338,33 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
         });
         break;
       case "Single-line":
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
       case "Multi-line":
-        payload.answer = formData.answer;
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
+      case "Approach Analysis":
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
+      case "Case Study":
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
         break;
       default:
         break;
@@ -726,6 +754,15 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
         {questionType === "Single-line" && (
           <>
             <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
                 name="QuestionText"
@@ -744,11 +781,30 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 placeholder="Enter the correct answer"
               />
             </FormGroup>
+            <FormGroup>
+              <FormLabel>Description*</FormLabel>
+              <FormInput
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+              />
+            </FormGroup>
+
           </>
         )}
 
         {questionType === "Multi-line" && (
           <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
             <FormGroup>
               <FormLabel>Question *</FormLabel>
               <FormTextArea
@@ -769,21 +825,107 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 rows={6}
               />
             </FormGroup>
+            <FormGroup>
+              <FormLabel>Description</FormLabel>
+              <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
+              />
+            </FormGroup>
           </>
         )}
 
-        {(questionType === "Approach Analysis" || questionType === "Case Study") && (
-          <FormGroup>
-            <FormLabel>Question *</FormLabel>
-            <FormTextArea
-              name="QuestionText"
-              value={formData.QuestionText}
-              onChange={handleInputChange}
-              placeholder="Enter the question"
-              rows={questionType === "Case Study" ? 8 : 6}
-            />
-          </FormGroup>
+        {questionType === "Approach Analysis" && (
+          <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Question *</FormLabel>
+              <FormTextArea
+                name="QuestionText"
+                value={formData.QuestionText}
+                onChange={handleInputChange}
+                placeholder="Enter the question"
+                rows={6}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Answer*</FormLabel>
+              <FormTextArea
+                name="answer"
+                value={formData.answer}
+                onChange={handleInputChange}
+                placeholder="Enter the correct answer"
+                rows={6}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Description</FormLabel>
+              <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
+              />
+            </FormGroup>
+          </>
+
         )}
+
+        {questionType === "Case Study" && (
+          <>
+            <FormGroup>
+              <FormLabel>Challenge Date</FormLabel>
+              <FormInput
+                type="date"
+                name="challenge_date"
+                value={formData.challenge_date}
+                onChange={handleChange}
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Question *</FormLabel>
+              <FormTextArea
+                name="QuestionText"
+                value={formData.QuestionText}
+                onChange={handleInputChange}
+                placeholder="Enter the question"
+                rows={8}
+              />
+            </FormGroup>
+            <FormGroup><FormLabel>Description *</FormLabel>
+              <FormTextArea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
+                rows={3}
+              />
+            </FormGroup>
+            <FormGroup><FormLabel>Answer *</FormLabel>
+              <FormTextArea
+                name="answer"
+                value={formData.answer}
+                onChange={handleInputChange}
+                placeholder="Enter the correct answer"
+                rows={3}
+              />
+            </FormGroup>
+          </>
+
+        )}
+
 
         <SaveButton type="submit" disabled={isSubmitting} onClick={handleSubmit}>
           {isSubmitting ? "Saving..." : "Save Changes"}

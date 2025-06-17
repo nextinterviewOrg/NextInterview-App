@@ -123,7 +123,7 @@ const UserChallenges = () => {
 
                             <CardDesc>
                                 <CardLabels>
-                                    <Label>{questionTypeDisplayNames[challenge.question_type] || challenge.question_type}</Label>
+                                    {/* <Label>{questionTypeDisplayNames[challenge.question_type] || challenge.question_type}</Label> */}
                                     <Label difficulty={challenge.difficulty.toLowerCase()}>
                                         {challenge.difficulty}
                                     </Label>
