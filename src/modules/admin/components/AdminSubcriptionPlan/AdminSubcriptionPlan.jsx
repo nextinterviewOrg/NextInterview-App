@@ -29,13 +29,15 @@ import {
     ModalTitleDelete,
     CancelButton,
     DeletePaymentButton,
-    ToggleWrapper, Switch
+    ToggleWrapper, Switch,
+    EditPaymentButton
 } from "./AdminSubcriptionPlan.styles";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import noData from "../../../../assets/nodataanimation.gif";
-import { createPlan, getAllPlansWithStatus, deletePlan, UpdateToggleStatus, getAllPlans } from "../../../../api/subscriptionApi";
+import { createPlan, getAllPlansWithStatus, deletePlan, UpdateToggleStatus, updatePlans } from "../../../../api/subscriptionApi";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { FiEdit } from "react-icons/fi";
 
 
 const AdminSubscriptionPlan = () => {
@@ -54,7 +56,9 @@ const AdminSubscriptionPlan = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deletePlanId, setDeletePlanId] = useState(null);
   const [isDelete, setIsDelete] = useState(false);
-  console.log(plans);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editPlan, setEditPlan] = useState({ id: null, features: "" });
+  const [isEditSaving, setIsEditSaving] = useState(false);
 
 
 const handleToggle = async (planId) => {
@@ -137,7 +141,7 @@ const handleCreateSave = async () => {
   try {
     const res = await createPlan(planData);
     console.log("Create plan response:", res);
-    const updatedPlans = await getAllPlans();
+    const updatedPlans = await getAllPlansWithStatus();
     setPlans(updatedPlans);
     resetNewPlan();
     setIsCreateOpen(false);
@@ -160,7 +164,7 @@ const handleDeleteClick = async () => {
   if (!deletePlanId) return;
   try {
     await deletePlan(deletePlanId.razorpay_plan_id);
-    setPlans(await getAllPlans());
+    setPlans(await getAllPlansWithStatus());
     setTimeout(() => toast.success("Plan deleted successfully"), 6000);
   } catch (err) {
     console.error("Failed to delete plan:", err);
@@ -171,6 +175,50 @@ const handleDeleteClick = async () => {
     setIsDelete(false);
   }
 };
+
+  const openEditModal = (plan) => {
+    setEditPlan({
+      id: plan._id,
+      name: plan.name,
+      description: plan.description,
+      interval: plan.interval,
+      amount: plan.amount,
+      features: plan.features.join(", "),
+    });
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!editPlan.name || !editPlan.amount || !editPlan.description) return;
+
+    const amountNum = Number(editPlan.amount);
+    if (!Number.isFinite(amountNum) || amountNum <= 0) {
+      toast.error("Amount must be a positive number");
+      return;
+    }
+
+    const payload = {
+      name: editPlan.name.trim(),
+      description: editPlan.description.trim(),
+      features: editPlan.features
+        .split(",")
+        .map((f) => f.trim())
+        .filter(Boolean),
+    };
+
+    setIsEditSaving(true);
+    try {
+      await updatePlans(editPlan.id, payload);
+      setPlans(await getAllPlansWithStatus());
+      toast.success("Plan updated successfully");
+      setIsEditModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      toast.error("Plan update failed");
+    } finally {
+      setIsEditSaving(false);
+    }
+  };
 
 
 
@@ -213,7 +261,10 @@ const handleDeleteClick = async () => {
                   <TableCell>₹{p.amount}</TableCell>
                   <TableCell>{p.interval}</TableCell>
                   <TableCell>
+                    <ActionsContainer>
                     <a href="#" onClick={() => setViewPlan(p)} className="link-view">view</a>
+
+                    </ActionsContainer>
                   </TableCell>
                   <TableCell>
                     <ActionsContainer>
@@ -225,7 +276,13 @@ const handleDeleteClick = async () => {
   title={p.isActive ? "Deactivate" : "Activate"}
 >
   <Switch active={p.isActive} />
+  
 </ToggleWrapper>
+                      <FiEdit
+                        className="link"
+                        onClick={() => openEditModal(p)}
+                        title="Edit"
+                      />
                     </ActionsContainer>
                  </TableCell>
                 </TableRow>
@@ -338,6 +395,77 @@ const handleDeleteClick = async () => {
           </ModalContent>
         </ModalOverlay>
       )}
+
+      {isEditModalOpen && (
+        <ModalOverlay onClick={() => setIsEditModalOpen(false)}>
+          <ModalContent onClick={(e) => e.stopPropagation()}>
+            <ModalHeader>
+              <ModalTitle>Edit Plan</ModalTitle>
+              <ModalClose onClick={() => setIsEditModalOpen(false)}>
+                ×
+              </ModalClose>
+            </ModalHeader>
+            <ModalBody>
+              <label>Plan Name</label>
+              <Input
+                value={editPlan.name}
+                onChange={(e) =>
+                  setEditPlan({ ...editPlan, name: e.target.value })
+                }
+              />
+
+              <label style={{ marginTop: 12 }}>Description</label>
+              <TextArea
+                rows="2"
+                value={editPlan.description}
+                onChange={(e) =>
+                  setEditPlan({ ...editPlan, description: e.target.value })
+                }
+              />
+
+              <label style={{ marginTop: 12 }}>Amount</label>
+              <Input
+                type="number"
+                value={editPlan.amount}
+                onChange={(e) =>
+                  setEditPlan({ ...editPlan, amount: e.target.value })
+                }
+                disabled
+              />
+
+              <label style={{ marginTop: 12 }}>Interval</label>
+              <Select
+                value={editPlan.interval}
+                onChange={(e) =>
+                  setEditPlan({ ...editPlan, interval: e.target.value })
+                }
+                disabled
+              >
+                <option value="monthly">Monthly</option>
+                <option value="yearly">Yearly</option>
+              </Select>
+
+              <label style={{ marginTop: 12 }}>
+                Features&nbsp;(comma‑separated)
+              </label>
+              <TextArea
+                rows="3"
+                value={editPlan.features}
+                onChange={(e) =>
+                  setEditPlan({ ...editPlan, features: e.target.value })
+                }
+              />
+            </ModalBody>
+            <ModalFooter>
+              <EditPaymentButton onClick={handleEditSave}>
+                {isEditSaving ? "updating..." : "Update"}
+              </EditPaymentButton>
+            </ModalFooter>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+
 
     {isDeleteModalOpen && (
       <ModalOverlayDelete>
