@@ -105,7 +105,7 @@ const UserChallenges = () => {
                     return (
                         <Card
                             key={challenge.id}
-                            onClick={() => navigate(`/user/challengeInfo/${challenge.id}`)}
+                            onClick={() => navigate(`/user/challengeInfo/${challenge.id}/true`)}
                             style={{ cursor: 'pointer' }}
                         >
                             <IconWrapper>

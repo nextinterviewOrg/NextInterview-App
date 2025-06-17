@@ -326,7 +326,7 @@ const TakeChallenge = ({ questionType = "coding" }) => {
               <Buttons>
                 <Button
                   secondary
-                  onClick={() => navigate(`/user/challengeInfo/${challenge._id}`)}
+                  onClick={() => navigate(`/user/challengeInfo/${challenge._id}/false`)}
                 >
                   Challenge Info
                 </Button>

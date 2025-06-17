@@ -118,3 +118,23 @@ export const getPastChallengesWithUserResults =async (userId) => {
       throw error;
   }
 }
+
+export const getPastChallengesNextQuestion =async (userId, questionId) => {
+  try {
+    const response =await api.get(`/userChallenges/getPastNextChallenges/${userId}/${questionId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}
+
+export const getTodayChallengesNextQuestion = async (userId, questionId) => {
+  try {
+    const response =await api.get(`/userChallenges/getTodaysNextChallenges/${userId}/${questionId}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}
