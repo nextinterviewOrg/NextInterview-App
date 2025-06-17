@@ -60,7 +60,7 @@ const QusnsTryitYourself = () => {
           </Icon>
           <Content>
             <TagsRow>
-              <Tag>{q.question_type}</Tag>
+              {/* <Tag>{q.question_type}</Tag> */}
               <Tag difficulty={q.level}>{q.level}</Tag>
             </TagsRow>
             <Title>{q.question}</Title>

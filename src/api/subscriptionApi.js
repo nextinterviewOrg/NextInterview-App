@@ -131,3 +131,14 @@ export const UpdateToggleStatus = async (planId) => {
     throw error;
   }
 };
+
+export const updatePlans = async (planId, planData) => {
+  try {
+    const response = await api.put(`/subscription/updatePlan/${planId}`, planData);
+    console.log("updatePlans API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("updatePlans API Error:", error.response?.data || error.message);
+    throw error;
+  }
+};

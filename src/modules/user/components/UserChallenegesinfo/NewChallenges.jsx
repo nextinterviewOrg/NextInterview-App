@@ -380,11 +380,11 @@ const NewChallenge = () => {
               ? "# Today's Challenge"
               : "# Past Challenge"}
           </Tag>
-          <Tag>
+          {/* <Tag>
             {challenge.question_type === "coding"
               ? `# ${challenge.programming_language}`
               : `# ${challenge.question_type}`}
-          </Tag>
+          </Tag> */}
         </div>
         <Title>{challenge.QuestionText}</Title>
         {renderInput()}

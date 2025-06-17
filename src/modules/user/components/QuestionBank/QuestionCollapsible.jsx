@@ -288,6 +288,7 @@ const QuestionCollapsible = () => {
       case "multi-line":
       case "approach":
       case "text":
+      case "case-study":
         return (
           <TextAnswer
             as="textarea"
@@ -349,11 +350,11 @@ const QuestionCollapsible = () => {
       <BackButton onClick={() => navigate(-1)}>
         <IoChevronBackSharp /> Back
       </BackButton>
-      <Tag>
+      {/* <Tag>
         {question.type === "coding"
           ? `# ${question.category}`
           : `# ${question.type}`}
-      </Tag>
+      </Tag> */}
       <Container>
         <QuestionBox>
           <QusnandType>
@@ -375,15 +376,15 @@ const QuestionCollapsible = () => {
                 ) : (
                   <span>{question.answer}</span>
                 )}
-                <HelpIcons>
+                {/* <HelpIcons>
                   <PiThumbsUpLight /> Helpful
                   <PiThumbsDownLight /> Not helpful
-                </HelpIcons>
+                </HelpIcons> */}
               </SolutionAnswer>
             </SolutionBox>
           )}
 
-        {question.type === "approach" && showSolution && (
+        {(question.type === "approach" || question.type === "case-study") && showSolution && (
           <SolutionBox>
             <SolutionText>Feedback:</SolutionText>
             {feedbackData ? (
@@ -420,7 +421,7 @@ const QuestionCollapsible = () => {
           </SolutionBox>
         )}
 
-        {["text", "multi-line", "approach", "mcq", "single-line"].includes(
+        {["text", "multi-line", "approach", "mcq", "single-line", "case-study"].includes(
           question.type
         ) && (
           <Footer>

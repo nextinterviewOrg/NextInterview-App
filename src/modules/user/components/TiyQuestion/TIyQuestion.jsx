@@ -36,7 +36,8 @@ import { getUserByClerkId } from '../../../../api/userApi';
 import { useUser } from '@clerk/clerk-react';
 import { getTiyHarderQuestion, nextTiyQuestion } from '../../../../api/userMainQuestionBankApi';
 
-
+const EXTERNAL_API_BASE =
+  "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
 
 const TIyQuestion = () => {
     const { id } = useParams();
@@ -49,6 +50,7 @@ const TIyQuestion = () => {
     const [showSolution, setShowSolution] = useState(false);
     const [showMore, setShowMore] = useState(false);
     const [textAnswer, setTextAnswer] = useState('');
+    const [feedbackData, setFeedbackData] = useState(null);
     console.log('Question ID:', showSolution, id);
 
     useEffect(() => {
@@ -141,6 +143,11 @@ const TIyQuestion = () => {
             handleNextQuestion();
             return;
         }
+
+            if (question.type === "approach") {
+      handleGetFeedbackClick();
+      return;
+    }
 
         if (!textAnswer.trim()) {
             alert('Please provide an answer before viewing the solution.');
@@ -283,14 +290,54 @@ const TIyQuestion = () => {
         }
     };
 
+     const handleGetFeedbackClick = async () => {
+    console.log("this functionality is calling")
+    if (!textAnswer.trim()) {
+      setError("Please provide an answer before getting feedback.");
+      return;
+    }
+
+    try {
+      // optional spinner
+      const res = await fetch(`${EXTERNAL_API_BASE}/analyze-approach`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: question.text ?? "",
+          user_answer: textAnswer,
+        }),
+      });
+
+      const data = await res.json();
+      console.log("data ejfhh", data);
+      if (!res.ok) {
+        // FastAPI validation errors come as { detail: [...] }
+        const msg =
+          Array.isArray(data.detail) && data.detail.length
+            ? `${data.detail[0].loc.join(".")}: ${data.detail[0].msg}`
+            : "Unexpected server error.";
+        setError(msg);
+        return;
+      }
+    
+      setFeedbackData(data); // { feedback, strengths, areas_for_improvement, score }
+      setShowSolution(true);
+    } catch (err) {
+      console.error("Error getting feedback:", err);
+      setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
     return (
         <div style={{ marginLeft: '60px', }}>
             <BackButton onClick={() => navigate(-1)}>
                 <IoChevronBackSharp /> Back
             </BackButton>
-            <Tag>
+            {/* <Tag>
                 {question.type === "coding" ? `# ${question.category}` : `# ${question.type}`}
-            </Tag>
+            </Tag> */}
             <Container>
                 <QuestionBox>
                     <QusnandType>
@@ -302,33 +349,85 @@ const TIyQuestion = () => {
                     {renderInput()}
                 </QuestionBox>
 
-                {['text', 'multi-line', 'approach', 'mcq', 'single-line'].includes(question.type) && showSolution && (
-                    <SolutionBox>
-                        <SolutionText>Solution:</SolutionText>
-                        <SolutionAnswer>
-                            {question.type === "mcq" ? (
-                                <span>{question.correctOption}</span>
-                            ) : (
-                                <span>{question.answer}</span>
-                            )}
-                            <HelpIcons>
-                                <PiThumbsUpLight /> Helpful
-                                <PiThumbsDownLight /> Not helpful
-                            </HelpIcons>
-                        </SolutionAnswer>
-                    </SolutionBox>
-                )}
 
-                {['text', 'multi-line', 'approach', 'mcq', 'single-line'].includes(question.type) && (
-                    <Footer>
-                        <Button onClick={handleSolutionButton} disabled={!showSolution && textAnswer.trim().length === 0}>
-                            {showSolution ? 'Next question' : 'Show solution'}
-                        </Button>
-                        <TryHarder onClick={handleTryHarderQuestion}>
-                            <PiStarFour /> Try harder question
-                        </TryHarder>
-                    </Footer>
+        {["text", "multi-line", "mcq", "single-line"].includes(question.type) &&
+          showSolution && (
+            <SolutionBox>
+              <SolutionText>Solution:</SolutionText>
+              <SolutionAnswer>
+                {question.type === "mcq" ? (
+                  <span>{question.correctOption}</span>
+                ) : (
+                  <span>{question.answer}</span>
                 )}
+                <HelpIcons>
+                  <PiThumbsUpLight /> Helpful
+                  <PiThumbsDownLight /> Not helpful
+                </HelpIcons>
+              </SolutionAnswer>
+            </SolutionBox>
+          )}
+
+        {question.type === "approach" && showSolution && (
+          <SolutionBox>
+            <SolutionText>Feedback:</SolutionText>
+            {feedbackData ? (
+              <>
+                <SolutionAnswer>
+                  <strong>Feedback:</strong>{" "}
+                  {feedbackData.feedback || "No feedback provided."}
+                </SolutionAnswer>
+                <SolutionAnswer>
+                  <strong>Strengths:</strong>{" "}
+                  {Array.isArray(feedbackData.strengths) &&
+                  feedbackData.strengths.length > 0
+                    ? feedbackData.strengths.join(", ")
+                    : "No strengths identified."}
+                </SolutionAnswer>
+                <SolutionAnswer>
+                  <strong>Areas for Improvement:</strong>{" "}
+                  {Array.isArray(feedbackData.areas_for_improvement) &&
+                  feedbackData.areas_for_improvement.length > 0
+                    ? feedbackData.areas_for_improvement.join(", ")
+                    : "No improvement areas identified."}
+                </SolutionAnswer>
+                <SolutionAnswer>
+                  <strong>Score:</strong>{" "}
+                  {typeof feedbackData.score === "number"
+                    ? feedbackData.score
+                    : "N/A"}{" "}
+                  / 10
+                </SolutionAnswer>
+              </>
+            ) : (
+              <SolutionAnswer>No feedback available.</SolutionAnswer>
+            )}
+          </SolutionBox>
+        )}
+                
+                        {["text", "multi-line", "approach", "mcq", "single-line"].includes(
+                          question.type
+                        ) && (
+                          <Footer>
+                            <Button
+                              onClick={handleSolutionButton}
+                              disabled={
+                                !showSolution && // we’re still answering
+                                textAnswer.trim().length === 0 && // nothing typed
+                                question.type !== "approach" // “approach” may send empty → API will complain, so keep same guard
+                              }
+                            >
+                              {showSolution
+                                ? "Next question"
+                                : question.type === "approach"
+                                ? "Get Feedback"
+                                : "Show Solution"}
+                            </Button>
+                            <TryHarder onClick={handleTryHarderQuestion}>
+                              <PiStarFour /> Try harder question
+                            </TryHarder>
+                          </Footer>
+                        )}
             </Container>
         </div>
     );
