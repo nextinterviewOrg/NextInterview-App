@@ -70,7 +70,7 @@ export const SubTitle = styled.h3`
 
 
 export const CreatePaymentButton = styled.button`
-  padding: 14px;
+  padding: 14px 30px;
   background: #2290AC;
   color: white;
   border: none;
@@ -95,6 +95,52 @@ export const CreatePaymentButton = styled.button`
     padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
     font-size: 0.8rem;
     width: 50%;
+  }
+`;
+
+export const DeletePaymentButton = styled.button`
+  padding: 10px 30px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-family: ${(props) => props.theme.fonts.body};
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    // padding: 8px;
+    font-size: 0.9rem;
+    width: 25%;
+    margin-right: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
+    font-size: 0.8rem;
+    width: 50%;
+  }
+`;
+
+
+export const CancelButton = styled.button`
+  background-color: #fff;
+  color: #000;
+  font-family: ${(props) => props.theme.fonts.body};
+  font-size: 1rem;
+  border: 1px solid #000;
+  border-radius: ${(props) => props.theme.spacing(0.5)};
+  padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 10px 30px;
+
+  &:hover {
+    background-color: darken(${(props) => props.theme.colors.secondary}, 10%);
   }
 `;
 
@@ -138,8 +184,8 @@ export const TableCell = styled.td`
     text-align: center;
     border: 1px solid #F0F8F1;
 
-&:nth-child(4) {
-  .link {
+&:nth-child(5) {
+  .link-view {
     color: #2290ac;
     cursor: pointer;
     text-decoration: none;
@@ -174,6 +220,24 @@ export const TableHeader = styled.th`
 }
 `;
 
+export const ActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;        /* space between icons / buttons */
+
+  .link {
+    color: red;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 18px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+`;
+
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -195,6 +259,26 @@ export const ModalContent = styled.div`
   flex-direction: column;
 `;
 
+export const ModalOverlayDelete = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+`;
+
+export const ModalContentDelete = styled.div`
+  background: #fff;
+  width: 420px;
+  max-width: 90%;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const ModalHeader = styled.div`
   background: #fff;
   color: #000;
@@ -204,7 +288,20 @@ export const ModalHeader = styled.div`
   align-items: center;
 `;
 
+export const ModalMainHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding: 0 18px;
+`;
+
 export const ModalTitle = styled.h4`
+  margin: 0;
+  font-size: 18px;
+`;
+
+export const ModalTitleDelete = styled.h4`
   margin: 0;
   font-size: 18px;
 `;
@@ -231,6 +328,7 @@ export const ModalFooter = styled.div`
   padding: 12px 18px 18px 18px;
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
 `;
 
 /* ---------- inputs ---------- */
@@ -254,4 +352,25 @@ export const Select = styled.select`
   border: 1px solid #d7dce1;
   border-radius: 4px;
   font-size: 14px;
+`;
+
+export const ToggleWrapper = styled.div`
+  width: 50px;
+  height: 26px;
+  border-radius: 50px;
+  background-color: ${({ active }) => (active ? "#4caf50" : "#ccc")};
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+`;
+
+export const Switch = styled.div`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: white;
+  transition: transform 0.3s ease;
+  transform: ${({ active }) => (active ? "translateX(24px)" : "translateX(0)")};
 `;

@@ -21,11 +21,22 @@ import {
   ModalFooter,
   Input,
   Select,
-  TextArea
+  TextArea,
+  ActionsContainer,
+  ModalMainHead,
+    ModalOverlayDelete,
+  ModalContentDelete,
+    ModalTitleDelete,
+    CancelButton,
+    DeletePaymentButton,
+    ToggleWrapper, Switch
 } from "./AdminSubcriptionPlan.styles";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import noData from "../../../../assets/nodataanimation.gif";
-import { createPlan, getAllPlans } from "../../../../api/subscriptionApi";
+import { createPlan, getAllPlansWithStatus, deletePlan, UpdateToggleStatus, getAllPlans } from "../../../../api/subscriptionApi";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 
 const AdminSubscriptionPlan = () => {
   const [fetching, setFetching] = useState(true);
@@ -39,11 +50,54 @@ const AdminSubscriptionPlan = () => {
     amount: "",
     features: ""
   });
+  const [isCreate, setIsCreate] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deletePlanId, setDeletePlanId] = useState(null);
+  const [isDelete, setIsDelete] = useState(false);
+  console.log(plans);
+
+
+const handleToggle = async (planId) => {
+  const toggledPlan = plans.find((pl) => pl._id === planId);
+  const newStatus = !toggledPlan?.isActive;        // ← use isActive
+
+  try {
+    // 1. Optimistic UI update
+    setPlans((prev) =>
+      prev.map((pl) =>
+        pl._id === planId ? { ...pl, isActive: newStatus } : pl
+      )
+    );
+
+    // 2. Persist to the server
+    await UpdateToggleStatus(planId);
+
+    // 3. Feedback
+    toast.success(
+      `Plan ${newStatus ? "activated" : "deactivated"} successfully`
+    );
+  } catch (err) {
+    console.error(err);
+    toast.error("Status update failed");
+
+    // Roll back on error
+    setPlans((prev) =>
+      prev.map((pl) =>
+        pl._id === planId ? { ...pl, isActive: !newStatus } : pl
+      )
+    );
+  }
+};
+
+
+
+
+
 
   useEffect(() => {
     const fetchPlans = async () => {
       try {
-        const list = await getAllPlans();
+        const list = await getAllPlansWithStatus();
         setPlans(list);
       } catch (err) {
         console.error(err);
@@ -58,6 +112,7 @@ const AdminSubscriptionPlan = () => {
     setNewPlan({ name: "", description: "", interval: "monthly", amount: "", features: "" });
 
 const handleCreateSave = async () => {
+  setIsCreate(true);
   if (!newPlan.name.trim() || !newPlan.amount.trim() || !newPlan.description.trim()) return;
 
   const amountNum = Number(newPlan.amount.trim());
@@ -86,11 +141,37 @@ const handleCreateSave = async () => {
     setPlans(updatedPlans);
     resetNewPlan();
     setIsCreateOpen(false);
+    setTimeout(() => toast.success("Plan created successfully"), 1000);
   } catch (err) {
     console.error("Failed to create plan:", err);
     alert("Plan creation failed. See console for details.");
+  } finally {
+    setIsCreate(false);
   }
 };
+
+const openDeleteModal = (plan) => {   
+  setDeletePlanId(plan);    // keep the plan handy for the API call
+  setIsDeleteModalOpen(true); // but hide its features modal via the guard below
+};
+
+const handleDeleteClick = async () => {
+    setIsDelete(true);
+  if (!deletePlanId) return;
+  try {
+    await deletePlan(deletePlanId.razorpay_plan_id);
+    setPlans(await getAllPlans());
+    setTimeout(() => toast.success("Plan deleted successfully"), 6000);
+  } catch (err) {
+    console.error("Failed to delete plan:", err);
+    toast.error("Plan deletion failed. See console for details.");
+  } finally {
+    setIsDeleteModalOpen(false);
+    setViewPlan(null);
+    setIsDelete(false);
+  }
+};
+
 
 
   return (
@@ -108,10 +189,12 @@ const handleCreateSave = async () => {
         <StyledTable>
           <TableHead>
             <TableRow>
+                <TableHeader>razorpay plan id</TableHeader>
               <TableHeader>Plan Name</TableHeader>
               <TableHeader>Amount</TableHeader>
               <TableHeader>Type</TableHeader>
               <TableHeader>Features</TableHeader>
+              <TableHeader>Actions</TableHeader>
             </TableRow>
           </TableHead>
 
@@ -124,13 +207,27 @@ const handleCreateSave = async () => {
               </TableRow>
             ) : plans.length ? (
               plans.map(p => (
-                <TableRow key={p.razorpay_plan_id}>
+                <TableRow key={p._id}>
+                    <TableCell>{p.razorpay_plan_id}</TableCell>
                   <TableCell>{p.name}</TableCell>
                   <TableCell>₹{p.amount}</TableCell>
                   <TableCell>{p.interval}</TableCell>
                   <TableCell>
-                    <a href="#" onClick={() => setViewPlan(p)} className="link">view</a>
+                    <a href="#" onClick={() => setViewPlan(p)} className="link-view">view</a>
                   </TableCell>
+                  <TableCell>
+                    <ActionsContainer>
+                       {/* <RiDeleteBin6Line className="link" onClick={() => openDeleteModal(p)} /> */}
+
+<ToggleWrapper
+  onClick={() => handleToggle(p._id)}
+  active={p.isActive}
+  title={p.isActive ? "Deactivate" : "Activate"}
+>
+  <Switch active={p.isActive} />
+</ToggleWrapper>
+                    </ActionsContainer>
+                 </TableCell>
                 </TableRow>
               ))
             ) : (
@@ -144,7 +241,7 @@ const handleCreateSave = async () => {
         </StyledTable>
       </TableWrapper>
 
-      {viewPlan && (
+      {viewPlan  &&  (
         <ModalOverlay onClick={() => setViewPlan(null)}>
           <ModalContent onClick={(e) => e.stopPropagation()}>
             <ModalHeader>
@@ -235,12 +332,40 @@ const handleCreateSave = async () => {
 
             <ModalFooter>
               <CreatePaymentButton onClick={handleCreateSave}>
-                Save
+                {isCreate ? "Saving..." : "Save"}
               </CreatePaymentButton>
             </ModalFooter>
           </ModalContent>
         </ModalOverlay>
       )}
+
+    {isDeleteModalOpen && (
+      <ModalOverlayDelete>
+        <ModalContentDelete>
+          <ModalMainHead>
+            <ModalTitleDelete>Delete Plan</ModalTitleDelete>
+            <ModalClose onClick={() => setIsDeleteModalOpen(false)}>×</ModalClose>
+          </ModalMainHead>
+
+          <ModalHeader>
+            <ModalTitle>Are you sure you want to delete?</ModalTitle>
+          </ModalHeader>
+
+          <ModalFooter>
+            <DeletePaymentButton onClick={handleDeleteClick}>
+              {isDelete ? "Deleting..." : "Delete"}
+            </DeletePaymentButton>
+            <CancelButton onClick={() => setIsDeleteModalOpen(false)}>
+              Cancel
+            </CancelButton>
+          </ModalFooter>
+        </ModalContentDelete>
+      </ModalOverlayDelete>
+    )}
+
+    <ToastContainer 
+      position="top-center"
+      />
     </PaymentContainer>
   );
 };

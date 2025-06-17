@@ -97,3 +97,37 @@ export const upgradeSubscription = async (userId, planId) => {
         throw err;
     }
 };
+
+export const deletePlan = async (planId) => {
+  try {
+    const response = await api.delete(`/subscription/softDelete/${planId}`);
+    console.log("deletePlan API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("deletePlan API Error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const getAllPlansWithStatus = async () => {
+  try {
+    const { data } = await api.get('/subscription/getAllPlansStatus');
+    console.log(data); 
+    // If backend shape is { success, plans: [...] }
+    return data.plans ?? data;   // ← always an array
+  } catch (err) {
+    console.error('Error fetching plans:', err);
+    throw err;
+  }
+};
+
+export const UpdateToggleStatus = async (planId) => {
+  try {
+    const response = await api.put(`/subscription/togglePlanStatus/${planId}`);
+    console.log("UpdateToggleStatus API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("UpdateToggleStatus API Error:", error.response?.data || error.message);
+    throw error;
+  }
+};
