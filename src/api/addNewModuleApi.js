@@ -121,6 +121,7 @@ export const getModuleByModuleCode = async (moduleCode) => {
         throw error;
     }
 };
+
 export const getTopicCodeAndNameByModuleCode = async (moduleId) => {
     try {
         const response = await api.get(`/addNewModule/moduleTopics/${moduleId}`);

@@ -266,6 +266,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         });
         break;
       case "Single-line":
+        payload.answer = formData.answer;
       case "Multi-line":
         payload.answer = formData.answer;
         break;
@@ -701,6 +702,15 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 value={formData.answer}
                 onChange={handleInputChange}
                 placeholder="Enter the correct answer"
+              />
+            </FormGroup>
+            <FormGroup>
+              <FormLabel>Description*</FormLabel>
+              <FormInput
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Enter the description"
               />
             </FormGroup>
           </>

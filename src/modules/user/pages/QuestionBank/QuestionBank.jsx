@@ -307,7 +307,6 @@
 // };
 
 // export default QuestionBank;import React, { useState, useEffect } from 'react';
-
 import React, { useState, useEffect } from 'react';
 import {
   Container,
@@ -335,24 +334,22 @@ import { FaCheck } from 'react-icons/fa6';
 import { IoClose } from 'react-icons/io5';
 import { TfiFilter } from 'react-icons/tfi';
 import { LuPencil } from 'react-icons/lu';
-
-// API calls
+import { getModuleCode } from '../../../../api/addNewModuleApi';
 import { getAllCategory } from '../../../../api/categoryApi';
-import { getQuestionByCategoryIdandUserId, getAllQuestionsUsingUserId } from '../../../../api/questionBankApi';
+import { getAllQuestionsUsingUserId, getQuestionByCategoryIdandUserId } from '../../../../api/questionBankApi';
 import { useUser } from '@clerk/clerk-react';
 import { getUserByClerkId } from '../../../../api/userApi';
 
-const difficultyLevels = ['Easy', 'Medium', 'Hard']; // For filter UI only
+const difficultyLevels = ['Easy', 'Medium', 'Hard'];
 
 const QuestionBank = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [filterSearchQuery, setFilterSearchQuery] = useState('');
-  const [topics, setTopics] = useState([]);
-  const [moduleCodes, setModuleCodes] = useState([]);
-  const [categories, setCategories] = useState([]); // Dynamic categories
-  const [questions, setQuestions] = useState([]); // Current filtered questions
-  const [allQuestions, setAllQuestions] = useState([]); // Store all questions for reuse
+  const [modules, setModules] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [questions, setQuestions] = useState([]);
+  const [allQuestions, setAllQuestions] = useState([]);
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
 
@@ -360,7 +357,7 @@ const QuestionBank = () => {
     easy: false,
     medium: false,
     hard: false,
-    topics: [],
+    modules: [],
     status: { solved: false, unsolved: false }
   };
 
@@ -380,63 +377,43 @@ const QuestionBank = () => {
     if (user?.id) fetchUserId();
   }, [user]);
 
-  // Load categories and all questions initially
+  // Load initial data (categories, modules and questions)
   useEffect(() => {
     const loadInitialData = async () => {
       if (!userId) return;
 
       try {
-        const categoryRes = await getAllCategory();
-        if (categoryRes?.success) {
-          const categoryList = categoryRes.data || [];
-          setCategories(categoryList);
+        // Fetch categories first
+        const categoriesRes = await getAllCategory();
+        if (categoriesRes?.success) {
+          setCategories(categoriesRes.data || []);
+        }
 
-          const allQuestionsRes = await getAllQuestionsUsingUserId(userId);
-          console.log("All Questions Response:", allQuestionsRes);
-          let allQuestions = [];
+        // Then fetch modules
+        const modulesRes = await getModuleCode();
+        if (modulesRes?.success) {
+          setModules(modulesRes.data || []);
+        }
 
-          if (allQuestionsRes?.success && Array.isArray(allQuestionsRes.data)) {
-            allQuestions = allQuestionsRes.data;
-          }
-
-          // Extract unique topics
-          const topicSet = new Set();
-          allQuestions.forEach(q => {
-            if (Array.isArray(q.topics)) {
-              q.topics.forEach(t => topicSet.add(t.topic_name));
-            }
-          });
-          setTopics(Array.from(topicSet));
-
-          // Generate module codes
-          const categoryMap = {};
-          categoryList.forEach(cat => {
-            if (!categoryMap[cat.category_name]) {
-              categoryMap[cat.category_name] = `CAT${Object.keys(categoryMap).length + 1}`;
-            }
-          });
-          const modCodes = Object.entries(categoryMap).map(([name, code]) => ({
-            module_name: name,
-            module_code: code,
-          }));
-          setModuleCodes(modCodes);
-
-          // Map questions
-          const mappedQuestions = allQuestions.map(q => ({
+        // Then fetch all questions
+        const questionsRes = await getAllQuestionsUsingUserId(userId);
+        if (questionsRes?.success && Array.isArray(questionsRes.data)) {
+          const mappedQuestions = questionsRes.data.map(q => ({
             id: q._id,
-            category: q.programming_language || "Other",
+            module_code: q.module_code || "Other",
+            module_name: modulesRes?.data?.find(m => m.module_code === q.module_code)?.module_name || q.module_code || "Other",
+            category: q.questionbankCategoryRef?.[0] || null,
             difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
             text: q.question || "Untitled",
             type: q.question_type || "text",
             completed: q.attempted || false,
             description: q.description || '',
-            longDescription: q.description || '',
             topics: q.topics?.map(t => t.topic_name) || [],
             solution: q.output || ''
           }));
-
+          
           setAllQuestions(mappedQuestions);
-          setQuestions(mappedQuestions); // Initially show all
+          setQuestions(mappedQuestions);
         }
       } catch (err) {
         console.error("Error loading initial data", err);
@@ -446,44 +423,23 @@ const QuestionBank = () => {
     loadInitialData();
   }, [userId]);
 
-  // Load category-specific questions when activeTab changes
+  // Filter questions when activeTab changes
   useEffect(() => {
-    const loadCategoryQuestions = async () => {
-      if (activeTab === 'all') {
-        // Reset to all questions
-        setQuestions(allQuestions);
-        return;
+    if (activeTab === 'all') {
+      setQuestions(allQuestions);
+    } else {
+      // Check if activeTab is a category ID
+      const isCategory = categories.some(cat => cat._id === activeTab);
+      if (isCategory) {
+        const filtered = allQuestions.filter(q => q.category === activeTab);
+        setQuestions(filtered);
+      } else {
+        // Otherwise treat it as a module code
+        const filtered = allQuestions.filter(q => q.module_code === activeTab);
+        setQuestions(filtered);
       }
-
-      if (!userId) return;
-
-      try {
-        const res = await getQuestionByCategoryIdandUserId(activeTab, userId);
-        if (res?.success && Array.isArray(res.data)) {
-          const mappedQuestions = res.data.map(q => ({
-            id: q._id,
-            category: q.programming_language || "Other",
-            difficulty: q.level ? q.level.charAt(0).toUpperCase() + q.level.slice(1) : "Easy",
-            text: q.question || "Untitled",
-            type: q.question_type || 'text',
-            completed: q.attempted || false,
-            description: q.description || '',
-            longDescription: q.description || '',
-            topics: q.topics?.map(t => t.topic_name) || [],
-            solution: q.output || ''
-          }));
-          setQuestions(mappedQuestions);
-        } else {
-          setQuestions([]);
-        }
-      } catch (err) {
-        console.error("Error fetching category questions", err);
-        setQuestions([]);
-      }
-    };
-
-    loadCategoryQuestions();
-  }, [activeTab, userId, allQuestions]); // Now depends on allQuestions
+    }
+  }, [activeTab, allQuestions, categories]);
 
   const toggleDropdown = () => {
     setTempFilters(selectedFilters);
@@ -492,17 +448,17 @@ const QuestionBank = () => {
 
   const closeDropdown = () => setIsDropdownOpen(false);
 
-  const toggleTopic = (topic) => {
-    setTempFilters((prev) => ({
+  const toggleModule = (moduleCode) => {
+    setTempFilters(prev => ({
       ...prev,
-      topics: prev.topics.includes(topic)
-        ? prev.topics.filter((t) => t !== topic)
-        : [...prev.topics, topic]
+      modules: prev.modules.includes(moduleCode)
+        ? prev.modules.filter(m => m !== moduleCode)
+        : [...prev.modules, moduleCode]
     }));
   };
 
   const toggleStatus = (statusType) => {
-    setTempFilters((prev) => ({
+    setTempFilters(prev => ({
       ...prev,
       status: {
         ...prev.status,
@@ -511,37 +467,48 @@ const QuestionBank = () => {
     }));
   };
 
-  const filteredQuestions = questions.filter((q) => {
+  const filteredQuestions = questions.filter(q => {
     const matchesDifficulty =
       (!selectedFilters.easy && !selectedFilters.medium && !selectedFilters.hard) ||
       selectedFilters[q.difficulty.toLowerCase()];
-    const matchesTopic =
-      selectedFilters.topics.length === 0 || selectedFilters.topics.some(t => q.topics.includes(t));
+    
+    const matchesModule =
+      selectedFilters.modules.length === 0 || 
+      selectedFilters.modules.includes(q.module_code);
+    
     const matchesStatus =
       (!selectedFilters.status.solved && !selectedFilters.status.unsolved) ||
       (selectedFilters.status.solved && q.completed) ||
       (selectedFilters.status.unsolved && !q.completed);
-    return matchesDifficulty && matchesTopic && matchesStatus;
+    
+    return matchesDifficulty && matchesModule && matchesStatus;
   });
 
-  console.log ("dbhfsdfg",filteredQuestions )
+  const getModuleName = (moduleCode) => {
+    const module = modules.find(m => m.module_code === moduleCode);
+    return module ? module.module_name : moduleCode;
+  };
+
+  const getCategoryName = (categoryId) => {
+    const category = categories.find(c => c._id === categoryId);
+    return category ? category.category_name : "Other";
+  };
 
   return (
     <Container>
       <FilterBar>
-        {/* Always show All */}
         <FilterButton active={activeTab === 'all'} onClick={() => setActiveTab('all')}>
           All
         </FilterButton>
 
-        {/* Dynamic Category Tabs */}
-        {categories.map((cat) => (
+        {/* Show categories in the filter bar */}
+        {categories.map(category => (
           <FilterButton
-            key={cat._id}
-            active={activeTab === cat._id}
-            onClick={() => setActiveTab(cat._id)}
+            key={category._id}
+            active={activeTab === category._id}
+            onClick={() => setActiveTab(category._id)}
           >
-            {cat.category_name}
+            {category.category_name}
           </FilterButton>
         ))}
 
@@ -577,7 +544,7 @@ const QuestionBank = () => {
             <FilterHeader>
               <SearchInput
                 type="text"
-                placeholder="Search filters..."
+                placeholder="Search modules..."
                 value={filterSearchQuery}
                 onChange={(e) => setFilterSearchQuery(e.target.value.toLowerCase())}
               />
@@ -588,13 +555,13 @@ const QuestionBank = () => {
 
             <FilterSection>
               <SubText>Difficulty Level</SubText>
-              {difficultyLevels.map((level) => (
+              {difficultyLevels.map(level => (
                 <CheckboxLabel key={level}>
                   <input
                     type="checkbox"
                     checked={tempFilters[level.toLowerCase()]}
                     onChange={() =>
-                      setTempFilters((prev) => ({
+                      setTempFilters(prev => ({
                         ...prev,
                         [level.toLowerCase()]: !prev[level.toLowerCase()]
                       }))
@@ -606,17 +573,18 @@ const QuestionBank = () => {
             </FilterSection>
 
             <FilterSection>
-              <SubText>Topics</SubText>
-              {moduleCodes
-                .filter((module) =>
-                  module.module_name.toLowerCase().includes(filterSearchQuery)
+              <SubText>Modules</SubText>
+              {modules
+                .filter(module =>
+                  module.module_name.toLowerCase().includes(filterSearchQuery) ||
+                  module.module_code.toLowerCase().includes(filterSearchQuery)
                 )
-                .map((module) => (
+                .map(module => (
                   <CheckboxLabel key={module.module_code}>
                     <input
                       type="checkbox"
-                      checked={tempFilters.topics.includes(module.module_name)}
-                      onChange={() => toggleTopic(module.module_name)}
+                      checked={tempFilters.modules.includes(module.module_code)}
+                      onChange={() => toggleModule(module.module_code)}
                     />{' '}
                     {module.module_name}
                   </CheckboxLabel>
@@ -646,7 +614,6 @@ const QuestionBank = () => {
         )}
       </FilterBar>
 
-      {/* Render Questions Based on Active Tab */}
       {filteredQuestions.map((q, index) => (
         <Link
           key={index}
@@ -655,11 +622,12 @@ const QuestionBank = () => {
         >
           <QuestionCard>
             <Icon>
-              {q.completed ? <FaCheck color="green" /> : q.type === 'coding' ? <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
+              {q.completed ? <FaCheck color="green" /> : q.type === 'coding' ? 
+                <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
             </Icon>
             <Content>
               <TagsRow>
-                <Tag>{q.type}</Tag>
+                <Tag>{q.category ? getCategoryName(q.category) : getModuleName(q.module_code)}</Tag>
                 <Tag difficulty={q.difficulty}>{q.difficulty}</Tag>
               </TagsRow>
               <Title>{q.text}</Title>
@@ -672,9 +640,3 @@ const QuestionBank = () => {
 };
 
 export default QuestionBank;
-
-// 67e39c46f4ef735e4fc83cfa
-
-// 68104bbf0e8f15d8b199583d
-
-// 67c6c5b4c83761e02b32725a

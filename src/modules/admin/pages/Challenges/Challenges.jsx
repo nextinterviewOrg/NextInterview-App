@@ -138,7 +138,8 @@ const Challenges = () => {
               <Question>{item.QuestionText}</Question>
 
               {/* <Answer>{item.answer}...</Answer> */}
-              <Answer>{item.question_type === 'coding' ? 'N/A' : item.description}...</Answer>
+              <Answer>{item.question_type === 'coding' ? 'N/A' : item.description}</Answer>
+              {/* <Answer>{item.description}</Answer> */}
               <Action>
                 <IconButton 
                   aria-label="Edit challenge"
