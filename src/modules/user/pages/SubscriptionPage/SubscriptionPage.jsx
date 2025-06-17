@@ -11,7 +11,7 @@ import { getUserByClerkId } from "../../../../api/userApi";
 import { useClerk } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 
-export default function SubscriptionPage() {
+export default function SubsSubscriptionPage() {
     const [subscriptionPlan, setSubscriptionPlan] = useState([]);
     const [userSubscription, setUserSubscription] = useState(null);
     const [userId, setUserId] = useState(null);
