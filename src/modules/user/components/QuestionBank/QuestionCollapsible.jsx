@@ -288,6 +288,7 @@ const QuestionCollapsible = () => {
       case "multi-line":
       case "approach":
       case "text":
+      case "case-study":
         return (
           <TextAnswer
             as="textarea"
@@ -383,7 +384,7 @@ const QuestionCollapsible = () => {
             </SolutionBox>
           )}
 
-        {question.type === "approach" && showSolution && (
+        {(question.type === "approach" || question.type === "case-study") && showSolution && (
           <SolutionBox>
             <SolutionText>Feedback:</SolutionText>
             {feedbackData ? (
@@ -420,7 +421,7 @@ const QuestionCollapsible = () => {
           </SolutionBox>
         )}
 
-        {["text", "multi-line", "approach", "mcq", "single-line"].includes(
+        {["text", "multi-line", "approach", "mcq", "single-line", "case-study"].includes(
           question.type
         ) && (
           <Footer>

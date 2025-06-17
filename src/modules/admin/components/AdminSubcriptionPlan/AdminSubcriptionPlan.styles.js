@@ -126,6 +126,34 @@ export const DeletePaymentButton = styled.button`
   }
 `;
 
+export const EditPaymentButton = styled.button`
+  padding: 10px 30px;
+  background: #2290AC;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-family: ${(props) => props.theme.fonts.body};
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    // padding: 8px;
+    font-size: 0.9rem;
+    width: 25%;
+    margin-right: 20px;
+  }
+
+  @media (max-width: 480px) {
+    padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
+    font-size: 0.8rem;
+    width: 50%;
+  }
+`;
+
 
 export const CancelButton = styled.button`
   background-color: #fff;
@@ -227,7 +255,7 @@ export const ActionsContainer = styled.div`
   gap: 12px;        /* space between icons / buttons */
 
   .link {
-    color: red;
+    color: #2290ac;
     cursor: pointer;
     text-decoration: none;
     font-size: 18px;
