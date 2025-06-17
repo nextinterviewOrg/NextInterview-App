@@ -867,6 +867,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the correct answer"
                 rows={3}
+                
               />
             </FormGroup>
           </>
