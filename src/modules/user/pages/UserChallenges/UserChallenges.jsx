@@ -109,8 +109,8 @@ const UserChallenges = () => {
                             style={{ cursor: 'pointer' }}
                         >
                             <IconWrapper>
-                                <Icon type={challenge.type} status={challenge.status}>
-                                    {challenge.userStatus === 'attempted' ? (
+                                <Icon type={challenge.question_type} status={challenge.status}>
+                                    {challenge.status === 'attempted' ? (
                                         <FaCheck />
                                     ) : challenge.question_type === 'coding' ? (
                                         <FaCode />

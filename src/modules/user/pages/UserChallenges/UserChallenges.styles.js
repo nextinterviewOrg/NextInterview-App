@@ -48,7 +48,7 @@ export const IconWrapper = styled.div`
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
-  color: #64748b;
+  // color: #64748b;
   flex-shrink: 0;
   margin-right: 0.75rem;
 
@@ -64,29 +64,35 @@ export const Icon = styled.div`
   font-size: 1.55rem;
   flex-shrink: 0;
 
-  color: ${({ status, type }) =>
-    status === 'Completed' ? '#10b981' :
-    type === 'mcq' ? '#3b82f6' :         
-    type === 'code' ? '#8b5cf6' :        
-    '#64748b'};   
-    background-color: #f3f4f6;
-    padding: 0.5rem;
-    border-radius: 50%;   
-    margin-top: 1rem;    
-    
-    @media (max-width: 1024px) {
-      font-size: 1.25rem;
-    }
+color: ${({ status, type }) =>
+  status === 'attempted' || status === 'completed' ? '#10b981' : 
+  type === 'coding' ? '#57209B' :
+  '#3b82f6'};
 
-    @media (max-width: 768px) {
-      font-size: 1rem;
-    }
+  background-color: ${({ type }) =>
+    type === 'coding' ? '#F8EEFF' :             
+    '#375DFB0D'};                              
 
-    @media (max-width: 480px) {
-      font-size: 1.5rem;
-      margin-top: 2rem;
-    }
+  padding: 0.5rem;
+  border-radius: 50%;
+  margin-top: 1rem;
+
+  @media (max-width: 1024px) {
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.5rem;
+    margin-top: 2rem;
+  }
 `;
+
+
+
 
 
 
