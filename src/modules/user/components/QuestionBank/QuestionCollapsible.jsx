@@ -349,11 +349,11 @@ const QuestionCollapsible = () => {
       <BackButton onClick={() => navigate(-1)}>
         <IoChevronBackSharp /> Back
       </BackButton>
-      <Tag>
+      {/* <Tag>
         {question.type === "coding"
           ? `# ${question.category}`
           : `# ${question.type}`}
-      </Tag>
+      </Tag> */}
       <Container>
         <QuestionBox>
           <QusnandType>
@@ -375,10 +375,10 @@ const QuestionCollapsible = () => {
                 ) : (
                   <span>{question.answer}</span>
                 )}
-                <HelpIcons>
+                {/* <HelpIcons>
                   <PiThumbsUpLight /> Helpful
                   <PiThumbsDownLight /> Not helpful
-                </HelpIcons>
+                </HelpIcons> */}
               </SolutionAnswer>
             </SolutionBox>
           )}

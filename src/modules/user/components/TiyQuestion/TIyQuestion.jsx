@@ -288,9 +288,9 @@ const TIyQuestion = () => {
             <BackButton onClick={() => navigate(-1)}>
                 <IoChevronBackSharp /> Back
             </BackButton>
-            <Tag>
+            {/* <Tag>
                 {question.type === "coding" ? `# ${question.category}` : `# ${question.type}`}
-            </Tag>
+            </Tag> */}
             <Container>
                 <QuestionBox>
                     <QusnandType>

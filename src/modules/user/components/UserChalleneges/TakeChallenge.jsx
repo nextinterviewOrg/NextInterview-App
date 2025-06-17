@@ -23,11 +23,11 @@ const Card = styled.div`
 `;
 
 const ChallengeTitle = styled.h2`
-  font-family: ${(props) => props.theme.fonts.body};
-  color: ${(props) => props.theme.colors.text};
-  font-size: 24px;
-  margin: ${(props) => props.theme.spacing(1)} 0;
-
+  font-size: 1.2rem;
+  padding-top: 16px;
+  margin: 0;
+  color: #1e293b; 
+  font-weight: 600;
   @media (max-width: 768px) {
     font-size: 20px;
   }
@@ -301,10 +301,11 @@ const TakeChallenge = ({ questionType = "coding" }) => {
             <div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <small style={badgeStyle}>#Today's Challenge</small>
+           
+                <small style={badgeStyle}>#Today's Challenge </small>
                 {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
-              {challenge.userStatus}
-            </StatusBadge> */}
+                 {challenge.userStatus}
+               </StatusBadge> */}
               </div>
 
               <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
