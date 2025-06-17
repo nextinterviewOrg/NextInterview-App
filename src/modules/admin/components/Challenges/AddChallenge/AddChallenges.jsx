@@ -243,8 +243,8 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
 
     switch (questionType) {
       case "Coding":
-        
-        break;Object.assign(payload, {
+
+        Object.assign(payload, {
           programming_language: formData.programming_language,
           description: formData.description,
           input: formData.input,
@@ -255,6 +255,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
           solutionExplanation: formData.solutionExplanation,
           challenge_date: new Date(formData.challenge_date).toISOString(),
         });
+        break;
       case "MCQ":
         Object.assign(payload, {
           difficulty: formData.difficulty,
@@ -266,19 +267,19 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         });
         break;
       case "Single-line":
-    Object.assign(payload, {
-      QuestionText: formData.QuestionText.trim(),
-      answer: formData.answer,
-      challenge_date: new Date(formData.challenge_date).toISOString(),
-     description: formData.description
-    })
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
       case "Multi-line":
-      Object.assign(payload, {
-        QuestionText: formData.QuestionText.trim(),
-        answer: formData.answer,
-        challenge_date: new Date(formData.challenge_date).toISOString(),
-        description: formData.description
-      })
+        Object.assign(payload, {
+          QuestionText: formData.QuestionText.trim(),
+          answer: formData.answer,
+          challenge_date: new Date(formData.challenge_date).toISOString(),
+          description: formData.description
+        })
       case "Approach Analysis":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
@@ -286,7 +287,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
           challenge_date: new Date(formData.challenge_date).toISOString(),
           description: formData.description
         })
-        case "Case Study":
+      case "Case Study":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
@@ -644,7 +645,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 rows={4}
               />
             </FormGroup>
-            
+
 
             <FormGroup>
               <FormLabel>Option A *</FormLabel>
@@ -852,7 +853,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
               />
             </FormGroup>
             <FormGroup><FormLabel>Description *</FormLabel>
-            <FormTextArea
+              <FormTextArea
                 name="description"
                 value={formData.description}
                 onChange={handleInputChange}
@@ -861,13 +862,13 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>
-            <FormTextArea
+              <FormTextArea
                 name="answer"
                 value={formData.answer}
                 onChange={handleInputChange}
                 placeholder="Enter the correct answer"
                 rows={3}
-                
+
               />
             </FormGroup>
           </>

@@ -144,6 +144,8 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
         default:
           break;
       }
+      console.log("specificData", specificData);
+      console.log("baseData", baseData);
 
       setFormData({
         ...baseData,
@@ -467,9 +469,10 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 }}
                 value={formData.description || ""}
                 onEditorChange={(newValue) => {
+                 
                   setFormData({ ...formData, description: newValue });
                 }}
-                initialValue=""
+               
               />
             </FormGroup>
 
