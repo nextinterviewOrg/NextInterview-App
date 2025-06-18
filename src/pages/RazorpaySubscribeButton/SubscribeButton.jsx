@@ -65,7 +65,7 @@ const SubscribeButton = ({ planId }) => {
                     console.log("success razorpay", response);
                     const razorResponse = subscriptionVerifyFrontend({ ...response, userId: User._id });
                     // Optional confirmation handler
-                    if (razorResponse.success) {
+                    if (razorResponse.data.success) {
                         notification.success({
                             message: "Success",  // Title of the notification
                             description: "Subscription successful!",  // Description of the notification
