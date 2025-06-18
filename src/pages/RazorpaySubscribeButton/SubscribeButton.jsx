@@ -12,7 +12,7 @@ const loadRazorpayScript = () => {
 import { useUser }
     from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../api/userApi";
-import { createSubscription } from "../../api/subscriptionApi";
+import { createSubscription, subscriptionVerifyFrontend } from "../../api/subscriptionApi";
 import { notification } from "antd";
 import { useNavigate } from "react-router-dom";
 const SubscribeButton = ({ planId }) => {
@@ -52,7 +52,7 @@ const SubscribeButton = ({ planId }) => {
 
             // 2. Launch Razorpay Checkout
             const options = {
-                key: "rzp_test_6WXjV101bam9C9", // Razorpay key_id
+                key: "rzp_test_AMIaPjM0QAOr3O", // Razorpay key_id
                 name: "Next Interview",
                 description: "Subscription payment",
                 subscription_id: data.subscriptionId,
@@ -62,16 +62,21 @@ const SubscribeButton = ({ planId }) => {
                     contact: User.user_phone_number,
                 },
                 handler: function (response) {
+                    console.log("success razorpay", response);
+                    const razorResponse = subscriptionVerifyFrontend({ ...response, userId: User._id });
                     // Optional confirmation handler
-                    notification.success({
-                        message: "Success",  // Title of the notification
-                        description: "Subscription successful!",  // Description of the notification
-                        placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
-                        duration: 3,
-                    })
-                    navigate("/user");
+                    if (!razorResponse.success) {
+                        notification.success({
+                            message: "Success",  // Title of the notification
+                            description: "Subscription successful!",  // Description of the notification
+                            placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
+                            duration: 3,
+                        })
+                        navigate("/user");
+                    }
 
-                    console.log("Razorpay Response:", response);
+
+                    // console.log("Razorpay Response:", response);
                 },
                 theme: {
                     color: "#528FF0",

@@ -142,3 +142,14 @@ export const updatePlans = async (planId, planData) => {
     throw error;
   }
 };
+
+export const subscriptionVerifyFrontend = async (data) => {
+  try {
+    const response = await api.put(`/subscription/verifyPayment`,data);
+    console.log("subscriptionVerifyFrontend API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("subscriptionVerifyFrontend API Error:", error.response?.data || error.message);
+    throw error;
+  }
+}
