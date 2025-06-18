@@ -61,11 +61,11 @@ const SubscribeButton = ({ planId }) => {
                     email: User.user_email,
                     contact: User.user_phone_number,
                 },
-                handler: function (response) {
-                    console.log("success razorpay", response);
-                    const razorResponse = subscriptionVerifyFrontend({ ...response, userId: User._id });
+                handler: async function (response) {
+                    // console.log("success razorpay", response);
+                    const razorResponse =await subscriptionVerifyFrontend({ ...response, userId: User._id });
                     // Optional confirmation handler
-                    if (razorResponse.data.success) {
+                    if (razorResponse.success) {
                         notification.success({
                             message: "Success",  // Title of the notification
                             description: "Subscription successful!",  // Description of the notification
