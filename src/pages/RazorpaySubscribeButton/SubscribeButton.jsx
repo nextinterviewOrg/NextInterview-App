@@ -53,7 +53,7 @@ const SubscribeButton = ({ planId }) => {
             // 2. Launch Razorpay Checkout
             const options = {
                 key: "rzp_test_6WXjV101bam9C9", // Razorpay key_id
-                name: "Your App Name",
+                name: "Next Interview",
                 description: "Subscription payment",
                 subscription_id: data.subscriptionId,
                 prefill: {
