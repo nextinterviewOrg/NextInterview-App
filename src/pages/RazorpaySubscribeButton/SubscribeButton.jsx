@@ -1,5 +1,6 @@
 // components/SubscribeButton.jsx
 import React, { useEffect } from "react";
+
 const loadRazorpayScript = () => {
     return new Promise((resolve) => {
         const script = document.createElement("script");
@@ -14,7 +15,7 @@ import { useUser }
 import { getUserByClerkId } from "../../api/userApi";
 import { createSubscription, subscriptionVerifyFrontend } from "../../api/subscriptionApi";
 import { notification } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Router, useNavigate } from "react-router-dom";
 const SubscribeButton = ({ planId }) => {
     const { user } = useUser();
     const [User, setUser] = React.useState(null);
@@ -65,13 +66,15 @@ const SubscribeButton = ({ planId }) => {
                     // console.log("success razorpay", response);
                     const razorResponse =await subscriptionVerifyFrontend({ ...response, userId: User._id });
                     // Optional confirmation handler
-                    if (razorResponse.success) {
+                    if (response) {
                         notification.success({
                             message: "Success",  // Title of the notification
                             description: "Subscription successful!",  // Description of the notification
                             placement: "topRight",  // Where the notification will appear (topRight, bottomRight, etc.)
                             duration: 3,
                         })
+                        window.location.reload();
+                        
                         navigate("/user");
                     }
 
