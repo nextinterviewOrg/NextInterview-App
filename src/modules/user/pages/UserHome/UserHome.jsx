@@ -14,9 +14,10 @@ export default function UserHome() {
 
   const [interviewFavoriteCardData, setInterviewFavoriteCardData] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
+  const [visibleCards, setVisibleCards] = useState([]);
 
   useEffect(() => {
-    
+
     const interval = setInterval(() => {
       handleNext();
     }, 5000);
@@ -24,13 +25,13 @@ export default function UserHome() {
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
-   
+
     const apiCaller = async () => {
       try {
 
 
         const responeData = await getInterviewFavourites();
-       
+
 
         const preparedData = responeData.map((item) => ({
           title: item.moduleName,
@@ -46,6 +47,7 @@ export default function UserHome() {
           imgSrc: item.imageURL
         })
         );
+        console.log("preparedData", preparedData);
         setInterviewFavoriteCardData(preparedData);
       } catch (e) {
         console.log(e);
@@ -53,31 +55,38 @@ export default function UserHome() {
     };
     apiCaller();
   }, [])
-
-  const handleNext = () => {
-    setStartIndex(
-      (prevIndex) => (prevIndex + 1) % interviewFavoriteCardData.length
+  useEffect(() => {
+    const visibleCardsData = interviewFavoriteCardData.filter(
+      (_, index) => index >= startIndex && index < startIndex + 4
     );
+    console.log("visibleCardsDatavhhvhvhg", visibleCardsData);
+
+    setVisibleCards(visibleCardsData);
+  }, [startIndex, interviewFavoriteCardData]);
+
+const handleNext = () => {
+    if (interviewFavoriteCardData.length === 0) return;
+    setStartIndex(prev => (prev + 1) % interviewFavoriteCardData.length);
   };
 
   const handlePrev = () => {
-    setStartIndex(
-      (prevIndex) =>
-        (prevIndex - 1 + interviewFavoriteCardData.length) %
-        interviewFavoriteCardData.length
+    if (interviewFavoriteCardData.length === 0) return;
+    setStartIndex(prev => 
+      (prev - 1 + interviewFavoriteCardData.length) % interviewFavoriteCardData.length
     );
   };
 
   const getVisibleCards = () => {
-    if(!interviewFavoriteCardData) return [];
-    if(interviewFavoriteCardData.length < 4) return interviewFavoriteCardData;
+    console.log("interviewFavoriteCardData", interviewFavoriteCardData);
+    if (interviewFavoriteCardData.length < 4) return interviewFavoriteCardData;
     return Array.from({ length: 4 }, (_, i) => {
       const index = (startIndex + i) % interviewFavoriteCardData.length;
       return interviewFavoriteCardData[index];
     });
   };
 
-  const visibleCards = getVisibleCards();
+  // const visibleCards = getVisibleCards();
+  console.log("visibleCards", visibleCards);
 
   return (
     <UserHomeWrapper>
@@ -102,8 +111,10 @@ export default function UserHome() {
             <FaAngleLeft />
           </ArrowButton>
           <InterviewFavoriteCardContainer>
-            {visibleCards.length>0 &&
-              visibleCards.map((cardData, index) => ( 
+            {visibleCards.length > 0 &&
+              visibleCards.map((cardData, index) =>{ 
+                console.log("carn sndnbnbdData", cardData);
+                return(
                 <InterviewFavoriteCard
                   key={`${startIndex}-${index}`}
                   title={cardData?.title}
@@ -113,7 +124,7 @@ export default function UserHome() {
                   imgSrc={cardData?.imgSrc}
                   moduleId={cardData?.moduleId}
                 />
-              ))}
+              )})}
           </InterviewFavoriteCardContainer>
           <ArrowButton onClick={handleNext}>
             <FaAngleRight />
