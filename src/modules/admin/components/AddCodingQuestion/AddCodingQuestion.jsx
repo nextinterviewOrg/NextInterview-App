@@ -18,7 +18,7 @@ import {
     HintItem,
     RemoveHintButton,
     RunCodeButton,
-    
+
 } from './AddCodingQuestion.styles';
 import { Select, notification } from 'antd';
 import { getModuleCode, getTopicCode } from '../../../../api/addNewModuleApi';
@@ -31,6 +31,7 @@ import {
 } from "../../../../config/TinyMceConfig";
 import { addTiyQbCodingQuestion } from '../../../../api/tiyQbCodingQuestionApi';
 import { addMainQBCodingQuestion } from '../../../../api/userMainQuestionBankApi';
+import { getInterviewTopics } from '../../../../api/interviewTopicsApi';
 // import { addChallenge } from '../../../../../api/challengesApi';
 
 const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
@@ -52,6 +53,8 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
         question_type: "coding",
         solutionCode: '',
         solutionExplanation: '',
+        isAvailableForMockInterview: false,
+        topicId: null
     });
 
     const [code, setCode] = useState('');
@@ -65,10 +68,14 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
     const [selectedModuleCode, setSelectedModuleCode] = useState(null);
     const [topicOptions, setTopicOptions] = useState([]);
     const [selectedTopicCode, setSelectedTopicCode] = useState(null);
+    const [interviewTopicOptions, setInterviewTopicOptions] = useState([]);
 
     useEffect(() => {
         const apiCaller = async () => {
             const moduleCodesData = await getModuleCode();
+            const interviewTopicData = await getInterviewTopics();
+            const preparedInterviewTopicData = interviewTopicData.data.map((topic) => { return ({ value: topic._id, label: topic.topic }) })
+            setInterviewTopicOptions(preparedInterviewTopicData);
             const preparedModuleOptions = moduleCodesData.data.map((module) => { return ({ value: module.module_code, label: module.module_name }) })
             setModuleOptions(preparedModuleOptions);
             setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
@@ -428,10 +435,12 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                     />
                 </FormGroup>
 
-                <FormGroup>
-                    <FormLabel>Sample Input</FormLabel>
-                    <FormTextArea name="input" value={formData.input} onChange={handleChange} />
-                </FormGroup>
+                {formData.programming_language !== "MySQL" &&
+                    <FormGroup>
+                        <FormLabel>Input</FormLabel>
+                        <FormTextArea name="input" value={formData.input} onChange={handleChange} />
+                    </FormGroup>
+                }
 
                 <RunCodeButton onClick={runCode} disabled={isRunning}>
                     {isRunning ? 'Running...' : 'Run Code'}
@@ -535,7 +544,39 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                         /> Question Bank Question
                     </FormLabel>
                 </FormGroup>
+                <FormGroup>
+                    <FormLabel>Interview Topic</FormLabel>
+                    <Select
+                        style={{ width: '100%' }}
+                        showSearch
 
+                        placeholder="Select a Interview Topic"
+                        filterOption={(input, option) => {
+                            var _a;
+                            return (
+                                (_a = option === null || option === void 0 ? void 0 : option.label) !== null &&
+                                    _a !== void 0
+                                    ? _a
+                                    : ''
+                            )
+                                .toLowerCase()
+                                .includes(input.toLowerCase());
+                        }}
+                        options={interviewTopicOptions}
+                        value={formData.topicId}
+                        onChange={(e) => { setFormData({ ...formData, topicId: e }); }}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <FormLabel>
+                        <input
+                            type="checkbox"
+                            name="isAvailableForMockInterview"
+                            checked={formData.isAvailableForMockInterview}
+                            onChange={(e) => { if (formData.topicId == null) return; handleCheckboxChange(e) }}
+                        />   <>     </> Mark this question as available for Mock Interviews
+                    </FormLabel>
+                </FormGroup>
                 <SaveButton onClick={handleSubmit} disabled={isSubmitting}>
                     {isSubmitting ? 'Saving...' : 'Save'}
                 </SaveButton>

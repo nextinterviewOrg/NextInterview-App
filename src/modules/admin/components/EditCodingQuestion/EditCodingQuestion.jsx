@@ -29,9 +29,10 @@ import {
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
 import { editMainQBCodingQuestion } from '../../../../api/userMainQuestionBankApi';
+import { getInterviewTopics } from '../../../../api/interviewTopicsApi';
 
 const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
-    console.log("questionData", questionData);
+    // console.log("questionData", questionData);
     const [formData, setFormData] = useState({ ...questionData, topics: questionData.topics.map((topic) => topic.topic_name) });
     const [code, setCode] = useState(questionData.base_code || '');
     const [newTopic, setNewTopic] = useState('');
@@ -41,13 +42,16 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
     const [selectedModuleCode, setSelectedModuleCode] = useState(null);
-        const [selectedTopicCode, setSelectedTopicCode] = useState(null);
-
+    const [selectedTopicCode, setSelectedTopicCode] = useState(null);
+    const [interviewTopicOptions, setInterviewTopicOptions] = useState([]);
     useEffect(() => {
         const fetchModules = async () => {
             const res = await getModuleCode();
             const options = res.data.map(mod => ({ value: mod.module_code, label: mod.module_name }));
             setModuleOptions(options);
+            const interviewTopicData = await getInterviewTopics();
+            const preparedInterviewTopicData = interviewTopicData.data.map((topic) => { return ({ value: topic._id, label: topic.topic }) })
+            setInterviewTopicOptions(preparedInterviewTopicData);
         };
         fetchModules();
     }, []);
@@ -222,7 +226,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Module</FormLabel>
-                      <FormTextArea   value={(moduleOptions?.find(e=>{  return e.value=== formData.module_code})?.label)} readOnly />
+                    <FormTextArea value={(moduleOptions?.find(e => { return e.value === formData.module_code })?.label)} readOnly />
                     {/* <Select
                         style={{ width: '100%' }}
                         showSearch
@@ -247,7 +251,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Topic</FormLabel>
-                      <FormTextArea  value={(topicOptions?.find(e=>{  return e.value=== formData.topic_code})?.label)} readOnly />
+                    <FormTextArea value={(topicOptions?.find(e => { return e.value === formData.topic_code })?.label)} readOnly />
                     {/* <Select
                         style={{ width: '100%' }}
                         showSearch
@@ -331,11 +335,13 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                     <FormLabel>Editor</FormLabel>
                     <Editor height="200px" language={formData.programming_language.toLowerCase()} value={code} onChange={setCode} theme="vs-light" />
                 </FormGroup>
+                {formData.programming_language !== "MySQL" &&
+                    <FormGroup>
+                        <FormLabel>Input</FormLabel>
+                        <FormTextArea name="input" value={formData.input} onChange={handleChange} />
+                    </FormGroup>
+                }
 
-                <FormGroup>
-                    <FormLabel>Input</FormLabel>
-                    <FormTextArea name="input" value={formData.input} onChange={handleChange} />
-                </FormGroup>
 
                 <RunCodeButton onClick={runCode} disabled={isRunning}>{isRunning ? 'Running...' : 'Run Code'}</RunCodeButton>
 
@@ -403,7 +409,39 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                         </HintList>
                     </HintContainer>
                 </FormGroup>
+                <FormGroup>
+                    <FormLabel>Interview Topic</FormLabel>
+                    <Select
+                        style={{ width: '100%' }}
+                        showSearch
 
+                        placeholder="Select a Interview Topic"
+                        filterOption={(input, option) => {
+                            var _a;
+                            return (
+                                (_a = option === null || option === void 0 ? void 0 : option.label) !== null &&
+                                    _a !== void 0
+                                    ? _a
+                                    : ''
+                            )
+                                .toLowerCase()
+                                .includes(input.toLowerCase());
+                        }}
+                        options={interviewTopicOptions}
+                        value={formData.topicId}
+                        onChange={(e) => { setFormData({ ...formData, topicId: e }); }}
+                    />
+                </FormGroup>
+                <FormGroup>
+                    <FormLabel>
+                        <input
+                            type="checkbox"
+                            name="isAvailableForMockInterview"
+                            checked={formData.isAvailableForMockInterview}
+                            onChange={(e) => { if (formData.topicId == null) return; handleCheckboxChange(e) }}
+                        />   <>     </> Mark this question as available for Mock Interviews
+                    </FormLabel>
+                </FormGroup>
                 <SaveButton onClick={handleSubmit} disabled={isSubmitting}>
                     {isSubmitting ? 'Saving...' : 'Save'}
                 </SaveButton>
