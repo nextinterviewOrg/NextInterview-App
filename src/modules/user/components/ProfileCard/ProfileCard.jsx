@@ -78,6 +78,25 @@ const ProfileCard = () => {
         setLinkedInError("");
       }
     }
+      // Restrict userName: only alphabets and spaces
+  if (name === "username" && !/^[a-zA-Z\s]*$/.test(value)) {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "Only alphabets and spaces are allowed.",
+    }));
+    return;
+  }
+
+  // Restrict phoneNumber: only digits
+  if (name === "phoneNumber" && !/^[0-9]*$/.test(value)) {
+    setErrors((prev) => ({
+      ...prev,
+      [name]: "Only numbers are allowed.",
+    }));
+    return;
+  }
+
+
     setFormData({ ...formData, [name]: value });
   };
 
@@ -220,6 +239,7 @@ const ProfileCard = () => {
                 value={formData.phone}
                 onChange={handleChange}
                 disabled={loading}
+                maxLength={10}
               />
             </div>
 
