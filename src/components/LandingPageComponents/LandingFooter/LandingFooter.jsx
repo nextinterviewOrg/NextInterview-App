@@ -39,9 +39,9 @@ const LandingFooter = () => {
 
         <SecondColumn>
           <Title>Support</Title>
-          <Link href="#">Help center</Link>
+          {/* <Link href="#">Help center</Link> */}
           <Link href="/termsandconditions">Terms of service</Link>
-          <Link href="#">Legal</Link>
+           {/* <Link href="#">Legal</Link> */}
           <Link href="/privacypolicy">Privacy policy</Link>
         </SecondColumn>
         </FooterDetails>

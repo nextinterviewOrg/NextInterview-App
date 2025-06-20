@@ -110,7 +110,7 @@ function Question7() {
     label: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
-          src={company.company_image_url}
+          src={company.company_logo}
           alt={company.company_name}
           style={{ width: 20, height: 20, marginRight: 10 }}
         />

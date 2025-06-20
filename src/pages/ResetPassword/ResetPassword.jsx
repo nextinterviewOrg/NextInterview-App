@@ -51,19 +51,19 @@ const ResetPassword = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!password || !confirmPassword || !verificationCode) {
       setMessage("Please fill in all fields.");
       setMessageType("warning");
       return;
     }
-  
+
     if (password !== confirmPassword) {
       setMessage("Passwords do not match.");
       setMessageType("error");
       return;
     }
-  
+
     if (
       password.length < 8 ||
       !/^(?=.*[a-zA-Z])(?=.*[0-9]).+$/.test(password)
@@ -74,7 +74,7 @@ const ResetPassword = () => {
       setMessageType("error");
       return;
     }
-  
+
     try {
       await signIn
         ?.attemptFirstFactor({
@@ -88,7 +88,7 @@ const ResetPassword = () => {
             setMessageType("warning");
           } else if (result.status === "complete") {
             setActive({ session: result.createdSessionId });
-             navigate("/resetsuccessful");
+            navigate("/resetsuccessful");
           } else {
             console.log(result);
           }
@@ -97,12 +97,17 @@ const ResetPassword = () => {
           console.error("error", err.errors);
           if (err.errors[0].code === "verification_code_invalid") {
             // alert("Incorrect verification code. Please try again.");
-          }
-          if (err.errors[0].code === "verification_code_invalid") {
+          } else if (err.errors[0].code === "verification_code_invalid") {
             // alert("Incorrect verification code. Please try again.");
             setMessage(err.errors[0].message);
+          } else if (err.errors[0].code === "verification_code_expired") {
+            setMessage(err.errors[0].message);
+          } else   if (err.errors[0].code === "form_code_incorrect") {
+            setMessage("Incorrect OTP. Please try again.");
+          } else {
+            setMessage(err.errors[0].message);
+
           }
-          setMessage(err.errors[0].message);
           setMessageType("error");
         });
     } catch (error) {
@@ -118,7 +123,7 @@ const ResetPassword = () => {
     const onlyNumber = value.replace(/\D/g, ""); // Remove non-numeric characters
     setVerificationCode(onlyNumber);
   };
-  
+
 
   const passwordsMatch =
     password && confirmPassword && password === confirmPassword;

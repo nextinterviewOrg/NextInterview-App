@@ -73,7 +73,7 @@ const QuestionPage2 = () => {
           >
             <RxArrowLeft />
           </BackIcon>
-          <Title>Are you currently in a data/ai job?</Title>
+          <Title>Are you currently in a data/AI job?</Title>
 
           <Option
             $isSelected={selectedOption === "Yes"}

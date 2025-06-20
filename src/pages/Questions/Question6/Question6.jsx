@@ -75,7 +75,7 @@ function Question6() {
     label: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
-          src={company.company_image_url}
+          src={company.company_logo}
           alt={company.company_name}
           style={{ width: 20, height: 20, marginRight: 10 }}
         />
@@ -179,7 +179,7 @@ function Question6() {
           <button
             className="anotherCompany"
             onClick={() => {
-              navigate("/question7");
+              navigate("/question7", { state: { backLink: "/question6" } });
             }}
           >
             Not sure yet

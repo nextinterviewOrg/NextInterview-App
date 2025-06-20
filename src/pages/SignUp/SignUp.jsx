@@ -292,8 +292,8 @@ const SignUp = () => {
 
           <Footer>
             By signing in, I agree to Next Interview's{" "}
-            <a href="/#">Privacy Policy </a>
-            and <a href="/#">Terms of Service</a>.
+            <a href="/privacypolicy">Privacy Policy </a>
+            and <a href="/termsandconditions">Terms of Service</a>.
           </Footer>
         </FormSection>
 

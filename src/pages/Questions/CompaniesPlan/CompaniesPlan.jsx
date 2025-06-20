@@ -106,19 +106,21 @@ const CompaniesPlan = () => {
   };
 
 
-  const companyOptions = comapnyData.map((company) => ({
-    value: company._id,
-    label: (
-      <div style={{ display: "flex", alignItems: "center", color: "black" }}>
-        <img
-          src={company.company_image_url}
-          alt={company.company_name}
-          style={{ width: 20, height: 20, marginRight: 10 }}
-        />
-        {company.company_name}
-      </div>
-    ),
-  }));
+  const companyOptions = comapnyData.map((company) => {
+    return ({
+      value: company._id,
+      label: (
+        <div style={{ display: "flex", alignItems: "center", color: "black" }}>
+          <img
+            src={company.company_logo}
+            alt={company.company_name}
+            style={{ width: 20, height: 20, marginRight: 10 }}
+          />
+          {company.company_name}
+        </div>
+      ),
+    })
+  });
 
   const designationOptions = designationData.map((desgnation) => ({
     value: desgnation._id,
@@ -187,8 +189,21 @@ const CompaniesPlan = () => {
               <Label>Date of Interview (Optional)</Label>
               <Input
                 type="date"
+                min={new Date().toISOString().split('T')[0]} // Ensures only future dates are selectable
                 value={interviewDate}
-                onChange={(e) => { console.log("sfgshjk", e.target.value); setInterviewDate(e.target.value) }}
+                onChange={(e) => {
+                  const selectedDate = new Date(e.target.value);
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+
+                  if (selectedDate >= today) {
+                    setInterviewDate(e.target.value);
+                  } else {
+                    // Optional: Show an error message
+                    alert("Please select a future date.");
+                    setInterviewDate(""); // Reset if invalid
+                  }
+                }}
               />
             </FormField>
 

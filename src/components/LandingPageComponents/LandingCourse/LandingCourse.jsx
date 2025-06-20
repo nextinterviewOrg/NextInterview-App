@@ -289,7 +289,7 @@ export default function LandingCourse() {
                                 <img src={course.image} alt={course.title} className="course-image" />
                                 <div className="course-details">
                                     <h3 className='course-title'>{course.title}</h3>
-                                    <p className='course-description'>{course.description.slice(0, 100)}...</p>
+                                    <p className='course-description'>{course.description.slice(0, 90)}...</p>
                                     <div className="course-info">
                                         <span style={{ marginRight: "40px" }}>{course.topics} topic</span>
                                         <span>Less than {course.duration} hrs</span>

@@ -27,6 +27,7 @@ import {
 import interviewVideoImage from "../../../assets/featureLanding.jpg"; // Video thumbnail
 import analyserIllustration from "../../../assets/featureLanding2.png"; // New image for Approach Analyser
 import { FaPlay } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const features = [
   {
@@ -126,6 +127,7 @@ const features = [
 const LandingFeature = () => {
   const [activeTab, setActiveTab] = useState("AI Interview Practice");
   const currentFeature = features.find(f => f.key === activeTab);
+  const navigate= useNavigate();
 
   return (
     <ContainerWrapper>
@@ -161,7 +163,7 @@ const LandingFeature = () => {
               ))}
             </HowItWorks>
             <ButtonRow>
-            <GetStartedButton>Get Started</GetStartedButton>
+            <GetStartedButton onClick={() => navigate("/login")}>Get Started</GetStartedButton>
           </ButtonRow>
           </How>
             <VideoContainer>

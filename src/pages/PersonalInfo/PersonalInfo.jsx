@@ -137,7 +137,7 @@ const PersonalInfo = () => {
             style={{ display: "grid", gap: "30px" }}
           >
             <InputGroup>
-              <InputLabel>User name</InputLabel>
+              <InputLabel>Full name</InputLabel>
               <InputField
                 type="text"
                 name="userName"

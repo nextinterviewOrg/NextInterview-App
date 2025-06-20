@@ -19,6 +19,7 @@ const UserSubscriptionInfo = () => {
                 
                 const userData = await getUserByClerkId(user.id);
                 const userSubscriptionData = await getUserSubscription(userData.data.user._id);
+                console.log("userSubscriptionData", userSubscriptionData);
                 setUserSubscription(userSubscriptionData);
             } catch (error) {
                 console.error("Error fetching subscription data:", error);
