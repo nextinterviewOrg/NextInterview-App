@@ -77,7 +77,7 @@ const UserReminder = () => {
     return (
       <UserReminderWrapper>
         <div className="user-reminder-completed">
-          <p className="completed-message">You have completed all the tasks for today!</p>
+          <p className="completed-message">Thanks for helping us tailor your journey</p>
           <div className="tick-icon">✔</div> {/* Display the checkmark */}
         </div>
       </UserReminderWrapper>

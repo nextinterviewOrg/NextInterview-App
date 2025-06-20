@@ -84,7 +84,8 @@ import React, { useEffect, useState } from 'react'
                                  {/* <p className={isGridView?'course-description':'course-description-list'}>{course.description}</p> */}
                               <p className={isGridView?'course-description':'course-description-list'}>{course.description.slice(0,110)}...</p>
                                  <div className={isGridView?"course-info":"course-info-list"}>
-                                     <span style={{marginRight:"40px"}}>{course.topics} topic</span>                                 
+                                     {/* <span style={{marginRight:"40px"}}>{course.topics}>1? "topics":"topic</span>                                  */}
+                                    <span style={{marginRight:"40px"}}>{course.topics} {course.topics>1?"topics":"topic"}</span>
                                      <span>Less than {course.duration} {course.duration>1?"hrs":"hr"}</span>
                                  </div>
                              </div>
