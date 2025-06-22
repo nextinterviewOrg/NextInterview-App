@@ -23,8 +23,8 @@ export const Header = styled.div`
 export const TimerBtn = styled.button`
   padding: 5px 10px;
   background: white;
-  border: ${(props) => (props.isRunning ? "#2290AC" : "black")};
-  color: ${(props) => (props.isRunning ? "#2290AC" : "black")};
+  border: ${(props) => (props.isRunning ? "#1a1c1e99" : "black")};
+  color: ${(props) => (props.isRunning ? "#1a1c1e99" : "black")};
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -150,7 +150,7 @@ export const Text = styled.p`
   white-space: pre-wrap;
   overflow: auto;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   font-family: DM SANS;`;
 
 export const Img = styled.img`

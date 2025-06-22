@@ -16,6 +16,7 @@ export const Container = styled.div`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     padding: ${({ theme }) => theme.spacing(1)};
+    margin-left: 0px;
   }
 `;
 
@@ -31,6 +32,7 @@ export const Title = styled.h1`
 
   @media (max-width: ${({ theme }) => theme.breakpoints.mobile}) {
     font-size: 1rem;
+    text-align: center;
   }
 `;
 
@@ -291,6 +293,7 @@ export const TextArea = styled.textarea`
   font-size: 0.9rem;
   resize: vertical;
   width: 100%;
+  box-sizing: border-box; /* Ensure padding doesn't overflow */
 
   &:focus {
     outline: none;

@@ -4,6 +4,7 @@ import theme from "../../../../../theme/Theme";
 export const TableWrapper = styled.div`
   width: 100%;
   margin: ${theme.spacing(2)} 0;
+  overflow-x: auto;
 
   h3 {
     font-family: ${theme.fonts.heading};
@@ -17,6 +18,7 @@ export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   text-align: left;
+  max-width:800px;
 
   thead {
     background-color: ${theme.colors.light};

@@ -1,8 +1,20 @@
 import React from 'react'
+import styled from 'styled-components';
+
+const Container = styled.div`
+  text-align: left;
+  padding: 0 100px;
+  line-height: 1.5;
+  margin-bottom: 100px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
+`;
 
 const TermsandConditions = () => {
     return (
-        <div style={{ textAlign: "left", padding: " 0 100px", lineHeight: "1.5" , marginBottom:"100px"}}>
+    <Container>
             <div >
                 <h1 style={{ textAlign: "center" }}>Terms and Conditions</h1>
                 <div >
@@ -421,7 +433,7 @@ const TermsandConditions = () => {
   
 
 
-        </div>
+    </Container>
     )
 
 }

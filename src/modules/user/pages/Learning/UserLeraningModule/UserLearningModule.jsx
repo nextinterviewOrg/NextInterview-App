@@ -16,6 +16,7 @@ import { getUserProgress, startModule } from "../../../../../api/userProgressApi
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { ShimmerPostItem, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
+import sampleInterviewIcon from "../../../../../assets/sampleInterviewIcon.svg";
 
 const UserLearningModule = () => {
   const [expandedTopic, setExpandedTopic] = useState(null);
@@ -181,7 +182,7 @@ const UserLearningModule = () => {
                 <VscBook size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Topics:</span>{" "}
+                <span className="topics-title">Topics</span>{" "}
                 <span className="topics-count">{courseData.topics}</span>
               </span>
             </span>
@@ -190,7 +191,7 @@ const UserLearningModule = () => {
                 <LuClock4 size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Maximum time taken:</span>{" "}
+                <span className="topics-title">Maximum time taken</span>{" "}
                 <span className="topics-count">
                   {courseData.duration > 1 ? `${courseData.duration} hrs` : `${courseData.duration} hr`}
                 </span>
@@ -201,7 +202,7 @@ const UserLearningModule = () => {
                 <TbClockEdit size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Last updated on:</span>{" "}
+                <span className="topics-title">Last updated on</span>{" "}
                 <span className="topics-count">{courseData.lastUpdated}</span>
               </span>
             </span>
@@ -213,7 +214,7 @@ const UserLearningModule = () => {
                 navigate(`/user/learning/${moduleId}/topic/sampleInterview`);
               }}
             >
-              <RiGeminiLine /> View Sample Interview
+              <img src={sampleInterviewIcon} alt="Sample Interview" style={{width:"20px",height:"20px"}}/> View Sample Interview
             </button>
             
             {
@@ -290,7 +291,10 @@ const UserLearningModule = () => {
         {courseData.topicsList?.map((topic, index) => (
           <div key={index} className="topic">
             <div className="topic-title" onClick={() => toggleExpand(index)}>
+              <div>
+              <span>Topic {index + 1} - </span>
               <span>{topic.title}</span>
+              </div>
               <span>
                 {expandedTopic === index ? (
                   <MdOutlineExpandLess size={38} />

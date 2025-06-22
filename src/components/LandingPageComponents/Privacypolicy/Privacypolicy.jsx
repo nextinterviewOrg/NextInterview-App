@@ -1,8 +1,110 @@
 import React from 'react'
+import styled from 'styled-components';
+
+const Container = styled.div`
+  text-align: left;
+  padding: 0 100px;
+  line-height: 1.5;
+  margin-bottom: 100px;
+
+  @media (max-width: 768px) {
+    padding: 0 20px;
+  }
+`;
+
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Arial", sans-serif;
+  max-width: 800px;
+`;
+
+const Th = styled.th`
+  border: 1px solid #000;
+  padding: 8px;
+  vertical-align: top;
+  background-color: #f2f2f2;
+  text-align: left;
+`;
+
+const Td = styled.td`
+  border: 1px solid #000;
+  padding: 8px;
+  vertical-align: top;
+`;
+
+const Row = styled.tr``;
+
+
+const RowData = [
+  {
+    type: "Account Details",
+    description:
+      "To access specific features, such as content, you must create an account. This involves collecting and storing your email",
+    basis: "- Contract execution\n- Legitimate interests (service provision, identity)",
+  },
+  {
+    type: "Profile Information",
+    description:
+      "You may opt to include details like a profile picture, biography, headline, language, website URL, social media links, country of residence, or other personal information. Your profile will be visible to others on the platform.",
+    basis:
+      "- Contract execution\n- Legitimate interests (enhancing platform usability, content attribution)",
+  },
+  {
+    type: "Content You Share",
+    description:
+      "Certain features allow you to engage with other users or publicly share content, such as uploading educational materials, posting reviews, answering questions, messaging others, or sharing photos and other content. Depending on where it is shared, this content may be visible to others.",
+    basis:
+      "- Contract execution\n- Legitimate interests (service provision, platform improvement)",
+  },
+  {
+    type: "Learning Interaction Data",
+    description:
+      "When interacting with content, we track activities like courses, assignments, labs, quizzes, and other learning modules you engage with. This includes purchases, subscription information, completion certificates, and interactions with instructors or fellow learners. It also includes submitted tasks, essays, and exam responses.",
+    basis:
+      "- Contract execution\n- Legitimate interests (service provision, platform optimization)",
+  },
+  {
+    type: "Student Payment Information",
+    description:
+      "If you make a purchase, we collect necessary details such as your name, billing address, and ZIP code to process payments. You must provide payment details (credit card information, billing address) directly to payment processors. We may receive limited data, such as the last four digits of your card, for transaction processing.",
+    basis:
+      "- Contract execution\n- Legal obligations\n- Legitimate interests (payment processing, fraud prevention, legal compliance, security)",
+  },
+  {
+    type: "Instructor Payment Information",
+    description:
+      "If you are an instructor, you can link your payment account (PayPal, Payoneer, etc.) to receive payments. When linking, we collect relevant information such as email address, payment account ID, physical address, and other necessary details. In certain cases, we may collect ACH or wire transfer data. We also collect tax-related information, such as residency, tax ID, and other necessary details. Nextinterview does not store sensitive banking data. Payment data is processed according to the privacy policies of your payment provider.",
+    basis:
+      "- Contract execution\n- Legitimate interests (platform usability, content attribution)",
+  },
+  {
+    type: "Data from External Accounts",
+    description:
+      "If you connect your Nextinterview account to social media or other online services, we may receive data from these platforms according to your privacy settings. Typically, this data includes your name, user ID, and email address. If you sign in using a third-party service like Facebook, the data received depends on your privacy settings with that service. The collection and use of data will also be subject to the privacy policies of those third-party platforms.",
+    basis: "- Legitimate interests (identity verification, improving user experience)",
+  },
+  {
+    type: "Contests, Surveys, and Promotions",
+    description:
+      "You may be invited to participate in surveys or promotional activities (such as contests, sweepstakes, or challenges). If you participate, we will collect details such as your name, email address, phone number, and postal address. This data will be used to manage the promotion, notify winners, and distribute rewards.",
+    basis:
+      "- Contract execution\n- Legitimate interests (promotion management, prize distribution, legal compliance)",
+  },
+  {
+    type: "Customer Support and Communication",
+    description:
+      "When you reach out to us for assistance or to report an issue, we collect and store your contact details, messages, and any other relevant information such as your name, email, location, transaction ID, and other data. This helps us respond to and resolve your queries and issues in line with our Privacy Policy.",
+    basis:
+      "- Legitimate interests (customer support, troubleshooting, technical assistance)",
+  },
+];
+
 
 const Privacypolicy = () => {
   return (
-    <div style={{ textAlign: "left", padding: " 0 100px", lineHeight: "1.5" }}>
+    <Container>
  <h1>Privacy Policy</h1>
     <p>The most recent update to this Privacy Policy was made on February 25, 2025.</p>
     <p>Thank you for choosing NextInterview. At NextInterview (“we,” “us,” “our”), we value your privacy and are committed to ensuring that you understand how we gather, utilize, and share information about you. This Privacy Policy outlines the ways in which we collect data and explains your rights concerning your personal information.</p>
@@ -29,129 +131,36 @@ const Privacypolicy = () => {
     <p>The type of data we collect from or about you may vary based on how you interact with the Services. Below are some examples to clarify the information we gather.</p>
 
     <p>When you sign up for an account and use the Services, whether directly or via a third-party platform, we collect any information you provide, including:</p>
+    <div style={{ overflowX: "auto" }}>
    
- <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "Arial, sans-serif" }}>
-  <tr>
-    <th style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top", backgroundColor: "#f2f2f2", textAlign: "left" }}>
-      Type of Personal Data
-    </th>
-    <th style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top", backgroundColor: "#f2f2f2", textAlign: "left" }}>
-      Description
-    </th>
-    <th style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top", backgroundColor: "#f2f2f2", textAlign: "left" }}>
-      Basis for Processing
-    </th>
-  </tr>
-   <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-     Account Details
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-To access specific features, such as content, you must create an account. This involves collecting and storing your email    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-     - Contract execution  <br />
-     - Legitimate interests (service provision, identity 
-    </td>
-  </tr>
-  <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      Profile Information
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      You may opt to include details like a profile picture, biography, headline, language, website URL, social media links, country of residence, or other personal information. Your profile will be visible to others on the platform.
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Contract execution <br />
-      - Legitimate interests (enhancing platform usability, content attribution)
-    </td>
-  </tr>
-  <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      Content You Share
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      Certain features allow you to engage with other users or publicly share content, such as uploading educational materials, posting reviews, answering questions, messaging others, or sharing photos and other content. Depending on where it is shared, this content may be visible to others.
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Contract execution <br />
-      - Legitimate interests (service provision, platform improvement)
-    </td>
-  </tr>
-  <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      Learning Interaction Data
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      When interacting with content, we track activities like courses, assignments, labs, quizzes, and other learning modules you engage with. This includes purchases, subscription information, completion certificates, and interactions with instructors or fellow learners. It also includes submitted tasks, essays, and exam responses.
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Contract execution <br />
-      - Legitimate interests (service provision, platform optimization)
-    </td>
-  </tr>
-  <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      Student Payment Information
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      If you make a purchase, we collect necessary details such as your name, billing address, and ZIP code to process payments. You must provide payment details (credit card information, billing address) directly to payment processors. We may receive limited data, such as the last four digits of your card, for transaction processing.
-    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Contract execution <br />
-      - Legal obligations <br />
-      - Legitimate interests (payment processing, fraud prevention, legal compliance, security)
-    </td>
-  </tr>
+    <Table>
+      <thead>
+        <Row>
+          <Th>Type of Personal Data</Th>
+          <Th>Description</Th>
+          <Th>Basis for Processing</Th>
+        </Row>
+      </thead>
 
-   <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-Instructor Payment Information    </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-If you are an instructor, you can link your payment account (PayPal, Payoneer, etc.) to receive payments. When linking, we collect relevant information such as email address, payment account ID, physical address, and other necessary details. In certain cases, we may collect ACH or wire transfer data. We also collect tax-related information, such as residency, tax ID, and other necessary details. Nextinterview does not store sensitive banking data. Payment data is processed according to the privacy policies of your payment provider.  </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Contract execution <br />
-      - Legitimate interests (enhancing platform usability, content attribution)
-    </td>
-  </tr>
+      <tbody>
+        {RowData.map(({ type, description, basis }) => (
+          <Row key={type}>
+            <Td>{type}</Td>
+            <Td>{description}</Td>
+            <Td>
+              {basis.split("\n").map((line) => (
+                <React.Fragment key={line}>
+                  {line}
+                  <br />
+                </React.Fragment>
+              ))}
+            </Td>
+          </Row>
+        ))}
+      </tbody>
+    </Table>
 
-   <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-Data from
-External Accounts </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-If you connect your Nextinterview account to social media or other online services, we may receive data from these platforms according to your privacy settings. Typically, this data includes your name, user ID, and email address. If you sign in using a third-party service like Facebook, the data received depends on your privacy settings with that service. The collection and use of data will also be subject to the privacy policies of those third-party platforms.
-</td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-      - Legitimate interests (identity verification, improving user experience)
-    </td>
-  </tr>
-
-     <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-Contests, Surveys,
-and Promotions </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-You may be invited to participate in surveys or promotional activities (such as contests, sweepstakes, or challenges). If you participate, we will collect details such as your name, email address, phone number, and postal address. This data will be used to manage the promotion, notify winners, and distribute rewards. In some cases, you may be required to allow us to publicly share some information, like your name on a winner's page. If a third-party platform is used to manage the promotion, their privacy policy will apply.</td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-- Contract execution - Legitimate interests (promotion management, prize distribution, legal compliance)    </td>
-  </tr>
-
-     <tr>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-Customer Support
-and
-Communication </td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-When you reach out to us for assistance or to report an issue, we collect and store your contact details, messages, and any other relevant information such as your name, email, location, transaction ID, and other data. This helps us respond to and resolve your queries and issues in line with our Privacy Policy.</td>
-    <td style={{ border: "1px solid #000", padding: "8px", verticalAlign: "top" }}>
-- Legitimate interests (customer support, troubleshooting, technical assistance)
-    </td>
-  </tr>
-
-
-
- 
-</table>
+    </div>
 
 <ul>
   <li>
@@ -212,80 +221,7 @@ Estimated location data, such as the country, city, and geographic coordinates, 
 <p>The information mentioned above is gathered through server log files and tracking tools, as explained in the "Cookies and Data Collection Tools" section below. We store this data and link it to your account.</p>
 
    
-   <h3>1.3 Information Obtained from External Sources</h3>
-
-   <p>If you are a potential Nextinterview Business client, along with the information you provide directly, we may also gather specific business contact details from third-party commercial providers.</p>
-   
-   
-   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   <h3>1.3 Information Obtained from External Sources</h3>   <p>If you are a potential Nextinterview Business client, along with the information you provide directly, we may also gather specific business contact details from third-party commercial providers.</p>
 
 
     <h2>2. Methods of Data Collection</h2>
@@ -623,7 +559,7 @@ unintentionally collected personal data about your underage child, please get in
    
    
    
-       </div>
+       </Container>
   )
 }
 

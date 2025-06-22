@@ -29,8 +29,8 @@ export const Conversation = styled.div`
 export const TimerBtn = styled.button`
   padding: 5px 10px;
   background: white;
-  border: ${(props) => (props.isRunning ? "#2290AC" : "black")};
-  color: ${(props) => (props.isRunning ? "#2290AC" : "black")};
+  border: ${(props) => (props.isRunning ? "#1a1c1e99" : "black")};
+  color: ${(props) => (props.isRunning ? "#1a1c1e99" : "black")};
   border: none;
   border-radius: 5px;
   cursor: pointer;

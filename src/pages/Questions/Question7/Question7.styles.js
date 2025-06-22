@@ -47,6 +47,7 @@ export const Question7Wrapper = styled.div`
     border-radius: 4px;
     padding: 16px;
     margin-bottom: 16px;
+    box-sizing: border-box;
   }
 
   .Label {
@@ -116,7 +117,6 @@ export const Question7Wrapper = styled.div`
     margin-bottom: 12px;
     margin-top: 12px;
     box-sizing: border-box!important;
-    margin-left: 20px;
   }
 
   .NextButton:hover {
@@ -220,7 +220,6 @@ export const SkipButton = styled.button`
   border-radius: 8px;
   cursor: ${(props) => (props.disabled ? "not-allowed" : "pointer")};
   transition: background-color 0.3s ease;
-  margin-left: 20px;
 
   &:hover {
     background-color: ${(props) => (props.disabled ? "#cccccc" : "#28a745")};

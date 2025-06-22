@@ -32,7 +32,7 @@ export const Container = styled.div`
   z-index: 1000;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
-    width: 100%;
+    width: 85%;
     padding: ${theme.spacing(2)};
   }
 `;
@@ -101,6 +101,7 @@ export const TextArea = styled.textarea`
   font-family: ${theme.fonts.body};
   font-size: 1rem;
   resize: none;
+  box-sizing: border-box;
 
   &:focus {
     outline: none;

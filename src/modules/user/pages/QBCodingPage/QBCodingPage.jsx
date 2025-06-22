@@ -314,12 +314,7 @@ const QBCodingPage = () => {
             </QusnType>
 
             <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                gap: "20px",
-                alignItems: "flex-start",
-              }}
+              className="question-container"
             >
               <QuestionContainer>
                 <Title>Question</Title>

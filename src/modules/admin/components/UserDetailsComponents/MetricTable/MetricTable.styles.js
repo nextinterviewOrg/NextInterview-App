@@ -8,6 +8,11 @@ export const TableWrapper = styled.div`
   gap: ${theme.spacing(5)};
   margin: ${theme.spacing(2)} 0;
 
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: column;
+    gap: ${theme.spacing(2)};
+  }
+
   h3 {
     font-family: ${theme.fonts.heading};
     font-size: 18px;

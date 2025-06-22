@@ -16,6 +16,11 @@ border: 1px solid #F5F5F5;
   display: flex;
   flex-direction: column;
   align-content: center;
+
+  @media (max-width: 768px) {
+    max-width: 90%;
+    margin-left: 0px;
+  }
 }
 
 .chartTitle {

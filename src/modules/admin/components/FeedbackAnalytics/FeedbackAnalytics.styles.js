@@ -77,4 +77,8 @@ export const Title = styled.h2`
   font-size: 1.2rem;
   font-weight: 800;
   margin-left: 10%;
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 `;

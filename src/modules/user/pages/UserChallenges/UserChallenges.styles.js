@@ -127,6 +127,13 @@ export const CardTitle = styled.h3`
 
   @media (max-width: 480px) {
     font-size: 0.875rem;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 80px;
   }
 `;
 
@@ -138,6 +145,17 @@ export const CardSubtitle = styled.p`
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+
+    @media (max-width: 480px) {
+    font-size: 0.875rem;
+    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 80px;
+  }
 `;
 
 

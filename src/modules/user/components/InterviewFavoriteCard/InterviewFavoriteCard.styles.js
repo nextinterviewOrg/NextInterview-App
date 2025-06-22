@@ -15,6 +15,10 @@ export const InterviewFavoriteCardWrapper = styled.div`
     flex-direction: column;
     position: relative;
     height: 40vh;
+
+    @media (max-width: 768px) {
+      height: 52vh;
+    }
   }
 
   .card-image {

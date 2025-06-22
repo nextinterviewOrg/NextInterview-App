@@ -338,3 +338,66 @@ export const PrmngLang = styled.div`
   margin: 20px 10px;
   text-align: right;
 `;
+
+export const Card = styled.div`
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 24px;
+  width: 280px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  font-family: "Segoe UI", sans-serif;
+  margin: 24px
+`;
+
+export const Title = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d2d2d;
+  margin-bottom: 10px;
+`;
+
+export const Description = styled.p`
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+`;
+
+export const QnButton = styled.button`
+  background-color: transparent;
+  color: #2290ac;
+  border: 1px solid #2290ac;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  width: 100%;
+
+  &:hover {
+    background-color: #e6f0ff;
+  }
+`;
+
+export const TIYContainer = styled.div`
+  display: flex;
+  align-items: center;
+
+  .container {
+  margin-left: 80px;
+  width: 80%;
+  @media (max-width: 768px) {
+    margin-left: 0;
+    width: 95%;
+    margin: 0 auto; 
+    padding: 0 10px;
+    
+  }
+}
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;

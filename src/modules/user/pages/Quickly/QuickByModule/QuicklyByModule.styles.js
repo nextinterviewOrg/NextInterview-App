@@ -3,7 +3,7 @@ import theme from "../../../../../theme/Theme";
 
 export const Container = styled.div`
   display: flex;
-  margin-left: 60px;
+  margin-left: 50px;
   @media (max-width: ${theme.breakpoints.tablet}) {
     margin-left: 0px;
   }

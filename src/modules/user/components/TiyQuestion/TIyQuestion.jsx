@@ -23,6 +23,11 @@ import {
     HelpIcons,
     TextInput,
     Tag,
+    Card,
+    Title,
+    Description,
+    QnButton,
+    TIYContainer,
 } from './TiyQuestion.styles';
 import { IoChevronBackSharp } from 'react-icons/io5';
 import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from 'react-icons/pi';
@@ -331,7 +336,8 @@ const TIyQuestion = () => {
   };
 
     return (
-        <div style={{ marginLeft: '60px', }}>
+        <TIYContainer>
+        <div className='container'>
             <BackButton onClick={() => navigate(-1)}>
                 <IoChevronBackSharp /> Back
             </BackButton>
@@ -429,7 +435,17 @@ const TIyQuestion = () => {
                           </Footer>
                         )}
             </Container>
-        </div>
+ </div>
+                <Card>
+      <Title>Explore the question bank</Title>
+      <Description>
+        Dive into the question bank to find and solve more exercises like this,
+        expanding your skills even further.
+      </Description>
+      <QnButton onClick = {() => navigate('/user/mainQuestionBank/questionbank')}>Question bank</QnButton>
+    </Card>
+       
+        </TIYContainer>
     );
 };
 

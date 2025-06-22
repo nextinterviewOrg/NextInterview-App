@@ -132,7 +132,7 @@ const QuicklyRevise = () => {
         ))
       ) : (
         <>
-          <Lottie
+          {/* <Lottie
             className="Lottie"
             animationData={dataNot}
             loop={true}
@@ -146,7 +146,9 @@ const QuicklyRevise = () => {
               margin: 0,            // ensure no default margins
               padding: 0,
             }}
-          />
+          /> */}
+
+          <span style={{  fontSize: "20px", fontWeight: "bold", textAlign: "center" ,width:"90vw", height: "30vh", display: "flex", justifyContent: "center", alignItems: "center"}}>'You can access Quick Revision after completing the modules'</span>
         </>
       )}
     </Container>

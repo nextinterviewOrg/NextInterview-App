@@ -7,6 +7,7 @@ export const Container = styled.div`
 
   @media (max-width: 480px) {
     width: 100%;
+    margin-left: 0px;
   }
 `;
 
@@ -26,6 +27,7 @@ export const QuestionCard = styled.div`
 
   @media (max-width: 480px) {
     padding: 8px 4px;
+    width: 90%
   }
 `;
 
@@ -85,5 +87,6 @@ export const Title = styled.div`
 
   @media (max-width: 1360px) {
     font-size: 13px;
+    width: 90%;
   }
 `;

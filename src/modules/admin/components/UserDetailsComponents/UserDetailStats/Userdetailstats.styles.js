@@ -5,6 +5,10 @@ export const Header = styled.div`
   margin-bottom: ${theme.spacing(4)};
   display: flex;
   line-height: 1;
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    flex-direction: column;
+  }
   img {
     margin-top: 30px;
     width: 100px;
@@ -26,8 +30,14 @@ export const StatsContainer = styled.div`
   height: 100px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
+  .hr {
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    display: none;
+  }}
+
   @media (max-width: ${theme.breakpoints.tablet}) {
     flex-wrap: wrap;
+    height: auto;
   }
 `;
 

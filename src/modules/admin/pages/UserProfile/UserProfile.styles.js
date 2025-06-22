@@ -8,6 +8,11 @@ export const UserProfileContainer = styled.div`
     margin-left:60px;
     margin-top:20px;
 
+    @media (max-width: 768px) {
+      margin: 0;
+      padding: 10px;
+    }
+
 
     .restriction-banner {
      display: flex;
@@ -245,6 +250,8 @@ font-style: normal;
 font-weight: 700;
 line-height: 28px; /* 116.667% */
 letter-spacing: -0.48px;
+
+@
     }
 
     .performanceSection{

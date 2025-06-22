@@ -165,4 +165,8 @@ color:${({ theme }) => theme.colors.black};
     }
 }
 
+@media (max-width: 480px) {
+margin-left: 0;
+}
+
 `

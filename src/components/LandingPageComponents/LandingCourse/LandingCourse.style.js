@@ -228,7 +228,15 @@ font-weight: 500;
 
 .start-btn:hover {
   background-color: ${({ theme }) => theme.colors.info};
+
+        @meadia (max-width: 480px) {
+   width: 60px;
+   height: 20px;
+   font-size: 12px;
 }
+}
+
+
 `;
 
 

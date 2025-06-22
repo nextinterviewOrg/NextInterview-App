@@ -16,9 +16,9 @@ export const ModalOverlay = styled.div`
 
 export const ModalContainer = styled.div`
   background-color: ${theme.colors.light};
-  padding: ${theme.spacing(4)};
+  padding: ${theme.spacing(2)};
   border-radius: ${theme.spacing(1)};
-  width: 400px;
+  width: 85%;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
 `;

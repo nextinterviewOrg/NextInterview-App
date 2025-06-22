@@ -13,6 +13,10 @@ import styled from "styled-components";
  .courses-container {
    padding: 40px;
    font-family: Arial, sans-serif;
+
+   @media (max-width: 768px) {
+     padding: 20px;
+   }
  }
  
  /* Header Styling */
@@ -85,15 +89,15 @@ import styled from "styled-components";
        .header {
            flex-direction: column;
        }
-             .toggle-btn{
-           display: none;
-           }
+          //    .toggle-btn{
+          //  display: none;
+          //  }
          
    }
        @media (max-width: 480px) {
-             .toggle-btn{
-           display: none;
-           }
+          //    .toggle-btn{
+          //  display: none;
+          //  }
        }
  
  /* Grid and List Layout for Course Cards */
@@ -136,6 +140,7 @@ import styled from "styled-components";
  //   padding: 24px;
  @media (max-width: 768px) {
    width: 80%;
+   margin: 0 auto;  
  }
  }
  .course-card-list{
@@ -169,6 +174,10 @@ import styled from "styled-components";
    border-radius: 15px ;
    object-fit: cover;
    margin:24px;
+
+   @media (max-width: 480px) {
+   margin: 10px;
+}
    }
  
  
@@ -183,8 +192,9 @@ import styled from "styled-components";
  .course-details-list{
  display: flex;
  flex-direction: column;
+ gap: 10px;
  
- margin-bottom: 20px;
+//  margin-bottom: 20px;
  }
  .course-title {
    padding-left: 5px;
@@ -195,6 +205,17 @@ import styled from "styled-components";
  font-weight: 600;
  line-height: normal;
    color:${({ theme }) => theme.colors.black};
+
+   @media (max-width: 480px) {
+       font-size: 16px;
+       word-wrap: break-word;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       display: -webkit-box;
+       -webkit-line-clamp: 1;
+       -webkit-box-orient: vertical;
+              width: 60px;
+   }
  }
  
  .course-description{
@@ -227,6 +248,13 @@ import styled from "styled-components";
  background-color:${({ theme }) => theme.colors.white};
  gap: 10px;
  padding-left: 10px;
+ margin-left: 7px;
+
+ @media (max-width: 480px) {
+       display: flex;
+   flex-direction: column;
+   gap: 5px;
+ }
  }
  .course-info-list span{
       font-family: "DM Sans";
@@ -235,6 +263,18 @@ import styled from "styled-components";
  font-weight: 400;
  line-height: 10px; 
  color:${({ theme }) => theme.colors.textgray};
+ margin-right: 40px;
+
+ @media (max-width: 480px) {
+   margin-right: 10px;
+   word-wrap: break-word;
+       overflow: hidden;
+       text-overflow: ellipsis;
+       display: -webkit-box;
+       -webkit-line-clamp: 1;
+       -webkit-box-orient: vertical;
+       width: 60px;
+}
  }
  
  .course-info span {
@@ -277,10 +317,18 @@ import styled from "styled-components";
  
    cursor: pointer;
    transition: background-color 0.3s;
+
+
  }
  
  .start-btn:hover {
    background-color: ${({ theme }) => theme.colors.info};
+
+      @meadia (max-width: 480px) {
+   width: 60px;
+   height: 20px;
+   font-size: 12px;
+}
  }
  
  

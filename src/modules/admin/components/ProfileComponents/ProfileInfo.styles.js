@@ -39,6 +39,11 @@ export const ProfileContainer = styled.div`
   margin-left: 10%;
   margin: 40px auto;
   font-family: ${theme.fonts.body};
+
+  @media (max-width: 768px) {
+  margin: 0;
+  padding: 0 20px;
+  }
 `;
 
 export const SectionTitle = styled.h2`
@@ -47,11 +52,19 @@ export const SectionTitle = styled.h2`
   font-size: 20px;
   text-align: left;
   margin-bottom: ${theme.spacing(3)};
+
+  @media (max-width: 768px) {
+    text-align: center;
+  }
 `;
 
 export const ProfilePhoto = styled.div`
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    align-items: center;
+  }
 
   .profilePic {
     width: 120px;
@@ -113,6 +126,12 @@ export const InputField = styled.input`
   font-family: ${theme.fonts.body};
   font-size: 14px;
   width: 50%;
+  box-sizing: border-box;
+
+  @media (max-width: ${theme.breakpoints.tablet}) {
+    width: 100%;
+    
+  }
 
   &:focus {
     border-color: ${theme.colors.primary};
@@ -133,6 +152,11 @@ export const SaveButton = styled.button`
   width: 10%;
   margin-left: auto;
 
+  @media (max-width: 768px) {
+    width: 50%;
+    margin: 0;
+  }
+
   &:hover {
     opacity: 0.9;
   }
@@ -144,6 +168,7 @@ export const ResetButtonWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   font-family: ${theme.fonts.body};
+  gap: 10px;
 `;
 
 export const ResetButton = styled.button`
@@ -156,6 +181,10 @@ export const ResetButton = styled.button`
   font-family: ${theme.fonts.body};
   font-size: 16px;
   width: 20%;
+
+  @media (max-width: 768px) {
+  width: 50%;
+  }
 
   &:hover {
     opacity: 0.9;

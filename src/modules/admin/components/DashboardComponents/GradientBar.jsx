@@ -11,6 +11,11 @@ const GradientBackground = styled.div`
     ${(props) => props.theme.colors.bluetext},
     ${(props) => props.theme.colors.admintop}
   );
+      display: flex
+;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
 
   @media (max-width: 768px) {
     height: 80px;

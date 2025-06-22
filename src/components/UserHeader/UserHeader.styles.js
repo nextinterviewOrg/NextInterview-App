@@ -45,10 +45,11 @@ margin-left:20px;
 `;
 
 export const Title = styled.h1`
-  font-size: 24px;
+  font-size: 34px;
   margin: 20px;
   color: ${theme.colors.text};
   font-family: ${theme.fonts.display};
+  margin-left: 40px;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 20px;

@@ -172,6 +172,7 @@ color:${({ theme }) => theme.colors.black};
 }
 textarea {
     height: 170px;
+    resize: none;
 }
 .model-btn-container{
 display: flex;

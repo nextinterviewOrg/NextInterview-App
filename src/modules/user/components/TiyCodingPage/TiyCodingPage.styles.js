@@ -4,6 +4,14 @@
 import styled from 'styled-components';
 import theme from '../../../../theme/Theme';
 
+export const TIYContain = styled.div`
+margin-left: 60px;
+
+@media (max-width: 768px) {
+  margin-left: 0px;
+}
+`
+
 export const BackButton = styled.button`
   border: none;
   color: #2290ac;
@@ -103,6 +111,16 @@ export const Wrapper = styled.div`
     justify-content: flex-end;
     width: 100%;
   }
+
+  .question-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const Title = styled.h2`
@@ -155,6 +173,12 @@ border-radius: 5px;
 export const QuestionContainer = styled.div`
   padding: 1rem;
    width: 50%; 
+
+     @media (max-width: 768px) {
+    width:100%;
+    padding: 0rem;
+  }
+
 `;
 
 export const QuestionBox = styled.div`
@@ -165,6 +189,7 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
+
  
 `;
 

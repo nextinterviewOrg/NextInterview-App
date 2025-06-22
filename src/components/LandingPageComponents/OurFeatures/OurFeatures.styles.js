@@ -69,6 +69,11 @@ export const FeatureCard = styled.div`
   box-shadow: 0px 4px 10px rgba(0,0,0,0.05);
   position: relative;
 
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+    }
+
   @media (max-width: 1024px) {
     padding: 1rem;
   }
@@ -102,6 +107,11 @@ export const FeatureTitle = styled.h4`
   text-align: center;
   margin: auto;
     margin-top: 2rem;
+
+    &:hover {
+      cursor: pointer;
+      color: #ccc;
+    }
 
 
     @media (max-width: 1360px) {

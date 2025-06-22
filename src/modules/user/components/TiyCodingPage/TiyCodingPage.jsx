@@ -35,7 +35,8 @@ import {
     TryHarderLink,
     Footer,
     FeedbackButton,
-    FeedBacks
+    FeedBacks,
+    TIYContain
 } from "./TiyCodingPage.styles";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
 import { IoChevronBackSharp, IoClose } from "react-icons/io5";
@@ -293,7 +294,7 @@ const TiyCodingPage = () => {
         }
     };
     return (
-        <div style={{ marginLeft: "60px" }}>
+        <TIYContain>
             <BackButton onClick={handleGoBack}>
                 <IoChevronBackSharp /> Back
             </BackButton>
@@ -312,12 +313,7 @@ const TiyCodingPage = () => {
                         </QusnType>
 
                         <div
-                            style={{
-                                display: "flex",
-                                flexDirection: "row",
-                                gap: "20px",
-                                alignItems: "flex-start",
-                            }}
+                            classname= "question-container"
                         >
                             <QuestionContainer>
                                 <Title>Question</Title>
@@ -526,7 +522,7 @@ const TiyCodingPage = () => {
                     </ModalOverlay>
                 )}
             </Wrapper>
-        </div>
+        </TIYContain>
     );
 };
 

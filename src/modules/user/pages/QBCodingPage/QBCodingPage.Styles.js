@@ -41,6 +41,18 @@ export const Wrapper = styled.div`
     z-index: 1000;
     width: 100%;
 }
+
+  .question-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+
   .modal-content {
     background-color: white;
     padding: 20px;
@@ -155,6 +167,10 @@ border-radius: 5px;
 export const QuestionContainer = styled.div`
   padding: 1rem;
    width: 50%; 
+        @media (max-width: 768px) {
+    width:100%;
+    padding: 0rem;
+  }
 `;
 
 export const QuestionBox = styled.div`

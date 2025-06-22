@@ -31,7 +31,7 @@ export const Header = styled.div`
 
   @media (max-width: ${theme.breakpoints.tablet}) {
   width: 90%;
-margin-left: 0px;
+margin: 0px auto;
 }
      
       

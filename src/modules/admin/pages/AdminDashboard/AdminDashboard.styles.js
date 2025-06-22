@@ -17,6 +17,7 @@ export const DashboardContainer = styled.div`
 
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
+
     }
   }
 
@@ -30,6 +31,7 @@ export const DashboardContainer = styled.div`
     margin-top: 150px;
     @media (max-width: 768px) {
       grid-template-columns: 1fr;
+      margin-top: 100px;
     }
   }
 `;

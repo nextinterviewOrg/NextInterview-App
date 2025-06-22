@@ -1,5 +1,6 @@
 // FeatureSection.style.js
 import styled from "styled-components";
+import theme from "../../../../src/theme/Theme"
 
 export const ContainerWrapper = styled.div`
     // background-color: ${({ theme }) => theme.colors.background};
@@ -8,12 +9,10 @@ padding-bottom:130px;
 background: rgba(237, 241, 243, 0.5);
 
 @media (max-width: 768px) {
-    padding-top: 10px;
-    padding-bottom: 10px;
-  }
-
-@media (max-width: 480px) {
-    background: white;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 0px;
   }
 
     `;
@@ -28,18 +27,11 @@ export const SectionWrapper = styled.div`
  
   background-color: white;
 
-  @media (max-width: 1024px) {
-    margin-left: 50px;
-    margin-right: 50px;
-  }
-
   @media (max-width: 768px) {
-    margin: 20px;
-  }
-
-  @media (max-width: 480px) {
-    margin: 10px;
-    flex-direction: column;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 0px;
   }
 `;
 
@@ -347,18 +339,4 @@ export const MainTitle = styled.h1`
 margin-bottom:50px;
   margin-left:130px;
   margin-right:130px;
-
-  @media (max-width: 1024px) {
-    margin-left: 50px;
-    margin-right: 50px;
-  }
-
-  @media (max-width: 768px) {
-    margin: 20px;
-    font-size: 26px;
-  }
-
-  @media (max-width: 480px) {
-    margin: 10px 20px;
-  }
 `;

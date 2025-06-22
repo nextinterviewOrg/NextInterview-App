@@ -344,7 +344,7 @@ const MockInterview = () => {
     >
       Problem Statement:
       <br />
-      <p style={{ fontSize: "16px", fontWeight: "600" }}>{baseQuestion}</p>
+      <p style={{ fontSize: "16px", fontWeight: "400" }}>{baseQuestion}</p>
     </div>
   )}
  

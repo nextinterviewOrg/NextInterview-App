@@ -84,7 +84,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
   return (
     <Container isOpen={isOpen}>
       <Modal>
-        <Title>Submit a Query</Title>
+        <Title>Raise a Query</Title>
         <ModalContent>
           {/* Category Selection */}
           <div
@@ -95,7 +95,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
               padding: "15px",
             }}
           >
-            <label>Select Category</label>
+            <label>Select issue Category</label>
             <Dropdown
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -118,7 +118,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
               padding: "15px",
             }}
           >
-            <label>Mention Your Query</label>
+            <label>Issue Summary field</label>
             <TextBox
               type="text"
               value={query}
@@ -135,26 +135,16 @@ const SupportQuery = ({ isOpen, onClose }) => {
               display: "flex",
               gap: "10px",
               marginTop: "20px",
-              justifyContent: "space-between",
+              justifyContent: "flex-end",
               flexDirection: "row",
               marginLeft: "20px",
             }}
           >
             <Button
-              onClick={onClose}
-              style={{
-                backgroundColor: "white",
-                color: "red",
-                border: "1px solid red",
-              }}
-            >
-              Close
-            </Button>
-            <Button
               onClick={handleSend}
               style={{ backgroundColor: "#2390ac", marginRight: "10px" }}
             >
-              Send
+              Submit
             </Button>
           </div>
         </ModalContent>

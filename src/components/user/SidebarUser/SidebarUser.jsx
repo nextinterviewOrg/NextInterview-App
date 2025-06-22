@@ -29,6 +29,8 @@ import challenge from "../../../assets/Challenges.svg";
 import world from "../../../modules/user/assets/world.svg";
 import blog from "../../../assets/blogging.svg";
 import { useRef } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -148,6 +150,15 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
               ))}
             </ul>
           </div>
+
+           {/* Arrow toggle (desktop) */}
+     <div
+       className="arrow-toggle"
+       onClick={() => setIsExpanded(!isExpanded)}
+       title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+     >
+       {isExpanded ? <FaChevronLeft size={14} /> : <FaChevronRight size={14} />}
+     </div>
 
            
       {isExpanded ? (

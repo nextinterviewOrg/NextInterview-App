@@ -5,6 +5,10 @@ export const Container = styled.div`
   padding: ${theme.spacing(2)};
   font-family: ${theme.fonts.body};
 
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    padding: ${theme.spacing(0)};
+  }
+
   h1,
   h3,
   h4 {
@@ -39,4 +43,11 @@ export const ContentWrapper = styled.div`
   padding: 20px;
   // width: calc(100% - ${(props) => (props.isExpanded ? "200px" : "60px")});
   transition: margin-left 0.3s ease, width 0.3s ease;
+
+  @media (max-width: 768px) {
+    margin-left: 0px;
+    padding: 20px;
+    width: 90%;
+    margin: auto;
+  }
 `;

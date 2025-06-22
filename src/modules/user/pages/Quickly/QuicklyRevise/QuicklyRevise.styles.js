@@ -41,6 +41,11 @@ export const Card = styled.div`
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     background-color: ${({ theme }) => theme.colors.lightgreen};
   }
+
+  @media (max-width: 768px) {
+    max-width: 100%; /* Full width on smaller screens */
+    align-items: center;
+  }
 `;
 
 export const ImageWrapper = styled.div`
@@ -48,6 +53,7 @@ export const ImageWrapper = styled.div`
   height: 200px;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
+
 `;
 
 export const Image = styled.img`

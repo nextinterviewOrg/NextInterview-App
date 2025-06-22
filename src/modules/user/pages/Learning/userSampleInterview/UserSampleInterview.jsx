@@ -55,11 +55,11 @@ const UserSampleInterview = () => {
     <UserSampleInterviewWrapper>
       {videoUrl && (
         <>
-          <div className="backbtn">
+          {/* <div className="backbtn">
             <button onClick={() => window.history.back()}>
               <IoMdArrowRoundBack />{" "}
             </button>
-          </div>
+          </div> */}
           <div className="video-page">
             <div className="video-container">
               <video
@@ -87,6 +87,7 @@ const UserSampleInterview = () => {
                     <h2 className="modal-title">Sample interview feedback</h2>
                   </div>
                   <div className="model-form">
+                    <div className="form-group-container">
                     <div className="form-group">
                       <label className="modal-form-group-label">
                         Was the sample interview helpful?
@@ -139,6 +140,8 @@ const UserSampleInterview = () => {
                         placeholder="Enter your response"
                       />
                     </div>
+                    </div>
+                    </div>
 
                     <div className="modal-actions">
                       <button
@@ -154,7 +157,7 @@ const UserSampleInterview = () => {
                         Submit
                       </button>
                     </div>
-                  </div>
+                  
                 </div>
               </div>
             )}

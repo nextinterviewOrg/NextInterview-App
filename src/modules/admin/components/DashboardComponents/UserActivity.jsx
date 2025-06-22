@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Line } from "react-chartjs-2";
 import styled, { useTheme } from "styled-components";
 import {
@@ -26,7 +26,6 @@ const Wrapper = styled.div`
   padding: 16px;
   margin-top: ${(props) => props.theme.spacing(4)};
   box-sizing: border-box;
-  overflow: hidden; // prevents any child from forcing the width
 
   @media (max-width: 768px) {
     padding: 1px;
@@ -40,6 +39,11 @@ const Title = styled.h2`
   color: ${(props) => props.theme.colors.text};
   margin-bottom: ${(props) => props.theme.spacing(3)};
   text-align: left;
+
+  @media (max-width: 768px) {
+    text-align: center;
+    margin: 0;
+  }
 `;
 
 const CardContainer = styled.div`
@@ -47,11 +51,8 @@ const CardContainer = styled.div`
   border-radius: ${(props) => props.theme.spacing(1)};
   box-shadow: 0 4px 4px ${(props) => props.theme.colors.borderblue};
   width: 100%;
-  height: auto;
   padding: ${(props) => props.theme.spacing(2)};
-  margin-left: 1px;
   box-sizing: border-box;
-  overflow: hidden;
 `;
 
 const ChartWrapper = styled.div`
@@ -64,29 +65,29 @@ const ChartWrapper = styled.div`
 
 const UserActivity = () => {
   const theme = useTheme();
+ const [legendPosition, setLegendPosition] = useState(
+   window.innerWidth <= 480 ? "bottom" : "right"
+ );
+
+  // Update legend position on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setLegendPosition(window.innerWidth <= 480 ? "bottom" : "right");
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const data = {
     labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+      "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
     ],
     datasets: [
       {
         label: "Users Growth",
-        data: [
-          1000, 5000, 10000, 30000, 80000, 70000, 90000, 85000, 60000, 70000,
-          80000, 90000,
-        ],
+        data: [1000, 5000, 10000, 30000, 80000, 70000, 90000, 85000, 60000, 70000, 80000, 90000],
         borderColor: theme.colors.primary,
         backgroundColor: "transparent",
         borderWidth: 2,
@@ -98,11 +99,11 @@ const UserActivity = () => {
 
   const options = {
     responsive: true,
-    maintainAspectRatio: false, // Crucial
+    maintainAspectRatio: false,
     plugins: {
       legend: {
         display: true,
-        position: "right",
+        position: legendPosition,
         labels: {
           font: {
             family: theme.fonts.body,

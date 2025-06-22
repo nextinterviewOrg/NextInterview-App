@@ -36,6 +36,8 @@ gap: 30px;
 
 @media (max-width: ${theme.breakpoints.mobile}) {
 gap: 10px;
+flex-direction: column;
+width: 90%;
 }
 `;
 
@@ -146,6 +148,7 @@ export const SearchBar = styled.input`
   flex: 1;
   background-color: ${theme.colors.sidebarBgColor};
 
+
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 12px;
   }
@@ -159,6 +162,7 @@ export const SearchBarWrapper = styled.div`
   border-radius: 4px;
   gap: 8px;
   border: 1px solid ${theme.colors.sidebarHoverBgColor};
+    box-sizing: border-box;
 
   @media (max-width: ${theme.breakpoints.tablet}) {
     width: 100%;

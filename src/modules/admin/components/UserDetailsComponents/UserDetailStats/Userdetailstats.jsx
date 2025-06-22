@@ -22,17 +22,17 @@ const UserDetailStats = () => {
           <p>Views</p>
           <h3>0</h3>
         </StatCard>
-        <hr />
+        <hr className="hr" />
         <StatCard>
           <p>Completion Rate</p>
           <h3>0%</h3>
         </StatCard>
-        <hr />
+        <hr className="hr" />
         <StatCard>
           <p>Avg. Time Spent</p>
           <h3>0m</h3>
         </StatCard>
-        <hr />
+        <hr className="hr" />
         <StatCard>
           <p>Quiz Score</p>
           <h3>0%</h3>

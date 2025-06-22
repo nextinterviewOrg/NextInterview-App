@@ -96,6 +96,7 @@ color:${({ theme }) => theme.colors.black};
   border: 1px solid #ddd;
   border-radius: 4px;
   flex: 60%;
+  box-sizing: border-box;
 }
 .save-btn-container{
   display: flex;

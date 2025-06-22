@@ -4,6 +4,7 @@ import theme from "../../../../../theme/Theme";
 
 export const Section = styled.div`
   margin-bottom: ${theme.spacing(4)};
+  overflow-x: auto;
 
   h3 {
     font-family: ${theme.fonts.heading};
@@ -15,6 +16,7 @@ export const Section = styled.div`
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  max-width: 800px;
 `;
 
 export const TableHeader = styled.th`

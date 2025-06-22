@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { ProfileCardWrapper } from "./ProfileCard.styles";
 import { Clerk } from "@clerk/clerk-js";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import {
   createUserProfile,
   getUserByClerkId,
@@ -9,6 +9,7 @@ import {
   updateUser,
 } from "../../../../api/userApi";
 import { Spin, message } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const ProfileCard = () => {
   const clerk = new Clerk(
@@ -28,6 +29,9 @@ const ProfileCard = () => {
   });
   const [linkedInError, setLinkedInError] = useState("");
   const imageInputRef = useRef(null);
+    const { signOut } = useClerk();
+
+  const navigate = useNavigate();
 
   // Initialize Clerk
   useEffect(() => {
@@ -150,6 +154,11 @@ const ProfileCard = () => {
     }
   };
 
+  const handlelogout = async () => {
+        await signOut();
+        navigate("/sign-in");
+  }
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -159,6 +168,12 @@ const ProfileCard = () => {
   }
 
   return (
+    <>
+    <div style={{display:"flex",justifyContent:"flex-end"}}>
+      <button style={{margin:"10px", background:"transparent",color:"#2290ac", border: "1px solid #2290ac", borderRadius:"5px", padding:"10px 30px", marginBottom:"10px", cursor:"pointer"}} onClick={handlelogout}>
+        logout
+      </button>
+      </div>
     <ProfileCardWrapper>
       <div className="profile-container">
         <div className="profile-header">
@@ -268,6 +283,7 @@ const ProfileCard = () => {
         </div>
       </div>
     </ProfileCardWrapper>
+    </>
   );
 };
 

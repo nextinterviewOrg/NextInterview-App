@@ -96,7 +96,7 @@ export const Option = styled.div`
   border: 2px solid ${(props) => (props.$isSelected ? "#68c184" : "#cccccc")};
   border-radius: 8px;
   cursor: pointer;
-  background-color: ${(props) => (props.$isSelected ? "#e8f5e9" : "#ffffff")};
+  background-color: ${(props) => (props.$isSelected ? "#ffffff" : "#ffffff")};
   box-sizing: border-box;
   &:hover {
     border-color: ${theme.colors.primary};
@@ -153,7 +153,7 @@ export const CirclePointer = styled.div`
 export const OptionLabel = styled.span`
   font-size: 16px;
   font-weight: ${(props) => (props.$isSelected ? "bold" : "normal")};
-  color: ${(props) => (props.$isSelected ? "#28a745" : "#000000")};
+  color: ${(props) => (props.$isSelected ? "#28a745" : "#1A1C1E99")};
 
   @media (max-width: 768px) {
     font-size: 14px;

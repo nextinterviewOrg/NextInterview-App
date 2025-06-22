@@ -246,7 +246,7 @@ useEffect(() => {
           <QusnDifficulty difficulty={challenge.difficulty}>{challenge.difficulty}</QusnDifficulty>
         </QusnType>
 
-        <div style={{ display: "flex", flexDirection: "row", gap: "20px", alignItems: "flex-start" }}>
+        <div className="question-container">
           <QuestionContainer>
             <Title>Question</Title>
             <QuestionBox>

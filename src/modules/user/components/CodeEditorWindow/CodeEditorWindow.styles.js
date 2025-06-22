@@ -26,6 +26,22 @@ export const Wrapper = styled.div`
   padding: 1rem;
   margin-left: 40px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  @media (max-width: 768px) {
+      margin-left: 0px;
+  }
+
+    .question-container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+
+  
    .modal {
     display: flex;
     justify-content: center;
@@ -152,6 +168,11 @@ border-radius: 5px;
 export const QuestionContainer = styled.div`
   padding: 1rem;
    width: 40%;
+
+        @media (max-width: 768px) {
+       width:100%;
+       padding: 0rem;
+     }
 `;
 
 export const QuestionBox = styled.div`

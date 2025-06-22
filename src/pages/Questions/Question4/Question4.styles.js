@@ -96,7 +96,7 @@ export const Option = styled.div`
   border: 2px solid ${(props) => (props.$isSelected ? "#00b894" : "#cccccc")};
   border-radius: 8px;
   cursor: pointer;
-  background-color: ${(props) => (props.$isSelected ? "#e8f5e9" : "#ffffff")};
+  background-color: ${(props) => (props.$isSelected ? "#ffffff" : "#ffffff")};
   transition: all 0.3s ease;
 
   &:hover {
@@ -155,7 +155,7 @@ export const OptionLabel = styled.span`
   font-size: 16px;
   font-weight: ${(props) => (props.$isSelected ? "bold" : "normal")};
   color: ${(props) =>
-    props.$isSelected ? `${theme.colors.success}` : `${theme.colors.black}`};
+    props.$isSelected ? `${theme.colors.success}` : "#1A1C1E99"};
 
   @media (max-width: 768px) {
     font-size: 14px;

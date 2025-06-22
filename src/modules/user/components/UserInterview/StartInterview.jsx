@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { getExternalTopics } from "../../../../api/topicApi";
+import AIicon from "../../../../assets/SampleInterviewIcon.svg"
 
 const EXTERNAL_API_BASE = "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
 
@@ -109,7 +110,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
     <Container isOpen={isOpen}>
       <Modal>
         <h2>Start a New Interview</h2>
-        <small>Uses AI</small>
+        <small>Uses AI <img src={AIicon} alt="AI" width="15px" height="15px" style= {{marginLeft: "5px"}} /></small>
         <ModalContent>
           <Heading> {title}</Heading>
           <label>Select Topic</label>

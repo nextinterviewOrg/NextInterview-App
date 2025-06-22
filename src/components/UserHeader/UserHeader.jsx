@@ -95,6 +95,9 @@ const Dropdown = ({
   };
   const listLIStyles = {
     marginBottom: "8px",
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
   };
 
   return ReactDOM.createPortal(
@@ -176,6 +179,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if (path.includes("questionbank")) return "Question Bank"; // Add this line
       if (path.includes("interview")) return "Mock Interview";
       if (path.includes("qusnstryityourself")) return "Try It Yourself";
+      if (path.includes("tiyQuestion")) return "Try It Yourself";
  
       // Add more routes as needed
       return "Dashboard"; // Default title

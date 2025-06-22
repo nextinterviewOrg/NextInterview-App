@@ -8,13 +8,13 @@ export const SideBarwrapper = styled.div`
   display: flex;
   flex-direction: column;
   transition: width 0.3s ease-in-out;
-  overflow: hidden;
+  overflow-y: auto;
+
   z-index: 999;
 
   @media (max-width: 768px) {
    width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
     position: fixed;
-    height: 100vh;
     z-index: 1000;
     transition: width 0.3s ease-in-out;
   }
@@ -38,6 +38,10 @@ export const SideBarwrapper = styled.div`
     align-items: flex-start;
     gap: 10px;
     border: none;
+  }
+
+    .menu {
+  flex: 1 1 auto;          /* take all free vertical space */      /* scroll if items exceed viewport height */
   }
 
   .menu-item {
@@ -100,14 +104,15 @@ export const SideBarwrapper = styled.div`
     text-align: center;
     width: 200px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
+    // position: absolute;
     top: 65%;
     color: white;
     font-family: Arial, sans-serif;
     display: grid;
     align-items: center;
     justify-content: center;
-    left: 10px;
+    left: 10px;     /* participate in normal flow */
+   margin-top: 40px; 
   }
  
   .mock-card-icon {
@@ -174,6 +179,33 @@ export const SideBarwrapper = styled.div`
     background: #ccc;
   }
 
+    .arrow-toggle {
+    position: absolute;
+    right: 10px;               /* sits slightly outside the bar */
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid #d0d0d0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: background 0.2s;
+    z-index: 1001;
+  }
+
+  .arrow-toggle:hover {
+    background: #f0f0f0;
+  }
+
+  @media (max-width: 768px) {
+    .arrow-toggle { display: none; }   /* hide on mobile; use hamburger */
+  }
+
 
 `;
 
@@ -187,4 +219,6 @@ export const ContentWrapper = styled.div`
   margin-left: 0px;
   padding: 20px;
   width: 100%;
+
+    
 `;

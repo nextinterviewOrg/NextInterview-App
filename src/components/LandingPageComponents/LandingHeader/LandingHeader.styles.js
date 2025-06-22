@@ -75,6 +75,12 @@ export const NavLinkItem = styled.a`
     border-radius: 50px;
   }
 
+  &:active {
+    background-color: ${theme.colors.bluetext};
+    color: ${theme.colors.light};
+    border-radius: 50px;
+  }
+
   @media (max-width: 1024px) {
     font-size: 18px;
     padding: 8px 10px;

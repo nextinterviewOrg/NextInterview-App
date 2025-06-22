@@ -28,8 +28,7 @@ margin-left: 0px;}
   }
 
 .video-container {
-  width: 100vw;
- max-width: 1200px; /* Max width constraint */
+  width: 100%;
   background: linear-gradient(45deg, #9c85f1, #79b6f1); /* Background gradient */
   border-radius: 15px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -53,14 +52,15 @@ margin-left: 0px;}
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
+  z-index: 1000;
 }
 
 .modal-content {
   background-color: white;
  
   border-radius: 10px;
-  width: 50vw;
+  width: 100%;
+  max-width: 700px;
  max-height: fit-content;  
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
@@ -86,18 +86,27 @@ color:${({ theme }) => theme.colors.black};
   margin-bottom: 20px;
 }
   .model-form{
-//   display:flex;
-//   flex-direction: column;
-//   align-items: center;
-//   justify-content: center;
-  padding:28px
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding:28px;
+
   }
+
+  .form-group-container {
+      max-width: 500px;
+  display:flex;
+  flex-direction: column;
+  // align-items: center;
+  justify-content: center;}
 
 .form-group {
 border-radius: 8px;
 border: 1px solid ${({ theme }) => theme.colors.black};
   margin-bottom: 15px;
   padding:20px;
+
 }
   .modal-form-radio-btns{
   display:flex;
@@ -128,6 +137,7 @@ color:${({ theme }) => theme.colors.textgray};
   display: block;
   margin-bottom: 8px;
   margin-top: 13px;
+  resize: none;
 }
 input[type="radio"] {
   margin-right: 10px;

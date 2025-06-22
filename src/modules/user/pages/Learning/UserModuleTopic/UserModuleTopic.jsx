@@ -56,6 +56,7 @@ import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTool
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
+import  SummarizeIcon  from "../../../../../assets/SampleInterviewIcon.svg";
 
 // Sample Data for Dynamic Rendering
 
@@ -817,14 +818,14 @@ const UserModuleTopic = () => {
           <div
             style={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "center",
               flexDirection: "column",
-              alignContent: "center",
+              // alignContent: "center",
               alignItems: "center",
               gap: "20px",
             }}
           >
-            <div>
+            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
               {showDownloadButton && (
                 <div
                   style={{
@@ -860,10 +861,14 @@ const UserModuleTopic = () => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    marginTop: "20px",
                   }}
                   onClick={handleSummarizeClick}
                 >
+                  <img
+                    src={SummarizeIcon}
+                    alt="Summarize"
+                    style={{ marginRight: "10px" }}
+                  />
                   Summarize for me
                 </Button>
               )}
