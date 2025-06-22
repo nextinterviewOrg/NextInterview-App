@@ -174,7 +174,7 @@ const LandingFeature = () => {
               {currentFeature.mediaType === "video" && (
                 <>
                   <PlayButton>
-                    <FaPlay size={24} color="#2290ac" />
+                    <FaPlay />
                   </PlayButton>
                   <WatchText>Watch this video to learn more</WatchText>
                 </>

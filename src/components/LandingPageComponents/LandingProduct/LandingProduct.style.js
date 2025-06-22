@@ -14,6 +14,11 @@ export const UserLearningWrapper = styled.div`
   gap:8px;
   font-family: Arial, sans-serif;
 
+  @media (max-width: 1024px) {
+    margin-left: 50px;
+    margin-right: 50px;
+  }
+
   @media ( max-width:768px){
   margin-left:0px;
   margin-right:0px;
@@ -36,6 +41,18 @@ font-style: normal;
 font-weight: 700;
 line-height: 28px; 
 color:${({ theme }) => theme.colors.black};
+
+@media (max-width: 768px) {
+  font-size: 24px;
+  line-height: 24px;
+  margin-left: 20px;
+}
+
+@media (max-width: 480px) {
+  // font-size: 20px;
+  line-height: 20px;
+  // margin: 0px;
+}
 }
 
 `;
@@ -45,4 +62,14 @@ export const Subheading = styled.p`
  color:"#262524";
   margin-top: 8px;
   margin-bottom: 50px;
+
+  @media (max-width: 768px) {
+    margin-left: 20px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    margin-bottom: 20px;
+    margin-right: 10px;
+  }
 `;
