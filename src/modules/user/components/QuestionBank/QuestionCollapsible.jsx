@@ -72,7 +72,7 @@ const QuestionCollapsible = () => {
             if (q.option_d) options.push(q.option_d);
             if (q.option_e) options.push(q.option_e);
           }
-
+          console.log("Options:", options);
           setQuestion({
             id: q._id,
             category: q.programming_language || "Other",
@@ -86,6 +86,10 @@ const QuestionCollapsible = () => {
             longDescription: q.description || "",
             topics: q.topics?.map((t) => t.topic_name) || [],
             solution: q.output || "",
+            option_a: q.option_a,
+            option_b:q.option_b,
+            option_c:q.option_c,
+            option_d:q.option_d,
             options,
             moduleId: q.moduleId || q.module_code || "",
             correctOption: q.correct_option || "",
@@ -193,7 +197,6 @@ const QuestionCollapsible = () => {
       console.log("Submitting payload:", payload);
 
       const response = await markUserSubmission(payload);
-
       console.log("Submission response:", response);
 
       if (response?.success) {
@@ -372,7 +375,7 @@ const QuestionCollapsible = () => {
               <SolutionText>Solution:</SolutionText>
               <SolutionAnswer>
                 {question.type === "mcq" ? (
-                  <span>{question.correctOption}</span>
+                  <span>{question[question.correctOption]}</span>
                 ) : (
                   <span>{question.answer}</span>
                 )}

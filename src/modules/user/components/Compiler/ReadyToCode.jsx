@@ -134,33 +134,38 @@ const ReadyToCode = ({
           <OutputBox>
             <OutputSection>{output}</OutputSection>
 
-            {showOptimiseBtn && (
-              <HardandOptimise>
-                {!challenge ?
-                  <TryHarderButton onClick={()=>{ console.log('clicked');tryHarderQuestion()}}>
-                    <PiStarFour /> Try Harder Question
-                  </TryHarderButton> :
-                  <div>
-                  </div>}
-                <div style={{ display: "flex", gap: "10px" }}>
-                  {/* {!optimizeClicked ? ( */}
+
+            <HardandOptimise>
+              {!challenge ?
+                <TryHarderButton onClick={() => { console.log('clicked'); tryHarderQuestion() }}>
+                  <PiStarFour /> Try Harder Question
+                </TryHarderButton> :
+                <div>
+                </div>}
+              <div style={{ display: "flex", gap: "10px" }}>
+                {/* {!optimizeClicked ? ( */}
+                {showOptimiseBtn && (
                   <OptimiseButton
                     onClick={handleOptimizeCode}
                   >
                     Optimise Code
                   </OptimiseButton>
-                  {/* ) : ( */}
+                )}
+                {/* ) : ( */}
+                {/* {!challenge && ( */}
                   <SubmitButton
                     onClick={handleSubmit}
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? "Submitting..." : "Submit"}
                   </SubmitButton>
-                  {/* )} */}
-                </div>
+                {/* )} */}
 
-              </HardandOptimise>
-            )}
+                {/* )} */}
+              </div>
+
+            </HardandOptimise>
+
           </OutputBox>
         </Output>
       )}

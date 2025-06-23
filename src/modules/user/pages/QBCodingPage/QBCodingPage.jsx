@@ -256,9 +256,7 @@ const QBCodingPage = () => {
         skip: false,
         question_type: "coding"
       };
-
       const res = await addQuestionToQuestionProgress(submissionData);
-
       if (res.success) {
         notification.success({ message: "Question submitted successfully" });
         navigate("/user/mainQuestionBank/questionbank", { state: location.state });

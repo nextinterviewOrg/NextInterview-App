@@ -43,6 +43,7 @@ import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
 import { VscDebugRestart } from "react-icons/vsc";
+import { notification } from "antd";
 // ... (imports remain unchanged)
 
 const CodeEditorWindow = () => {
@@ -83,39 +84,39 @@ const CodeEditorWindow = () => {
   });
 
   useEffect(() => {
-  let timer;
+    let timer;
 
-  if (activeTab === "mycode" && !solutionTimeExpired) {
-    timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        const newTime = prev - 1;
-        
-        // Save to localStorage on every change
-        localStorage.setItem(`challengeTimer_${id}`, newTime.toString());
-        
-        if (newTime <= 0) {
-          clearInterval(timer);
-          setSolutionTimeExpired(true);
-          localStorage.setItem(`challengeExpired_${id}`, 'true');
-          return 0;
-        }
-        
-        return newTime;
-      });
-    }, 1000);
-  }
+    if (activeTab === "mycode" && !solutionTimeExpired) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          const newTime = prev - 1;
 
-  return () => clearInterval(timer);
-}, [activeTab, solutionTimeExpired, id]);
+          // Save to localStorage on every change
+          localStorage.setItem(`challengeTimer_${id}`, newTime.toString());
 
-// Reset timer when needed (e.g., when changing challenges)
-useEffect(() => {
-  return () => {
-    // Cleanup when component unmounts or challenge changes
-    localStorage.removeItem(`challengeTimer_${id}`);
-    localStorage.removeItem(`challengeExpired_${id}`);
-  };
-}, [id]);
+          if (newTime <= 0) {
+            clearInterval(timer);
+            setSolutionTimeExpired(true);
+            localStorage.setItem(`challengeExpired_${id}`, 'true');
+            return 0;
+          }
+
+          return newTime;
+        });
+      }, 1000);
+    }
+
+    return () => clearInterval(timer);
+  }, [activeTab, solutionTimeExpired, id]);
+
+  // Reset timer when needed (e.g., when changing challenges)
+  useEffect(() => {
+    return () => {
+      // Cleanup when component unmounts or challenge changes
+      localStorage.removeItem(`challengeTimer_${id}`);
+      localStorage.removeItem(`challengeExpired_${id}`);
+    };
+  }, [id]);
 
   const handleGoBack = () => {
     navigate(`/user/challengeInfo/${id}`);
@@ -142,10 +143,18 @@ useEffect(() => {
         };
 
         const result = await submitUserChallengeProgress(payload);
-        alert("Congratulations! Your solution is correct and progress has been saved.");
+        notification.success({
+          message: "Congratulations!\n Your solution is correct and progress has been saved.",
+          duration: 3
+        });
+        // alert("Congratulations! Your solution is correct and progress has been saved.");
         navigate("/user/challenges");
       } else {
-        alert("Your output doesn't match the expected result. Please try again.");
+        notification.error({
+          message: "Your output doesn't match the expected result. Please try again.",
+          duration: 3,
+        })
+        // alert("Your output doesn't match the expected result. Please try again.");
       }
     } catch (err) {
       console.error("Submission error:", err);
@@ -257,14 +266,14 @@ useEffect(() => {
               <p><strong>Input:</strong> {challenge.input}</p>
               <p><strong>Output:</strong>
                 {challenge.programming_language === "Python" ? (
-<p> {challenge?.output}</p>
-                      ) : (
-                        <pre   style={{
-    maxwidth: '300px',
-    overflowX: 'auto',
-    wordBreak: 'break-word'
-  }} > {challenge?.output}</pre>
-                      )} </p>
+                  <p> {challenge?.output}</p>
+                ) : (
+                  <pre style={{
+                    maxwidth: '300px',
+                    overflowX: 'auto',
+                    wordBreak: 'break-word'
+                  }} > {challenge?.output}</pre>
+                )} </p>
             </QuestionBox>
           </QuestionContainer>
 

@@ -498,7 +498,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
               </div>
             </FormGroup>
 
-            <FormGroup>
+            {formData.programming_language !== "MySQL" && <FormGroup>
               <FormLabel>Sample Input</FormLabel>
               <FormTextArea
                 name="input"
@@ -507,7 +507,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 placeholder="Enter sample input"
                 rows={3}
               />
-            </FormGroup>
+            </FormGroup>}
 
             <RunCodeButton type="button" onClick={runCode} disabled={isRunning}>
               {isRunning ? "Running..." : "Run Code"}
