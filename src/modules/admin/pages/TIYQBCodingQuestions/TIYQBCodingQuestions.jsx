@@ -276,7 +276,7 @@ const TIYQBCodingQuestions = () => {
                 ) : (
                     <RowContainer>
                         <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '20px' }}>
-                            No matching questions found.
+                            No questions found for the selected module.
                         </div>
                     </RowContainer>
                 )}

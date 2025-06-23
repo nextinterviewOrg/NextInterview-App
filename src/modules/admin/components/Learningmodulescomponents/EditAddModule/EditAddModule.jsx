@@ -757,7 +757,7 @@ const EditAddModule = () => {
                   justifyContent: "flex-end",
                 }}
               >
-                <Button>
+                {/* <Button>
                   {" "}
                   <RiGeminiFill
                     style={{
@@ -766,7 +766,7 @@ const EditAddModule = () => {
                     }}
                   />
                   Generate with AI
-                </Button>
+                </Button> */}
               </FormGroup>
 
               {/* SUBTOPIC SUMMARY */}
