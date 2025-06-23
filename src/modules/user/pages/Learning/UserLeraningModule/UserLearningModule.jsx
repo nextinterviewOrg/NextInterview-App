@@ -16,7 +16,7 @@ import { getUserProgress, startModule } from "../../../../../api/userProgressApi
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { ShimmerPostItem, ShimmerText, ShimmerTitle } from "react-shimmer-effects";
-import sampleInterviewIcon from "../../../../../assets/sampleInterviewIcon.svg";
+import sampleInterviewIcon from "../../../../../assets/SampleInterviewIcon.svg";
 
 const UserLearningModule = () => {
   const [expandedTopic, setExpandedTopic] = useState(null);
