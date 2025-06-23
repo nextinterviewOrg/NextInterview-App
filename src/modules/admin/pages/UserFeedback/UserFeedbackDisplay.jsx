@@ -46,11 +46,11 @@ const UserFeedbackDisplay = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div style={{ textAlign: 'center' }}>Loading...</div>;
   }
 
   if (!modules.length) {
-    return <div>No module feedback data available</div>;
+    return <div style={{ textAlign: 'center' }}>No module feedback data available</div>;
   }
 
   return (

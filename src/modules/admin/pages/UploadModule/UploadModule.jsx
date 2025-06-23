@@ -455,7 +455,7 @@ const UploadModule = () => {
             onClick={handleNext}
             disabled={buttonDisabled}
           >
-            Next <FaArrowRight size={16} />
+            Save and Next <FaArrowRight size={16} />
           </NavButton>
         </ButtonGroup>
       </ButtonRow>
