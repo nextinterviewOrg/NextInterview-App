@@ -1,39 +1,40 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { useLocation } from 'react-router-dom';
 import {
-    Container,
-    MainHeading,
-    Section,
-    Heading,
-    Text,
-    CardContainer,
-    CardTitle,
-    CardSubtitle,
-    Card,
-    SubHeading,
-    SummaryText,
-    List,
-    ListItem,
-    SummaryHeading,
-    Practisequsns,
-    PSQuestionsList,
-    PSHeading,
-    PSQuestionItem,
-    SummaryContainer,
-    SummarySection
+  Container,
+  MainHeading,
+  Section,
+  Heading,
+  Text,
+  CardContainer,
+  CardTitle,
+  CardSubtitle,
+  Card,
+  SubHeading,
+  SummaryText,
+  List,
+  ListItem,
+  SummaryHeading,
+  Practisequsns,
+  PSQuestionsList,
+  PSHeading,
+  PSQuestionItem,
+  SummaryContainer,
+  SummarySection
 } from './ProblemStatement.styles';
 import { IoOpenOutline } from "react-icons/io5";
-import { useLocation } from 'react-router-dom';
-import PropTypes from 'prop-types';
 
 const ProblemStatement = (props) => {
-    // Accept feedback and interview data via props or location.state
-    const location = useLocation();
-    const feedbackData = props.feedback || location.state?.feedback;
-    const metricsData = props.metrics || location.state?.metrics;
-    const summaryData = props.summary || location.state?.summary;
-    const problemStatement = props.problemStatement || location.state?.base_question;
-    const questions = props.questions || location.state?.questions;
+  const location = useLocation();
 
+  const feedbackData = props.feedback || location.state?.feedback || {};
+  const metricsData = props.metrics || location.state?.metrics || {};
+  const summaryData = props.summary || location.state?.summary || '';
+  const baseQuestion = props.base_question || location.state?.base_question || '';
+  const questions = props.questions || location.state?.questions || [];
+
+  
     // Fallbacks for static content if not provided
     const summary = summaryData || [
         {
@@ -66,38 +67,40 @@ const ProblemStatement = (props) => {
         address: [],
         improvement: []
     };
-
-const metrics =
-  metricsData && Object.keys(metricsData).length > 0
+  
+    const metrics = Object.keys(metricsData).length
     ? Object.entries(metricsData).map(([key, value]) => ({
-        title: key
-          .replace(/_/g, ' ')
-          .replace(/\b\w/g, char => char.toUpperCase()), // Capitalize each word
-        label: value
+        title: key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()),
+        label: value,
       }))
-    : [];
+    : [{ title: 'No metrics available', label: '' }];
 
+  // Render HTML safely for base question
+  const renderBaseQuestion = () => (
+    <div dangerouslySetInnerHTML={{ __html: baseQuestion }} />
+  );
 
-    return (
-        <Container>
-            <MainHeading>Interview Feedback</MainHeading>
-            {/* Problem Statement Section (always show) */}
-            <Section>
-                <Heading>Problem statement</Heading>
-                <Text>{problemStatement || 'No problem statement available.'}</Text>
-            </Section>
+  return (
+    <Container>
+      <MainHeading>Interview Feedback</MainHeading>
 
-            {/* Metrics Section (always show) */}
-<CardContainer>
-  {(metrics.length > 0 ? metrics : [{ title: 'No metrics available.', label: '' }]).map((metric, idx) => (
-    <Card key={idx}>
-      <CardTitle>{metric.title}</CardTitle>
-      <CardSubtitle>{metric.label}</CardSubtitle>
-    </Card>
-  ))}
-</CardContainer>
+      {/* Problem Statement Section */}
+      <Section>
+        <Heading>Problem Statement</Heading>
+        <Text>{renderBaseQuestion()}</Text>
+      </Section>
 
-            {/* Summary Section (always show) */}
+      {/* Metrics */}
+      <CardContainer>
+        {metrics.map((metric, idx) => (
+          <Card key={idx}>
+            <CardTitle>{metric.title}</CardTitle>
+            <CardSubtitle>{metric.label}</CardSubtitle>
+          </Card>
+        ))}
+      </CardContainer>
+
+  {/* Summary Section (always show) */}
             <SummaryContainer>
                 {(summary.length > 0 ? summary : [{ title: 'Summary', content: 'No summary available.' }]).map((section, idx) => (
                     <SummarySection key={idx}>
@@ -133,25 +136,18 @@ const metrics =
                             <IoOpenOutline className='openicon' />
                         </PSQuestionItem>
                     ))}
-                </PSQuestionsList>
-            </Practisequsns>
-        </Container>
-    );
-};
-
-// Add feedbackTitles for placeholder titles
-const feedbackTitles = {
-    positives: 'Positive points',
-    address: 'Points to address',
-    improvement: 'Areas for improvement',
+        </PSQuestionsList>
+      </Practisequsns>
+    </Container>
+  );
 };
 
 ProblemStatement.propTypes = {
-    feedback: PropTypes.object,
-    metrics: PropTypes.array,
-    summary: PropTypes.array,
-    problemStatement: PropTypes.string,
-    questions: PropTypes.array,
+  feedback: PropTypes.object,
+  metrics: PropTypes.object,
+  summary: PropTypes.string,
+  base_question: PropTypes.string,
+  questions: PropTypes.array,
 };
 
 export default ProblemStatement;
