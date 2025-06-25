@@ -51,6 +51,8 @@ const MockInterview = () => {
   const [selectLang, setSelectLang] = useState("python");
   const [output, setOutput] = useState("");
   const [readyToCode, setReadyToCode] = useState(false);
+
+  console.log("feedbackdfhgsj,kadshgsadg", feedback);
  
  
   // On mount, show the initial question
@@ -206,38 +208,47 @@ const MockInterview = () => {
   };
  
   // Handle end interview and fetch feedback
-  const handleEndInterview = async () => {
-    if (!session_id) return;
-    setProcessingData(true);
-    setError("");
-    try {
-      const response = await fetch(
-        `${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-      if (!response.ok) {
-        setError("Failed to fetch feedback. Please try again.");
-        setProcessingData(false);
-        return;
+const handleEndInterview = async () => {
+  if (!session_id) return;
+  setProcessingData(true);
+  setError("");
+  try {
+    const response = await fetch(
+      `${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
       }
-      const data = await response.json();
-      setFeedback(data);
-      console.log("Feedback:", data);
-    } catch {
+    );
+
+    if (!response.ok) {
       setError("Failed to fetch feedback. Please try again.");
-    } finally {
       setProcessingData(false);
+      return;
     }
-  };
- 
-  // If feedback is present, show feedback summary
-  if (feedback) {
-    navigate("/user/interview/interview-feedback", { state: { feedback } });
-    return null;
+
+    const data = await response.json();
+    setFeedback(data);
+    console.log("Feedback:", data);
+
+    // Navigate after data is successfully fetched
+    navigate("/user/interview/interview-feedback", {
+      state: {
+        feedback: data,
+        metrics: data.metrics,
+        summary: data.summary,
+        base_question: data.base_question,
+        questions: data.questions,
+      },
+    });
+
+  } catch {
+    setError("Failed to fetch feedback. Please try again.");
+  } finally {
+    setProcessingData(false);
   }
+};
+
  
   return (
     <>
