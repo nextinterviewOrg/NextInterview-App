@@ -320,8 +320,9 @@ const NewChallenge = () => {
 
     const userData = await getUserByClerkId(user?.id);
     const userId = userData?.data?.user?._id;
+    const challengeId = challenge._id;
     console.log("User ID:", userId);
-    console.log("Question ID:", challenge.id);
+    console.log("Question IDhjgfdsgahjk ch:", challengeId);
 
     try {
       // optional spinner
@@ -332,7 +333,7 @@ const NewChallenge = () => {
           question: challenge.QuestionText ?? "",
           user_answer: textAnswer,
           user_id: userId,
-          question_id: challenge.id
+          question_id: challengeId
         }),
       });
 
