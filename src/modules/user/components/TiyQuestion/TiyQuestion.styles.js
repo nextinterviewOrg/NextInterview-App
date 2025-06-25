@@ -344,6 +344,7 @@ export const Card = styled.div`
   border-radius: 12px;
   padding: 24px;
   width: 280px;
+  height: 220px;
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   text-align: left;
@@ -383,9 +384,9 @@ export const QnButton = styled.button`
 
 export const TIYContainer = styled.div`
   display: flex;
-  align-items: center;
+  // align-items: center;
 
-  .container {
+  .containers {
   margin-left: 80px;
   width: 80%;
   @media (max-width: 768px) {

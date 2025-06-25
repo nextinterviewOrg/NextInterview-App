@@ -22,6 +22,7 @@ const QusnsTryitYourself = () => {
   const { module_code, topic_code } = useParams();
   const { user } = useUser();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchQuestions = async () => {
@@ -29,21 +30,35 @@ const QusnsTryitYourself = () => {
         const userRes = await getUserByClerkId(user.id);
         const userId = userRes.data.user._id;
         const res = await getAllMainQuestionBankQuestionWithFilter(module_code, topic_code, 'tiy', userId);
-        console.log("res.data", res.data);
+        console.log("res.datagdfshfgdsfgdhf", res.data);
         setQuestions(res.data);
       } catch (error) {
         console.error('Failed to fetch coding questions:', error);
       }
+      finally {
+        setIsLoading(false);
+      }
     };
 
     if (user?.id && module_code && topic_code) {
+      setIsLoading(true);
       fetchQuestions();
+
     }
   }, [user, module_code, topic_code]);
 
   return (
     <Container>
-      {questions.map((q) => (
+      {isLoading ? (
+        <p style={{ textAlign: 'center', padding: '2rem', color: '#333', fontSize: '1.5rem' }}>
+          Loading...
+        </p>
+      ) : questions.length === 0 ? (
+        <p style={{ textAlign: 'center', padding: '2rem', color: '#333', fontSize: '1.5rem', fontWeight: 'bold' }}>
+          No questions found.
+        </p>
+      ) : (
+      questions.map((q) => (
         <QuestionCard key={q._id} onClick={() => {
 
           navigate(`/user/tiyQuestion/${q._id}`);
@@ -66,7 +81,8 @@ const QusnsTryitYourself = () => {
             <Title>{q.question}</Title>
           </Content>
         </QuestionCard>
-      ))}
+      ))
+      )}
     </Container>
   );
 };

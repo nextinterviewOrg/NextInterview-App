@@ -63,6 +63,10 @@ export const CardContainer = styled.div`
   display: flex;
   gap: 1rem;
   margin-bottom: 1rem;
+
+  @media (max-width: 576px) {
+    flex-direction: column;
+  }
 `;
 
 export const Card = styled.div`

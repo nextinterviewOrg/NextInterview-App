@@ -225,6 +225,7 @@ const MockInterview = () => {
       }
       const data = await response.json();
       setFeedback(data);
+      console.log("Feedback:", data);
     } catch {
       setError("Failed to fetch feedback. Please try again.");
     } finally {
@@ -277,7 +278,7 @@ const MockInterview = () => {
     >
       Problem Statement:
       <br />
-      <p style={{ fontSize: "16px", fontWeight: "600" }}>{baseQuestion}</p>
+      <p style={{ fontSize: "16px", fontWeight: "600" }} dangerouslySetInnerHTML={{ __html: baseQuestion }}/>
     </div>
   )}
  

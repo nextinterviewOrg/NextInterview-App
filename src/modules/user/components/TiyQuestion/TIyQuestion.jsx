@@ -344,7 +344,7 @@ const TIyQuestion = () => {
 
     return (
         <TIYContainer>
-        <div className='container'>
+        <div className='containers'>
             <BackButton onClick={() => navigate(-1)}>
                 <IoChevronBackSharp /> Back
             </BackButton>

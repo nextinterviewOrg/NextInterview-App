@@ -9,6 +9,10 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 85vh;
+
+  @media (max-width: 768px) {
+    height: auto;
+  }
 `;
 
 export const Header = styled.div`

@@ -31,7 +31,7 @@ const ProblemStatement = (props) => {
     const feedbackData = props.feedback || location.state?.feedback;
     const metricsData = props.metrics || location.state?.metrics;
     const summaryData = props.summary || location.state?.summary;
-    const problemStatement = props.problemStatement || location.state?.problemStatement;
+    const problemStatement = props.problemStatement || location.state?.base_question;
     const questions = props.questions || location.state?.questions;
 
     // Fallbacks for static content if not provided
@@ -67,7 +67,16 @@ const ProblemStatement = (props) => {
         improvement: []
     };
 
-    const metrics = metricsData || [];
+const metrics =
+  metricsData && Object.keys(metricsData).length > 0
+    ? Object.entries(metricsData).map(([key, value]) => ({
+        title: key
+          .replace(/_/g, ' ')
+          .replace(/\b\w/g, char => char.toUpperCase()), // Capitalize each word
+        label: value
+      }))
+    : [];
+
 
     return (
         <Container>
@@ -79,14 +88,14 @@ const ProblemStatement = (props) => {
             </Section>
 
             {/* Metrics Section (always show) */}
-            <CardContainer>
-                {(metrics.length > 0 ? metrics : [{ title: 'No metrics available.', label: '' }]).map((metric, idx) => (
-                    <Card key={idx}>
-                        <CardTitle>{metric.title}</CardTitle>
-                        <CardSubtitle>{metric.label}</CardSubtitle>
-                    </Card>
-                ))}
-            </CardContainer>
+<CardContainer>
+  {(metrics.length > 0 ? metrics : [{ title: 'No metrics available.', label: '' }]).map((metric, idx) => (
+    <Card key={idx}>
+      <CardTitle>{metric.title}</CardTitle>
+      <CardSubtitle>{metric.label}</CardSubtitle>
+    </Card>
+  ))}
+</CardContainer>
 
             {/* Summary Section (always show) */}
             <SummaryContainer>
