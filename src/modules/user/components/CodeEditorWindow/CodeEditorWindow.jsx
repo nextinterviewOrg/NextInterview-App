@@ -169,9 +169,12 @@ const CodeEditorWindow = () => {
   };
 
   const fetchOptimizedCode = async () => {
+
+    const userId = await getUserByClerkId(user.id);
+    const user_id = userId.data.user._id;
     try {
       const response = await fetch(
-        "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code",
+        "https://nextinterview.ai/fastapi/code/optimize-code",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -180,6 +183,7 @@ const CodeEditorWindow = () => {
             user_code: code,
             sample_input: challenge?.input,
             sample_output: challenge?.output,
+            user_id: user_id,
           }),
         }
       );

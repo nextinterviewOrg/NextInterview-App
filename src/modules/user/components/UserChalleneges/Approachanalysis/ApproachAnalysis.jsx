@@ -13,7 +13,7 @@ import { getUserByClerkId } from "../../../../../api/userApi";
 import { FaPlus, FaCheckCircle } from "react-icons/fa";
 
 const EXTERNAL_API_BASE =
-  "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+  "https://nextinterview.ai/fastapi/approach";
  
 
 const ApproachAnalysis = () => {

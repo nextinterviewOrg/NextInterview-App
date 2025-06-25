@@ -64,7 +64,7 @@ export const generateSummary = async ({ text, maxLength }) => {
 // Fetch topics from the EXTERNAL API
 export const getExternalTopics = async () => {
     try {
-        const response = await fetch("https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/topics", {
+        const response = await fetch("https://nextinterview.ai/fastapi/mock/topics", {
             method: "GET",
             headers: { "Content-Type": "application/json" },
         });

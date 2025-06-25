@@ -168,11 +168,14 @@ const TiyCodingPage = () => {
         const optimizeCode = async () => {
             if (!output || !question) return;
 
+            const userId = await getUserIdByClerkId(user.id);
+            const user_id = userId.data.user._id;
+
             if (output.trim() === question.output.trim()) {
                 setShowOptimiseBtn(true);
                 try {
                     const response = await fetch(
-                        "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code",
+                        "https://nextinterview.ai/fastapi/code/optimize-code",
                         {
                             method: "POST",
                             headers: {
@@ -183,6 +186,7 @@ const TiyCodingPage = () => {
                                 user_code: code,
                                 sample_input: question.input,
                                 sample_output: question.output,
+                                user_id: user_id,
                             }),
                         }
                     );

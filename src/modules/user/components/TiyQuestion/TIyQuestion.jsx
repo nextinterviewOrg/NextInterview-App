@@ -42,7 +42,7 @@ import { useUser } from '@clerk/clerk-react';
 import { getTiyHarderQuestion, nextTiyQuestion } from '../../../../api/userMainQuestionBankApi';
 
 const EXTERNAL_API_BASE =
-  "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+  "https://nextinterview.ai/fastapi/approach";
 
 const TIyQuestion = () => {
     const { id } = useParams();
@@ -302,6 +302,11 @@ const TIyQuestion = () => {
       return;
     }
 
+    const userData = await getUserByClerkId(user?.id);
+    const userId = userData?.data?.user?._id;
+    console.log("User ID:", userId);
+    console.log("Question ID:", question.id);
+
     try {
       // optional spinner
       const res = await fetch(`${EXTERNAL_API_BASE}/analyze-approach`, {
@@ -310,6 +315,8 @@ const TIyQuestion = () => {
         body: JSON.stringify({
           question: question.text ?? "",
           user_answer: textAnswer,
+          user_id: userId,
+          question_id: question.id
         }),
       });
 

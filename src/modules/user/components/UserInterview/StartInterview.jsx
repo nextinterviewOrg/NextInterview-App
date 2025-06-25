@@ -17,7 +17,7 @@ import { getUserByClerkId } from "../../../../api/userApi";
 import { getExternalTopics } from "../../../../api/topicApi";
 import AIicon from "../../../../assets/SampleInterviewIcon.svg"
 
-const EXTERNAL_API_BASE = "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+const EXTERNAL_API_BASE = "https://nextinterview.ai/fastapi/mock";
 
 const StartInterview = ({ isOpen, onClose, title }) => {
   const [topics, setTopics] = useState([]);
@@ -69,6 +69,9 @@ const StartInterview = ({ isOpen, onClose, title }) => {
   }, [isLoaded, user]);
 
   const handleStartInterview = async () => {
+
+    const userId = await getUserByClerkId(user.id);
+    const user_id = userId.data.user._id;
     if (!selectedTopic || !userName) return;
     setLoading(true);
     setError("");
@@ -76,7 +79,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
       const response = await fetch(`${EXTERNAL_API_BASE}/init`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: selectedTopic, user_name: userName }),
+        body: JSON.stringify({ topic: selectedTopic, user_id: user_id }),
       });
       if (!response.ok) {
         throw new Error(`Failed to start interview: ${response.status}`);

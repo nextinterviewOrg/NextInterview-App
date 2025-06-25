@@ -85,9 +85,13 @@ const TIYCodingPage = () => {
     useEffect(() => {
         const apiCaller = async () => {
 
+            const userId = await getUserByClerkId(user.id);
+            const user_id = userId.data.user._id;
+
+
             if ((output.trim() === question?.output.trim())) {
                 setShowOptimiseBtn(true)
-                const response = await fetch('https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code', {
+                const response = await fetch('https://nextinterview.ai/fastapi/code/optimize-code', {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json', 
@@ -96,7 +100,8 @@ const TIYCodingPage = () => {
                         question: question?.QuestionText,
                         user_code: code,
                         sample_input: question?.input,
-                        sample_output: question?.output
+                        sample_output: question?.output,
+                        user_id: user_id
                     })
                 })
                 console.log("response", response);

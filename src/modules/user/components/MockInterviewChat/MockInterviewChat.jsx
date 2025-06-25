@@ -28,7 +28,7 @@ import { message as antdMessage } from "antd";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
  
 const EXTERNAL_API_BASE =
-  "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+  "https://nextinterview.ai/fastapi/mock";
  
 const MockInterview = () => {
   const [messages, setMessages] = useState([]);

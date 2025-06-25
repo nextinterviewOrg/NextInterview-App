@@ -32,7 +32,7 @@ import {
 import { getUserByClerkId } from "../../../../api/userApi";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
  
-const EXTERNAL_API_BASE = "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+const EXTERNAL_API_BASE = "https://nextinterview.ai/fastapi/mock";
  
 const MockInterview = () => {
   const [isRecording, setIsRecording] = useState(false);

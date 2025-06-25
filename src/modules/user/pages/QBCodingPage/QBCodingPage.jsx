@@ -164,12 +164,16 @@ const QBCodingPage = () => {
   useEffect(() => {
     const optimizeCode = async () => {
       if (!output || !question) return;
+      const userId = await getUserByClerkId(user.id);
+      console.log("Fetched user ID:", userId);
+      const user_id = userId.data.user._id;
+      console.log("User ID:", user_id);
 
       if (output.trim() === question.output.trim()) {
         setShowOptimiseBtn(true);
         try {
           const response = await fetch(
-            "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api/optimize-code",
+            "https://nextinterview.ai/fastapi/code/optimize-code",
             {
               method: "POST",
               headers: {
@@ -180,6 +184,7 @@ const QBCodingPage = () => {
                 user_code: code,
                 sample_input: question.input,
                 sample_output: question.output,
+                user_id: user_id,
               }),
             }
           );

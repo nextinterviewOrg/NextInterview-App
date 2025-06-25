@@ -37,7 +37,7 @@ import { getUserByClerkId } from "../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react"; // Adjust the import path if needed
 
 const EXTERNAL_API_BASE =
-  "https://f9ma89kmrg.execute-api.ap-south-1.amazonaws.com/default/mock-interview-api";
+  "https://nextinterview.ai/fastapi/approach";
 const NewChallenge = () => {
   const { id, past } = useParams();
   const { user } = useUser(); // Get the current user from Clerk
@@ -318,6 +318,11 @@ const NewChallenge = () => {
       return;
     }
 
+    const userData = await getUserByClerkId(user?.id);
+    const userId = userData?.data?.user?._id;
+    console.log("User ID:", userId);
+    console.log("Question ID:", challenge.id);
+
     try {
       // optional spinner
       const res = await fetch(`${EXTERNAL_API_BASE}/analyze-approach`, {
@@ -326,6 +331,8 @@ const NewChallenge = () => {
         body: JSON.stringify({
           question: challenge.QuestionText ?? "",
           user_answer: textAnswer,
+          user_id: userId,
+          question_id: challenge.id
         }),
       });
 
