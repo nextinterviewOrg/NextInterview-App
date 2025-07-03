@@ -54,21 +54,21 @@ const Dropdown = ({
   const dropdownRef = useRef();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        onClose(); // Close dropdown if clicking outside
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      onClose();
     }
+  };
 
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isOpen, onClose]);
+  if (isOpen) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -490,7 +490,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
                 isOpen={isProfileOpen}
                 position={avatarPosition}
               //  onClose={() => setIsProfileOpen(false)}
-              onclose = {handleClose}
+              onClose = {handleClose}
                 onLogoutClick={() => {
                   setIsLogoutModalOpen(true);
                }}

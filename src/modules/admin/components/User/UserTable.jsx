@@ -24,6 +24,7 @@ const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   background-color: ${({ theme }) => theme.colors.white};
+  min-width: 1000px;
 
   @media (max-width: 768px) {
     font-size: 12px;
@@ -31,7 +32,7 @@ const Table = styled.table`
 `;
 
 const Th = styled.th`
-  text-weight: normal;
+  font-weight: normal;
   text-align: left;
   padding: ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.colors.lightgreen};
