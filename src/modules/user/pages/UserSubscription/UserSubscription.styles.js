@@ -4,7 +4,7 @@ export const UserSubscriptionWrapper = styled.div`
   margin-left: 40px;
   display: flex;
   gap: 10px;
-  height: 50vh;
+  /* height: 50vh; */
   justify-content: center;
   align-items: center;
   margin-top: 10vh;
