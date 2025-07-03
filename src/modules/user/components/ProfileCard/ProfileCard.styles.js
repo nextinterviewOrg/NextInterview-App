@@ -40,7 +40,12 @@ display: flex
     flex-direction: column;
     width: 60%;
     box-sizing: border-box;
-    margin-right: 20px;}
+    // margin-right: 20px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+    }
 
 .profile-photo-section {
   display: flex;

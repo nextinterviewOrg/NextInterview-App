@@ -28,6 +28,7 @@ const ProfileCard = () => {
     profilePhoto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
   });
   const [linkedInError, setLinkedInError] = useState("");
+  const [emailError, setEmailError] = useState("");
   const imageInputRef = useRef(null);
     const { signOut } = useClerk();
 
@@ -89,6 +90,12 @@ const ProfileCard = () => {
       [name]: "Only alphabets and spaces are allowed.",
     }));
     return;
+  }
+
+    if (name === "email") {
+    // very simple RFC-style test.  Adjust if you need stricter rules
+    const valid = /^\S+@\S+\.\S+$/.test(value);
+    setEmailError(valid || value === "" ? "" : "Enter a valid e-mail address");
   }
 
   // Restrict phoneNumber: only digits
@@ -218,16 +225,20 @@ const ProfileCard = () => {
               />
             </div>
 
-            <div className="form-group">
-              <label>User mail ID</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                disabled={loading}
-              />
-            </div>
+         <div className="form-group">
+  <label>User mail ID</label>
+  <div className="input-container">
+    <input
+      type="email"
+      name="email"
+      value={formData.email}
+      onChange={handleChange}
+      disabled={loading}
+      placeholder="example@domain.com"
+    />
+    {emailError && <div className="error-message">{emailError}</div>}
+  </div>
+</div>
 
             <div className="form-group"
          
@@ -274,7 +285,7 @@ const ProfileCard = () => {
               <button 
                 className="save-btn" 
                 onClick={handleSave}
-                disabled={loading || !!linkedInError}
+                disabled={loading || !!linkedInError || !!emailError}
               >
                 {loading ? "Saving..." : "Save"}
               </button>

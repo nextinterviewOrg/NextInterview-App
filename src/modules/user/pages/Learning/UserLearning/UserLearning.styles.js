@@ -207,6 +207,7 @@ import styled from "styled-components";
    color:${({ theme }) => theme.colors.black};
 
    @media (max-width: 480px) {
+   margin-top: 10px;
        font-size: 16px;
        word-wrap: break-word;
        overflow: hidden;

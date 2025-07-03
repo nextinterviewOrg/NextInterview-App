@@ -18,7 +18,7 @@ export const SearchBar = styled.div`
   justify-content: space-between;
   margin-bottom: ${theme.spacing(4)};
   background-color: ${theme.colors.sidebarBgColor};
-  padding: ${theme.spacing(2)};
+  // padding: ${theme.spacing(2)};
   border-radius: 8px;
 
   .search-container {

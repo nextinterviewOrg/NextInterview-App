@@ -121,7 +121,7 @@ const Dropdown = ({
           }}
         >
           {" "}
-          <CgProfile /> FAQ's
+          <CgProfile /> FAQ
         </li>
         <li
           style={listLIStyles}

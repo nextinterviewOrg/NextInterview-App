@@ -74,7 +74,7 @@ const LandingHeader = () => {
         <MobileMenu ref={menuRef}>
           <MobileMenuItem href="/about">About</MobileMenuItem>
           <MobileMenuItem href="/course">Topics</MobileMenuItem>
-          <MobileMenuItem href="/produc">Product</MobileMenuItem>
+          <MobileMenuItem href="/product">Product</MobileMenuItem>
           <MobileMenuItem href="/pricing">Pricing</MobileMenuItem>
           <MobileMenuItem href="/login">Login</MobileMenuItem>
           <MobileMenuItem href="/signup">Sign up</MobileMenuItem>
