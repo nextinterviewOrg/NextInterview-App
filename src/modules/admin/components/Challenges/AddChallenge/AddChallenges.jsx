@@ -170,7 +170,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "x-rapidapi-key": "e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c",
+          "x-rapidapi-key": "39906602eamsh7241fddd134e8ecp1ff6d1jsn745264e9d839",
           "x-rapidapi-host": "onecompiler-apis.p.rapidapi.com"
         },
         body: JSON.stringify(payload)
