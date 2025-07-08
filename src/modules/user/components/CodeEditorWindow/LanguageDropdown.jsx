@@ -13,7 +13,7 @@ const LanguagesDropdown = ({ onSelectChange }) => {
         url: "https://judge0-extra-ce.p.rapidapi.com/languages",
         headers: {
           "x-rapidapi-key":
-            "ae1d4db102mshca27e059c4571a1p177bfcjsn7e49f5986951",
+            "39906602eamsh7241fddd134e8ecp1ff6d1jsn745264e9d839",
           "x-rapidapi-host": "judge0-extra-ce.p.rapidapi.com",
         },
       };
