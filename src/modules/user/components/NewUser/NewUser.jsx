@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Container,
   Illustration,
-  Message,
   Title,
   StartButton
 } from '../../components/NewUser/NewUser.style';
@@ -15,7 +14,6 @@ const NewUser = () => {
       <Illustration src={newuser} alt="Start Learning Illustration" 
     
       />
-      <Message>You haven’t started learning yet</Message>
       <Title>Start your first Module</Title>
   <Link to="/user/learning">
       <StartButton>Start Module</StartButton>

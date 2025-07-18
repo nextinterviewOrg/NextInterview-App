@@ -92,7 +92,7 @@ export const IconWrapper = styled.div`
   align-items: center;
   justify-content: space-around;
   gap: ${theme.spacing(1)};
-  padding: ${theme.spacing(2)};
+  padding: 12px;
   border: 1px solid ${theme.colors.text};
   border-radius: 40px; /* Rounded corners for the box */
   background-color: transparent; /* No background fill */
@@ -100,11 +100,11 @@ export const IconWrapper = styled.div`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     gap: ${theme.spacing(1)};
-    display: none;
+    padding: 8px;
   }
   @media (max-width: ${theme.breakpoints.tablet}) {
     gap: ${theme.spacing(1)};
-    display: none;
+    padding: 8px;
   }
   @media (max-width: ${theme.breakpoints.desktop}) {
     gap: ${theme.spacing(1)};
@@ -116,10 +116,10 @@ export const Icon = styled.div`
   cursor: pointer;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
-    font-size: 14px;
+    font-size: 18px;
   }
   @media (max-width: ${theme.breakpoints.tablet}) {
-    font-size: 14px;
+    font-size: 18px;
   }
   @media (max-width: ${theme.breakpoints.desktop}) {
     font-size: 14px;

@@ -280,7 +280,7 @@ function App() {
             <Route path="interview/interview-feedback" element={<ProblemStatement />} />
             <Route path="titcodinglist" element={<TIYCodingList />} />
             <Route path="titcodingDetail/:questionID" element={<TIYCodingDetailPage />} />
-            <Route path="titcodingRun" element={<TIYCodingPage />} />
+            {/* <Route path="titcodingRun" element={<TIYCodingPage />} /> */}
             <Route path="mainQuestionBank" element={<AllQuestionBank />} >
               <Route index element={<QBCodingList />} />
               <Route path="qbcodinglist" element={<QBCodingList />} />

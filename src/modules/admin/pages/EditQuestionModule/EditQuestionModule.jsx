@@ -12,7 +12,8 @@ import {
 } from './EditQuestionModule.styles';
 import { Select, message } from 'antd';
 import Lottie from "lottie-react";
-import dataNot from "../../../../assets/Lottie/5nvMVE1u7L.json";
+// import dataNot from "../../../../assets/Lottie/5nvMVE1u7L.json";
+import NoData from '../../components/nodata/nodata';
 
 import { FaSearch } from 'react-icons/fa';
 import { MdOutlineKeyboardArrowDown } from "react-icons/md";
@@ -541,22 +542,9 @@ const removeQuestions = async () => {
                 ))}
               </TableBody>
             </Table>
-          </TableWrapper> ) :
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '50vh' }}> <Lottie
-            className="Lottie"
-            animationData={dataNot}
-            loop={true}
-            style={{
-              // width: "100%", height: "100%",
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100vw",
-              height: "50vh",      // full viewport height
-              margin: 0,            // ensure no default margins
-              padding: 0,
-            }}
-          /></div>
+          </TableWrapper> ) : (
+            <NoData message="No questions available for this module." />
+          )
         }
       <EditQuestion
         isOpen={isModalOpen}

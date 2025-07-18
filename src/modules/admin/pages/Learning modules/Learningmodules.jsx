@@ -16,7 +16,7 @@ const LearningModules = () => {
       {/* <Sidebar isExpanded={isExpanded} setIsExpanded={setIsExpanded} /> */}
 
       {/* Content */}
-      <ContentWrapper isExpanded={isExpanded} style={{ width: "100%", padding:"0px" }}>
+      <ContentWrapper isExpanded={isExpanded} style={{ width: "100%", paddingRight:"30px" }}>
         {/* <Header/> */}
         {/* <h2>Learning Modules</h2> */}
         <LearningModulesStats />

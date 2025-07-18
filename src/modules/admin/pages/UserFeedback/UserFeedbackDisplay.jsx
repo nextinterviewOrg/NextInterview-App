@@ -11,6 +11,7 @@ import {
   Container
 } from './UserFeedbackDisplay.style';
 import { getSummaryFeedbackAllModule } from '../../../../api/moduleFeedbackApi';
+import NoData from '../../components/nodata/nodata';
 
 const renderStars = (count) =>
   [...Array(5)].map((_, i) => (
@@ -50,28 +51,28 @@ const UserFeedbackDisplay = () => {
   }
 
   if (!modules.length) {
-    return <div style={{ textAlign: 'center' }}>No module feedback data available</div>;
+    return <NoData message="No module feedback data available" />;
   }
 
   return (
     <Container>
-    <TableContainer>
-      <TableHeader>
-        <div>Module Name</div>
-        <div>Avg Rating</div>
+      <TableContainer>
+        <TableHeader>
+          <div>Module Name</div>
+          <div>Avg Rating</div>
         <div> User Count</div>
-      </TableHeader>
-      {modules.map((mod) => (
-        <RowContainer key={mod.id}>
-          <ModuleName title={mod.description}>{mod.name}</ModuleName>
-          <AvgRating>
-            {mod.rating}
-            <RatingStars>{renderStars(mod.rating)}</RatingStars>
-          </AvgRating>
-          <UserCount>{mod.users}</UserCount>
-        </RowContainer>
-      ))}
-    </TableContainer>
+        </TableHeader>
+        {modules.map((mod) => (
+          <RowContainer key={mod.id}>
+            <ModuleName title={mod.description}>{mod.name}</ModuleName>
+            <AvgRating>
+              {mod.rating}
+              <RatingStars>{renderStars(mod.rating)}</RatingStars>
+            </AvgRating>
+            <UserCount>{mod.users}</UserCount>
+          </RowContainer>
+        ))}
+      </TableContainer>
     </Container>
   );
 };

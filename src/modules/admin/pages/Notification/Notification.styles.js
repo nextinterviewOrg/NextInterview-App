@@ -81,7 +81,7 @@ export const NotificationBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 60%;
+  width: 100%;
   height: 170px;
 
   @media (max-width: 768px) {
@@ -105,6 +105,11 @@ export const NotificationBody = styled.div`
     margin: 0;
     font-size: 14px;
     color: ${({ theme }) => theme.colors.textgray};
+     display: -webkit-box;
+    -webkit-line-clamp: 3; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
  
     &.highlight {
       font-weight: bold;

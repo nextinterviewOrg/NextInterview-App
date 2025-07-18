@@ -124,6 +124,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Describe your issue..."
+              maxLength={1000}
             />
             {/* Show error if query is empty */}
             {errors.query && <div>{errors.query}</div>}

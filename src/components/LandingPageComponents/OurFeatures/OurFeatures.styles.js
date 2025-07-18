@@ -3,7 +3,8 @@ import styled from 'styled-components';
 export const FeaturesWrapper = styled.div`
   background-color: #f4f8fa;
   background-color: #EDF1F3;
-  padding: 1rem;
+  padding: 60px 20px;
+  margin: 0 auto;
 `;
 
 export const Wrapper = styled.div`
@@ -26,7 +27,7 @@ export const Wrapper = styled.div`
 export const FeaturesHeading = styled.h2`
   font-size: 32px;
   font-weight: 700;
-  margin-bottom: 3rem;
+  margin-bottom: 40px;
   color: #262524;
   margin: 0;
   margin-bottom: 2rem;

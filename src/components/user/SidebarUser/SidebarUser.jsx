@@ -120,8 +120,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
   return (
     <SideBarwrapper
     ref={sidebarRef}
-          onMouseEnter={() => setIsExpanded(true)}
-          onMouseLeave={() => setIsExpanded(false)}
+          // onMouseEnter={() => setIsExpanded(true)}
+          // onMouseLeave={() => setIsExpanded(false)}
           isExpanded={isExpanded}
           isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
         >

@@ -63,8 +63,8 @@ const UserSampleInterview = () => {
           <div className="video-page">
             <div className="video-container">
               <video
-                width="100%"
-                height="auto"
+                // width="100%"
+                // height="700px"
                 controls
                 onEnded={handleVideoEnd}
                 className="video-player"

@@ -82,6 +82,7 @@ const ProfileInfo = () => {
 
       await updateUser(formData);
       message.success("Profile updated successfully!");
+      window.location.reload();
       
       // Refresh the data after update
       const response = await getUserByClerkId(user.id);

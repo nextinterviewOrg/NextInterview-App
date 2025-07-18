@@ -10,6 +10,9 @@ import {
 } from "../../../../api/userApi";
 import { Spin, message } from "antd";
 import { useNavigate } from "react-router-dom";
+import { Phone } from "@mui/icons-material";
+import PhoneInput from 'react-phone-number-input'
+import 'react-phone-number-input/style.css'
 
 const ProfileCard = () => {
   const clerk = new Clerk(
@@ -30,7 +33,7 @@ const ProfileCard = () => {
   const [linkedInError, setLinkedInError] = useState("");
   const [emailError, setEmailError] = useState("");
   const imageInputRef = useRef(null);
-    const { signOut } = useClerk();
+  const { signOut } = useClerk();
 
   const navigate = useNavigate();
 
@@ -46,16 +49,16 @@ const ProfileCard = () => {
   useEffect(() => {
     const apiCaller = async () => {
       if (!isLoaded || !user) return;
-      
+
       try {
         setLoading(true);
         const response = await getUserByClerkId(user.id);
         setUserId(response.data.user._id);
-        
+
         const questionariesResponse = await getUserQuestionariesByUserId(
           response.data.user._id
         );
-        
+
         setFormData({
           username: response.data.user.user_name || "",
           email: response.data.user.user_email || "",
@@ -83,29 +86,29 @@ const ProfileCard = () => {
         setLinkedInError("");
       }
     }
-      // Restrict userName: only alphabets and spaces
-  if (name === "username" && !/^[a-zA-Z\s]*$/.test(value)) {
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "Only alphabets and spaces are allowed.",
-    }));
-    return;
-  }
+    // Restrict userName: only alphabets and spaces
+    if (name === "username" && !/^[a-zA-Z\s]*$/.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Only alphabets and spaces are allowed.",
+      }));
+      return;
+    }
 
     if (name === "email") {
-    // very simple RFC-style test.  Adjust if you need stricter rules
-    const valid = /^\S+@\S+\.\S+$/.test(value);
-    setEmailError(valid || value === "" ? "" : "Enter a valid e-mail address");
-  }
+      // very simple RFC-style test.  Adjust if you need stricter rules
+      const valid = /^\S+@\S+\.\S+$/.test(value);
+      setEmailError(valid || value === "" ? "" : "Enter a valid e-mail address");
+    }
 
-  // Restrict phoneNumber: only digits
-  if (name === "phoneNumber" && !/^[0-9]*$/.test(value)) {
-    setErrors((prev) => ({
-      ...prev,
-      [name]: "Only numbers are allowed.",
-    }));
-    return;
-  }
+    // Restrict phoneNumber: only digits
+    if (name === "phoneNumber" && !/^[0-9]*$/.test(value)) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "Only numbers are allowed.",
+      }));
+      return;
+    }
 
 
     setFormData({ ...formData, [name]: value });
@@ -130,22 +133,23 @@ const ProfileCard = () => {
   const handleSave = async () => {
     if (linkedInError) {
       message.error("Please fix the LinkedIn URL before saving");
+      window.location.reload();
       return;
     }
-    
+
     try {
       setLoading(true);
       const formDataSub = new FormData();
       formDataSub.append("clerk_id", user.id);
       formDataSub.append("user_name", formData.username);
-      
+
       if (profileFile) {
         formDataSub.append("user_profile_pic", profileFile);
       }
 
       formDataSub.append("user_Phone_number", formData.phone);
       formDataSub.append("user_email", formData.email);
-      
+
       await updateUser(formDataSub);
       await createUserProfile({
         user_linkedin_profile_link: formData.linkedIn,
@@ -162,8 +166,8 @@ const ProfileCard = () => {
   };
 
   const handlelogout = async () => {
-        await signOut();
-        navigate("/sign-in");
+    await signOut();
+    navigate("/login");
   }
 
   if (loading) {
@@ -176,124 +180,133 @@ const ProfileCard = () => {
 
   return (
     <>
-    <div style={{display:"flex",justifyContent:"flex-end"}}>
-      <button style={{margin:"10px", background:"transparent",color:"#2290ac", border: "1px solid #2290ac", borderRadius:"5px", padding:"10px 30px", marginBottom:"10px", cursor:"pointer"}} onClick={handlelogout}>
-        logout
-      </button>
+      <div style={{ display: "flex", justifyContent: "flex-end" }}>
+        <button style={{ margin: "10px", background: "transparent", color: "#2290ac", border: "1px solid #2290ac", borderRadius: "5px", padding: "10px 30px", marginBottom: "10px", cursor: "pointer" }} onClick={handlelogout}>
+          logout
+        </button>
       </div>
-    <ProfileCardWrapper>
-      <div className="profile-container">
-        <div className="profile-header">
-          <h2 className="profile-title">Basic Info</h2>
+      <ProfileCardWrapper>
+        <div className="profile-container">
+          <div className="profile-header">
+            <h2 className="profile-title">Basic Info</h2>
 
-          {/* Profile Photo Section */}
-          <div className="profile-photo-section">
-            <h3 className="profile-photo-title">Profile Photo</h3>
-            <img
-              src={formData.profilePhoto}
-              alt="Profile"
-              className="profile-photo"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              ref={imageInputRef}
-              style={{ display: "none" }}
-              onChange={handleImageChange}
-              disabled={loading}
-            />
-            <button 
-              className="change-photo-btn" 
-              onClick={handleImageClick}
-              disabled={loading}
-            >
-              Change photo
-            </button>
-          </div>
-        </div>
-        {/* Form Fields */}
-        <div className="profile-content">
-          <div className="form-fields">
-            <div className="form-group">
-              <label>User name</label>
+            {/* Profile Photo Section */}
+            <div className="profile-photo-section">
+              <h3 className="profile-photo-title">Profile Photo</h3>
+              <img
+                src={formData.profilePhoto}
+                alt="Profile"
+                className="profile-photo"
+              />
               <input
-                type="text"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
+                type="file"
+                accept="image/*"
+                ref={imageInputRef}
+                style={{ display: "none" }}
+                onChange={handleImageChange}
                 disabled={loading}
               />
-            </div>
-
-         <div className="form-group">
-  <label>User mail ID</label>
-  <div className="input-container">
-    <input
-      type="email"
-      name="email"
-      value={formData.email}
-      onChange={handleChange}
-      disabled={loading}
-      placeholder="example@domain.com"
-    />
-    {emailError && <div className="error-message">{emailError}</div>}
-  </div>
-</div>
-
-            <div className="form-group"
-         
-            >
-              <label>LinkedIn profile link</label>
-              <div className="input-container">
-              <input
-                type="text"
-                name="linkedIn"
-                value={formData.linkedIn}
-                onChange={handleChange}
+              <button
+                className="change-photo-btn"
+                onClick={handleImageClick}
                 disabled={loading}
-                placeholder="https://www.linkedin.com/in/your-profile"
-              />
-              {linkedInError && <div className="error-message">{linkedInError}</div>}
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Phone number</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                disabled={loading}
-                maxLength={10}
-              />
-            </div>
-
-            <div className="form-group">
-              <label>Years of experience in data science</label>
-              <input
-                type="text"
-                name="experience"
-                value={formData.experience}
-                onChange={handleChange}
-                disabled={loading}
-              />
-            </div>
-
-            {/* Save Button */}
-            <div className="save-btn-container">
-              <button 
-                className="save-btn" 
-                onClick={handleSave}
-                disabled={loading || !!linkedInError || !!emailError}
               >
-                {loading ? "Saving..." : "Save"}
+                Change photo
               </button>
             </div>
           </div>
+          {/* Form Fields */}
+          <div className="profile-content">
+            <div className="form-fields">
+              <div className="form-group">
+                <label>User Name</label>
+                <input
+                  type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>User Mail ID</label>
+                <div className="input-container">
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    disabled={loading}
+                    placeholder="example@domain.com"
+                    readOnly
+                    onFocus={(e) => {
+                      alert("Please contact Support to change your registered email address.");
+                      e.target.blur();
+                    }}
+                  />
+                  {emailError && <div className="error-message">{emailError}</div>}
+                </div>
+              </div>
+
+              <div className="form-group"
+
+              >
+                <label>LinkedIn Profile Link</label>
+                <div className="input-container">
+                  <input
+                    type="text"
+                    name="linkedIn"
+                    value={formData.linkedIn}
+                    onChange={handleChange}
+                    disabled={loading}
+                    placeholder="https://www.linkedin.com/in/your-profile"
+                  />
+                  {linkedInError && <div className="error-message">{linkedInError}</div>}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Phone Number</label>
+                <PhoneInput
+                style={{ width: "60%" }}
+                  international
+                  defaultCountry="IN"
+                  value={formData.phone}
+                  onChange={(value) => setFormData({ ...formData, phone: value })}
+                  disabled={loading}
+                  onFocus={(e) => {
+                    alert("Please contact Support to change your registered phone number.");
+                    e.target.blur();
+                  }}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Years Of Experience In Data Science</label>
+                <input
+                  type="text"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleChange}
+                  disabled={loading}
+                />
+              </div>
+
+              {/* Save Button */}
+              <div className="save-btn-container">
+                <button
+                  className="save-btn"
+                  onClick={handleSave}
+                  disabled={loading || !!linkedInError || !!emailError}
+                >
+                  {loading ? "Saving..." : "Save"}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </ProfileCardWrapper>
+      </ProfileCardWrapper>
     </>
   );
 };

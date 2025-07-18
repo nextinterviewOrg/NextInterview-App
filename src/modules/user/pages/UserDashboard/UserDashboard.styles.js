@@ -109,13 +109,13 @@ export const UserDashboardWrapper = styled.div`
     box-shadow: 0px 4px 12px rgba(112, 144, 176, 0.1);
     flex: 1;
     min-width: 150px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    // cursor: pointer;
+    // transition: all 0.3s ease;
 
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0px 6px 16px rgba(112, 144, 176, 0.15);
-    }
+    // &:hover {
+    //   transform: translateY(-2px);
+    //   box-shadow: 0px 6px 16px rgba(112, 144, 176, 0.15);
+    // }
 
     @media (max-width: 768px) {
       // min-width: auto;

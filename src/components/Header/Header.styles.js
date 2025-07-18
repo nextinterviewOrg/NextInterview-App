@@ -187,6 +187,7 @@ export const Avatar = styled.img`
   height: 30px;
   border-radius: 50%;
   object-fit: cover;
+  cursor: pointer;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     width: 25px;

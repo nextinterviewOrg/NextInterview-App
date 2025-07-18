@@ -18,7 +18,7 @@ export const ModalContainer = styled.div`
   background-color: ${theme.colors.light};
   padding: ${theme.spacing(2)};
   border-radius: ${theme.spacing(1)};
-  width: 85%;
+  // width: 85%;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   text-align: center;
 `;
@@ -28,6 +28,10 @@ export const ModalTitle = styled.h2`
   font-size: 1.25rem;
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(3)};
+
+  @media (max-width: ${theme.breakpoints.mobile}) {
+    font-size: 1rem;
+  }
 `;
 
 export const ModalButtonContainer = styled.div`

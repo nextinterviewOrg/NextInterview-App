@@ -59,7 +59,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     },
     {
       id: 6,
-      name: "FAQ's",
+      name: "FAQs",
       path: "/admin/faq",
       icon: <img className="svgicon" src={faq} alt="FAQ's Icon" />,
     },
