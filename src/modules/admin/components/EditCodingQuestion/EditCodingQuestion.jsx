@@ -131,7 +131,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-rapidapi-key': 'e3d1d11c7dmshca53081ed1ccf3fp1b61cdjsn79cc71e1336c',
+                    'x-rapidapi-key': '39906602eamsh7241fddd134e8ecp1ff6d1jsn745264e9d839',
                     'x-rapidapi-host': 'onecompiler-apis.p.rapidapi.com'
                 },
                 body: JSON.stringify({
@@ -143,7 +143,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
             const result = await res.json();
             console.log("result", result);
             if (result.status === 'success') {
-                setFormData(prev => ({ ...prev, output: result.stdout.trim() || result?.stderr?.trim() }));
+                setFormData(prev => ({ ...prev, output: result?.stdout?.trim() || result?.stderr?.trim() }));
             }
         } catch (err) {
             notification.error({ message: 'Code execution failed', description: err.message });
