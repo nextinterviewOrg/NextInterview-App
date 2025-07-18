@@ -143,7 +143,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
             const result = await res.json();
             console.log("result", result);
             if (result.status === 'success') {
-                setFormData(prev => ({ ...prev, output: result.stdout.trim() || result?.stderr?.trim() }));
+                setFormData(prev => ({ ...prev, output: result?.stdout?.trim() || result?.stderr?.trim() }));
             }
         } catch (err) {
             notification.error({ message: 'Code execution failed', description: err.message });
