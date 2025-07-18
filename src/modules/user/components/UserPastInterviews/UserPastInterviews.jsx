@@ -116,7 +116,9 @@ const UserPastInterviews = () => {
       questionsAsked: [],
     });
     setIsModalOpen(false);
+    window.location.reload();
   };
+
   const handleTopicSelect = (topics, index) => {
     const updatedCompaniesDetails = { ...interviewData };
     updatedCompaniesDetails.questionsAsked = topics.map((topic) => topic.value);
@@ -214,6 +216,7 @@ const UserPastInterviews = () => {
                   name="whatWentWell"
                   value={interviewData.whatWentWell}
                   onChange={handleInputChange}
+                  maxLength={5000}
                 ></textarea>
               </div>
               <div className="modal-content-formgroup">
@@ -222,6 +225,7 @@ const UserPastInterviews = () => {
                   name="whatDidntGoWell"
                   value={interviewData.whatDidntGoWell}
                   onChange={handleInputChange}
+                  maxLength={5000}
                 ></textarea>
               </div>
               <div className="modal-content-formgroup">

@@ -61,7 +61,7 @@ export const Icon = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.55rem;
+  font-size: 2rem;
   flex-shrink: 0;
 
 color: ${({ status, type }) =>
