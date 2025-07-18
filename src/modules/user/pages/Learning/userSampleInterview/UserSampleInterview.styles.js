@@ -2,44 +2,36 @@ import styled from "styled-components";
 
 
 export const UserSampleInterviewWrapper = styled.div`
-margin-left: 60px;
-margin-bottom:10px;
+  margin: 0 20px 10px 60px;
 
-@media ( max-width: 768px)
-{
-margin-left: 0px;}
-
-/* Container for the video */
-.video-page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-color: #f0f4f8;
-}
-  .backbtn{
-  height: 40px;
-  width: 40px;
-  background-color: ${({ theme }) => theme.colors.white};
- padding: 10px;
- display: flex;
- align-items: center;
- justify-content: center;
+  @media (max-width: 768px) {
+    margin-left: 0;
   }
 
-.video-container {
-  width: 100%;
-  background: linear-gradient(45deg, #9c85f1, #79b6f1); /* Background gradient */
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-}
+  .video-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // background-color: #f0f4f8;
+  }
 
-.video-player {
-  width: 100%;
-  height: 90%;
-  border-radius: 15px;
-}
+  .video-container {
+    width: 100%;
+    max-width: 1350px;
+    aspect-ratio: 16 / 9;
+    background: linear-gradient(45deg, #9c85f1, #79b6f1);
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .video-player {
+    width: 100%;
+    height: 100%;
+    // object-fit: cover;
+    border-radius: 15px;
+  }
+
 
 /* Modal Styling */
 .modal {

@@ -57,11 +57,20 @@ export const Type = styled.div`
 export const Question = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-size: 14px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
+
 
 export const Answer = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-size: 14px;
+    display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 `;
 
 export const Action = styled.div`

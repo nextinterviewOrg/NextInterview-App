@@ -227,6 +227,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
 
   const handleClose = () => {
     setIssopen(false);
+    setIsProfileOpen(false)
   };
 
   // Function to close the modal when clicking outside of it
@@ -436,6 +437,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
                 <MdOutlineInfo
                   title="Information"
                   onClick={() => navigate("/user/userfaq")}
+                  Size={"26px"}
                 />
               </Icon>
             </IconWrapper>

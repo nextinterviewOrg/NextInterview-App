@@ -172,6 +172,7 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
   const [duration, setDuration] = useState(1);
   const [durationUnit, setDurationUnit] = useState("Week");
   const [showSuccess, setShowSuccess] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleClose = () => {
     setShowSuccess(false);
@@ -180,25 +181,37 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Process form submission
+  e.preventDefault();
+  setLoading(true); // Start loading
+  try {
     const startDate = new Date();
     const endDate = new Date();
 
     if (durationUnit === "Week") {
       const days = duration * 7;
-      endDate.setDate(startDate.getDate() + days * duration);
+      endDate.setDate(startDate.getDate() + days);
     } else if (durationUnit === "Month") {
       endDate.setMonth(startDate.getMonth() + duration);
     } else if (durationUnit === "Day") {
-      endDate.setFullYear(startDate.getDate() + duration);
+      endDate.setDate(startDate.getDate() + duration);
     }
-  
-    await restrictUser({ clerk_ids: selectedRows, startDate: startDate, endDate: endDate, reason: reason, remarks: remarks });
-   message.success("User restricted successfully!");
-    // window.location.reload();
-    onClose();
-  };
+
+    await restrictUser({
+      clerk_ids: selectedRows,
+      startDate,
+      endDate,
+      reason,
+      remarks,
+    });
+
+    message.success("User restricted successfully!");
+    setShowSuccess(true);
+  } catch (error) {
+    message.error("Failed to restrict user.");
+  } finally {
+    setLoading(false); // End loading
+  }
+};
 
   if (!isOpen) return null;
 
@@ -260,7 +273,9 @@ const RestrictUser = ({ isOpen, onClose, selectedRows }) => {
               This will be notified to the user through email
             </p>
             <ButtonContainer>
-              <Button type="submit">Restrict</Button>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Restricting..." : "Restrict"}
+                </Button>
             </ButtonContainer>
           </form>
         )}

@@ -171,6 +171,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
               <thead>
                 <tr>
                   <Th></Th>
+                  <Th>Status</Th>
                   <Th>Name</Th>
                   <Th>Topics Completed</Th>
                   <Th>Avg. Active Hours</Th>
@@ -181,6 +182,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
               </thead>
               <tbody>
                 {currentUsers.map((user, index) => (
+                  console.log("user", user),
                   <Tr
                     key={index}
                     isSelected={selectedRows.includes(user.clerkId)}
@@ -192,6 +194,23 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                         onChange={(e) => e.stopPropagation()}
                       />
                     </Td>
+                    <Td>
+                      <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <span
+                          style={{
+                            display: "inline-block",
+                            width: "8px",
+                            height: "8px",
+                            borderRadius: "50%",
+                            backgroundColor: user.bellIcon ? "red" : "green",
+                          }}
+                        ></span>
+                        <span style={{ color: user.bellIcon ? "red" : "green" }}>
+                          {user.bellIcon ? "Restricted" : "Active"}
+                        </span>
+                      </span>
+                    </Td>
+
                     <Td>
                       <UserCell>
                         <Avatar>
@@ -220,7 +239,6 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                       </ActiveHours>
                     </Td>
                     <Td>{user.lastActive}</Td>
-                    <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
                     <Td>
                       <Link
                         to={`/admin/userProfile`}
@@ -239,11 +257,11 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
       </TableContainer>
 
       {/* Pagination Controls */}
-      <div className="pagination" style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", marginRight: "20px", marginLeft:"60px", }}>
+      <div className="pagination" style={{ display: "flex", justifyContent: "space-between", marginTop: "20px", marginRight: "20px", marginLeft: "60px", }}>
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          style={{ padding:"10px", backgroundColor:"#68c184", borderRadius:"5px", border:"none", color:"white" }}
+          style={{ padding: "10px", backgroundColor: "#68c184", borderRadius: "5px", border: "none", color: "white" }}
         >
           Prev
         </button>
@@ -251,7 +269,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          style={{ padding:"10px", backgroundColor:"#68c184", borderRadius:"5px", border:"none", color:"white" }}
+          style={{ padding: "10px", backgroundColor: "#68c184", borderRadius: "5px", border: "none", color: "white" }}
         >
           Next
         </button>
