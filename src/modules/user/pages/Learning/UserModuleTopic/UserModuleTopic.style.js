@@ -1,4 +1,9 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
 
 import theme from "../../../../../theme/Theme";
 export const Container = styled.div`
@@ -238,6 +243,23 @@ export const FeedbackPopup = styled.div`
       opacity: 1;
     }
   }
+
+  /* ✅ Add this spin animation here */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+
+export const Spinner = styled.div`
+  border: 4px solid #ccc;
+  border-top: 4px solid #2390ac;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: ${spin} 2s linear infinite;
+  margin: 0 auto;
 `;
 
 export const FeedbackIcon = styled.div`

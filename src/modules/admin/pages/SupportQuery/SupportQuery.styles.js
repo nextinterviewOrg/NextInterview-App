@@ -8,7 +8,7 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(4)};
-  margin-left: 50px;
+  // margin-left: 50px;
 
   @media (max-width: ${theme.breakpoints.tablet}) {
     padding: ${theme.spacing(2)};

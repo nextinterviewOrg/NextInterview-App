@@ -22,6 +22,7 @@ import {
   FeedbackCloseButton,
   FeedbackButton,
   FeedbackIconWrapper,
+  Spinner
 } from "./UserModuleTopic.style";
 import { SlLike } from "react-icons/sl";
 import { SlDislike } from "react-icons/sl";
@@ -132,6 +133,7 @@ const UserModuleTopic = () => {
   const [returnUrl, setReturnUrl] = useState(null);
   const [moduleCODE, setModuleCODE] = useState(null)
   const [topicCODE, setTopicCODE] = useState(null)
+  const [contentReady, setContentReady] = useState(false);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -501,7 +503,9 @@ const UserModuleTopic = () => {
               setMarkAsCompleteBtnStatus(false);
             }
           }
+          setContentReady(true);
         }
+
         const moduleResponse = await getModuleById(moduleId);
         const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
         await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
@@ -772,12 +776,12 @@ const UserModuleTopic = () => {
 
   return (
     <Container>
-      {loading ? (
-        <>
-          <ShimmerTitle line={1} gap={10} />
-          <ShimmerText line={3} gap={15} />
-          <ShimmerButton size="md" />
-        </>
+     {!contentReady ? (
+  // Only show loading spinner for content, not for buttons
+  <div style={{ textAlign: "center", marginTop: "40px" }}>
+    <Spinner />
+    <p>Loading...</p>
+  </div>
       ) : (
         <>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -815,6 +819,14 @@ const UserModuleTopic = () => {
             )}
           </div>
 
+{!contentReady && (
+  <div style={{ textAlign: "center", marginTop: "20px" }}>
+    <Spinner />
+    <p>Loading tools...</p>
+  </div>
+)}
+
+          {contentReady && (  
           <div
             style={{
               display: "flex",
@@ -874,7 +886,7 @@ const UserModuleTopic = () => {
               )}
             </div>
           </div>
-
+)}
           {showSummary && (
             <SummaryContainer>
               <SummaryTitle>Summary</SummaryTitle>
@@ -950,6 +962,8 @@ const UserModuleTopic = () => {
         </>
       )}
 
+{contentReady && (
+  <>
       {markAsCompleteBtnStatus && !isModuleCompleted ? (
         <Button
           style={{
@@ -983,7 +997,8 @@ const UserModuleTopic = () => {
           Mark as completed
         </Button>
       )}
-
+</>
+)}
       {showModal && (
         <ModalOverlay>
           <ModalContent>
