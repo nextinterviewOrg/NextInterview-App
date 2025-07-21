@@ -56,9 +56,47 @@ export const RadioGroup = styled.div`
 export const RadioOption = styled.label`
   display: flex;
   align-items: center;
-  gap: 5px;
-  accent-color: ${theme.colors.bluetext};
+  gap: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+
+  input[type='radio'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: white;
+  }
+
+  input[type='radio']:checked {
+    border-color: ${({ theme }) => theme.colors.primary};
+    background-color: white;
+  }
+
+  input[type='radio']:checked::before {
+    content: '';
+    display: block;
+    width: 7px;
+    height: 7px;
+    background-color: ${({ theme }) => theme.colors.primary};
+    border-radius: 50%;
+    position: absolute;
+    top: 1.6px;
+    left: 1.5px;
+  }
 `;
+
+
+
 
 export const Button = styled.button`
   padding: 8px;

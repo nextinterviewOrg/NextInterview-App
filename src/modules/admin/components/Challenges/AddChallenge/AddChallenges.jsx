@@ -66,7 +66,7 @@ const INITIAL_FORM = {
   base_code: "",
   dbSetupCommands: "",
   solutionCode: "",
-  challenge_date: null,
+    challenge_date: "",
   solutionExplanation: "",
 };
 
@@ -199,6 +199,8 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
     setError(null);
     setSuccess(null);
 
+    const todayISO = new Date().toISOString();
+
     let requiredFields = ["QuestionText"];
 
     switch (questionType) {
@@ -253,7 +255,9 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
           dbSetupCommands: formData.dbSetupCommands,
           solutionCode: formData.solutionCode,
           solutionExplanation: formData.solutionExplanation,
-          challenge_date: new Date(formData.challenge_date).toISOString(),
+challenge_date: formData.challenge_date
+      ? new Date(formData.challenge_date).toISOString()
+      : todayISO,
         });
         break;
       case "MCQ":
@@ -372,6 +376,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -382,6 +387,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleChange}
                 placeholder="Enter the question text"
                 rows={4}
+                maxLength={250}
               />
             </FormGroup>
 
@@ -633,6 +639,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -643,6 +650,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleChange}
                 placeholder="Enter the question text"
                 rows={4}
+                maxLength={250}
               />
             </FormGroup>
 
@@ -709,6 +717,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -719,6 +728,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -737,6 +747,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter the description"
+                maxLength={250}
               />
             </FormGroup>
           </>
@@ -751,6 +762,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -761,6 +773,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -781,6 +794,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
           </>
@@ -795,6 +809,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -805,6 +820,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={6}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -825,6 +841,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
           </>
@@ -840,6 +857,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -850,6 +868,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={8}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup><FormLabel>Description *</FormLabel>
@@ -859,6 +878,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>

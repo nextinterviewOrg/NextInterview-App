@@ -43,6 +43,7 @@ export const getChallengeById =async (id) => {
 export const editChallenge =async (id,data) => {
     try {
       const response =await api.put(`/userChallenges/${id}`,data);
+      console.log("Response from editChallenge:",response.data);
       return response.data;
     } catch (error) {
         console.log(error);
@@ -122,6 +123,7 @@ export const getPastChallengesWithUserResults =async (userId) => {
 export const getPastChallengesNextQuestion =async (userId, questionId) => {
   try {
     const response =await api.get(`/userChallenges/getPastNextChallenges/${userId}/${questionId}`);
+    console.log("Response from getPastChallengesNextQuestion:",response.data);
     return response.data;
   } catch (error) {
       console.log(error);

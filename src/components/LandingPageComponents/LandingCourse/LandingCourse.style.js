@@ -125,6 +125,36 @@ background: #F0F8F1;
   }
 }
 
+.course-cards.list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.course-cards.list-view .course-card {
+  flex-direction: row;
+  height: auto;
+  align-items: flex-start;
+}
+
+.course-cards.list-view .course-image {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-right: 20px;
+}
+
+.course-cards.list-view .course-details {
+  flex: 1;
+}
+
+.course-cards.list-view .coursecard-bt-container {
+  margin-top: auto;
+  justify-content: flex-end;
+}
+
+
 .course-card {
   background-color: white;
   border-radius: 10px;

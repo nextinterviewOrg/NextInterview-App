@@ -80,14 +80,14 @@ color:${({ theme }) => theme.colors.black};
   .model-form{
   display:flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding:28px;
+  // align-items: center;
+  // justify-content: center;
+  padding:28px 0;
 
   }
 
   .form-group-container {
-      max-width: 500px;
+      // max-width: 500px;
   display:flex;
   flex-direction: column;
   // align-items: center;
@@ -218,15 +218,12 @@ button:focus {
 /* Close Button */
 .close {
   position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 20px;
+  top: 0px;
+  right: 8px;
+  font-size: 30px;
   color: #333;
   cursor: pointer;
 }
 
-.close:hover {
-  color: red;
-}
 
 `

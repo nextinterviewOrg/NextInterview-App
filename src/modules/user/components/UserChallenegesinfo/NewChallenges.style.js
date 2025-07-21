@@ -14,6 +14,7 @@ export const BackButton = styled.button`
   width: 100%;
   padding: 10px;
     padding-left: 50px;
+     font-family: "DM Sans";
 
   @media (max-width: 1024px) {
     font-size: 14px;
@@ -28,7 +29,7 @@ export const Card = styled.div`
   border-radius: 12px;
   border: 1px solid #f5f5f5;
   /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
-  font-family: "Arial", sans-serif;
+  font-family: "DM Sans";
 
   .hrtag {
     border: 1px solid #f5f5f5;
@@ -304,4 +305,42 @@ export const TextInput = styled.input`
     // border-color: #00796b;
     // background-color: #f0fdfd;
   }
+`;
+
+export const QusnType = styled.h2`
+display: flex;
+flex-direction: row;
+justify-content: space-between;
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1rem;
+  background-color: #EDF1F3;
+  padding: 6px;
+  border-radius: 5px;
+`;
+
+export const QusnText = styled.h2`
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  // margin-bottom: 1rem;
+  padding: 6px;
+`;
+
+export const QusnDifficulty = styled.h2`
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  // margin-bottom: 1rem;
+   background-color: ${({ difficulty }) =>
+    difficulty === 'Easy'
+      ? '#d1fae5'      
+      : difficulty === 'Medium'
+      ? '#fff3cd'     
+      : difficulty === 'Hard'
+      ? '#f8d7da'     
+      : '#e2e3e5'};   
+padding: 6px;
+border-radius: 5px;
 `;
