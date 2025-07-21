@@ -80,7 +80,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     //   icon: <FaMoneyCheckAlt />,
     // },
     {
-      id: 9,
+      id: 7,
       name: "Blogs",
       path: "/user/blogs",
      icon: <img className="svgicon" width={20} height={20} src={blog} alt="Users Icon" />
@@ -183,7 +183,7 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
     title="Take a Mock Interview"
  
   >
-    <PiVideoConference />
+    <PiVideoConference  className="collapsed-icon"/>
   </div>
 )}
  

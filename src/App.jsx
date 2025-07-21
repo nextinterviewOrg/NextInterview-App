@@ -201,7 +201,6 @@ function App() {
           <Route path="/backtosignIn" element={<BacktoSignIn />} />
           <Route path="/resetpassword" element={<ResetPassword />} />
           <Route path="/resetsuccessful" element={<ResetSuccessful />} />
-          <Route path="/subscription" element={<SubscriptionPage />} />
           <Route
             path="/admin"
             element={<ProtectedRoute Component={BaseLayout} roles={["admin"]} />}
@@ -289,6 +288,7 @@ function App() {
               <Route path="questionbank" element={<QuestionBank />} />
               <Route path="questionbank/:id" element={<QuestionCollapsible />} />
             </Route>
+            <Route path="subscription" element={<SubscriptionPage />} />
           </Route>
           {/* <Route path="userfaq" element={<UserFAQ />} /> */}
           {/* <Route path="subscription" element={<UserSubscription />} /> */}

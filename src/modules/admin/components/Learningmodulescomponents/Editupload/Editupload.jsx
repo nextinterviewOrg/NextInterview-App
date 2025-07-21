@@ -63,13 +63,25 @@ const Editupload = () => {
   const [courseOverviewError, setCourseOverviewError] = useState("");
   const [whatUsersLearnError, setWhatUsersLearnError] = useState("");
   const [moduleDataId, setModuleDataId] = useState(null);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  
   useEffect(() => {
-    // If module data is passed from previous page, set it in the state
     const moduleId = location.state?.moduleId;
-    setModuleDataId(moduleId); // Check for moduleId passed via state
+    setModuleDataId(moduleId);
     if (moduleId) {
       fetchModuleData(moduleId);
     }
+   
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = ""; // Required for Chrome to show the confirmation alert
+    };
+   
+    window.addEventListener("beforeunload", handleBeforeUnload);
+   
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, [location]);
 
   const fetchModuleData = async (id) => {
@@ -282,6 +294,7 @@ const Editupload = () => {
               onChange={(e) =>
                 setModuleData({ ...moduleData, moduleName: e.target.value })
               }
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {moduleNameError && <ErrorMessage>{moduleNameError}</ErrorMessage>}
           </FormGroup>
@@ -297,6 +310,7 @@ const Editupload = () => {
               onChange={(e) =>
                 setModuleData({ ...moduleData, description: e.target.value })
               }
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {descriptionError && (
               <ErrorMessage>{descriptionError}</ErrorMessage>
@@ -313,6 +327,7 @@ const Editupload = () => {
               onChange={(e) =>
                 setModuleData({ ...moduleData, approxTime: e.target.value })
               }
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {approxTimeError && <ErrorMessage>{approxTimeError}</ErrorMessage>}
           </FormGroup>
@@ -328,6 +343,7 @@ const Editupload = () => {
               ref={videoInputRef}
               style={{ display: "none" }}
               onChange={handleVideoChange}
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {moduleData.interviewSampleURL && (
               <PreviewVideo controls src={moduleData.interviewSampleURL} />
@@ -350,6 +366,7 @@ const Editupload = () => {
               onChange={(e) =>
                 setModuleData({ ...moduleData, courseOverview: e.target.value })
               }
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {courseOverviewError && (
               <ErrorMessage>{courseOverviewError}</ErrorMessage>
@@ -375,6 +392,7 @@ const Editupload = () => {
                   .map((line) => line.replace(/^•?\s*/, "")),
                 })
               }
+              onBlur={() => setHasUnsavedChanges(true)}
             />
             {whatUsersLearnError && (
               <ErrorMessage>{whatUsersLearnError}</ErrorMessage>

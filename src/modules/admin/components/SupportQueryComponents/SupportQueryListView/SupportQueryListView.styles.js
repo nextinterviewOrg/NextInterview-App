@@ -58,7 +58,7 @@ export const SearchInput = styled.input`
 `;
 
 export const FilterButton = styled.button`
-  background-color: ${theme.colors.white};
+  background-color: ${theme.colors.bluetext};
   color: ${theme.colors.black};
   padding: ${theme.spacing(1)} ${theme.spacing(2)};
   border: none;

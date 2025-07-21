@@ -69,6 +69,7 @@ const CodeEditorWindow = () => {
 
   const [activeTab, setActiveTab] = useState("mycode");
   const [showHint, setShowHint] = useState(false);
+  
 
   // const [timeLeft, setTimeLeft] = useState(20);
   // const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
@@ -119,7 +120,7 @@ const CodeEditorWindow = () => {
   }, [id]);
 
   const handleGoBack = () => {
-    navigate(`/user/challengeInfo/${id}`);
+    navigate(`/user/challengeInfo/${id}/true`);
   };
 
   const handleSubmit = async () => {
@@ -298,10 +299,12 @@ const CodeEditorWindow = () => {
                   }}
                 >
                   Show Solution
+                  {!solutionTimeExpired && (
                   <TimerText>
                     <PiTimer style={{ marginRight: "5px" }} />
                     {timeLeft}secs
                   </TimerText>
+                  )}
                 </TabButton>
               </div>
 
@@ -384,16 +387,17 @@ const CodeEditorWindow = () => {
 
                 <div
                   style={{
-                    background: "#f4f4f4",
+                    background: "#fff",
                     padding: "20px",
                     borderRadius: "8px",
                     minHeight: "300px",
                     whiteSpace: "pre-wrap",
                     fontFamily: "monospace",
                     fontSize: "14px",
+                    border: "1px solid #e1e1e1",
                   }}
                 >
-                  <h3>Solution Explanation:</h3>
+                  <h3>Code Explanation:</h3>
                   <code>{challenge.solutionExplanation || "No solution available."}</code>
                 </div>
               </>

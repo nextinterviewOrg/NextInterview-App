@@ -130,6 +130,7 @@ export const SideBarwrapper = styled.div`
   }
  
   .mock-card-icon.collapsed{
+  margin-top: 10px;
   background: linear-gradient(to bottom, #2290ac, #68c184);
   width: 50px;
   height: 50px;
@@ -140,9 +141,18 @@ export const SideBarwrapper = styled.div`
   font-size: 24px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   color: white;
-   position: absolute;
-  top: 60%;
-  left: 10px;
+  
+  @media (min-height: 200px ) and (max-height: 445px)  {
+        height: 70px;
+        width: 40px;
+        font-size: 20px;
+  }
+}
+
+.collapsed-icon {
+  @media (min-height: 200px ) and (max-height: 445px) {
+        padding: 10px;
+  }
 }
  
   .mock-card-icon img {

@@ -111,7 +111,7 @@ export const CardStatus = styled.div`
   justify-content: center;
   gap: 0.25rem;
   min-width: 150px;
-  text-align: right;
+  text-align: center;
 
   @media (max-width: 1024px) {
     gap: 0rem;
@@ -124,6 +124,10 @@ export const CardTitle = styled.h3`
   margin: 0;
   color: #1e293b; 
   font-weight: 600;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 
   @media (max-width: 480px) {
     font-size: 0.875rem;
@@ -133,7 +137,7 @@ export const CardTitle = styled.h3`
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    width: 80px;
+    width: 80%;
   }
 `;
 

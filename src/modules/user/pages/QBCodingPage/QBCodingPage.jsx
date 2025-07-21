@@ -311,7 +311,7 @@ const QBCodingPage = () => {
             <QusnType>
               <QusnText>{question?.QuestionText}</QusnText>
               <QusnDifficulty difficulty={question?.difficulty}>
-                {question?.difficulty}
+                {question?.difficulty?.charAt(0).toUpperCase() + question?.difficulty?.slice(1)}
               </QusnDifficulty>
 
             </QusnType>
