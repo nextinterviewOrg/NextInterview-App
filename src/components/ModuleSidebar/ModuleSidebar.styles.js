@@ -274,6 +274,7 @@ export const ModuleSidebarContainer = styled.div`
     font-weight: 500;
     color: ${({ theme }) => theme.colors.secondary};
     margin-top: 20px;
+    background-color: transparent;
   }
 `;
 

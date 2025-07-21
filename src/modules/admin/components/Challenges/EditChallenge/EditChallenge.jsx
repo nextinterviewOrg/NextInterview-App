@@ -345,29 +345,36 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
           answer: formData.answer,
           challenge_date: new Date(formData.challenge_date).toISOString(),
           description: formData.description
-        })
+        });
+        break;
+
       case "Multi-line":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
           challenge_date: new Date(formData.challenge_date).toISOString(),
           description: formData.description
-        })
+        });
+        break;
+
       case "Approach Analysis":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
           challenge_date: new Date(formData.challenge_date).toISOString(),
           description: formData.description
-        })
+        });
+        break;
+
       case "Case Study":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
           challenge_date: new Date(formData.challenge_date).toISOString(),
           description: formData.description
-        })
+        });
         break;
+
       default:
         break;
     }
@@ -376,7 +383,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
 
     try {
       const response = await editChallenge(challenge._id, payload);
-      console.log("response", response);
+      console.log("editttttttttt", response);
       if (response.success) {
         setSuccess("Challenge updated successfully!");
         onChallengeUpdated(response.data);
@@ -400,7 +407,13 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
           <FiX size={20} />
         </CloseButton>
 
-        <FormTitleQuestion>Edit Challenge</FormTitleQuestion>
+        <FormTitleQuestion>Edit </FormTitleQuestion>
+
+        {challenge?.updatedAt && (
+          <div style={{ marginBottom: "10px", color: "#555", fontSize: "14px" }}>
+            Last Updated: {new Date(challenge.updatedAt).toLocaleString()}
+          </div>
+        )}
 
         {error && <div style={{ color: "red", marginBottom: 15 }}>{error}</div>}
         {success && <div style={{ color: "green", marginBottom: 15 }}>{success}</div>}
@@ -449,6 +462,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -469,10 +483,10 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 }}
                 value={formData.description || ""}
                 onEditorChange={(newValue) => {
-                 
+
                   setFormData({ ...formData, description: newValue });
                 }}
-               
+
               />
             </FormGroup>
 
@@ -763,6 +777,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -806,6 +821,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -850,6 +866,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -895,6 +912,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -930,7 +948,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
         )}
 
 
-        <SaveButton type="submit" disabled={isSubmitting} onClick={handleSubmit}>
+        <SaveButton type="button" disabled={isSubmitting} onClick={handleSubmit}>
           {isSubmitting ? "Saving..." : "Save Changes"}
         </SaveButton>
       </FormContainer>

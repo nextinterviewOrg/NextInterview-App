@@ -21,6 +21,9 @@ import {
   SolutionAnswer,
   SolutionText,
   HelpIcons,
+    QusnType,
+  QusnText,
+  QusnDifficulty,
 } from "./NewChallenges.style"; // You’ll need to add these styled components if not already
 // import { RxArrowLeft } from "react-icons/rx";
 import amazon from "../../../../assets/Avatar.svg";
@@ -394,8 +397,10 @@ const NewChallenge = () => {
               : `# ${challenge.question_type}`}
           </Tag> */}
         </div>
-        <Title>{challenge.QuestionText}</Title>
-        {renderInput()}
+ <QusnType>
+          <QusnText>{challenge.QuestionText}</QusnText>
+          <QusnDifficulty difficulty={challenge.difficulty}>{challenge.difficulty}</QusnDifficulty>
+        </QusnType>        {renderInput()}
 
         {["multi-line", "mcq", "single-line"].includes(
           challenge.question_type

@@ -4,6 +4,7 @@ export const Container = styled.div`
   // padding: 24px;
   margin: 0;
   width: 98%;
+  font-family: "DM Sans";
 `;
 
 export const BackButton = styled.button`

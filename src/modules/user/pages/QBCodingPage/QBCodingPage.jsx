@@ -484,10 +484,10 @@ const QBCodingPage = () => {
                       <Footer>
                         <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink>
 
-                        {/* <FeedBacks>
+                        <FeedBacks>
                           <FeedbackButton><PiThumbsUpLight /> Helpful</FeedbackButton>
                           <FeedbackButton><PiThumbsDownLight /> Not helpful</FeedbackButton>
-                        </FeedBacks> */}
+                        </FeedBacks>
                       </Footer>
                     </CardContainer>
                   </>

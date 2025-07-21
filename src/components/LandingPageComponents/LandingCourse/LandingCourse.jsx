@@ -250,14 +250,14 @@ export default function LandingCourse() {
 
                                 <ToggleButtons>
                                     <button
-                                    //   className={viewMode === "list" ? "active" : ""}
-                                    //   onClick={() => setViewMode("list")}
+                                      className={viewMode === "list" ? "active" : ""}
+                                      onClick={() => setViewMode("list")}
                                     >
                                         <MdViewList />
                                     </button>
                                     <button
-                                    //   className={viewMode === "grid" ? "active" : ""}
-                                    //   onClick={() => setViewMode("grid")}
+                                      className={viewMode === "grid" ? "active" : ""}
+                                      onClick={() => setViewMode("grid")}
                                     >
                                         <MdGridView />
                                     </button>
@@ -283,7 +283,7 @@ export default function LandingCourse() {
 
 
                     {/* Course Cards Layout */}
-                    <div className="course-cards grid-view">
+                    <div className={`course-cards ${viewMode}-view`}>
                         {filteredCourses.map((course, index) => (
                             <div key={index} className="course-card">
                                 <img src={course.image} alt={course.title} className="course-image" />

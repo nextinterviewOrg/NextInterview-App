@@ -153,7 +153,7 @@ export const CirclePointer = styled.div`
 export const OptionLabel = styled.span`
   font-size: 16px;
   font-weight: ${(props) => (props.$isSelected ? "bold" : "normal")};
-  color: ${(props) => (props.$isSelected ? "#28a745" : "#1A1C1E99")};
+  color: ${(props) => (props.$isSelected ? "#28a745" : "#363F49")};
 
   @media (max-width: 768px) {
     font-size: 14px;

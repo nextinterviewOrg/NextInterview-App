@@ -55,7 +55,7 @@ export const Sidebar = styled.div`
 
 export const Tab = styled.div`
   padding: 1.5rem 1rem;
-//   color: ${({ theme }) => theme.colors.textSecondary};
+  color: #1A1C1E99;
   cursor: pointer;
   
   font-size:16px;

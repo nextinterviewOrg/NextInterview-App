@@ -45,7 +45,11 @@ const UserLearningModule = () => {
           title: response.data.moduleName,
           topics: response.data.topicData.length,
           duration: response.data.approxTimeTaken,
-          lastUpdated: new Date(response.data.updatedAt).toLocaleDateString(),
+lastUpdated: new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric"
+}).format(new Date(response.data.updatedAt)),
           description: response.data.description,
           learningGoals: response.data.userLearntData?.map(
             (item) => item.learntData
@@ -62,6 +66,7 @@ const UserLearningModule = () => {
           imageUrl: response.data?.imageURL, // Course Image URL
         };
         setCourseData(data);
+        console.log(data);
         const moduleStatusData = await getUserProgress(userData.data.user._id);
         console.log("moduleStatusData", moduleStatusData);
         if (moduleStatusData.success === false) {
@@ -182,7 +187,7 @@ const UserLearningModule = () => {
                 <VscBook size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Topics</span>{" "}
+                <span className="topics-title">Topics:</span>{" "}
                 <span className="topics-count">{courseData.topics}</span>
               </span>
             </span>
@@ -191,9 +196,9 @@ const UserLearningModule = () => {
                 <LuClock4 size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Maximum time taken</span>{" "}
+                <span className="topics-title">Maximum time taken:</span>{" "}
                 <span className="topics-count">
-                  {courseData.duration > 1 ? `${courseData.duration} hrs` : `${courseData.duration} hr`}
+                  {courseData.duration > 1 ? `Less than ${courseData.duration} hours` : `Less than ${courseData.duration} hour`}
                 </span>
               </span>
             </span>
@@ -202,7 +207,7 @@ const UserLearningModule = () => {
                 <TbClockEdit size={28} />
               </span>
               <span className="topic-information">
-                <span className="topics-title">Last updated on</span>{" "}
+                <span className="topics-title">Last updated on:</span>{" "}
                 <span className="topics-count">{courseData.lastUpdated}</span>
               </span>
             </span>
