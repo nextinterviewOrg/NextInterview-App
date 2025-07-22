@@ -55,9 +55,8 @@ const Tags = styled.div`
 const Tag = styled.span`
   background-color: ${(props) => props.theme.colors.backgray};
   // color: ${(props) => props.theme.colors.borderblue};
-  color: #333;
-  padding: ${(props) => props.theme.spacing(0.4)}
-    ${(props) => props.theme.spacing(1)};
+  /* color: #333; */
+  padding: ${(props) => props.theme.spacing(0.4)} ${(props) => props.theme.spacing(1)};
   border-radius: 4px;
   font-size: 11px;
 
@@ -74,8 +73,7 @@ const Tag = styled.span`
     }
   }};
 
-
-  @media (max-width: 768px) {
+    @media (max-width: 768px) {
     font-size: 9px;
   }
 `;
@@ -87,13 +85,10 @@ const Buttons = styled.div`
 
 const Button = styled.button`
   background-color: ${(props) =>
-    props.primary ? props.theme.colors.secondary : props.theme.colors.light};
-  color: ${(props) =>
-    props.secondary ? props.theme.colors.secondary : props.theme.colors.white};
-  border: ${(props) =>
-    props.secondary ? "none" : `1px solid ${props.theme.colors.secondary}`};
-  padding: ${(props) => props.theme.spacing(1)}
-    ${(props) => props.theme.spacing(2)};
+    props.primary ? props.theme.colors.secondary : props.theme.colors.light}; 
+    color: ${(props) => props.secondary ? props.theme.colors.secondary : props.theme.colors.white};
+  border: ${(props) => props.secondary ? "none" : `1px solid ${props.theme.colors.secondary}`};
+  padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
   border-radius: 8px;
   font-family: ${(props) => props.theme.fonts.body};
   font-size: 14px;
@@ -227,6 +222,7 @@ const TakeChallenge = ({ questionType = "coding" }) => {
         setError(null);
 
         const userData = await getUserByClerkId(user.id);
+        console.log("User Data:", userData);
         const userId = userData.data.user._id;
 
         const response = await getTodaysUserChallenges(userId, questionType);
