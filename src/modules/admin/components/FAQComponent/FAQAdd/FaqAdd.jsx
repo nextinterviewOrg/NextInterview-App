@@ -60,6 +60,7 @@ const FaqAdd = ({ onClose, onSave }) => {
               type="text"
               placeholder="Type here"
               value={question}
+              maxLength={1000}
               onChange={(e) => setQuestion(e.target.value)}
             />
             {errors.question && <ErrorMessage>{errors.question}</ErrorMessage>}
@@ -74,6 +75,7 @@ const FaqAdd = ({ onClose, onSave }) => {
               rows="5"
               placeholder="Type here"
               value={answer}
+              maxLength={5000}
               onChange={(e) => setAnswer(e.target.value)}
             />
             {errors.answer && <ErrorMessage>{errors.answer}</ErrorMessage>}
