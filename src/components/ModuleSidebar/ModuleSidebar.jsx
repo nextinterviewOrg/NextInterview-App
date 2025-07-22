@@ -198,7 +198,7 @@ export default function ModuleSidebar({
         sidebarOpen={sidebarOpen}
       >
         <div className="logo">
-          <Link to={`/user/learning/${moduleId}/`}>
+          <Link to={`/user`}>
             <img src={Logo} alt="logo" />
           </Link>
 

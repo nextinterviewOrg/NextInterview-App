@@ -84,7 +84,7 @@ import React, { useEffect, useState } from 'react'
                                  {/* <p className={isGridView?'course-description':'course-description-list'}>{course.description}</p> */}
                               <p className={isGridView?'course-description':'course-description-list'}>{course.description.slice(0,110)}...</p>
                                  <div className={isGridView?"course-info":"course-info-list"}>
-                                     <span>{course.topics} topic</span>                                 
+                                     <span>{course.topics} topics</span>                                 
                                      <span>Less than {course.duration} {course.duration>1?"hrs":"hr"}</span>
                                  </div>
                              </div>

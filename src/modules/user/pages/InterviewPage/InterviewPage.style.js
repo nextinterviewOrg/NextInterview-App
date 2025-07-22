@@ -30,7 +30,7 @@ export const Container = styled.div`
 
   .course-image {
     width: 100%;
-    height: auto;
+    height: 300px;
     display: block;
   }
 

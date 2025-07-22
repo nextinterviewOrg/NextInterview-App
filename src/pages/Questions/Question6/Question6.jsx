@@ -19,6 +19,7 @@ function Question6() {
   const [selectedDesignation, setSelectedDesignation] = useState("");
   const [companyImageList, setCompanyImageList] = useState([]);
   const { isSignedIn, user, isLoaded } = useUser();
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const apiCaller = async () => {
@@ -72,7 +73,8 @@ function Question6() {
 
   const companyOptions = comapnyData.map((company) => ({
     value: company._id,
-    label: (
+    label: company.company_name,
+    customLabel: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
           src={company.company_logo}
@@ -109,18 +111,26 @@ function Question6() {
       zIndex: 9999, // Ensure the dropdown is above other elements
     }),
   };
-  const handleNext = async () => {
-    const data = await getUserByClerkId(user.id);
-    const submissionData = {
-      user_id: data.data.user._id,
-      data_planned_interview_response: {
-        companies: selectedCompany,
-        designations: selectedDesignation,
-      },
-    };
-    const responseData = await createUserProfile(submissionData);
-    navigate("/question7", { state: { backLink: "/question6" } });
+const handleNext = async () => {
+  if (!selectedCompany || selectedCompany.length === 0) {
+    setErrorMessage("Please select a company and role or choose 'Not sure yet'.");
+    return;
+  }
+
+  setErrorMessage(""); // clear error if all good
+
+  const data = await getUserByClerkId(user.id);
+  const submissionData = {
+    user_id: data.data.user._id,
+    data_planned_interview_response: {
+      companies: selectedCompany,
+      designations: selectedDesignation,
+    },
   };
+  await createUserProfile(submissionData);
+  navigate("/question7", { state: { backLink: "/question6" } });
+};
+
 
   return (
     <Question6Wrapper>
@@ -172,18 +182,21 @@ function Question6() {
             </div>
           </div>
 
+{errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+
           <button className="NextButton" onClick={handleNext}>
             Next
           </button>
 
-          <button
-            className="anotherCompany"
-            onClick={() => {
-              navigate("/question7", { state: { backLink: "/question6" } });
-            }}
-          >
-            Not sure yet
-          </button>
+         <button
+  className="anotherCompany"
+  onClick={() => {
+    setErrorMessage(""); // clear error if user chooses to skip
+    navigate("/question7", { state: { backLink: "/question6" } });
+  }}
+>
+  Not sure yet
+</button>
           {/* <SkipButton onClick={() => navigate("/question7")}>Skip</SkipButton> */}
         </div>
       </div>

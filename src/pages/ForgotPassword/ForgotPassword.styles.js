@@ -122,7 +122,7 @@ export const Button = styled.button`
   padding: ${theme.spacing(1.5)};
   font-size: 1rem;
   color: ${theme.colors.light};
-  background-color: ${theme.colors.primary};
+  background-color: ${theme.colors.success};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -130,7 +130,7 @@ export const Button = styled.button`
   margin-top: ${({ message }) => (message ? "4rem" : "20%")};
 
   &:hover {
-    background-color: ${theme.colors.bluetext};
+    background-color: ${theme.colors.primary};
   }
 
   @media (max-width: ${theme.breakpoints.mobile}) {

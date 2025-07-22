@@ -54,25 +54,25 @@ const StartInterview = ({ isOpen, onClose, course }) => {
           >
             <label>Select Interview Mode</label>
             <RadioGroup>
-  <RadioOption>
-    <input
-      type="radio"
-      value="chat"
-      checked={mode === "chat"}
-      onChange={() => setMode("chat")}
-    />
-    <span>Chat Mode</span>
-  </RadioOption>
-  <RadioOption>
-    <input
-      type="radio"
-      value="voice"
-      checked={mode === "voice"}
-      onChange={() => setMode("voice")}
-    />
-    <span>Voice Mode</span>
-  </RadioOption>
-</RadioGroup>
+              <RadioOption>
+                <input
+                  type="radio"
+                  value="chat"
+                  checked={mode === "chat"}
+                  onChange={() => setMode("chat")}
+                />
+                <span>Chat Mode</span>
+              </RadioOption>
+              <RadioOption>
+                <input
+                  type="radio"
+                  value="voice"
+                  checked={mode === "voice"}
+                  onChange={() => setMode("voice")}
+                />
+                <span>Voice Mode</span>
+              </RadioOption>
+            </RadioGroup>
 
           </div>
           <Button onClick={() => alert(`Starting ${module} interview for ${course.title} in ${mode} mode`)}>

@@ -57,7 +57,8 @@ import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTool
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
-import  SummarizeIcon  from "../../../../../assets/SampleInterviewIcon.svg";
+import SummarizeIcon from "../../../../../assets/SampleInterviewIcon.svg";
+import DOMPurify from 'dompurify';
 
 // Sample Data for Dynamic Rendering
 
@@ -134,6 +135,7 @@ const UserModuleTopic = () => {
   const [moduleCODE, setModuleCODE] = useState(null)
   const [topicCODE, setTopicCODE] = useState(null)
   const [contentReady, setContentReady] = useState(false);
+  const [loadingSummary, setLoadingSummary] = useState(false);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -567,12 +569,21 @@ const UserModuleTopic = () => {
   };
 
 
-  const handleSummarizeClick = () => {
-    setShowSummary(true); // Show summary section
-    delayText();
-    // setShowMarkAsRead(true); // Show "Mark as Read" button after summary section
-    setShowDownloadButton(false); // Hide the "Download Cheat Sheet" button after clicking "Summarize for me"
+  const handleSummarizeClick = async () => {
+    setLoadingSummary(true);         // Start spinner
+    setShowSummary(true);            // Show the summary section
+    setShowDownloadButton(false);    // Hide the cheat sheet button
+
+    // Clear previous text if any
+    setDelayedText([]);
+
+    // Simulate a short delay before the typing starts (like AI "thinking")
+    setTimeout(() => {
+      delayText();                   // Animate the summary display
+      setLoadingSummary(false);      // Stop spinner after delay
+    }, 1000); // Adjust delay if needed
   };
+
 
   const [assessmentParams, setAssessmentParams] = useState({});
 
@@ -776,12 +787,12 @@ const UserModuleTopic = () => {
 
   return (
     <Container>
-     {!contentReady ? (
-  // Only show loading spinner for content, not for buttons
-  <div style={{ textAlign: "center", marginTop: "40px" }}>
-    <Spinner />
-    <p>Loading...</p>
-  </div>
+      {!contentReady ? (
+        // Only show loading spinner for content, not for buttons
+        <div style={{ textAlign: "center", marginTop: "40px" }}>
+          <Spinner />
+          <p>Loading...</p>
+        </div>
       ) : (
         <>
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
@@ -819,80 +830,89 @@ const UserModuleTopic = () => {
             )}
           </div>
 
-{!contentReady && (
-  <div style={{ textAlign: "center", marginTop: "20px" }}>
-    <Spinner />
-    <p>Loading tools...</p>
-  </div>
-)}
-
-          {contentReady && (  
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-              // alignContent: "center",
-              alignItems: "center",
-              gap: "20px",
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
-              {showDownloadButton && (
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <a
-                    style={{
-                      backgroundColor: "transparent",
-                      fontWeight: "bold",
-                      color: "#2390ac",
-                      textDecoration: "none",
-                    }}
-                    target="_blank"
-                    download={"cheatSheet.pdf"}
-                    href={selectedCheetSheetURL}
-                  >
-                    Download Cheat Sheet (pdf)
-                  </a>
-                </div>
-              )}
-
-              {!showSummary && (
-                <Button
-                  style={{
-                    border: "2px solid #2390ac",
-                    backgroundColor: "transparent",
-                    color: "#2390ac",
-                    fontWeight: "bold",
-                    margin: "auto",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                  onClick={handleSummarizeClick}
-                >
-                  <img
-                    src={SummarizeIcon}
-                    alt="Summarize"
-                    style={{ marginRight: "10px" }}
-                  />
-                  Summarize for me
-                </Button>
-              )}
+          {!contentReady && (
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <Spinner />
+              <p>Loading tools...</p>
             </div>
-          </div>
-)}
+          )}
+
+          {contentReady && (
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                // alignContent: "center",
+                alignItems: "center",
+                gap: "20px",
+              }}
+            >
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
+                {showDownloadButton && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <a
+                      style={{
+                        backgroundColor: "transparent",
+                        fontWeight: "bold",
+                        color: "#2390ac",
+                        textDecoration: "none",
+                      }}
+                      target="_blank"
+                      download={"cheatSheet.pdf"}
+                      href={selectedCheetSheetURL}
+                    >
+                      Download Cheat Sheet (pdf)
+                    </a>
+                  </div>
+                )}
+
+                {!showSummary && (
+                  <Button
+                    style={{
+                      border: "2px solid #2390ac",
+                      backgroundColor: "transparent",
+                      color: "#2390ac",
+                      fontWeight: "bold",
+                      margin: "auto",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                    onClick={handleSummarizeClick}
+                  >
+                    <img
+                      src={SummarizeIcon}
+                      alt="Summarize"
+                      style={{ marginRight: "10px" }}
+                    />
+                    Summarize for me
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
           {showSummary && (
             <SummaryContainer>
               <SummaryTitle>Summary</SummaryTitle>
 
-              <SummaryText dangerouslySetInnerHTML={{ __html: gptSummaryText }} />
-              {/* {gptSummaryText}</SummaryText> */}
+              {loadingSummary ? (
+                <SummaryText style={{ fontStyle: "italic", color: "#888" }}>
+                  Generating summary...
+                </SummaryText>
+              ) : (
+                <SummaryText
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(delayedText.join("")),
+                  }}
+                />
+              )}
 
               <ButtonGroup
                 style={{
@@ -962,43 +982,43 @@ const UserModuleTopic = () => {
         </>
       )}
 
-{contentReady && (
-  <>
-      {markAsCompleteBtnStatus && !isModuleCompleted ? (
-        <Button
-          style={{
-            backgroundColor: "#2390ac",
-            color: "white",
-            fontWeight: "bold",
-            margin: "auto",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-          onClick={handleNext}
-        >
-          Next
-        </Button>
-      ) : (
-        <Button
-          style={{
-            backgroundColor: "#2390ac",
-            color: "white",
-            fontWeight: "bold",
-            margin: "auto",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "20px",
-          }}
-          onClick={handleMarkAsCompleted}
-        >
-          Mark as completed
-        </Button>
+      {contentReady && (
+        <>
+          {markAsCompleteBtnStatus && !isModuleCompleted ? (
+            <Button
+              style={{
+                backgroundColor: "#2390ac",
+                color: "white",
+                fontWeight: "bold",
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+              onClick={handleNext}
+            >
+              Next
+            </Button>
+          ) : (
+            <Button
+              style={{
+                backgroundColor: "#2390ac",
+                color: "white",
+                fontWeight: "bold",
+                margin: "auto",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: "20px",
+              }}
+              onClick={handleMarkAsCompleted}
+            >
+              Mark as completed
+            </Button>
+          )}
+        </>
       )}
-</>
-)}
       {showModal && (
         <ModalOverlay>
           <ModalContent>

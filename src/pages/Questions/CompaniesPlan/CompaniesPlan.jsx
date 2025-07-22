@@ -106,21 +106,23 @@ const CompaniesPlan = () => {
   };
 
 
-  const companyOptions = comapnyData.map((company) => {
-    return ({
-      value: company._id,
-      label: (
-        <div style={{ display: "flex", alignItems: "center", color: "black" }}>
-          <img
-            src={company.company_logo}
-            alt={company.company_name}
-            style={{ width: 20, height: 20, marginRight: 10 }}
-          />
-          {company.company_name}
-        </div>
-      ),
-    })
-  });
+ const companyOptions = comapnyData.map((company) => {
+  return {
+    value: company._id,
+    label: company.company_name, 
+    customLabel: (
+      <div style={{ display: "flex", alignItems: "center", color: "black" }}>
+        <img
+          src={company.company_logo}
+          alt={company.company_name}
+          style={{ width: 20, height: 20, marginRight: 10 }}
+        />
+        {company.company_name}
+      </div>
+    ),
+  };
+});
+
 
   const designationOptions = designationData.map((desgnation) => ({
     value: desgnation._id,
@@ -145,8 +147,11 @@ const CompaniesPlan = () => {
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isSelected ? "#3399cc" : "white",
-      color: state.isSelected ? "white" : "black", // Change text color of options
+backgroundColor: state.isSelected
+      ? "#3399cc"                 // selected option background
+      : state.isFocused
+      ? "#e6f2ff"                 // ← your custom hover color here
+      : "white",        color: state.isSelected ? "white" : "black", // Change text color of options
       padding: "10px",
     }),
     menu: (base) => ({

@@ -107,7 +107,8 @@ function Question7() {
 
   const companyOptions = companyData.map((company) => ({
     value: company._id,
-    label: (
+    label: company.company_name,
+    customLabel: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
           src={company.company_logo}
@@ -252,6 +253,7 @@ function Question7() {
               }}
               placeholder="What went well during the interview?"
               className="input"
+              maxLength={5000}
             />
 
             <label className="Label">What went wrong?</label>
@@ -265,6 +267,7 @@ function Question7() {
               }}
               placeholder="What went wrong during the interview?"
               className="input"
+              maxLength={5000}
             />
 
             <label className="Label">Topic asked</label>

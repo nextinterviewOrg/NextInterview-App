@@ -66,7 +66,7 @@ const INITIAL_FORM = {
   base_code: "",
   dbSetupCommands: "",
   solutionCode: "",
-    challenge_date: "",
+  challenge_date: "",
   solutionExplanation: "",
 };
 
@@ -255,9 +255,9 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
           dbSetupCommands: formData.dbSetupCommands,
           solutionCode: formData.solutionCode,
           solutionExplanation: formData.solutionExplanation,
-challenge_date: formData.challenge_date
-      ? new Date(formData.challenge_date).toISOString()
-      : todayISO,
+          challenge_date: formData.challenge_date
+            ? new Date(formData.challenge_date).toISOString()
+            : todayISO,
         });
         break;
       case "MCQ":
@@ -274,28 +274,36 @@ challenge_date: formData.challenge_date
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
-          challenge_date: new Date(formData.challenge_date).toISOString(),
+          challenge_date: formData.challenge_date
+            ? new Date(formData.challenge_date).toISOString()
+            : todayISO,
           description: formData.description
         })
       case "Multi-line":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
-          challenge_date: new Date(formData.challenge_date).toISOString(),
+          challenge_date: formData.challenge_date
+            ? new Date(formData.challenge_date).toISOString()
+            : todayISO,
           description: formData.description
         })
       case "Approach Analysis":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
-          challenge_date: new Date(formData.challenge_date).toISOString(),
+          challenge_date: formData.challenge_date
+            ? new Date(formData.challenge_date).toISOString()
+            : todayISO,
           description: formData.description
         })
       case "Case Study":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
           answer: formData.answer,
-          challenge_date: new Date(formData.challenge_date).toISOString(),
+          challenge_date: formData.challenge_date
+            ? new Date(formData.challenge_date).toISOString()
+            : todayISO,
           description: formData.description
         })
         break;
@@ -809,7 +817,7 @@ challenge_date: formData.challenge_date
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
-                                min={new Date().toISOString().split("T")[0]}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
@@ -857,7 +865,7 @@ challenge_date: formData.challenge_date
                 name="challenge_date"
                 value={formData.challenge_date}
                 onChange={handleChange}
-                                min={new Date().toISOString().split("T")[0]}
+                min={new Date().toISOString().split("T")[0]}
               />
             </FormGroup>
             <FormGroup>
