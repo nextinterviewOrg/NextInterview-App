@@ -44,7 +44,7 @@ const BaseLayout = () => {
               if (data.data.user.subscription_status === "active") {
                 // setRedirectPath("/user");
               } else {
-                navigate("/user/subscription");
+                navigate("/subscription");
               }
               // navigate("/user", { state: sessionId });
             } else {

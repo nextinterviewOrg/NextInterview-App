@@ -22,12 +22,19 @@ const ProfileCard = () => {
   const [userId, setUserId] = useState(null);
   const { isSignedIn, user, isLoaded } = useUser();
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    linkedIn: "",
+    phone: "",
+    experience: "",
+    profilePhoto: "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?cs=srgb&dl=pexels-pixabay-220453.jpg&fm=jpg"
+  });
   const [linkedInError, setLinkedInError] = useState("");
   const [emailError, setEmailError] = useState("");
   const imageInputRef = useRef(null);
   const { signOut } = useClerk();
-  console.log("ProfileCard rendered with user:", formData);
+
   const navigate = useNavigate();
 
   // Initialize Clerk

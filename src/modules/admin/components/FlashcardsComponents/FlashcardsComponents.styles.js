@@ -69,21 +69,6 @@ export const Flashcard = styled.div`
    
   }
 
-.flashcard-text {
-  font-family: ${theme.fonts.body};
-  color: ${theme.colors.text};
-  margin-bottom: ${theme.spacing(2)};
-  flex-grow: 1;
-
-  white-space: normal;              
-  word-break: break-word;            
-  overflow-wrap: break-word;    
-  text-align: justify;
-  text-justify: inter-word;
-
-}
-
-
   .actions {
     display: flex;
     gap: ${theme.spacing(1)};
@@ -247,7 +232,8 @@ export const AddButton = styled.button`
     // padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
     padding: ${theme.spacing(1)} ${theme.spacing(2)};
     width: 100%;
-
+ 
+    fl
   }
 `;
 

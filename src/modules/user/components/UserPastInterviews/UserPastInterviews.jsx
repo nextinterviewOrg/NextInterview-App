@@ -47,14 +47,16 @@ const UserPastInterviews = () => {
       const questionariesResponse = await getUserQuestionariesByUserId(
         data.data.user._id
       );
-const pastInterviews =
-  questionariesResponse.data.data_past_interview_response?.map((interview) => {
-    return {
-      company: interview.company_Name?.company_Name || "Unknown Company",
-      role: interview.designation?.designation_name || "N/A",
-      logo: interview.company_Name?.company_logo || "",
-    };
-  }) || [];
+      const pastInterviews =
+        questionariesResponse.data.data_past_interview_response?.map(
+          (interview) => {
+            return {
+              company: interview.company_Name.company_Name,
+              role: interview.designation.designation_name,
+              logo: interview.company_Name.company_logo,
+            };
+          }
+        );
       setPastInterview(pastInterviews);
     };
     apiCaller();

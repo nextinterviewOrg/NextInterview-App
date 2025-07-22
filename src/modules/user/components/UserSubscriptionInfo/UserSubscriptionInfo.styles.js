@@ -77,24 +77,4 @@ export const UserSubscriptionInfoWrapper1 = styled.div`
       padding: 16px;
     }
   }
-
-    .subscriptionCardContainer {
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-top: 30px;
-    width: 100%;
-
-  @media (max-width: 768px) {
-      gap: 15px;
-  }
-
-  @media (max-width: 480px) {
-      flex-direction: column;
-      gap: 20px;
-  }
-}
 `;

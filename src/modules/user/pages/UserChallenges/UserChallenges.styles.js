@@ -145,12 +145,10 @@ export const CardSubtitle = styled.p`
   font-size: 0.875rem;
   color: #64748b;
   margin: 0.25rem 0 0;
-      word-break: break-word;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 
     @media (max-width: 480px) {
     font-size: 0.875rem;
