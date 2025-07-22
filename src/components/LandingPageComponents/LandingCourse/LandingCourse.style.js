@@ -242,7 +242,7 @@ color:${({ theme }) => theme.colors.textgray};
 
 .start-btn {
   width: 96px;
-height: 34px;
+// height: 34px;
   padding: 10px;
   background-color: ${({ theme }) => theme.colors.secondary};
   color: white;

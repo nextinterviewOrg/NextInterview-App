@@ -21,7 +21,7 @@ import {
   SolutionAnswer,
   SolutionText,
   HelpIcons,
-    QusnType,
+  QusnType,
   QusnText,
   QusnDifficulty,
 } from "./NewChallenges.style"; // You’ll need to add these styled components if not already
@@ -51,6 +51,7 @@ const NewChallenge = () => {
   const [showSolution, setShowSolution] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
   const navigate = useNavigate();
+  const [feedbackLoading, setFeedbackLoading] = useState(false);
 
   useEffect(() => {
     const fetchChallenge = async () => {
@@ -187,7 +188,7 @@ const NewChallenge = () => {
             disabled={showSolution} // 🔒 Disable after submission
           />
         );
-              case "case-study":
+      case "case-study":
         return (
           <TextArea
             placeholder="Type your response..."
@@ -321,6 +322,7 @@ const NewChallenge = () => {
       return;
     }
 
+    setFeedbackLoading(true);
     const userData = await getUserByClerkId(user?.id);
     const userId = userData?.data?.user?._id;
     const challengeId = challenge._id;
@@ -352,9 +354,10 @@ const NewChallenge = () => {
         setError(msg);
         return;
       }
-         
+
       setFeedbackData(data); // { feedback, strengths, areas_for_improvement, score }
       setShowSolution(true);
+      setError(null);
     } catch (err) {
       console.error("Error getting feedback:", err);
       setError("Network error. Please try again.");
@@ -397,7 +400,7 @@ const NewChallenge = () => {
               : `# ${challenge.question_type}`}
           </Tag> */}
         </div>
- <QusnType>
+        <QusnType>
           <QusnText>{challenge.QuestionText}</QusnText>
           <QusnDifficulty difficulty={challenge.difficulty}>{challenge.difficulty}</QusnDifficulty>
         </QusnType>        {renderInput()}
@@ -405,21 +408,21 @@ const NewChallenge = () => {
         {["multi-line", "mcq", "single-line"].includes(
           challenge.question_type
         ) && (
-          <>
-            {showSolution && (
-              <SolutionBox>
-                <SolutionText>Solution:</SolutionText>
-                <SolutionAnswer>
-                  {challenge.question_type === "mcq" ? (
-                    <span>{challenge[challenge.correct_option]}</span>
-                  ) : (
-                    <span>{challenge.answer || "No solution provided."}</span>
-                  )}
-                </SolutionAnswer>
-              </SolutionBox>
-            )}
-          </>
-        )}
+            <>
+              {showSolution && (
+                <SolutionBox>
+                  <SolutionText>Solution:</SolutionText>
+                  <SolutionAnswer>
+                    {challenge.question_type === "mcq" ? (
+                      <span>{challenge[challenge.correct_option]}</span>
+                    ) : (
+                      <span>{challenge.answer || "No solution provided."}</span>
+                    )}
+                  </SolutionAnswer>
+                </SolutionBox>
+              )}
+            </>
+          )}
 
         {(challenge.question_type === "approach"|| challenge.question_type === "case-study") && showSolution && (
           <SolutionBox>
@@ -433,14 +436,14 @@ const NewChallenge = () => {
                 <SolutionAnswer>
                   <strong>Strengths:</strong>{" "}
                   {Array.isArray(feedbackData.strengths) &&
-                  feedbackData.strengths.length > 0
+                    feedbackData.strengths.length > 0
                     ? feedbackData.strengths.join(", ")
                     : "No strengths identified."}
                 </SolutionAnswer>
                 <SolutionAnswer>
                   <strong>Areas for Improvement:</strong>{" "}
                   {Array.isArray(feedbackData.areas_for_improvement) &&
-                  feedbackData.areas_for_improvement.length > 0
+                    feedbackData.areas_for_improvement.length > 0
                     ? feedbackData.areas_for_improvement.join(", ")
                     : "No improvement areas identified."}
                 </SolutionAnswer>
@@ -480,14 +483,15 @@ const NewChallenge = () => {
             )}
 
           {/* ――― Approach questions ――― */}
-          {!showSolution &&( challenge.question_type === "approach"|| challenge.question_type === "case-study") && (
-            <Button
-              onClick={handleGetFeedbackClick}
-              disabled={!textAnswer.trim()}
-            >
-              Get Feedback
-            </Button>
-          )}
+          {!showSolution &&
+            (challenge.question_type === "approach" || challenge.question_type === "case-study") && (
+              <Button
+                onClick={handleGetFeedbackClick}
+                disabled={!textAnswer.trim() || feedbackLoading}
+              >
+                {feedbackLoading ? "Getting feedback..." : "Get Feedback"}
+              </Button>
+            )}
 
           {showSolution && challenge.question_type === "approach" && (
             <Button onClick={() => handleNextQuestion(challenge._id)}>

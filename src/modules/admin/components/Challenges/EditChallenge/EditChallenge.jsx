@@ -407,7 +407,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
           <FiX size={20} />
         </CloseButton>
 
-        <FormTitleQuestion>Edit </FormTitleQuestion>
+        <FormTitleQuestion>Edit Challenge</FormTitleQuestion>
 
         {challenge?.updatedAt && (
           <div style={{ marginBottom: "10px", color: "#555", fontSize: "14px" }}>

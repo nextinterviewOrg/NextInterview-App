@@ -104,7 +104,7 @@ export const Button = styled.button`
   padding: ${theme.spacing(1.5)};
   font-size: 1rem;
   color: ${theme.colors.light};
-  background-color: ${theme.colors.info};
+  background-color: ${theme.colors.success};
   border: none;
   border-radius: 0.25rem;
   cursor: pointer;
@@ -112,7 +112,7 @@ export const Button = styled.button`
   margin-top: 20px;
 
   &:hover {
-    background-color: ${theme.colors.bluetext};
+    background-color: ${theme.colors.primary};
   }
 `;
 

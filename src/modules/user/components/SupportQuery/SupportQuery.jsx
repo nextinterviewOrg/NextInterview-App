@@ -129,6 +129,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
             {/* Show error if query is empty */}
             {errors.query && <div>{errors.query}</div>}
           </div>
+          <div style={{ marginLeft: "20px" }}>You will recieve an email regarding the update on this query</div>
 
           {/* Action Buttons */}
           <div

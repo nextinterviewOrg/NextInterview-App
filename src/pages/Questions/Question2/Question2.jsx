@@ -103,7 +103,7 @@ const QuestionPage2 = () => {
                 selectedOption === "No, planning to Switch to data/ai role"
               }
             >
-              No, planning to Switch to data/ai role
+              No, planning to Switch to data/AI role
             </OptionLabel>
           </Option>
 

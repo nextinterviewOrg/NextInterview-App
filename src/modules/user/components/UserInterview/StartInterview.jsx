@@ -116,6 +116,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
         <small>Uses AI <img src={AIicon} alt="AI" width="15px" height="15px" style= {{marginLeft: "5px"}} /></small>
         <ModalContent>
           <Heading> {title}</Heading>
+          <div style={{ border: "1px solid #F5F5F5", padding: "14px", borderRadius: "5px", display: "flex", flexDirection: "column", gap: "10px"}}>
           <label>Select Topic</label>
           <Dropdown
             value={selectedTopic}
@@ -129,6 +130,9 @@ const StartInterview = ({ isOpen, onClose, title }) => {
               </option>
             ))}
           </Dropdown>
+          </div>
+
+                    <div style={{ border: "1px solid #F5F5F5", padding: "14px", borderRadius: "5px", display: "flex", flexDirection: "column", gap: "10px"}}>
           <label>Select Interview Mode</label>
           <RadioGroup>
             <RadioOption>
@@ -152,6 +156,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
               Voice Mode
             </RadioOption>
           </RadioGroup>
+          </div>
           {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
           <Button onClick={handleStartInterview} disabled={!selectedTopic || !userName || loading}>
             {loading ? "Starting..." : "+ Start Interview"}

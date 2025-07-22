@@ -173,7 +173,7 @@ export const Question7Wrapper = styled.div`
     line-height: 24px; /* 160% */
     border: none;
     text-align: center !important;
-        margin-left: 20px;
+        // margin-left: 20px;
   }
 
   .anotherCompany:hover {
