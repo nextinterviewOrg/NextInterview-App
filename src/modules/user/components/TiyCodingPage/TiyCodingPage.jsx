@@ -317,7 +317,7 @@ const TiyCodingPage = () => {
                         </QusnType>
 
                         <div
-                            classname= "question-container"
+                            className="question-container"
                         >
                             <QuestionContainer>
                                 <Title>Question</Title>

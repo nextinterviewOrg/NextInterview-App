@@ -35,7 +35,7 @@ const LearningModulesListView = () => {
       const data = response.data.map((item) => ({
         title: item.moduleName,
         topics: item.topicData.length || 0,
-        id: item._id,
+        id: item.module_code,
         imageURL: item.imageURL || "",
       }));
       setModules(data);
@@ -51,16 +51,22 @@ const LearningModulesListView = () => {
     setIsDeleteModalOpen(true); // Open the modal
   };
 
-  const handleDeleteConfirm = async () => {
-    if (selectedModuleId) {
-      // await deleteModule(selectedModuleId);
-      await softModuleDelete(selectedModuleId);
+const handleDeleteConfirm = async () => {
+  if (selectedModuleId) {
+    console.log("Trying to delete module_code:", selectedModuleId); // Log to confirm the ID being sent
+    try {
+      const response = await softModuleDelete(selectedModuleId);
+      console.log("Delete response:", response);
       message.success("Module deleted successfully!");
-      fetchModules(); // Refresh the list after deletion
+      fetchModules(); // Re-fetch modules to update the list
+    } catch (error) {
+      console.error("Delete failed:", error);
+      message.error("Failed to delete module.");
     }
     setIsDeleteModalOpen(false); // Close modal
     setSelectedModuleId(null); // Reset selected module ID
-  };
+  }
+};
 
   const handleCancelDelete = () => {
     message.error("Module deletion canceled!");

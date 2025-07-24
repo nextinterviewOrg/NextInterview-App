@@ -250,6 +250,28 @@ export const UserLearningModuleWrapper = styled.div`
     margin-bottom: 30px;
   }
 
+.completion-status {
+  font-size: 15px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 8px;
+  margin-left: 10px;
+}
+
+.completion-status.completed {
+  background-color: #f0f8f1; 
+  border: 1px solid #bfffbd;
+  color: ${({ theme }) => theme.colors.primary}; 
+}
+
+.completion-status.incomplete {
+  background-color: #fff9e0; 
+  border: 1px solid #ffcc00;
+  color: #b7a047; 
+}
+
+
+
   .topic {
     margin-bottom: 15px;
   }
@@ -381,3 +403,4 @@ export const UserLearningModuleWrapper = styled.div`
     }
   }
 `;
+

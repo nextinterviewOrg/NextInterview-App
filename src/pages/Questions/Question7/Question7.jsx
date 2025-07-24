@@ -69,7 +69,7 @@ function Question7() {
 
   const navigate = useNavigate();
   const handleGoBack = () => {
-    navigate(location.state.backLink);
+    navigate("/question6");
   };
 
   const handleCompanySelect = (company, index) => {

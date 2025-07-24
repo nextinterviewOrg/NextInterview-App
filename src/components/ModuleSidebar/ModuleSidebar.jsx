@@ -66,7 +66,7 @@ export default function ModuleSidebar({
           setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length) * 100).toFixed(0));
         }
       });
-
+      
       setTotalTopics(response.data.topicData.length);
 
       const data = {

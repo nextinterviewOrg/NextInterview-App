@@ -182,16 +182,17 @@ export const QuestionContainer = styled.div`
 `;
 
 export const QuestionBox = styled.div`
-    background-color: #F5F5F5;
+  background-color: #F5F5F5;
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1.5rem;
   font-size: 16px;
   line-height: 1.6;
   color: #444;
-
- 
+  height: 375px;
+  overflow-y: auto; /* Enables vertical scrolling */
 `;
+
 
 export const EditorContainer = styled.div`
   width: 100%;

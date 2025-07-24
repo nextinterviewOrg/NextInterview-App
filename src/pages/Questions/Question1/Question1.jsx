@@ -20,7 +20,12 @@ import { createUserProfile, getQuestionariesByUserId, getUserByClerkId } from ".
 const QuestionPage1 = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const navigate = useNavigate();
-  const [options, setOptions] = useState([]);
+const defaultOptions = [
+  { _id: "1", response_name: "Prepare for interviews" },
+  { _id: "2", response_name: "Level up my data / AI skills" },
+];
+
+const [options, setOptions] = useState(defaultOptions); // fallback prevents flicker
 
   const { isSignedIn, user, isLoaded } = useUser();
   useEffect(() => {
