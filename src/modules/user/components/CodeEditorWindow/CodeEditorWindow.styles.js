@@ -118,6 +118,7 @@ export const Wrapper = styled.div`
     justify-content: flex-end;
     width: 100%;
   }
+}
 `;
 
 export const Title = styled.h2`
@@ -183,6 +184,11 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
+
+  .description {
+    overflow: auto;
+    width: 100%;
+  }
  
 `;
 

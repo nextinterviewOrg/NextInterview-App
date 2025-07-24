@@ -54,43 +54,48 @@ const ReadyToCode = ({
     setRunClicked(false);
   };
 
-  const runCode = async () => {
-    if (!selectLang || !code) {
-      setOutput("Please select a language and write some code.");
-      return;
-    }
-    const payload = {
-      language: selectLang,
-      files: [
-        {
-          name: languageOptions[selectLang].filename,
-          content: selectLang === "python" ? code : dbSetupCommands + code,
-        },
-      ],
-      stdin: selectLang === "python" ? input : "",
-    };
-    try {
-      const res = await fetch("https://onecompiler-apis.p.rapidapi.com/api/v1/run", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "x-rapidapi-key": "39906602eamsh7241fddd134e8ecp1ff6d1jsn745264e9d839",
-          "x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
-        },
-        body: JSON.stringify(payload),
-      });
+  console.log("tryHarderQuestion", setSelectLang);
 
-      const result = await res.json();
-      setRunClicked(true);
-      if (result.status === "success") {
-        setOutput(result.stdout || result.stderr || "No output");
-      } else {
-        setOutput("Error: " + (result.exception || "Unknown error"));
-      }
-    } catch (err) {
-      setOutput("Request failed: " + err.message);
-    }
+const runCode = async () => {
+  if (!selectLang || !code || !languageOptions[selectLang]) {
+    setOutput("Please select a valid language and write some code.");
+    return;
+  }
+
+  const payload = {
+    language: selectLang,
+    files: [
+      {
+        name: languageOptions[selectLang].filename,
+        content: selectLang === "python" ? code : dbSetupCommands + code,
+      },
+    ],
+    stdin: selectLang === "python" ? input : "",
   };
+
+  try {
+    const res = await fetch("https://onecompiler-apis.p.rapidapi.com/api/v1/run", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-rapidapi-key": "39906602eamsh7241fddd134e8ecp1ff6d1jsn745264e9d839",
+        "x-rapidapi-host": "onecompiler-apis.p.rapidapi.com",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+    setRunClicked(true);
+    if (result.status === "success") {
+      setOutput(result.stdout || result.stderr || "No output");
+    } else {
+      setOutput("Error: " + (result.exception || "Unknown error"));
+    }
+  } catch (err) {
+    setOutput("Request failed: " + err.message);
+  }
+};
+
 
   return (
     <Container>
@@ -103,14 +108,14 @@ const ReadyToCode = ({
           theme="vs-light"
         />
         <Buttons>
-          {/* <LanguageSelect value={selectLang} onChange={handleLanguageChange}>
+          <LanguageSelect value={selectLang} onChange={handleLanguageChange}>
             <option value="">Select Language</option>
             {Object.keys(languageOptions).map((lang) => (
               <option key={lang} value={lang}>
                 {lang.toUpperCase()}
               </option>
             ))}
-          </LanguageSelect> */}
+          </LanguageSelect>
           <RunButton onClick={runCode}>Run code</RunButton>
         </Buttons>
       </CodeBox>
@@ -132,7 +137,13 @@ const ReadyToCode = ({
         <Output>
           <h4>Output</h4>
           <OutputBox>
-            <OutputSection>{output}</OutputSection>
+<OutputSection>
+{selectLang === "mysql" ? (
+  <pre style={{ whiteSpace: 'pre-wrap' }}>{output}</pre>
+) : (
+  <pre>{output}</pre>
+)}
+</OutputSection>
 
 
             <HardandOptimise>

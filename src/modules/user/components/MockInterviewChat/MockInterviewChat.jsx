@@ -52,8 +52,7 @@ const MockInterview = () => {
   const [output, setOutput] = useState("");
   const [readyToCode, setReadyToCode] = useState(false);
 
-  console.log("feedbackdfhgsj,kadshgsadg", feedback);
- 
+  console.log("setlang", selectLang);
  
   // On mount, show the initial question
   useEffect(() => {

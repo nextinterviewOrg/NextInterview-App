@@ -30,7 +30,7 @@ export default function ValidationPage() {
                 if (data.data.user.subscription_status === "active") {
                   navigate("/user", { state: session.id });
                 } else {
-                  navigate("/subscription");
+                  navigate("/user/subscription");
                 }
 
               } else {

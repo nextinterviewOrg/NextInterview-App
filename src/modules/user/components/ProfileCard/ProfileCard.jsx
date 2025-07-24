@@ -27,7 +27,6 @@ const ProfileCard = () => {
   const [emailError, setEmailError] = useState("");
   const imageInputRef = useRef(null);
   const { signOut } = useClerk();
-  console.log("ProfileCard rendered with user:", formData);
   const navigate = useNavigate();
 
   // Initialize Clerk

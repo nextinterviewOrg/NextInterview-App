@@ -16,6 +16,7 @@ const BaseLayout = () => {
   const [title, setTitle] = useState(
     JSON.parse(localStorage.getItem("title")) || ""
   );
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -39,6 +40,22 @@ const BaseLayout = () => {
       if (isSignedIn && isLoaded && user) {
         try {
           const data = await getUserByClerkId(user.id);
+const role = data.data.user.user_role;
+const subscription = data.data.user.subscription_status;
+
+setSubscriptionStatus(subscription); // <-- Add this
+
+if (role === "user") {
+  if (data.data.user.profile_status === true) {
+    if (subscription === "active") {
+      // ok
+    } else {
+      navigate("/user/subscription");
+    }
+  } else {
+    navigate("/personalInfo");
+  }
+}
           if (data.data.user.user_role === "user") {
             if (data.data.user.profile_status === true) {
               if (data.data.user.subscription_status === "active") {
@@ -111,13 +128,15 @@ const BaseLayout = () => {
         </>
       ) : isUserPath ? (
         <>
-          <SidebarUser
-            isExpanded={isExpanded}
-            setIsExpanded={setIsExpanded}
-            setTitle={setTitle}
-            isSidebarOpen={isMobileSidebarOpen}
-            setIsSidebarOpen={setIsMobileSidebarOpen}
-          />
+<SidebarUser
+  isExpanded={isExpanded}
+  setIsExpanded={setIsExpanded}
+  setTitle={setTitle}
+  isSidebarOpen={isMobileSidebarOpen}
+  setIsSidebarOpen={setIsMobileSidebarOpen}
+  isSubscriptionActive={subscriptionStatus === "active"} // <--- Pass the prop correctly
+/>
+
           <ContentWrapper isExpanded={isExpanded}>
             <UserHeader title={title} toggleMobileSidebar={toggleMobileSidebar} />
             <Outlet />

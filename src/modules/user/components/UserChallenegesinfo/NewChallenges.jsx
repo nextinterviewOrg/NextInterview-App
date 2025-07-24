@@ -392,7 +392,8 @@ const NewChallenge = () => {
           <Tag>
             {isToday(challenge.createdAt)
               ? "# Today's Challenge"
-              : "# Past Challenge"}
+              : "# Past Challenge"} &nbsp;
+              {challenge.serialNo}
           </Tag>
           {/* <Tag>
             {challenge.question_type === "coding"

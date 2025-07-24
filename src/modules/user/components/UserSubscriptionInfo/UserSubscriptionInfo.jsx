@@ -9,6 +9,7 @@ import SubscriptionCard from '../SubscriptionCard/SubscriptionCard';
 import {
     cancelSubscription,
     getAllSubscription,
+    upgradeSubscription 
 } from "../../../../api/subscriptionApi";
 
 const UserSubscriptionInfo = () => {
@@ -22,39 +23,75 @@ const UserSubscriptionInfo = () => {
         const [error, setError] = useState(null);
         const { signOut } = useClerk();
         const [action, setAction] = useState(false);
-        useEffect(() => {
-            const apiCaller = async () => {
-                try {
-                    setIsLoading(true);
-                    if (!user) return;
+useEffect(() => {
+    const apiCaller = async () => {
+        try {
+            setIsLoading(true);
+            if (!user) return;
+
+            const [Plans, userData] = await Promise.all([
+                getAllSubscription(),
+                getUserByClerkId(user.id)
+            ]);
+
+            console.log("📦 Subscription Plans from getAllSubscription:", Plans); // ✅ Console added here
+
+            setUserId(userData?.data?.user?._id);
+
+            if (userData?.data?.user?._id) {
+                const userSubscriptionData = await getUserSubscription(userData.data.user._id);
+                setUserSubscription(userSubscriptionData);
+            }
+
+            setSubscriptionPlan(Plans.plans || []);
+        } catch (err) {
+            console.error("❌ Error in apiCaller:", err);
+            setError("Failed to load subscription data");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    apiCaller();
+}, [user, action]);
+
     
-                    const [Plans, userData] = await Promise.all([
-                        getAllSubscription(),
-                        getUserByClerkId(user.id)
-                    ]);
-    
-                    setUserId(userData?.data?.user?._id);
-    
-                    if (userData?.data?.user?._id) {
-                        const userSubscriptionData = await getUserSubscription(userData.data.user._id);
-                        setUserSubscription(userSubscriptionData);
-                    }
-    
-                    setSubscriptionPlan(Plans.plans || []);
-                } catch (err) {
-                    console.error(err);
-                    setError("Failed to load subscription data");
-                } finally {
-                    setIsLoading(false);
-                }
-            };
-    
-            apiCaller();
-        }, [user, action]);
-    
-        const handleSubscribe = (Id) => {
-            alert("Subscribed!");
-        };
+const handleSubscribe = async (planId) => {
+  try {
+    const apiKey = process.env.VITE_RAPID_API_KEY;
+    if (!apiKey) {
+      console.error("API key not found in environment variables.");
+      return;
+    }
+
+    if (!userId) throw new Error("User not found");
+    if (!planId) throw new Error("Plan ID missing");
+
+    // Optional: Call external API like Judge0 (if needed)
+    // await axios.post("https://judge0-extra-ce.p.rapidapi.com/submissions", {
+    //   /* your payload */
+    // }, {
+    //   headers: {
+    //     'X-RapidAPI-Key': apiKey,
+    //     'X-RapidAPI-Host': 'judge0-extra-ce.p.rapidapi.com',
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
+
+    // Upgrade subscription
+    const response = await upgradeSubscription(userId, planId);
+    if (response?.success) {
+      alert("Subscribed successfully!");
+      setAction(prev => !prev); // triggers re-fetch
+    } else {
+      alert(response?.message || "Failed to subscribe.");
+    }
+  } catch (error) {
+    console.error("Subscription error:", error);
+    alert(error.response?.data?.message || error.message || "Subscription failed.");
+  }
+};
+
     
         const handleUnsubscribe = async () => {
             try {
