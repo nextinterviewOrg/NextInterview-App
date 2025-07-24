@@ -215,20 +215,21 @@ const TIyQuestion = () => {
                         <CodeMeta dangerouslySetInnerHTML={{ __html: question.description }}></CodeMeta>
                         <CodeDescription>
                             Description:
-                            <p
-                                dangerouslySetInnerHTML={{
-                                    __html: showMore
-                                        ? question.longDescription
-                                        : question.longDescription.length > 150
-                                            ? question.longDescription.substring(0, 150) + '...'
-                                            : question.longDescription
-                                }}
-                            />
-                            {question.longDescription.length > 150 && (
-                                <ViewMore onClick={() => setShowMore(!showMore)}>
-                                    {showMore ? 'View Less' : 'View More'}
-                                </ViewMore>
-                            )}
+<p className={`description-text ${!showMore ? "clamped-text" : ""}`}>
+  <span
+    dangerouslySetInnerHTML={{
+      __html: showMore
+        ? question.longDescription
+        : question.longDescription.split(/\s+/).slice(0, 50).join(" ") + "..."
+    }}
+  />
+</p>
+
+  {question.longDescription.split(/\s+/).length > 50 && (
+    <ViewMore onClick={() => setShowMore(!showMore)}>
+      {showMore ? 'View Less' : 'View More'}
+    </ViewMore>
+  )}
                         </CodeDescription>
                         <TopicsCovered>
                             <strong>Topics Covered</strong>

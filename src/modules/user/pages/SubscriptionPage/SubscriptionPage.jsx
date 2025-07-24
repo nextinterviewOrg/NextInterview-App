@@ -4,11 +4,13 @@ import SubscriptionCard from "../../components/SubscriptionCard/SubscriptionCard
 import {
     cancelSubscription,
     getAllSubscription,
-    getUserSubscription
+    getUserSubscription,
+
 } from "../../../../api/subscriptionApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { useClerk } from "@clerk/clerk-react";
+import { upgradeSubscription } from "../../../../api/subscriptionApi";
 import { useNavigate } from "react-router-dom";
 
 export default function SubsSubscriptionPage() {
@@ -26,16 +28,21 @@ export default function SubsSubscriptionPage() {
             try {
                 setIsLoading(true);
                 if (!user) return;
+                if (user && user.id) {
+                    console.log("Clerk user ID:", user.id);
+                }
 
                 const [Plans, userData] = await Promise.all([
                     getAllSubscription(),
                     getUserByClerkId(user.id)
                 ]);
+                console.log("user subscription", Plans);
 
                 setUserId(userData?.data?.user?._id);
 
                 if (userData?.data?.user?._id) {
                     const userSubscriptionData = await getUserSubscription(userData.data.user._id);
+                    console.log("user subscription", userSubscriptionData);
                     setUserSubscription(userSubscriptionData);
                 }
 
@@ -51,9 +58,24 @@ export default function SubsSubscriptionPage() {
         apiCaller();
     }, [user, action]);
 
-    const handleSubscribe = (Id) => {
-        alert("Subscribed!");
-    };
+const handleSubscribe = async (planId) => {
+  try {
+    if (!userId) throw new Error("User not found");
+    if (!planId || planId === "undefined") throw new Error("Plan ID missing or invalid");
+
+    const response = await upgradeSubscription(userId, planId);
+
+    if (response?.success) {
+      alert("Subscribed successfully!");
+      setAction(prev => !prev);
+    } else {
+      alert(response?.message || "Failed to subscribe.");
+    }
+  } catch (error) {
+    console.error("Subscription error:", error);
+    alert(error?.response?.data?.message || error.message || "Subscription failed.");
+  }
+};
 
     const handleUnsubscribe = async () => {
         try {
@@ -84,10 +106,10 @@ export default function SubsSubscriptionPage() {
                     {subscriptionPlan.length > 0 ? (
                         subscriptionPlan.map((cardData, index) => (
                             <SubscriptionCard
-                                key={cardData.razorpay_plan_id || index}
-                                planId={cardData.razorpay_plan_id}
+                                key={cardData._id || index}
+                                planId={cardData._id}
                                 currentPlanId={userSubscription?.plan?.isActive ?
-                                    userSubscription.plan.razorpay_plan_id : ""}
+                                    userSubscription.plan._id : ""}
                                 title={cardData?.name}
                                 duration={cardData?.duration}
                                 price={cardData.amount}

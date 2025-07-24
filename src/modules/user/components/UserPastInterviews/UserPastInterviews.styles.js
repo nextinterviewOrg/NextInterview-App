@@ -21,6 +21,16 @@ color:${({ theme }) => theme.colors.black};
     margin-bottom: 15px;
 }
 
+.delete-btn {
+  background-color: #f5f5f5;
+  color: red;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
 .interview-list {
     display: flex;
     gap: 15px;

@@ -28,6 +28,7 @@ export const Conversation = styled.div`
  display: flex;
  font-size: 20px;
  margin-left: 20px;
+ font-family: "DM Sans";
 `;
 
 export const TimerBtn = styled.button`
@@ -155,8 +156,10 @@ export const Text = styled.pre`
   white-space: pre-wrap;
   overflow: auto;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 700;
+  color: #1a1c1e;
   font-family: DM SANS;
+  margin-bottom: 15px;
 `;
 
 export const Img = styled.img`
@@ -185,26 +188,59 @@ export const InputTab = styled.div`
   align-items: center;
   width: 100%;
   position: relative;
-  margin-right: 10px;
+  margin-right: 35px;
   margin-left: 10px;
 `;
 
+export const InputWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    z-index: 0;
+    border-radius: 16px;
+    background: linear-gradient(
+      90deg,
+      #FFE141 0%,
+      #7DFF67 25%,
+      #2B9DFF 50%,
+      #C242FF 75%,
+      #FF2D5F 100%
+    );
+    filter: blur(10px);
+    opacity: 0.3;
+  }
+`;
 
 
 export const Input = styled.textarea`
+  position: relative;
   width: 100%;
-  // min-height: 60px;
-  padding: 0px 100px 10px 10px;
-  border-image: linear-gradient(90deg, #FFE141 0%, #7DFF67 25%, #2B9DFF 50%, #C242FF 75%, #FF2D5F 100%);
-  border-image-slice: 1; 
+  padding: 10px;
+  border: 2px solid transparent;
+  border-radius: 8px;
+  border-image: linear-gradient(
+    90deg,
+    #FFE141 0%,
+    #7DFF67 25%,
+    #2B9DFF 50%,
+    #C242FF 75%,
+    #FF2D5F 100%
+  );
+  border-image-slice: 1;
   border-radius: 8px;
   font-size: 16px;
   outline: none;
-  resize: none; 
-  overflow-wrap: break-word; 
-  word-break: break-word;
-  text-overflow: ellipsis;
-  padding: 5px;
+  resize: none;
+  background-color: white;
+  z-index: 1;
 
   &::placeholder {
     color: #aaa;

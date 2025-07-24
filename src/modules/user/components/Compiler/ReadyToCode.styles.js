@@ -19,9 +19,11 @@ export const Buttons = styled.div`
 `;
 
 export const LanguageSelect = styled.select`
-  padding: 6px;
+  padding: 4px;
   border-radius: 4px;
   border: 1px solid #ccc;
+  margin-right: 8px;  
+  margin-bottom: 20px;
 `;
 
 export const RunButton = styled.button`
@@ -59,6 +61,8 @@ export const OutputBox = styled.div`
 export const OutputSection = styled.pre`
   white-space: pre-wrap;
   word-wrap: break-word;
+  overflow-x: auto;
+  width: 100%;
 `;
 
 export const OptimiseButton = styled.button`

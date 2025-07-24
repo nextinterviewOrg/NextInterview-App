@@ -69,6 +69,8 @@ const CodeEditorWindow = () => {
 
   const [activeTab, setActiveTab] = useState("mycode");
   const [showHint, setShowHint] = useState(false);
+  const [optimizationApplied, setOptimizationApplied] = useState(false);
+  
   
 
   // const [timeLeft, setTimeLeft] = useState(20);
@@ -83,6 +85,7 @@ const CodeEditorWindow = () => {
     // Check if timer was previously expired
     return localStorage.getItem(`challengeExpired_${id}`) === 'true';
   });
+
 
   useEffect(() => {
     let timer;
@@ -169,6 +172,10 @@ const CodeEditorWindow = () => {
     setModalOpen(true);
   };
 
+  const normalize = (str) =>
+  str?.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
+
+
   const fetchOptimizedCode = async () => {
 
     const userId = await getUserByClerkId(user.id);
@@ -215,15 +222,28 @@ const CodeEditorWindow = () => {
     fetchChallenge();
   }, [id]);
 
-  useEffect(() => {
+useEffect(() => {
+  if (!challenge || !output) return;
 
-    if (runClicked && output?.trim() === challenge?.output?.trim()) {
-      setShowOptimiseBtn(true);
-      fetchOptimizedCode();
-    } else {
-      setShowOptimiseBtn(false);
+  const expectedOutput = normalize(challenge.output);
+  const actualOutput = normalize(output);
+
+  console.log("Expected:", JSON.stringify(expectedOutput));
+  console.log("Actual:", JSON.stringify(actualOutput));
+
+  if (expectedOutput === actualOutput) {
+    // proceed (you could optionally auto-trigger submit or show message)
+  } else {
+    // Don't show error here unless user explicitly runs
+    if (runClicked) {
+      notification.error({
+        message: "Your output doesn't match the expected result. Please try again.",
+        duration: 3,
+      });
     }
-  }, [output, runClicked, challenge]);
+  }
+}, [challenge, output, runClicked]);
+
 
   useEffect(() => {
     let timer;
@@ -266,9 +286,9 @@ const CodeEditorWindow = () => {
             <QuestionBox>
               <p>
                 <strong>Description:</strong>
-                <div dangerouslySetInnerHTML={{ __html: challenge?.description }} />
+                <div dangerouslySetInnerHTML={{ __html: challenge?.description }}  className="description"/>
               </p>
-              <p><strong>Input:</strong> {challenge.input}</p>
+              <p><strong>Input:</strong>{challenge?.programming_language === "Python" ? <p> {challenge?.input}</p> : <pre style={{maxwidth: '300px', overflowX: 'auto', wordBreak: 'break-word'}} > {challenge?.input}</pre>}</p>
               <p><strong>Output:</strong>
                 {challenge.programming_language === "Python" ? (
                   <p> {challenge?.output}</p>
@@ -420,11 +440,12 @@ const CodeEditorWindow = () => {
               />
               <ButtonGroup>
                 <ModalButton
-                  onClick={() => {
-                    setCode(optimisedCode); // ✅ replaces old code
-                    setModalOpen(false);
-                    setOptimizeClicked(true);
-                  }}
+onClick={() => {
+  setCode(optimisedCode);
+  setModalOpen(false);
+  setOptimizeClicked(true);
+  setOptimizationApplied(true); // ✅ disable further optimize actions
+}}
                 >
                   Apply to your Code
                 </ModalButton>

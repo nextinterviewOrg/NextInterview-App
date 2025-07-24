@@ -6,11 +6,14 @@ import {
   addPastInterview,
   getUserByClerkId,
   getUserQuestionariesByUserId,
+  deletePastInterview
 } from "../../../../api/userApi";
 import { getCompanies } from "../../../../api/comapniesApi";
 import { getDesignations } from "../../../../api/designationApi";
 import Select from "react-select";
 import { getTopics } from "../../../../api/topicApi";
+import { RiDeleteBinLine} from "react-icons/ri";
+import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
 const UserPastInterviews = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [interviewData, setInterviewData] = useState({
@@ -24,6 +27,8 @@ const UserPastInterviews = () => {
   const { isSignedIn, user, isLoaded } = useUser();
   const [pastInterview, setPastInterview] = useState([]);
   const [userId, setUserId] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [interviewToDelete, setInterviewToDelete] = useState(null);
   const pastInterviews = [
     {
       company: "ABCD Private LTD",
@@ -40,25 +45,32 @@ const UserPastInterviews = () => {
   const [jobRoleData, setJobRoleData] = useState([]);
   const [topicData, setTopicData] = useState([]);
 
-  useEffect(() => {
-    const apiCaller = async () => {
-      const data = await getUserByClerkId(user.id);
-      setUserId(data.data.user._id);
-      const questionariesResponse = await getUserQuestionariesByUserId(
-        data.data.user._id
-      );
+useEffect(() => {
+  const apiCaller = async () => {
+    console.log("Clerk user.id:", user._id); // ✅
+
+    const data = await getUserByClerkId(user.id);
+    setUserId(data.data.user._id);
+
+    const questionariesResponse = await getUserQuestionariesByUserId(
+      data.data.user._id
+    );
+
 const pastInterviews =
   questionariesResponse.data.data_past_interview_response?.map((interview) => {
     return {
+      id: interview._id, // ✅ Add this line to store MongoDB document ID
       company: interview.company_Name?.company_Name || "Unknown Company",
       role: interview.designation?.designation_name || "N/A",
       logo: interview.company_Name?.company_logo || "",
     };
   }) || [];
-      setPastInterview(pastInterviews);
-    };
-    apiCaller();
-  }, [user]);
+
+    setPastInterview(pastInterviews);
+  };
+  apiCaller();
+}, [user]);
+
   useEffect(() => {
     const apiCaller = async () => {
       const company = await getCompanies();
@@ -90,6 +102,28 @@ const pastInterviews =
     apiCaller();
   }, []);
 
+  const confirmDeleteInterview = async () => {
+  try {
+    await deletePastInterview(userId, interviewToDelete);
+    setPastInterview((prev) => prev.filter((int) => int.id !== interviewToDelete));
+    setShowDeleteModal(false);
+    setInterviewToDelete(null);
+  } catch (err) {
+    console.error("Failed to delete interview:", err);
+  }
+};
+
+
+
+  const handleDeleteInterview = async (interviewId) => {
+  try {
+await deletePastInterview(userId, interviewId);
+    // Refresh list after deletion
+    setPastInterview(pastInterview.filter((int) => int.id !== interviewId));
+  } catch (err) {
+    console.error("Failed to delete interview:", err);
+  }
+};
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInterviewData({ ...interviewData, [name]: value });
@@ -129,19 +163,24 @@ const pastInterviews =
         <div className="interview-list-container">
           <div className="interview-list">
             {pastInterview.map((interview, index) => (
-              <div key={index} className="interview-card">
-                <div className="interview-company-logo">
-                  <img
-                    src={interview.logo}
-                    alt={interview.company}
-                    className="company-logo"
-                  />
-                </div>
-                <div className="interview-info">
-                  <h3 className="company-name">{interview.company}</h3>
-                  <p className="role">{interview.role}</p>
-                </div>
-              </div>
+<div key={interview.id} className="interview-card">
+  <div className="interview-company-logo">
+    <img src={interview.logo} alt={interview.company} className="company-logo" />
+  </div>
+  <div className="interview-info">
+    <h3 className="company-name">{interview.company}</h3>
+    <p className="role">{interview.role}</p>
+  </div>
+<button
+  onClick={() => {
+    setInterviewToDelete(interview.id);
+    setShowDeleteModal(true);
+  }}
+  className="delete-btn"
+>
+  <RiDeleteBinLine />
+</button>
+</div>
             ))}
           </div>
         </div>
@@ -272,6 +311,12 @@ const pastInterviews =
           </div>
         )}
       </div>
+      {showDeleteModal && (
+  <DeleteModule
+    onDelete={confirmDeleteInterview}
+    onCancel={() => setShowDeleteModal(false)}
+  />
+)}
     </UserPastInterviewsWrapper>
   );
 };

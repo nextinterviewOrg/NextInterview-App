@@ -130,7 +130,7 @@ export const SubmitButton = styled.button`
   padding: 11px;
   font-size: 18px;
   color: #fff;
-  background-color: ${theme.colors.secondary};
+  background-color: ${theme.colors.bluetext}90;
   border: none;
   border-radius: 5px;
   cursor: pointer;

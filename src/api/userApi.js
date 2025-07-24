@@ -115,6 +115,19 @@ export const addPastInterview = async (user_id, data) => {
   }
 };
 
+export const deletePastInterview = async (user_id, interview_id) => {
+  try {
+    const response = await api.delete(
+      `/users/updateUser/${user_id}/past-interviews/${interview_id}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to delete past interview", error);
+    throw error;
+  }
+};
+
+
 export const getUserBySessionId = async (data) => {
   try {
     const response = await api.post(`/users/getUserBySessionId`, data);

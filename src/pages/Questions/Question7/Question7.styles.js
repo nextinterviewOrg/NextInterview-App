@@ -211,7 +211,7 @@ export const SkipButton = styled.button`
   background-color: ${(props) =>
     props.disabled
       ? `${theme.colors.primary}`
-      : `${theme.colors.light}`} !important;
+      : `${theme.colors.light}`};
   // background-color:${theme.colors.light}!important;
   color: ${theme.colors.black};
   border: 1px solid ${theme.colors.black} !important;
@@ -222,7 +222,7 @@ export const SkipButton = styled.button`
   transition: background-color 0.3s ease;
 
   &:hover {
-    background-color: ${(props) => (props.disabled ? "#cccccc" : "#28a745")};
+    background-color: ${(props) => (props.disabled ? "#cccccc" : "#33333390")};
   }
 
   @media (max-width: 768px) {

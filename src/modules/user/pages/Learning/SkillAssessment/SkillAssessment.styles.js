@@ -53,6 +53,7 @@ export const Option = styled.div`
   margin: 5px 10px;
   font-size: 18px;
   padding: 5px;
+  text-align: left;
 
   input {
     margin-right: 10px;

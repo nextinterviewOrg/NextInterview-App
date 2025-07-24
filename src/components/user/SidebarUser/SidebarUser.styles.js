@@ -9,11 +9,10 @@ export const SideBarwrapper = styled.div`
   flex-direction: column;
   transition: width 0.3s ease-in-out;
   overflow-y: auto;
-
   z-index: 999;
 
   @media (max-width: 768px) {
-   width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
+    width: ${(props) => (props.isSidebarOpen ? "250px" : "0")};
     position: fixed;
     z-index: 1000;
     transition: width 0.3s ease-in-out;
@@ -24,6 +23,7 @@ export const SideBarwrapper = styled.div`
     justify-content: center;
     align-items: center;
     padding: 20px;
+
     img {
       width: ${(props) => (props.isExpanded ? "80%" : "80%")};
     }
@@ -32,7 +32,7 @@ export const SideBarwrapper = styled.div`
   .menu-list {
     display: flex;
     flex-direction: column;
-    padding: 0; 
+    padding: 0;
     margin: 0;
     list-style: none;
     align-items: flex-start;
@@ -40,8 +40,8 @@ export const SideBarwrapper = styled.div`
     border: none;
   }
 
-    .menu {
-  flex: 1 1 auto;          /* take all free vertical space */      /* scroll if items exceed viewport height */
+  .menu {
+    flex: 1 1 auto;
   }
 
   .menu-item {
@@ -50,8 +50,8 @@ export const SideBarwrapper = styled.div`
 
   .menu-link {
     display: grid;
-    grid-template-columns: ${(props) =>
-      props.isExpanded ? "1fr 4fr" : "1fr"};
+grid-template-columns: ${(props) => props.isExpanded ? "1fr 4fr auto" : "1fr"};
+
     align-items: center;
     padding: 0 10px;
     color: ${(props) => props.theme.colors.sidebarTextColor || "grey"};
@@ -86,7 +86,17 @@ export const SideBarwrapper = styled.div`
     }
   }
 
-  /* Hamburger icon for mobile view */
+  .menu-link-lock {
+  margin-left: auto;
+  font-size: 16px;
+  color: ${(props) => props.theme.colors.sidebarTextColor || "grey"};
+  display: ${(props) => props.isExpanded ? "flex": "none" };
+  align-items: center;
+  justify-content: center;
+
+}
+
+
   .hamburger-icon {
     display: none;
     cursor: pointer;
@@ -97,24 +107,26 @@ export const SideBarwrapper = styled.div`
     @media (max-width: 768px) {
       display: block;
     }
-  }.mock-card {
+  }
+
+  .mock-card {
     background: linear-gradient(to bottom, #2290ac, #68c184);
     border-radius: 16px;
     padding: 10px;
     text-align: center;
     width: 200px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    // position: absolute;
+    /* position: absolute; */
     top: 65%;
     color: white;
     font-family: Arial, sans-serif;
     display: grid;
     align-items: center;
     justify-content: center;
-    left: 10px;     /* participate in normal flow */
-   margin-top: 40px; 
+    left: 10px;
+    margin-top: 40px;
   }
- 
+
   .mock-card-icon {
     background: linear-gradient(to bottom, #2290ac, #68c184);
     width: 70px;
@@ -128,50 +140,50 @@ export const SideBarwrapper = styled.div`
     border: 5px solid white;
     font-size: 40px;
   }
- 
-  .mock-card-icon.collapsed{
-  margin-top: 10px;
-  background: linear-gradient(to bottom, #2290ac, #68c184);
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  color: white;
-  
-  @media (min-height: 200px ) and (max-height: 445px)  {
-        height: 70px;
-        width: 40px;
-        font-size: 20px;
-  }
-}
 
-.collapsed-icon {
-  @media (min-height: 200px ) and (max-height: 445px) {
-        padding: 10px;
+  .mock-card-icon.collapsed {
+    margin-top: 10px;
+    background: linear-gradient(to bottom, #2290ac, #68c184);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    color: white;
+
+    @media (min-height: 200px) and (max-height: 445px) {
+      height: 70px;
+      width: 40px;
+      font-size: 20px;
+    }
   }
-}
- 
+
+  .collapsed-icon {
+    @media (min-height: 200px) and (max-height: 445px) {
+      padding: 10px;
+    }
+  }
+
   .mock-card-icon img {
     width: 40px;
     height: 40px;
   }
- 
+
   .mock-card-title {
     font-size: 18px;
     font-weight: bold;
     margin: 10px 0;
   }
- 
+
   .mock-card-description {
     font-size: 14px;
     margin: 10px 0;
     color: rgba(255, 255, 255, 0.9);
   }
- 
+
   .mock-card-button {
     background: white;
     color: #68c184;
@@ -184,14 +196,24 @@ export const SideBarwrapper = styled.div`
     margin-top: 15px;
     transition: background 0.3s ease;
   }
- 
+
   .mock-card-button:hover {
     background: #ccc;
   }
 
-    .arrow-toggle {
+.menu-link.disabled {
+  pointer-events: none;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.menu-link:not(.disabled) {
+  cursor: pointer;
+}
+
+  .arrow-toggle {
     position: absolute;
-    right: 10px;               /* sits slightly outside the bar */
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     width: 26px;
@@ -203,20 +225,20 @@ export const SideBarwrapper = styled.div`
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     transition: background 0.2s;
     z-index: 1001;
   }
 
   .arrow-toggle:hover {
     background: #f0f0f0;
-  }
 
   @media (max-width: 768px) {
-    .arrow-toggle { display: none; }   /* hide on mobile; use hamburger */
+    .arrow-toggle {
+      display: none;
+    }
   }
-
-
+}
 `;
 
 export const ContentWrapper = styled.div`
@@ -226,9 +248,8 @@ export const ContentWrapper = styled.div`
   transition: margin-left 0.3s ease, width 0.3s ease;
 
   @media (max-width: 768px) {
-  margin-left: 0px;
-  padding: 20px;
-  width: 100%;
-
-    
+    margin-left: 0px;
+    padding: 20px;
+    width: 100%;
+  }
 `;

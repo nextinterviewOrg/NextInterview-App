@@ -51,6 +51,7 @@ const typeMapping = {
   "Case Study": "case-study"
 };
 
+
 const INITIAL_FORM = {
   programming_language: "",
   QuestionText: "",

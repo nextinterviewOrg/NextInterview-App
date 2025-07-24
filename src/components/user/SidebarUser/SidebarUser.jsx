@@ -30,8 +30,9 @@ import world from "../../../modules/user/assets/world.svg";
 import blog from "../../../assets/blogging.svg";
 import { useRef } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import lock from "../../../assets/lock.svg"
 
-const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen }) => {
+const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen, isSubscriptionActive }) => {
   const location = useLocation();
   const navigate = useNavigate();
 // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Track sidebar visibility for mobile
@@ -42,36 +43,42 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       name: "Dashboard",
       path: "/user",
       icon: <img className="svgicon" src={dboard} alt="Users Icon" />,
+      lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     },
     {
       id: 2,
       name: "Home",
       path: "/user/home",
       icon: <img className="svgicon" src={homeicon} alt="homeicon" />,
+            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     },
     {
       id: 3,
       name: "Learning Module",
       path: "/user/learning",
       icon: <img className="svgicon" src={learnmod} alt="Users Icon" />,
+      
     },
     {
       id: 4,
       name: "Quickly Revise",
       path: "/user/revise",
       icon: <img className="svgicon" src={quick} alt="quick" />,
+            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     },
     {
       id: 5,
       name: "Question Bank",
       path: "/user/mainQuestionBank/questionbank",
       icon: <img className="svgicon" src={question} alt="question" />,
+            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     },
     {
       id: 6,
       name: "Challenges",
       path: "/user/challenges",
       icon: <img className="svgicon" src={challenge} alt="Users Icon" />,
+            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     },
     // {
     //   id: 8,
@@ -83,7 +90,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       id: 7,
       name: "Blogs",
       path: "/user/blogs",
-     icon: <img className="svgicon" width={20} height={20} src={blog} alt="Users Icon" />
+     icon: <img className="svgicon" width={20} height={20} src={blog} alt="Users Icon" />,
+           lock: <img className="svgicon" src={lock} alt="Users Icon" />,
     }
   ];
 
@@ -93,6 +101,10 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
       setIsSidebarOpen(false);
     }
   }, [location.pathname]);
+
+  useEffect(() => {
+  console.log("Subscription status in SidebarUser:", isSubscriptionActive);
+}, [isSubscriptionActive]);
 
   const sidebarRef = useRef(null); // Create a ref for the sidebar
 
@@ -132,20 +144,36 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
             <ul className="menu-list">
               {SidebarItem.map((item) => (
                 <li className="menu-item" key={item.id}>
-                  <NavLink
-                    to={item.path}
-                    className={({ isActive }) =>
-                      isActive ? "menu-link active" : "menu-link"
-                    }
-                    onClick={() => {
-                      setTitle(item.name);
-                      localStorage.setItem("title", JSON.stringify(item.name));
-                    }}
-                    end
-                  >
-                    <span className="menu-link-icon">{item.icon}</span>
-                    <span className="menu-link-text">{item.name}</span>
-                  </NavLink>
+<NavLink
+  to={
+    isSubscriptionActive || item.name === "Learning Module"
+      ? item.path
+      : "#"
+  }
+  end // <-- add this line
+  className={({ isActive }) => {
+    const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
+    const baseClass = "menu-link";
+    if (isActive && !isLocked) return `${baseClass} active`;
+    if (isLocked) return `${baseClass} disabled`;
+    return baseClass;
+  }}
+  onClick={(e) => {
+    const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
+    if (isLocked) {
+      e.preventDefault();
+    } else {
+      setTitle(item.name);
+    }
+  }}
+>
+
+  <span className="menu-link-icon">{item.icon}</span>
+  <span className="menu-link-text">{item.name}</span>
+{!isSubscriptionActive && (
+  <span className="menu-link-lock"> {item.lock}</span>
+)}
+</NavLink>
                 </li>
               ))}
             </ul>

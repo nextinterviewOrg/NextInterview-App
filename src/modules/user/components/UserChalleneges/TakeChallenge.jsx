@@ -216,30 +216,33 @@ const TakeChallenge = ({ questionType = "coding" }) => {
   useEffect(() => {
     if (!isLoaded) return;
 
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+const fetchData = async () => {
+  try {
+    setLoading(true);
+    setError(null);
 
-        const userData = await getUserByClerkId(user.id);
-        console.log("User Data:", userData);
-        const userId = userData.data.user._id;
+    const userData = await getUserByClerkId(user.id);
+    console.log("User Data:", userData);
+    const userId = userData.data.user._id;
 
-        const response = await getTodaysUserChallenges(userId, questionType);
-        const challengeList = response?.data;
-        console.log("challengeList",challengeList);
-        if (Array.isArray(challengeList)) {
-          setChallenges(challengeList);
-        } else {
-          throw new Error("Invalid challenge data");
-        }
-      } catch (err) {
-        console.error("API Error:", err);
-        setError(err.response?.data?.message || err.message || "Failed to load challenges");
-      } finally {
-        setLoading(false);
-      }
-    };
+    const response = await getTodaysUserChallenges(userId, questionType);
+    console.log("Response:", response);
+    const challengeList = response?.data;
+    console.log("challengeList", challengeList);
+
+    if (Array.isArray(challengeList)) {
+      setChallenges(challengeList);
+    } else {
+      throw new Error("Invalid challenge data");
+    }
+  } catch (err) {
+    console.error("API Error:", err); // ✅ fixed
+    setError(err.response?.data?.message || err.message || "Failed to load challenges");
+  } finally {
+    setLoading(false);
+  }
+};
+
 
     fetchData();
   }, [user, isLoaded, questionType]);
@@ -288,7 +291,7 @@ const TakeChallenge = ({ questionType = "coding" }) => {
   };
   return (
     <>
-      {challenges.map((challenge) => {
+      {challenges.map((challenge, index) => {
         const statusText = getStatus(challenge);
         const statusKey = getStatusColor(statusText);
        
@@ -298,7 +301,9 @@ const TakeChallenge = ({ questionType = "coding" }) => {
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
            
-                <small style={badgeStyle}>#Today's Challenge </small>
+          <small style={badgeStyle}>
+            #Today's Challenge {challenge.serialNo} 
+          </small>
                 {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
                  {challenge.userStatus}
                </StatusBadge> */}

@@ -149,6 +149,10 @@ export const Question6Wrapper = styled.div`
     border: 1px solid #1a1c1e;
     padding: 8px;
     cursor: pointer;
+
+    &:hover {
+      background-color: ${(props) => props.theme.colors.backgray};
+    }
   }
 `;
 export const SkipButton = styled.button`

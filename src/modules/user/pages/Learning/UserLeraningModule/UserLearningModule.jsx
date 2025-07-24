@@ -27,6 +27,8 @@ const UserLearningModule = () => {
   const [startModuleData, setStartModuleData] = useState({});
   const [buttonText, setButtonText] = useState("Resume Learning");
   const [loading, setLoading] = useState(true);
+  const [completionStatus, setCompletionStatus] = useState("Not yet completed");
+
   const navigate = useNavigate();
   useEffect(() => {
     const apiCaller = async () => {
@@ -45,11 +47,11 @@ const UserLearningModule = () => {
           title: response.data.moduleName,
           topics: response.data.topicData.length,
           duration: response.data.approxTimeTaken,
-lastUpdated: new Intl.DateTimeFormat("en-GB", {
-  day: "numeric",
-  month: "short",
-  year: "numeric"
-}).format(new Date(response.data.updatedAt)),
+          lastUpdated: new Intl.DateTimeFormat("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          }).format(new Date(response.data.updatedAt)),
           description: response.data.description,
           learningGoals: response.data.userLearntData?.map(
             (item) => item.learntData
@@ -64,6 +66,7 @@ lastUpdated: new Intl.DateTimeFormat("en-GB", {
             };
           }),
           imageUrl: response.data?.imageURL, // Course Image URL
+          courseOverview: response.data?.courseOverview,
         };
         setCourseData(data);
         console.log(data);
@@ -79,11 +82,24 @@ lastUpdated: new Intl.DateTimeFormat("en-GB", {
           console.log("moduleProgressData", moduleProgressData);
           if (!moduleProgressData) {
             setModuleStatus(false);
+            setCompletionStatus("Not yet started");
           } else {
             if (moduleProgressData.completed === true) {
               setButtonText("Revise Topics");
+              setCompletionStatus("Completed");
             } else {
               setButtonText("Resume Learning");
+
+              const lastTopic = moduleProgressData.progressTopics?.at(-1);
+              const lastSubtopic = lastTopic?.progressSubtopics?.at(-1);
+
+              if (lastTopic && lastSubtopic) {
+                setCompletionStatus(
+                  `Not yet completed (Last visited: ${lastTopic.topicTitle || "Topic"} → ${lastSubtopic.subtopicTitle || "Subtopic"})`
+                );
+              } else {
+                setCompletionStatus("Yet to complete");
+              }
             }
           }
         }
@@ -103,7 +119,7 @@ lastUpdated: new Intl.DateTimeFormat("en-GB", {
 
   const handleStartLearning = async () => {
     const startData = await startModule(startModuleData.userId, startModuleData.moduleCode, startModuleData.moduleID);
-    console.log("startData", startData);
+    console.log("startDataaaaaaaaaaaa", startData);
     navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: 0, subtopicIndex: 0 } });
   };
   const handleResumeLearning = async () => {
@@ -174,157 +190,164 @@ lastUpdated: new Intl.DateTimeFormat("en-GB", {
       {loading ? (
         <ShimmerPostItem card title text cta />
       ) : (
-     
-      <div className="course-header1">
-        <img src={courseData.imageUrl} alt="Course" className="course-image" />
-        <div className="course-info">
-          <h1 className="course-info-title">{courseData.title}</h1>
-        </div>
-        <div className="course-actions">
-          <div className="course-details">
-            <span className="topics">
-              <span className="topic-icon">
-                <VscBook size={28} />
-              </span>
-              <span className="topic-information">
-                <span className="topics-title">Topics:</span>{" "}
-                <span className="topics-count">{courseData.topics}</span>
-              </span>
-            </span>
-            <span className="topics">
-              <span className="duration-icon">
-                <LuClock4 size={28} />
-              </span>
-              <span className="topic-information">
-                <span className="topics-title">Maximum time taken:</span>{" "}
-                <span className="topics-count">
-                  {courseData.duration > 1 ? `Less than ${courseData.duration} hours` : `Less than ${courseData.duration} hour`}
+
+        <div className="course-header1">
+          <img src={courseData.imageUrl} alt="Course" className="course-image" />
+          <div className="course-info">
+            <h1 className="course-info-title">{courseData.title}</h1>
+          </div>
+          <div className="course-actions">
+            <div className="course-details">
+              <span className="topics">
+                <span className="topic-icon">
+                  <VscBook size={28} />
+                </span>
+                <span className="topic-information">
+                  <span className="topics-title">Topics:</span>{" "}
+                  <span className="topics-count">{courseData.topics}</span>
                 </span>
               </span>
-            </span>
-            <span className="topics">
-              <span className="last-updated-icon">
-                <TbClockEdit size={28} />
+              <span className="topics">
+                <span className="duration-icon">
+                  <LuClock4 size={28} />
+                </span>
+                <span className="topic-information">
+                  <span className="topics-title">Maximum time taken:</span>{" "}
+                  <span className="topics-count">
+                    {courseData.duration > 1 ? `Less than ${courseData.duration} hours` : `Less than ${courseData.duration} hour`}
+                  </span>
+                </span>
               </span>
-              <span className="topic-information">
-                <span className="topics-title">Last updated on:</span>{" "}
-                <span className="topics-count">{courseData.lastUpdated}</span>
+              <span className="topics">
+                <span className="last-updated-icon">
+                  <TbClockEdit size={28} />
+                </span>
+                <span className="topic-information">
+                  <span className="topics-title">Last updated on:</span>{" "}
+                  <span className="topics-count">{courseData.lastUpdated}</span>
+                </span>
               </span>
-            </span>
-          </div>
-          <div className="course-action-btns">
-            <button
-              className="view-sample-btn"
-              onClick={() => {
-                navigate(`/user/learning/${moduleId}/topic/sampleInterview`);
-              }}
-            >
-              <img src={sampleInterviewIcon} alt="Sample Interview" style={{width:"20px",height:"20px"}}/> View Sample Interview
-            </button>
-            
-            {
-              moduleStatus === false ? (<>
-                {/* // <Link
+            </div>
+            <div className="course-action-btns">
+              <button
+                className="view-sample-btn"
+                onClick={() => {
+                  navigate(`/user/learning/${moduleId}/topic/sampleInterview`);
+                }}
+              >
+                <img src={sampleInterviewIcon} alt="Sample Interview" style={{ width: "20px", height: "20px" }} /> View Sample Interview
+              </button>
+
+              {
+                moduleStatus === false ? (<>
+                  {/* // <Link
                   //   to={`/user/learning/${moduleId}/topic`}
                   //   state={{ topicIndex: 0, subtopicIndex: 0 }}
                   // > */}
-                {" "}
-                <button className="start-learning-btn" onClick={handleStartLearning}>{
-                  <span>Start Learning</span>}
-                </button>
-                {/* // </Link> */}
-              </>) : (
-                buttonText === "Revise Topics" ? (
-                  <>
-                    <Link
-                      to={`/user/learning/${moduleId}/topic`}
-                      state={{ topicIndex: 0, subtopicIndex: 0 }}
-                    >
-                      <button className="start-learning-btn" onClick={handleStartLearning}>{
-                        <span>Revise Topics</span>}
+                  {" "}
+                  <button className="start-learning-btn" onClick={handleStartLearning}>{
+                    <span>Start Learning</span>}
+                  </button>
+                  {/* // </Link> */}
+                </>) : (
+                  buttonText === "Revise Topics" ? (
+                    <>
+                      <Link
+                        to={`/user/learning/${moduleId}/topic`}
+                        state={{ topicIndex: 0, subtopicIndex: 0 }}
+                      >
+                        <button className="start-learning-btn" onClick={handleStartLearning}>{
+                          <span>Revise Topics</span>}
+                        </button>
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <button className="start-learning-btn" onClick={handleResumeLearning}>{
+                        <span>Resume Learning</span>}
                       </button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <button className="start-learning-btn" onClick={handleResumeLearning}>{
-                      <span>Resume Learning</span>}
-                    </button>
-                  </>
+                    </>
+                  )
                 )
-              )
-            }
+              }
 
+            </div>
           </div>
         </div>
-      </div>
-       )}
+      )}
 
-    { loading ? (
-      <ShimmerTitle />
-    ) : (
-  
-      <div className="course-overview">
-        <h3 className="course-overview-title">Course Overview</h3>
-        <p className="course-overview-description">{courseData.courseOverview}</p>
-      </div>
-  )}
+      {loading ? (
+        <ShimmerTitle />
+      ) : (
+
+        <div className="course-overview">
+          <h3 className="course-overview-title">Course Overview</h3>
+          <p className="course-overview-description">{courseData.courseOverview || "No course overview available."}</p>
+        </div>
+      )}
       {loading ? (
         <ShimmerText />
       ) : (
-   
-      <div className="learning-goals">
-        <h3 className="course-overview-title">What you will learn</h3>
-        <ul className="learning-goals-list">
-          {courseData.learningGoals?.map((goal, index) => (
-            <li key={index}>
-              <span className="check">
-                <FaCheckCircle />
-              </span>{" "}
-              {goal}
-            </li>
-          ))}
-        </ul>
-      </div>
-   )}
-     {loading ? (
+
+        <div className="learning-goals">
+          <h3 className="course-overview-title">What you will learn</h3>
+          <ul className="learning-goals-list">
+            {courseData.learningGoals?.map((goal, index) => (
+              <li key={index}>
+                <span className="check">
+                  <FaCheckCircle />
+                </span>{" "}
+                {goal}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {loading ? (
         <ShimmerText />
       ) : (
-    
-      <div className="course-topics">
-        <h3 className="course-overview-title">Topics</h3>
-        {courseData.topicsList?.map((topic, index) => (
-          <div key={index} className="topic">
-            <div className="topic-title" onClick={() => toggleExpand(index)}>
-              <div>
-              <span>Topic {index + 1} - </span>
-              <span>{topic.title}</span>
+
+        <div className="course-topics">
+          <h3 className="course-overview-title">Topics</h3>
+          {courseData.topicsList?.map((topic, index) => (
+            <div key={index} className="topic">
+              <div className="topic-title" onClick={() => toggleExpand(index)}>
+                <div>
+                  <span>Topic {index + 1} - </span>
+                  <span>{topic.title}</span>
+                  <span
+                    className={`completion-status ${completionStatus.startsWith("Completed") ? "completed" : "incomplete"
+                      }`}
+                  >
+                    {completionStatus}
+                  </span>
+                </div>
+                <span>
+                  {expandedTopic === index ? (
+                    <MdOutlineExpandLess size={38} />
+                  ) : (
+                    <MdOutlineExpandMore size={38} />
+                  )}
+                </span>{" "}
+                {/* Toggle indicator */}
               </div>
-              <span>
-                {expandedTopic === index ? (
-                  <MdOutlineExpandLess size={38} />
-                ) : (
-                  <MdOutlineExpandMore size={38} />
-                )}
-              </span>{" "}
-              {/* Toggle indicator */}
+              {expandedTopic === index && (
+                <div className="subtopics">
+                  {topic.subtopics.map((subtopic, subIndex) => (
+                    <p key={subIndex}>
+                      {" "}
+                      <FaCircleChevronRight size={24} className="subtopicicon" />
+                      {subtopic}
+                    </p>
+                  ))}
+                </div>
+              )}
             </div>
-            {expandedTopic === index && (
-              <div className="subtopics">
-                {topic.subtopics.map((subtopic, subIndex) => (
-                  <p key={subIndex}>
-                    {" "}
-                    <FaCircleChevronRight size={24} className="subtopicicon" />
-                    {subtopic}
-                  </p>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-        
-      </div>
-       )}
+          ))}
+
+
+        </div>
+      )}
     </UserLearningModuleWrapper >
   );
 };

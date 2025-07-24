@@ -39,7 +39,7 @@ const ProtectedRoute = ({ Component, roles }) => {
             if(userResponse.data.user.subscription_status === "active"){
               setRedirectPath("/user");
             }else{
-              setRedirectPath("/subscription");
+              setRedirectPath("/user/subscription");
             }
             
           } else {
