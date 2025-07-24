@@ -49,9 +49,9 @@ const LandingFooter = () => {
         </FooterContent>
         
         <SocialIcons>
-          <IconWrapper> <a style={{textDecoration:"none", color:"white" }} href="https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=x8cs08q"><FaInstagram className='social-icons'/></a></IconWrapper>
+          <IconWrapper> <a style={{textDecoration:"none", color:"white" }} href="https://www.instagram.com/nextinterview.ai"><FaInstagram className='social-icons'/></a></IconWrapper>
           <IconWrapper><a style={{textDecoration:"none",  color:"white" }} href="https://www.linkedin.com/in/nextinterview-ai-263a2b342?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app"><FaLinkedinIn className='social-icons'/></a></IconWrapper>
-          <IconWrapper><a style={{textDecoration:"none",  color:"white" }} href="#"><FaXTwitter className='social-icons'/></a></IconWrapper>
+          <IconWrapper><a style={{textDecoration:"none",  color:"white" }} href="https://x.com/nextinterviewai"><FaXTwitter className='social-icons'/></a></IconWrapper>
           <IconWrapper><a style={{textDecoration:"none", color:"white" }} href="https://www.facebook.com/share/1AbCajxfBz/"><FaYoutube className='social-icons'/></a></IconWrapper>
         </SocialIcons>
       

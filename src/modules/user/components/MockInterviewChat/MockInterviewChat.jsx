@@ -17,6 +17,7 @@ import {
   CharCount,
   SendButton,
   InputTab,
+  InputWrapper,
 } from "./MockInterviewChat.style";
 import { LuSend } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -26,10 +27,10 @@ import UserHeader from "../../../../components/UserHeader/UserHeader";
 import HeaderWithLogo from "../../../../components/HeaderWithLogo/HeaderWithLogo";
 import { message as antdMessage } from "antd";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
- 
+
 const EXTERNAL_API_BASE =
   "https://nextinterview.ai/fastapi/mock";
- 
+
 const MockInterview = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -71,13 +72,12 @@ const MockInterview = () => {
     }
     setProcessingData(false);
   }, [session_id, initialQuestion]);
- 
-  // Timer logic (unchanged)
+
   useEffect(() => {
     setTimeLeft(900);
     setIsRunning(true);
   }, []);
- 
+
   useEffect(() => {
     let timer;
     if (isRunning && timeLeft > 0) {
@@ -94,27 +94,25 @@ const MockInterview = () => {
     }
     return () => clearInterval(timer);
   }, [isRunning, timeLeft]);
- 
+
   const countWords = (text) => {
     return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
   };
- 
+
   const handleInputChange = (e) => {
     const newText = e.target.value;
     if (countWords(newText) <= MAX_WORDS) {
       setInput(newText);
     }
   };
- 
-  // Add this handler
+
   const handleInputKeyDown = (e) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
- 
-  // Handle sending an answer or clarification
+
   const handleSend = async () => {
     if (!input.trim() || !session_id) return;
     setProcessingData(true);
@@ -132,20 +130,17 @@ const MockInterview = () => {
           clarification: clarificationMode,
         }),
       });
- 
-      console.log("Response:", response);
+
       if (!response.ok) {
         if (response.status === 404) setError("Session not found.");
-        else if (response.status === 422)
-          setError("Invalid input. Please try again.");
+        else if (response.status === 422) setError("Invalid input. Please try again.");
         else setError("Server error. Please try again later.");
         setProcessingData(false);
         return;
       }
+
       const data = await response.json();
- 
-      console.log("Data:", data);
-      // Add user message
+
       setMessages((prev) => [
         ...prev,
         {
@@ -159,13 +154,10 @@ const MockInterview = () => {
         },
       ]);
       setInput("");
- 
-      if (data?.ready_to_code === true) {
-        setReadyToCode(true);
-      } else {
-        setReadyToCode(false);
-      }
-      // Add AI response
+
+      if (data?.ready_to_code) setReadyToCode(true);
+      else setReadyToCode(false);
+
       if (data.question) {
         setMessages((prev) => [
           ...prev,
@@ -180,24 +172,13 @@ const MockInterview = () => {
           },
         ]);
       }
- 
-      if(data.code_stub){
-        setCode(data.code_stub);
- 
-        console.log("Code:", code);
-      }
- 
-      if (data.language) {
-        setSelectLang(data.language);
-        console.log("Language:", selectLang);
-      }
-      // Question loop logic
+
+      if (data.code_stub) setCode(data.code_stub);
+      if (data.language) setSelectLang(data.language);
+
       if (!clarificationMode) {
-        if (questionCount < 4) {
-          setQuestionCount((prev) => prev + 1);
-        } else {
-          setClarificationMode(true);
-        }
+        if (questionCount < 4) setQuestionCount((prev) => prev + 1);
+        else setClarificationMode(true);
       }
     } catch {
       setError("Failed to send answer. Please try again.");
@@ -205,164 +186,155 @@ const MockInterview = () => {
       setProcessingData(false);
     }
   };
- 
-  // Handle end interview and fetch feedback
-const handleEndInterview = async () => {
-  if (!session_id) return;
-  setProcessingData(true);
-  setError("");
-  try {
-    const response = await fetch(
-      `${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`,
-      {
+
+  const handleEndInterview = async () => {
+    if (!session_id) return;
+    setProcessingData(true);
+    setError("");
+    try {
+      const response = await fetch(`${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
+      });
+
+      if (!response.ok) {
+        setError("Failed to fetch feedback. Please try again.");
+        setProcessingData(false);
+        return;
       }
-    );
 
-    if (!response.ok) {
+      const data = await response.json();
+      setFeedback(data);
+
+      navigate("/user/interview/interview-feedback", {
+        state: {
+          feedback: data,
+          metrics: data.metrics,
+          summary: data.summary,
+          base_question: data.base_question,
+          questions: data.questions,
+        },
+      });
+    } catch {
       setError("Failed to fetch feedback. Please try again.");
+    } finally {
       setProcessingData(false);
-      return;
     }
+  };
 
-    const data = await response.json();
-    setFeedback(data);
-    console.log("Feedback:", data);
-
-    // Navigate after data is successfully fetched
-    navigate("/user/interview/interview-feedback", {
-      state: {
-        feedback: data,
-        metrics: data.metrics,
-        summary: data.summary,
-        base_question: data.base_question,
-        questions: data.questions,
-      },
-    });
-
-  } catch {
-    setError("Failed to fetch feedback. Please try again.");
-  } finally {
-    setProcessingData(false);
-  }
-};
-
- 
   return (
     <>
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <HeaderWithLogo />
-        <h2 style={{ margin: "0" }}>MOCK INTERVIEW</h2>
-        <UserHeader />
-      </div>
-      </div>
- 
-      <div style={{ display:"flex", height:"calc(100vh - 108px)"}}>
-      <div style ={{width: showCodeEditor ? "60%" : "100%", transsition: "width 0.3s", overflowY:"auto"}}>
- 
-      <Container>
-        <Header>
-          <TimerBtn isRunning={isRunning}>
-            <IoHourglassOutline />{" "}
-            {timeLeft !== null
-                ? `${Math.floor(timeLeft / 60).toString().padStart(2, '0')}:${(timeLeft % 60).toString().padStart(2, '0')} mins`
-                : "15:00 mins"}
-          </TimerBtn>
-          <hr style={{ margin: "0" }} />
-          <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
-        </Header>
- 
-        {initialQuestion && (
-    <div
-      style={{
-        backgroundColor: "#f5f5f5",
-        padding: "20px",
-        fontWeight: "bold",
-        fontSize: "1rem",
-        margin: "20px",
-        borderRadius: "8px",
-        paddingTop:"20px"
-      }}
-    >
-      Problem Statement:
-      <br />
-      <p style={{ fontSize: "16px", fontWeight: "600" }} dangerouslySetInnerHTML={{ __html: baseQuestion }}/>
-    </div>
-  )}
- 
-        <Conversation> Conversation </Conversation>
- 
-        <ChatBox>
-          {messages.map((msg, index) => (
-            <Message key={index} sender={msg.sender}>
-              <Profile>
-                <Sender sender={msg.sender}>{msg.sender}</Sender>
-                <span className="realtime">{msg.time}</span>
-              </Profile>
-              <Text>{msg.text}</Text>
-            </Message>
-          ))}
-          {processingData && (
-            <>
-              <Img src={processing} alt="pr" />
-              Processing
-            </>
-          )}
-          {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
-        </ChatBox>
-        <InputBox>
-        <InputTab>
-          <Input
-            type="textarea"
-            placeholder={
-              clarificationMode
-                ? "Ask for clarification or feedback..."
-                : "Enter your response here..."
-            }
-            value={input}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-            disabled={processingData || !!feedback}
-          />
-          {!feedback && (
-            <Sendicon onClick={handleSend}>
-              <LuSend />
-            </Sendicon>
-          )}
-          <CharCount>
-            {countWords(input)} / {MAX_WORDS}
-          </CharCount>
-          </InputTab>
-          {readyToCode && (
-  <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>
-    Ready to code
-  </SendButton>
-)}
- 
-        </InputBox>
-      </Container>
-      </div>
- 
-      {showCodeEditor && (
-        <div style={{width: "40%", height: "100%"}}>
-          <ReadyToCode
-          code={code}
-          setCode={setCode}
-          selectLang={selectLang}
-          setSelectLang={setSelectLang}
-          output={output}
-          setOutput={setOutput}
-          showCodeEditor={showCodeEditor}
-          />
-         
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <HeaderWithLogo />
+          <h2 style={{ margin: "0" }}>MOCK INTERVIEW</h2>
+          <UserHeader />
         </div>
-      )}
-    </div>
+      </div>
+
+      <div style={{ display: "flex", height: "calc(100vh - 108px)" }}>
+        <div style={{ width: showCodeEditor ? "60%" : "100%", transition: "width 0.3s", overflowY: "auto" }}>
+          <Container>
+            <Header>
+              <TimerBtn isRunning={isRunning}>
+                <IoHourglassOutline />
+                {timeLeft !== null
+                  ? `${Math.floor(timeLeft / 60).toString().padStart(2, "0")}:${(timeLeft % 60)
+                      .toString()
+                      .padStart(2, "0")} mins`
+                  : "15:00 mins"}
+              </TimerBtn>
+              <hr style={{ margin: "0" }} />
+              <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
+            </Header>
+
+            {initialQuestion && (
+              <div
+                style={{
+                  backgroundColor: "#f5f5f5",
+                  padding: "20px",
+                  fontWeight: "400",
+                  fontSize: "1rem",
+                  margin: "20px",
+                  borderRadius: "8px",
+                }}
+              >
+                Problem Statement:
+                <br />
+                <p style={{ fontSize: "16px", fontWeight: "400" }} dangerouslySetInnerHTML={{ __html: baseQuestion }} />
+              </div>
+            )}
+
+            <Conversation> Conversation </Conversation>
+
+            <ChatBox>
+              {messages.map((msg, index) => (
+                <Message key={index} sender={msg.sender}>
+                  <Profile>
+                    <Sender sender={msg.sender}>{msg.sender}</Sender>
+                    <span className="realtime">{msg.time}</span>
+                  </Profile>
+                  <Text>{msg.text}</Text>
+                </Message>
+              ))}
+              {processingData && (
+                <>
+                  <Img src={processing} alt="processing" />
+                  Processing
+                </>
+              )}
+              {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
+            </ChatBox>
+
+            <InputBox>
+              <InputTab>
+                <InputWrapper>
+                  <Input
+                    type="textarea"
+                    placeholder={
+                      clarificationMode ? "Ask for clarification or feedback..." : "Enter your response here..."
+                    }
+                    value={input}
+                    onChange={handleInputChange}
+                    onKeyDown={handleInputKeyDown}
+                    disabled={processingData || !!feedback}
+                  />
+                </InputWrapper>
+                {!feedback && (
+                  <Sendicon onClick={handleSend}>
+                    <LuSend />
+                  </Sendicon>
+                )}
+                <CharCount>
+                  {countWords(input)} / {MAX_WORDS}
+                </CharCount>
+              </InputTab>
+
+              {readyToCode && (
+                <SendButton show={showCodeEditor} onClick={() => setShowCodeEditor(true)}>
+                  Ready to code
+                </SendButton>
+              )}
+            </InputBox>
+          </Container>
+        </div>
+
+        {showCodeEditor && (
+          <div style={{ width: "40%", height: "100%" }}>
+            <ReadyToCode
+              code={code}
+              setCode={setCode}
+              selectLang={selectLang}
+              setSelectLang={setSelectLang}
+              output={output}
+              setOutput={setOutput}
+              showCodeEditor={showCodeEditor}
+            />
+          </div>
+        )}
+      </div>
     </>
   );
 };
- 
+
 export default MockInterview;
- 

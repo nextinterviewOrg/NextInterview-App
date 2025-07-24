@@ -177,6 +177,7 @@ const UserModuleTopic = () => {
               feedback_order: 1,
               moduleId: moduleResponse.data._id,
             })
+            console.log("🚀 Feedback statusData (order 2):", statusData);
             if (statusData.found === false) {
 
               /// logic for feedback
@@ -196,24 +197,31 @@ const UserModuleTopic = () => {
           if (item.moduleCode === moduleResponse.data.module_code) {
             // setTotalCompletedTopics(item.topicStats.completed);
             console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-            if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-              const statusData = await checkUserFeedBackExists({
-                userId: userData.data.user._id,
-                feedback_order: 2,
-                moduleId: moduleResponse.data._id,
-              })
-              console.log("statusData", statusData);
-              if (statusData.found === false) {
+           const feedback1 = await checkUserFeedBackExists({
+  userId: userData.data.user._id,
+  feedback_order: 1,
+  moduleId: moduleResponse.data._id,
+});
 
-                /// logic for feedback
-                setShowFeedbackModal(true);
-                setFeedbackOrder(2);
-                setReturnUrl(`/user/learning/`);
-              }
+const feedback2 = await checkUserFeedBackExists({
+  userId: userData.data.user._id,
+  feedback_order: 2,
+  moduleId: moduleResponse.data._id,
+});
+
+console.log("Feedback order 1:", feedback1);
+console.log("Feedback order 2:", feedback2);
+
+// ✅ Only show feedback if BOTH are missing
+if (!feedback1.found && !feedback2.found) {
+  setShowFeedbackModal(true);
+  setFeedbackOrder(2);
+  setReturnUrl(`/user/learning/`);
+}
 
             }
           }
-        }));
+        ));
         // navigate(`/user/learning`);
         return
       }
@@ -520,7 +528,7 @@ const UserModuleTopic = () => {
                 feedback_order: 1,
                 moduleId: moduleResponse.data._id,
               })
-              console.log("statusData", statusData);
+console.log("🚀 Feedback statusData (order 1):", statusData);
               if (statusData?.found === false) {
 
                 /// logic for feedback
