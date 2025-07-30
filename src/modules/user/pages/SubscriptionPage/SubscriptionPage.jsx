@@ -5,15 +5,13 @@ import {
     cancelSubscription,
     getAllSubscription,
     getUserSubscription,
-
+    upgradeSubscription
 } from "../../../../api/subscriptionApi";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useClerk } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
-import { useClerk } from "@clerk/clerk-react";
-import { upgradeSubscription } from "../../../../api/subscriptionApi";
 import { useNavigate } from "react-router-dom";
 
-export default function SubsSubscriptionPage() {
+export default function SubscriptionPage() {
     const [subscriptionPlan, setSubscriptionPlan] = useState([]);
     const [userSubscription, setUserSubscription] = useState(null);
     const [userId, setUserId] = useState(null);
@@ -23,131 +21,153 @@ export default function SubsSubscriptionPage() {
     const { signOut } = useClerk();
     const [action, setAction] = useState(false);
     const navigate = useNavigate();
+
     useEffect(() => {
-        const apiCaller = async () => {
+        const fetchData = async () => {
             try {
                 setIsLoading(true);
                 if (!user) return;
-                if (user && user.id) {
-                    console.log("Clerk user ID:", user.id);
-                }
 
-                const [Plans, userData] = await Promise.all([
+                const [plansResponse, userResponse] = await Promise.all([
                     getAllSubscription(),
                     getUserByClerkId(user.id)
                 ]);
-                console.log("user subscription", Plans);
 
-                setUserId(userData?.data?.user?._id);
+                // Filter only active plans
+                const activePlans = (plansResponse.plans || []).filter(plan => plan.isActive);
+                setSubscriptionPlan(activePlans);
 
-                if (userData?.data?.user?._id) {
-                    const userSubscriptionData = await getUserSubscription(userData.data.user._id);
-                    console.log("user subscription", userSubscriptionData);
-                    setUserSubscription(userSubscriptionData);
+                if (userResponse?.data?.user?._id) {
+                    setUserId(userResponse.data.user._id);
+                    const subscriptionResponse = await getUserSubscription(userResponse.data.user._id);
+                    setUserSubscription(subscriptionResponse);
                 }
-
-                setSubscriptionPlan(Plans.plans || []);
             } catch (err) {
-                console.error(err);
-                setError("Failed to load subscription data");
+                console.error("Failed to load subscription data:", err);
+                setError("Failed to load subscription data. Please try again.");
             } finally {
                 setIsLoading(false);
             }
         };
 
-        apiCaller();
+        fetchData();
     }, [user, action]);
 
-const handleSubscribe = async (planId) => {
-  try {
-    if (!userId) throw new Error("User not found");
-    if (!planId || planId === "undefined") throw new Error("Plan ID missing or invalid");
+    const handleSubscribe = async (planId) => {
+        try {
+            console.log("Attempting subscription with plan:", planId);
+            
+            // Validate plan exists and is active
+            const selectedPlan = subscriptionPlan.find(plan => 
+                plan.razorpay_plan_id === planId && plan.isActive
+            );
+            
+            if (!selectedPlan) {
+                throw new Error("Selected plan is not available or inactive");
+            }
 
-    const response = await upgradeSubscription(userId, planId);
+            if (!userId) throw new Error("User not found");
+            
+            const response = await upgradeSubscription(userId, planId);
+            console.log("Subscription response:", response);
 
-    if (response?.success) {
-      alert("Subscribed successfully!");
-      setAction(prev => !prev);
-    } else {
-      alert(response?.message || "Failed to subscribe.");
-    }
-  } catch (error) {
-    console.error("Subscription error:", error);
-    alert(error?.response?.data?.message || error.message || "Subscription failed.");
-  }
-};
+            if (response?.success) {
+                alert("Subscription upgraded successfully!");
+                setAction(prev => !prev); // Trigger re-fetch
+                navigate("/user/subscription"); // Redirect to subscription info
+            } else {
+                throw new Error(response?.message || "Failed to process subscription");
+            }
+        } catch (error) {
+            console.error("Subscription error:", error);
+            alert(error.response?.data?.message || error.message || "Subscription failed. Please try again.");
+        }
+    };
 
     const handleUnsubscribe = async () => {
         try {
             if (!userId) return;
+            
+            const confirmCancel = window.confirm("Are you sure you want to cancel your subscription?");
+            if (!confirmCancel) return;
 
             const response = await cancelSubscription(userId);
-            if (response) {
-                setAction(prev => !prev);
+            if (response?.success) {
+                alert("Subscription cancelled successfully");
+                setAction(prev => !prev); // Trigger re-fetch
+            } else {
+                throw new Error(response?.message || "Failed to cancel subscription");
             }
         } catch (err) {
-            console.error(err);
-            alert("Failed to cancel subscription");
+            console.error("Cancellation error:", err);
+            alert(err.response?.data?.message || err.message || "Failed to cancel subscription");
         }
     };
 
     if (isLoading) {
-        return <div>Loading...</div>;
+        return <div className="loading">Loading subscription information...</div>;
     }
 
     if (error) {
-        return <div>{error}</div>;
+        return <div className="error">{error}</div>;
     }
 
     return (
         <div style={{ display: "flex", flexDirection: "column" }}>
             <UserSubscriptionWrapper>
+                <div className="subscription-header">
+                    <h2>Available Subscription Plans</h2>
+                    {userSubscription?.status === "active" && (
+                        <p className="current-plan">Your current plan: {userSubscription.plan?.name}</p>
+                    )}
+                </div>
+
                 <div className="subscriptionCardContainer">
                     {subscriptionPlan.length > 0 ? (
-                        subscriptionPlan.map((cardData, index) => (
+                        subscriptionPlan.map((cardData) => (
                             <SubscriptionCard
-                                key={cardData._id || index}
+                                key={cardData._id}
                                 planId={cardData._id}
-                                currentPlanId={userSubscription?.plan?.isActive ?
-                                    userSubscription.plan._id : ""}
-                                title={cardData?.name}
-                                duration={cardData?.duration}
+                                currentPlanId={userSubscription?.plan?._id || ""}
+                                title={cardData.name}
                                 price={cardData.amount}
                                 interval={cardData.interval}
                                 currency={cardData.currency}
                                 features={cardData.features || []}
-                                isSuggested={userSubscription?.status === "active"}
+                                isActive={cardData.isActive}
+                                isCurrentPlan={
+                                    userSubscription?.status === "active" && 
+                                    userSubscription.plan?.razorpay_plan_id === cardData.razorpay_plan_id
+                                }
                                 onSubscribe={handleSubscribe}
                                 onCancel={handleUnsubscribe}
-                                showSubscription={userSubscription?.status === "active"}
-                                handleUnsubscribe={handleUnsubscribe}
                             />
                         ))
                     ) : (
-                        <div>No subscription plans available</div>
+                        <div className="no-plans">No active subscription plans available</div>
                     )}
                 </div>
-            </UserSubscriptionWrapper>
-            <div style={{ display: "flex", justifyContent: "center" }}>
-                {
-                    userSubscription?.status === "active" ?
-                        <button
-                            className="subscribe-button"
-                            onClick={() => { navigate("/user") }}
-                            style={{ marginTop: "20px", height: "40px", width: "100px", color: "white", background: "#007c91", border: "none", borderRadius: "5px" }}
-                        >Home</button>
-
-                        :
-                        <button
-                            className="subscribe-button"
-                            onClick={() => { signOut() }}
-                            style={{ marginTop: "20px", height: "40px", width: "100px", color: "white", background: "#007c91", border: "none", borderRadius: "5px" }}
-                        >Logout</button>
 
 
-                }
-
+            <div className="action-buttons">
+                {userSubscription?.status === "active" ? (
+                    <button
+                        className="nav-button"
+                        onClick={() => navigate("/user")}
+                    >
+                        Back to Dashboard
+                    </button>
+                ) : (
+                    <button
+                        className="nav-button"
+                        onClick={() => signOut()}
+                    >
+                        Logout
+                    </button>
+                )}
             </div>
+             </UserSubscriptionWrapper>
         </div>
+                   
     );
 }
