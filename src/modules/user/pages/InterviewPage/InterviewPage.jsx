@@ -3,7 +3,7 @@ import { LuHeart } from "react-icons/lu";
 import theme from "../../../../theme/Theme"; // Adjust the path according to your structure
 import {
   Container,
-  Details,
+  // Details,
   Card,
   CardContent,
   StartButton,
@@ -19,6 +19,7 @@ const InterviewPage = () => {
   useEffect(() => {
     const apiCaller = async () => {
       const response = await getModule();
+      console.log("Raw API response:", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         title: item.moduleName,
@@ -26,7 +27,9 @@ const InterviewPage = () => {
         difficulty: "Easy Level",
         totalTime: "10h",
         image: item.imageURL,
+        moduleCode: item.module_code,
       }));
+      console.log("Mapped courses with moduleCode:", data);
       setCourses(data);
     };
     apiCaller();
@@ -45,7 +48,7 @@ const InterviewPage = () => {
         {courses.map((course) => (
           <Card key={course.id}>
             <div style={{ position: "relative", display: "inline-block" }}>
-              <button
+              {/* <button
                 onClick={() => toggleLike(course.id)}
                 className="like-button"
               >
@@ -54,7 +57,7 @@ const InterviewPage = () => {
                     likedCourses[course.id] ? "liked" : ""
                   }`}
                 />
-              </button>
+              </button> */}
               <img
                 src={course.image}
                 alt={course.title}
@@ -63,13 +66,13 @@ const InterviewPage = () => {
             </div>
             <CardContent>
               <Title>{course.title}</Title>
-              <Details>
+              {/* <Details>
                 <p> {course.level} </p>
                 <div className="dot"></div>
                 <p> {course.difficulty}</p>
                 <div className="dot"></div>
                 <p> {course.totalTime}</p>
-              </Details>
+              </Details> */}
               <StartButton onClick={() => setSelectedCourse(course)}>
                 Start Now
               </StartButton>
@@ -85,6 +88,7 @@ const InterviewPage = () => {
           course={selectedCourse}
           onClose={() => setSelectedCourse(null)}
           title={courses.find((c) => c.id === selectedCourse.id)?.title}
+          moduleCode={selectedCourse.moduleCode}
         />
       )}
     </>

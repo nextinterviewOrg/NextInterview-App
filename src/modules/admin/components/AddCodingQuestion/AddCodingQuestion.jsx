@@ -544,7 +544,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                         /> Question Bank Question
                     </FormLabel>
                 </FormGroup>
-                <FormGroup>
+                {/* <FormGroup>
                     <FormLabel>Interview Topic</FormLabel>
                     <Select
                         style={{ width: '100%' }}
@@ -566,7 +566,7 @@ const AddCodingQuestion = ({ onClose, onChallengeAdded }) => {
                         value={formData.topicId}
                         onChange={(e) => { setFormData({ ...formData, topicId: e }); }}
                     />
-                </FormGroup>
+                </FormGroup> */}
                 <FormGroup>
                     <FormLabel>
                         <input

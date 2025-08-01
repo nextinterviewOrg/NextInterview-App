@@ -35,10 +35,19 @@ import {
   TryHarderLink,
   Footer,
   FeedbackButton,
-  FeedBacks
+  FeedBacks,
+  FeedbackIconWrapper,
+  FeedbackPopup,
+  FeedbackIcon,
+  FeedbackContent,
+  FeedbackTitle,
+  FeedbackMessage,
+  FeedbackCloseButton
 } from "./QBCodingPage.Styles";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
-import { IoChevronBackSharp, IoClose } from "react-icons/io5";
+import { IoChevronBackSharp, IoClose, IoCloseSharp } from "react-icons/io5";
+import { BsHandThumbsUpFill, BsHandThumbsDownFill } from "react-icons/bs";
+import { SlLike, SlDislike } from "react-icons/sl";
 import HintChallenges from "../../../admin/components/Challenges/HintChallenges/HintChallenges";
 import { getQuestionBankById, tryHarderQuestionBank } from "../../../../api/questionBankApi";
 import { addQuestionToQuestionProgressTIYQB } from "../../../../api/tiyQbCodingQuestionProgressApi";
@@ -46,11 +55,9 @@ import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { notification } from "antd";
 import Editor from "@monaco-editor/react";
-import { VscInfo } from "react-icons/vsc";
-import { PiTimer } from "react-icons/pi";
+import { VscInfo, VscDebugRestart } from "react-icons/vsc";
+import { PiTimer, PiStarFour } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
-import { PiStarFour, PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi";
-import { VscDebugRestart } from "react-icons/vsc";
 import { addQuestionToQuestionProgress } from "../../../../api/userMainQuestionBankProgressApi";
 
 const QBCodingPage = () => {
@@ -74,6 +81,14 @@ const QBCodingPage = () => {
   const [activeTab, setActiveTab] = useState("mycode");
   const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  const [isHelpful, setIsHelpful] = useState(null);
+  const [likeAnimation, setLikeAnimation] = useState(false);
+  const [dislikeAnimation, setDislikeAnimation] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+
   const [timeLeft, setTimeLeft] = useState(() => {
     const savedTime = localStorage.getItem(`challengeTimer_${id}`);
     const parsedTime = savedTime ? parseInt(savedTime) : 60;
@@ -81,20 +96,17 @@ const QBCodingPage = () => {
   });
   const [runClicked, setRunClicked] = useState(false);
 
-  // Get question ID from location.state
   useEffect(() => {
     if (location.state?.questionID) {
       setQuestionID(location.state.questionID);
     }
   }, [location.state]);
 
-  // Fetch user ID by Clerk ID
   useEffect(() => {
     const fetchUserId = async () => {
       if (user?.id) {
         try {
           const res = await getUserByClerkId(user.id);
-          console.log("Fetched user ID:", res);
           if (res.success) {
             setUserId(res.data.user._id);
           }
@@ -106,7 +118,6 @@ const QBCodingPage = () => {
     fetchUserId();
   }, [user]);
   useEffect(() => {
-
     if (runClicked && output?.trim() === question?.output?.trim()) {
       setShowOptimiseBtn(true);
       // fetchOptimizedCode();
@@ -115,14 +126,12 @@ const QBCodingPage = () => {
     }
   }, [output, runClicked]);
 
-  // Fetch question details
   useEffect(() => {
     const fetchQuestion = async () => {
       if (!questionID) return;
       setLoading(true);
       try {
         const res = await getQuestionBankById(questionID);
-        console.log("Fetched question:", res);
         if (res.success && res.data) {
           const q = res.data;
           setQuestion({
@@ -276,15 +285,29 @@ const QBCodingPage = () => {
     }
   };
 
+  const handleSummaryFeedback = (isHelpful) => {
+    if (isHelpful) {
+      setLikeAnimation(true);
+      setTimeout(() => setLikeAnimation(false), 1000);
+    } else {
+      setDislikeAnimation(true);
+      setTimeout(() => setDislikeAnimation(false), 1000);
+    }
+    setSelectedFeedback(isHelpful);
+    setFeedbackSubmitted(true);
+    setIsHelpful(isHelpful);
+    setFeedbackMessage(`Thank you for your feedback! The summary was ${isHelpful ? 'helpful' : 'not helpful'}.`);
+    setShowFeedbackPopup(true);
+    setTimeout(() => setShowFeedbackPopup(false), 3000);
+  };
+
   const handleTryHarderQuestion = async () => {
     try {
-      console.log('Fetching harder question...');
       const response = await tryHarderQuestionBank({
         questionId: questionID,
         isTIYQuestion: false,
         isQBQuestion: true
       });
-
       if (response?.success && response?.data?._id) {
         navigate(`/user/mainQuestionBank/questionbank/${response.data._id}`);
       } else {
@@ -484,10 +507,37 @@ const QBCodingPage = () => {
                       <Footer>
                         <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink>
 
-                        <FeedBacks>
-                          <FeedbackButton><PiThumbsUpLight /> Helpful</FeedbackButton>
-                          <FeedbackButton><PiThumbsDownLight /> Not helpful</FeedbackButton>
-                        </FeedBacks>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            flexDirection: "row",
+                            alignItems: "flex-end",
+                            gap: "20px",
+                            marginRight: "20px",
+                          }}
+                        >
+                          <FeedbackButton
+                            onClick={() => handleSummaryFeedback(true)}
+                            isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}
+                            style={{ opacity: feedbackSubmitted && selectedFeedback !== true ? 0.5 : 1 }}
+                          >
+                            <FeedbackIconWrapper isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}>
+                              {feedbackSubmitted && selectedFeedback === true ? <BsHandThumbsUpFill /> : <SlLike />}
+                            </FeedbackIconWrapper>
+                            Helpful
+                          </FeedbackButton>
+                          <FeedbackButton
+                            onClick={() => handleSummaryFeedback(false)}
+                            isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}
+                            style={{ opacity: feedbackSubmitted && selectedFeedback !== false ? 0.5 : 1 }}
+                          >
+                            <FeedbackIconWrapper isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}>
+                              {feedbackSubmitted && selectedFeedback === false ? <BsHandThumbsDownFill /> : <SlDislike />}
+                            </FeedbackIconWrapper>
+                            Not helpful
+                          </FeedbackButton>
+                        </div>
                       </Footer>
                     </CardContainer>
                   </>
@@ -524,6 +574,22 @@ const QBCodingPage = () => {
               </ButtonGroup>
             </ModalContent>
           </ModalOverlay>
+        )}
+
+        {/* Feedback Popup */}
+        {showFeedbackPopup && (
+          <FeedbackPopup>
+            <FeedbackIcon isHelpful={isHelpful}>
+              {isHelpful ? '✓' : '✕'}
+            </FeedbackIcon>
+            <FeedbackContent>
+              <FeedbackTitle>Feedback Received</FeedbackTitle>
+              <FeedbackMessage>{feedbackMessage}</FeedbackMessage>
+            </FeedbackContent>
+            <FeedbackCloseButton onClick={() => setShowFeedbackPopup(false)}>
+              <IoCloseSharp />
+            </FeedbackCloseButton>
+          </FeedbackPopup>
         )}
       </Wrapper>
     </>

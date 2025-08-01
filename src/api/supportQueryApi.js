@@ -15,7 +15,7 @@ export const getSupportQueryById = async (id) => {
         return response.data;
     } catch (error) {
         console.log(error);
-        throw error;
+        throw error; 
     }
 };
 
@@ -48,3 +48,15 @@ export const getSupportQueryStats = async () => {
         throw error;
     }
 };
+
+export const sendAdminMessageToQuery = async (queryId, messageText) => {
+    try {
+      const res = await api.post(`/supportQuery/support/${queryId}/admin-message`, {
+        message: messageText,
+      });
+      return res.data;
+    } catch (error) {
+      console.error("Failed to send admin reply:", error);
+      throw error;
+    }
+  };

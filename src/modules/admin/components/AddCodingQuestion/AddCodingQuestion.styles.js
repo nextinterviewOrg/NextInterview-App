@@ -31,7 +31,7 @@ export const FormTitle = styled.h2`
 `;
 
 export const FormGroup = styled.div`
-  margin-bottom: 16px;
+  // margin-bottom: 16px;
 `;
 
 export const FormLabel = styled.label`

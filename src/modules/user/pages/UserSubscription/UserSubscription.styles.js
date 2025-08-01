@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const UserSubscriptionWrapper = styled.div`
+export const UserSubscriptiontt = styled.div`
   margin-left: 40px;
   display: flex;
   gap: 10px;
@@ -11,7 +11,7 @@ export const UserSubscriptionWrapper = styled.div`
 
   .subscriptionCardContainer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     gap: 20px;
     justify-content: space-between;
     flex-wrap: wrap;

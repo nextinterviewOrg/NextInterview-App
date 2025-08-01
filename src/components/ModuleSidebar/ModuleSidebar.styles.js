@@ -87,7 +87,7 @@ export const ModuleSidebarContainer = styled.div`
   .progress-section {
     padding: 15px;
     text-align: center;
-    margin-bottom: 20px;
+    // margin-bottom: 20px;
   }
 
   .progress-section h3 {

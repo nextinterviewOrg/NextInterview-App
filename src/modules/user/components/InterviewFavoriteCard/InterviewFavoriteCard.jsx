@@ -26,9 +26,9 @@ const InterviewFavoriteCard = ({
           <p><strong>Topic:</strong> {topicName}</p>
 
           {allSubtopics?.length > 0 && (
-            <div className="subtopics-list">
+            <div>
               <strong>Subtopics:</strong>
-              <ul>
+              <ul className="subtopics-list">
                 {allSubtopics.map((sub, idx) => (
                   <li key={idx}>{sub}</li>
                 ))}

@@ -19,7 +19,8 @@ import AIicon from "../../../../assets/SampleInterviewIcon.svg"
 
 const EXTERNAL_API_BASE = "https://nextinterview.ai/fastapi/mock";
 
-const StartInterview = ({ isOpen, onClose, title }) => {
+const StartInterview = ({ isOpen, onClose, title, moduleCode }) => {
+  console.log("Recieved module codeeeeeeeeee", moduleCode);
   const [topics, setTopics] = useState([]);
   const [selectedTopic, setSelectedTopic] = useState("");
   const [mode, setMode] = useState("chat");
@@ -69,17 +70,17 @@ const StartInterview = ({ isOpen, onClose, title }) => {
   }, [isLoaded, user]);
 
   const handleStartInterview = async () => {
-
+  console.log("Starting interview with moduleCode:", moduleCode); 
     const userId = await getUserByClerkId(user.id);
     const user_id = userId.data.user._id;
-    if (!selectedTopic || !userName) return;
+    if (!moduleCode || !userName) return;
     setLoading(true);
     setError("");
     try {
       const response = await fetch(`${EXTERNAL_API_BASE}/init`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: selectedTopic, user_id: user_id }),
+        body: JSON.stringify({ topic: moduleCode, user_id: user_id }),
       });
       if (!response.ok) {
         throw new Error(`Failed to start interview: ${response.status}`);
@@ -94,7 +95,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
         code_stub: data.code_stub,
         tags: data.tags,
         first_follow_up: data.first_follow_up,
-        topic: selectedTopic,
+        topic: moduleCode,
         userName,
       };
       if (mode === "voice") {
@@ -116,7 +117,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
         <small>Uses AI <img src={AIicon} alt="AI" width="15px" height="15px" style= {{marginLeft: "5px"}} /></small>
         <ModalContent>
           <Heading> {title}</Heading>
-          <div style={{ border: "1px solid #F5F5F5", padding: "14px", borderRadius: "5px", display: "flex", flexDirection: "column", gap: "10px"}}>
+          {/* <div style={{ border: "1px solid #F5F5F5", padding: "14px", borderRadius: "5px", display: "flex", flexDirection: "column", gap: "10px"}}>
           <label>Select Topic</label>
           <Dropdown
             value={selectedTopic}
@@ -130,7 +131,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
               </option>
             ))}
           </Dropdown>
-          </div>
+          </div> */}
 
                     <div style={{ border: "1px solid #F5F5F5", padding: "14px", borderRadius: "5px", display: "flex", flexDirection: "column", gap: "10px"}}>
           <label>Select Interview Mode</label>
@@ -158,7 +159,7 @@ const StartInterview = ({ isOpen, onClose, title }) => {
           </RadioGroup>
           </div>
           {error && <div style={{ color: "red", marginTop: 8 }}>{error}</div>}
-          <Button onClick={handleStartInterview} disabled={!selectedTopic || !userName || loading}>
+          <Button onClick={handleStartInterview} disabled={!moduleCode || !userName || loading}>
             {loading ? "Starting..." : "+ Start Interview"}
           </Button>
         </ModalContent>
@@ -172,6 +173,7 @@ StartInterview.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   title: PropTypes.string,
+  moduleCode: PropTypes.string.isRequired,
 };
 
 export default StartInterview;

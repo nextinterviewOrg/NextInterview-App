@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { FiEdit } from "react-icons/fi";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import AddChallenge from "../../components/Challenges/AddChallenge/AddChallenges";
-import { getChallenges } from "../../../../api/challengesApi";
 import EditChallenge from "../../components/Challenges/EditChallenge/EditChallenge";
+import DeleteModule from "../../components/DeleteModule/DeleteModule"; // ✅ Import your confirmation modal
+import {
+  getChallenges,
+  softdeleteChallenges
+} from "../../../../api/challengesApi";
 import {
   Container,
   TableContainer,
@@ -18,9 +23,9 @@ import {
   StatusMessage,
   LoadingMessage
 } from "./Challenges.styles";
+import { message } from "antd";
 
 const Challenges = () => {
-  // State management
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [currentChallenge, setCurrentChallenge] = useState(null);
@@ -30,15 +35,16 @@ const Challenges = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [challengeToDelete, setChallengeToDelete] = useState(null);
 
-  // Fetch challenges from API
   const fetchChallenges = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getChallenges();
-      console.log("All challenegs from admin side", response.data);
-      setChallenges(response.data);
-      setFilteredChallenges(response.data);
+      const filtered = response.data.filter(ch => !ch.isDeleted);
+      setChallenges(filtered);
+      setFilteredChallenges(filtered);
       setError(null);
     } catch (err) {
       setError(err.message || "Failed to fetch challenges");
@@ -49,12 +55,10 @@ const Challenges = () => {
     }
   }, []);
 
-  // Initial data load
   useEffect(() => {
     fetchChallenges();
   }, [fetchChallenges]);
 
-  // Filter challenges based on search query
   useEffect(() => {
     if (searchQuery.trim() === "") {
       setFilteredChallenges(challenges);
@@ -66,7 +70,6 @@ const Challenges = () => {
     }
   }, [searchQuery, challenges]);
 
-  // Modal handlers
   const handleOpenAddModal = () => setShowAddModal(true);
   const handleCloseAddModal = () => setShowAddModal(false);
 
@@ -80,7 +83,6 @@ const Challenges = () => {
     setCurrentChallenge(null);
   };
 
-  // Data manipulation handlers
   const handleChallengeAdded = useCallback((newChallenge) => {
     setChallenges(prev => [newChallenge, ...prev]);
     setSuccessMessage('Challenge added successfully!');
@@ -88,14 +90,36 @@ const Challenges = () => {
   }, []);
 
   const handleChallengeUpdated = useCallback((updatedChallenge) => {
-    setChallenges(prev => 
-      prev.map(challenge => 
+    setChallenges(prev =>
+      prev.map(challenge =>
         challenge._id === updatedChallenge._id ? updatedChallenge : challenge
       )
     );
     setSuccessMessage('Challenge updated successfully!');
     setTimeout(() => setSuccessMessage(null), 3000);
   }, []);
+
+  const confirmDeleteChallenge = (challengeId) => {
+    setChallengeToDelete(challengeId);
+    setShowDeleteModal(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    try {
+      await softdeleteChallenges(challengeToDelete);
+      setChallenges(prev => prev.filter(ch => ch._id !== challengeToDelete));
+      setSuccessMessage("Challenge deleted successfully!");
+      message.success("Challenge deleted successfully!");
+    } catch (error) {
+      console.error("Error deleting challenge:", error);
+      setError("Failed to delete challenge");
+      message.error("Failed to delete challenge");
+    } finally {
+      setShowDeleteModal(false);
+      setChallengeToDelete(null);
+      setTimeout(() => setSuccessMessage(null), 3000);
+    }
+  };
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -109,17 +133,17 @@ const Challenges = () => {
       {error && <StatusMessage error>{error}</StatusMessage>}
       {successMessage && <StatusMessage success>{successMessage}</StatusMessage>}
 
-      {/* Action controls */}
+      {/* Controls */}
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <AddButton onClick={handleOpenAddModal}>Add Questions</AddButton>
-        <SearchBar 
-          placeholder="Search for a Question" 
+        <SearchBar
+          placeholder="Search for a Question"
           value={searchQuery}
-          onChange={handleSearchChange} 
+          onChange={handleSearchChange}
         />
       </div>
-      
-      {/* Challenges table */}
+
+      {/* Table */}
       <TableContainer>
         <TableHeader>
           <div>Type</div>
@@ -127,26 +151,20 @@ const Challenges = () => {
           <div>Description</div>
           <div>Action</div>
         </TableHeader>
-        
+
         {filteredChallenges.length > 0 ? (
           filteredChallenges.map((item) => (
             <RowContainer key={item._id}>
-              {/* <Type>{item.programming_language}</Type> */}
-              {/* it should be questiontype/ programming langiage  */}
               <Type>{item.question_type}</Type>
-              {/* <Question><b>Question:</b>{item.QuestionText} <br /><b>Answer:</b> {item.answer}</Question> */}
-              {/* if the quuestion type is mcq then i want to show correct_option instead answer  */}
               <Question>{item.QuestionText}</Question>
-
-              {/* <Answer>{item.answer}...</Answer> */}
               <Answer>{item.question_type === 'coding' ? 'N/A' : item.description}</Answer>
-              {/* <Answer>{item.description}</Answer> */}
               <Action>
-                <IconButton 
-                  aria-label="Edit challenge"
-                  onClick={() => handleOpenEditModal(item)}
-                >
-                  <FiEdit />
+                <IconButton>
+                  <FiEdit onClick={() => handleOpenEditModal(item)} />
+                  <RiDeleteBin6Line
+                    style={{ color: 'red', marginLeft: '10px', cursor: 'pointer' }}
+                    onClick={() => confirmDeleteChallenge(item._id)}
+                  />
                 </IconButton>
               </Action>
             </RowContainer>
@@ -162,17 +180,27 @@ const Challenges = () => {
 
       {/* Modals */}
       {showAddModal && (
-        <AddChallenge 
-          onClose={handleCloseAddModal} 
+        <AddChallenge
+          onClose={handleCloseAddModal}
           onChallengeAdded={handleChallengeAdded}
         />
       )}
-
       {showEditModal && currentChallenge && (
-        <EditChallenge 
+        <EditChallenge
           challenge={currentChallenge}
           onClose={handleCloseEditModal}
           onChallengeUpdated={handleChallengeUpdated}
+        />
+      )}
+      {showDeleteModal && (
+        <DeleteModule
+          title="Delete Challenge"
+          message="Are you sure you want to delete this challenge?"
+          onCancel={() => {
+            setShowDeleteModal(false);
+            setChallengeToDelete(null);
+          }}
+          onDelete={handleDeleteConfirmed}
         />
       )}
     </Container>

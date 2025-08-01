@@ -810,7 +810,7 @@ const AddNewModule = () => {
 
               {/* QUICK REVISE POINTS */}
               <FormGroup>
-                <Label>Quickly Revise Points</Label>
+                <Label>Quick Revise Points</Label>
                 <Editor
                   apiKey={TinyMCEapiKey}
                   init={{

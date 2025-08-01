@@ -19,10 +19,14 @@ import {
   LogMessage,
   Divider,
   QueryDate,
+  QueryText,
+  // QueryHeading,
+  QueryInput,
 } from "./SupportQueryUserDetails.styles";
 import {
   getSupportQueryById,
   updateSupportQuery,
+  sendAdminMessageToQuery,
 } from "../../../../../api/supportQueryApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import ConfirmationModal from "../Confirmation/Confirmation";
@@ -38,7 +42,8 @@ const SupportQueryUserDetails = () => {
   const [closedDate, setClosedDate] = useState("Pending");
   const [querySolvedMessage, setQuerySolvedMessage] = useState("");
   const [showModal, setShowModal] = useState(false); // State for the modal visibility
-
+  const [adminReply, setAdminReply] = useState("");
+  const [sendReply, setSendReply] = useState(false); // to trigger reply effect
   useEffect(() => {
     const fetchQueryAndUserDetails = async () => {
       try {
@@ -84,6 +89,27 @@ const SupportQueryUserDetails = () => {
     fetchQueryAndUserDetails();
   }, [id]);
 
+  useEffect(() => {
+    const sendAdminReply = async () => {
+      if (!sendReply || !adminReply.trim()) return;
+
+      try {
+        const response = await sendAdminMessageToQuery(id, adminReply);
+        setQueryDetails(response.data); // update with new data
+        setAdminReply("");
+        message.success("Reply sent successfully!");
+      } catch (error) {
+        console.error("Reply send error:", error);
+        message.error("Failed to send reply.");
+      } finally {
+        setSendReply(false);
+      }
+    };
+
+    sendAdminReply();
+  }, [sendReply]); // depends only on sendReply
+
+
   const handleQueryUpdate = async () => {
     try {
       if (!queryDetails) return;
@@ -93,7 +119,7 @@ const SupportQueryUserDetails = () => {
       const updatedLog = [
         ...(queryDetails.communicationLog || []),
         {
-          date: updatedClosedDate, 
+          date: updatedClosedDate,
           time: updatedClosedDate.toLocaleTimeString(),
           message: "Query solved by admin.",
         },
@@ -102,7 +128,7 @@ const SupportQueryUserDetails = () => {
       const data = {
         status: "solved",
         communicationLog: updatedLog,
-        closed_on: updatedClosedDate, 
+        closed_on: updatedClosedDate,
       };
 
       const response = await updateSupportQuery(id, data);
@@ -126,16 +152,16 @@ const SupportQueryUserDetails = () => {
   };
 
   const handleMarkAsSolvedClick = () => {
-    setShowModal(true); 
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   const handleConfirmModal = () => {
     handleQueryUpdate();
-    setShowModal(false); 
+    setShowModal(false);
   };
 
   if (loading) return (
@@ -154,7 +180,7 @@ const SupportQueryUserDetails = () => {
       </CommunicationLog>
     </Container>
   );
-  
+
   if (error) return <p>{error}</p>;
   if (!queryDetails) return <p>No query details found.</p>;
 
@@ -196,6 +222,30 @@ const SupportQueryUserDetails = () => {
       </QueryInfoSection>
       <Divider />
 
+      <QueryText>
+        <QueryHeading>Query Reply</QueryHeading>
+        <QueryInput>
+          <textarea
+            type="text"
+            placeholder="Reply to query"
+            rows={4}
+            value={adminReply}
+            onChange={(e) => setAdminReply(e.target.value)} // <-- key fix
+          />
+        </QueryInput>
+        <button
+          style={{ marginTop: "10px" }}
+          onClick={() => {
+            if (!adminReply.trim()) {
+              message.warning("Please enter a reply before sending.");
+              return;
+            }
+            setSendReply(true); 
+          }}
+        >
+          Send Reply
+        </button>
+      </QueryText>
       <CommunicationLog>
         <QueryHeading>Communication Log</QueryHeading>
         <LogEntry
@@ -225,9 +275,9 @@ const SupportQueryUserDetails = () => {
           onClick={handleMarkAsSolvedClick}
           disabled={queryDetails.status === "solved"}
           style={{
-            color: queryDetails.status === "solved" ? "green" : "red", 
+            color: queryDetails.status === "solved" ? "green" : "red",
             backgroundColor:
-              queryDetails.status === "solved" ? "#f0fff0" : "#ffebeb", 
+              queryDetails.status === "solved" ? "#f0fff0" : "#ffebeb",
             border: "none",
             borderRadius: "4px",
             padding: "8px 16px",
