@@ -171,7 +171,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
               <thead>
                 <tr>
                   <Th></Th>
-                  <Th>Status</Th>
+                  {/* <Th>Status</Th> */}
                   <Th>Name</Th>
                   <Th>Topics Completed</Th>
                   <Th>Avg. Active Hours</Th>
@@ -194,7 +194,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                         onChange={(e) => e.stopPropagation()}
                       />
                     </Td>
-                    <Td>
+                    {/* <Td>
                       <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                         <span
                           style={{
@@ -209,7 +209,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                           {user.bellIcon ? "Restricted" : "Active"}
                         </span>
                       </span>
-                    </Td>
+                    </Td> */}
 
                     <Td>
                       <UserCell>
@@ -239,6 +239,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                       </ActiveHours>
                     </Td>
                     <Td>{user.lastActive}</Td>
+                                        <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
                     <Td>
                       <Link
                         to={`/admin/userProfile`}

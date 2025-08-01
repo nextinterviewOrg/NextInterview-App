@@ -1,5 +1,3 @@
-
-
 import styled from 'styled-components';
 import theme from '../../../../theme/Theme';
 
@@ -442,4 +440,130 @@ export const ModalButton = styled.button`
   &:hover {
     background-color: #2290ac90
   }
+`;
+
+export const FeedbackIcon = styled.div`
+  background-color: ${props => props.isHelpful ? '#4CAF50' : '#f44336'};
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 20px;
+`;
+
+export const FeedbackContent = styled.div`
+  flex: 1;
+`;
+
+export const FeedbackTitle = styled.p`
+  margin: 0;
+  font-weight: bold;
+`;
+
+export const FeedbackMessage = styled.p`
+  margin: 5px 0 0 0;
+  font-size: 14px;
+`;
+
+export const FeedbackCloseButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-left: auto;
+  color: #666;
+`;
+
+export const FeedbackButton = styled.p`
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+  transform: ${props => props.isActive ? 'scale(1.2)' : 'scale(1)'};
+  color: ${props => props.isActive ? '#2390ac' : 'inherit'};
+`;
+
+export const FeedbackIconWrapper = styled.span`
+  padding-right: 5px;
+  font-size: ${props => props.isActive ? '1.2em' : '1em'};
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const FeedbackPopup = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1000;
+  max-width: 300px;
+  animation: slideIn 0.5s ease-out;
+
+  @keyframes slideIn {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* ✅ Add this spin animation here */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+`;
+
+export const CardContainer = styled.div`
+  border: 1px solid #e1e1e1;
+  border-radius: 12px;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 20px;
+`;
+
+export const TitleforSolution = styled.h3`
+  font-size: 16px;
+  font-weight: 600;
+  margin: 12px 0;
+`;
+
+export const Paragraph = styled.p`
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 12px;
+  line-height: 1.5;
+`;
+
+export const TryHarderLink = styled.a`
+  font-size: 14px;
+  color: #007bce;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 8px;
+`;
+
+export const Footer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 20px;
+`;
+
+export const FeedBacks = styled.div`
+  display: flex;
+  gap: 16px;
 `;

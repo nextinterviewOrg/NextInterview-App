@@ -53,6 +53,7 @@ export const updateModuleById = async (id, data) => {
 export const softModuleDelete = async (id) => {
   try {
     const response = await api.delete(`/addNewModule/softDelete/${id}`);
+    console.log("asdfghjkl;'",response.data);
     return response.data;
   } catch (error) {
     console.log(error);

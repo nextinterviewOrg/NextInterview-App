@@ -180,7 +180,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if (path.includes("interview")) return "Mock Interview";
       if (path.includes("qusnstryityourself")) return "Try It Yourself";
       if (path.includes("tiyQuestion")) return "Try It Yourself";
- 
+ if (/challengeinfo\/[^/]+\/[^/]+/.test(path)) return "Challenges"; 
       // Add more routes as needed
       return "Dashboard"; // Default title
     };

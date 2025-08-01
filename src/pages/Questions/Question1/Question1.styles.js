@@ -56,7 +56,7 @@ export const Option = styled.div`
   border: 2px solid ${(props) => (props.$isSelected ? "#00b894" : "#cccccc")};
   border-radius: 8px;
   cursor: pointer;
-  background-color: ${(props) => (props.$isSelected ? "#e8f5e9" : "#ffffff")};
+  background-color: #ffffff;
   transition: all 0.3s ease;
 
   &:hover {

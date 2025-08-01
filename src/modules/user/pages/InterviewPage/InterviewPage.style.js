@@ -65,7 +65,7 @@ export const CardContent = styled.div`
 export const Title = styled.h3`
   font-family: ${theme.fonts.heading};
   color: ${theme.colors.text};
-  margin-bottom: ${theme.spacing(1)};
+  margin-bottom: ${theme.spacing(2)};
   text-align: left;
 `;
 

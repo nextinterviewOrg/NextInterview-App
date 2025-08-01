@@ -140,3 +140,13 @@ export const getTodayChallengesNextQuestion = async (userId, questionId) => {
       throw error;
   }
 }
+
+export const softdeleteChallenges =async (id) => {
+  try {
+    const response =await api.delete(`/userChallenges/softdelete/${id}`);
+    return response.data;
+  } catch (error) {
+      console.log(error);
+      throw error;
+  }
+}

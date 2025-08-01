@@ -45,46 +45,51 @@ const UserChallenges = () => {
                 const userId = userDataRes.data.user._id;
                 setUserId(userId);
 
-// Inside useEffect > loadUserDataAndChallenges
-const registeredDate = new Date(userDataRes.data.user.createdAt);
-console.log("Registered Date:", registeredDate);
+                // Inside useEffect > loadUserDataAndChallenges
+                const registeredDate = new Date(userDataRes.data.user.createdAt);
+                console.log("Registered Date:", registeredDate);
 
-// Fetch past challenges
-const challengesRes = await getPastChallengesWithUserResults(userId);
-if (challengesRes?.success && Array.isArray(challengesRes.data)) {
-    const mappedChallenges = challengesRes.data
-        .filter((challenge) => {
-            const challengeDate = challenge.challenge_date ? new Date(challenge.challenge_date) : null;
-            // Only include if challengeDate is valid and on/after registered date
-            return challengeDate && !isNaN(challengeDate) && challengeDate >= registeredDate;
-        })
-        .map((challenge) => {
-            const challengeDate = new Date(challenge.challenge_date);
-            const formattedChallengeDate = isNaN(challengeDate)
-                ? 'No date available'
-                : challengeDate.toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: 'numeric',
-                });
+                // Fetch past challenges
+                const challengesRes = await getPastChallengesWithUserResults(userId);
+                if (challengesRes?.success && Array.isArray(challengesRes.data)) {
+                    const mappedChallenges = challengesRes.data
+                        .filter((challenge) => {
+                            const challengeDate = challenge.challenge_date ? new Date(challenge.challenge_date) : null;
 
-            return {
-                id: challenge.challengeId || challenge._id,
-                title: challenge.questionText || "Untitled Challenge",
-                description: challenge.description || "",
-                category: challenge.category || "Other",
-                difficulty: challenge.difficulty ? capitalizeFirstLetter(challenge.difficulty) : "Easy",
-                type: challenge.type === 'text' ? 'text' : 'code',
-                status: challenge.isCompleted ? 'Completed' : (challenge.userStatus || 'Pending'),
-                date: formattedChallengeDate,
-                question_type: challenge.question_type
-            };
+                            return (
+                                challengeDate &&
+                                !isNaN(challengeDate) &&
+                                challengeDate >= registeredDate &&
+                                !challenge?.isDeleted || challenge.isDeleted === false
+                            );
+                        })
+                        .map((challenge) => {
+                            const challengeDate = new Date(challenge.challenge_date);
+                            const formattedChallengeDate = isNaN(challengeDate)
+                                ? 'No date available'
+                                : challengeDate.toLocaleDateString('en-US', {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric',
+                                });
+
+                            return {
+                                id: challenge.challengeId || challenge._id,
+                                title: challenge.questionText || "Untitled Challenge",
+                                description: challenge.description || "",
+                                category: challenge.category || "Other",
+                                difficulty: challenge.difficulty ? capitalizeFirstLetter(challenge.difficulty) : "Easy",
+                                type: challenge.type === 'text' ? 'text' : 'code',
+                                status: challenge.isCompleted ? 'Completed' : (challenge.userStatus || 'Pending'),
+                                date: formattedChallengeDate,
+                                question_type: challenge.question_type
+                            };
             
-        });
+                        });
 
-    setChallenges(mappedChallenges);
-    console.log("Mapped Challenges:", mappedChallenges);
-}
+                    setChallenges(mappedChallenges);
+                    console.log("Mapped Challenges:", mappedChallenges);
+                }
 
                 console.log("Challenges:", challengesRes.data);
             } catch (error) {
@@ -132,26 +137,26 @@ if (challengesRes?.success && Array.isArray(challengesRes.data)) {
                             </IconWrapper>
 
                             <CardDesc>
-   <CardLabels>
-  <Label difficulty={challenge.difficulty.toLowerCase()} variant="difficulty">
-    {challenge.difficulty}
-  </Label>
-  {challenge.question_type === "approach" && (
-    <Label variant="default"><img src={star}  /> Test your Approach</Label>
-  )}
-</CardLabels>
+                                <CardLabels>
+                                    <Label difficulty={challenge.difficulty.toLowerCase()} variant="difficulty">
+                                        {challenge.difficulty}
+                                    </Label>
+                                    {challenge.question_type === "approach" && (
+                                        <Label variant="default"><img src={star} /> Test your Approach</Label>
+                                    )}
+                                </CardLabels>
                                 <CardTitle>{challenge.title}</CardTitle>
-<CardSubtitle>
-  {challenge.description ? (
-    <span
-      dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(challenge.description),
-      }}
-    />
-  ) : (
-    "No description provided."
-  )}
-</CardSubtitle>
+                                <CardSubtitle>
+                                    {challenge.description ? (
+                                        <span
+                                            dangerouslySetInnerHTML={{
+                                                __html: DOMPurify.sanitize(challenge.description),
+                                            }}
+                                        />
+                                    ) : (
+                                        "No description provided."
+                                    )}
+                                </CardSubtitle>
                             </CardDesc>
 
                             <CardStatus>

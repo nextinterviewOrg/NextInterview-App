@@ -142,3 +142,40 @@ export const LogMessage = styled.div`
   font-size: 0.8rem;
   color: ${theme.colors.text};
 `;
+
+export const QueryText = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1.5rem;
+`;
+
+// export const QueryHeading = styled.h3`
+//   font-size: 1rem;
+//   font-weight: 600;
+//   color: #333;
+//   margin-bottom: 0.5rem;
+// `;
+
+export const QueryInput = styled.div`
+  textarea {
+    width: 100%;
+    padding: ${theme.spacing(2)};
+    font-size: 0.9rem;
+    border: 1px solid ${theme.colors.sidebarHoverBgColor};
+    border-radius: 4px;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+
+    // &:focus {
+    //   border-color: #007bff;
+    //   background-color: #fff;
+    // }
+
+    // &:disabled {
+    //   background-color: #e9ecef;
+    //   cursor: not-allowed;
+    // }
+  }
+`;

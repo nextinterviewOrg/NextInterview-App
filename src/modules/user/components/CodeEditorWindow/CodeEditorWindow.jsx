@@ -32,18 +32,36 @@ import {
   HintIcon,
   HintContent,
   HintTitle,
-  HintExplanation
+  HintExplanation,
+  FeedbackIconWrapper,
+  CardContainer,
+  TitleforSolution,
+  Paragraph,
+  Footer,
+  TryHarderLink,
+  FeedbackButton,
+  // FeedbackIconWrapper,  
+  FeedbackPopup,
+  FeedbackIcon,
+  FeedbackContent,
+  FeedbackTitle,
+  FeedbackMessage,
+  FeedbackCloseButton,
 } from "./CodeEditorWindow.styles";
 import ReadyToCode from "../Compiler/ReadyToCode";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import Editor from "@monaco-editor/react";
-import { IoChevronBackSharp, IoClose } from "react-icons/io5";
+import { IoChevronBackSharp, IoClose, IoCloseSharp } from "react-icons/io5";
 import { VscInfo } from "react-icons/vsc";
 import { PiTimer } from "react-icons/pi";
 import { HiOutlineLightBulb } from "react-icons/hi2";
 import { VscDebugRestart } from "react-icons/vsc";
 import { notification } from "antd";
+import { BsHandThumbsUpFill, BsHandThumbsDownFill } from "react-icons/bs";
+import { SlLike, SlDislike } from "react-icons/sl";
+// import { VscInfo, VscDebugRestart } from "react-icons/vsc";
+// import { PiTimer, PiStarFour } from "react-icons/pi";
 // ... (imports remain unchanged)
 
 const CodeEditorWindow = () => {
@@ -70,8 +88,14 @@ const CodeEditorWindow = () => {
   const [activeTab, setActiveTab] = useState("mycode");
   const [showHint, setShowHint] = useState(false);
   const [optimizationApplied, setOptimizationApplied] = useState(false);
-  
-  
+
+  const [isHelpful, setIsHelpful] = useState(null);
+  const [likeAnimation, setLikeAnimation] = useState(false);
+  const [dislikeAnimation, setDislikeAnimation] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
 
   // const [timeLeft, setTimeLeft] = useState(20);
   // const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
@@ -173,7 +197,7 @@ const CodeEditorWindow = () => {
   };
 
   const normalize = (str) =>
-  str?.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
+    str?.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
 
 
   const fetchOptimizedCode = async () => {
@@ -222,27 +246,27 @@ const CodeEditorWindow = () => {
     fetchChallenge();
   }, [id]);
 
-useEffect(() => {
-  if (!challenge || !output) return;
+  useEffect(() => {
+    if (!challenge || !output) return;
 
-  const expectedOutput = normalize(challenge.output);
-  const actualOutput = normalize(output);
+    const expectedOutput = normalize(challenge.output);
+    const actualOutput = normalize(output);
 
-  console.log("Expected:", JSON.stringify(expectedOutput));
-  console.log("Actual:", JSON.stringify(actualOutput));
+    console.log("Expected:", JSON.stringify(expectedOutput));
+    console.log("Actual:", JSON.stringify(actualOutput));
 
-  if (expectedOutput === actualOutput) {
-    // proceed (you could optionally auto-trigger submit or show message)
-  } else {
-    // Don't show error here unless user explicitly runs
-    if (runClicked) {
-      notification.error({
-        message: "Your output doesn't match the expected result. Please try again.",
-        duration: 3,
-      });
+    if (expectedOutput === actualOutput) {
+      // proceed (you could optionally auto-trigger submit or show message)
+    } else {
+      // Don't show error here unless user explicitly runs
+      if (runClicked) {
+        notification.error({
+          message: "Your output doesn't match the expected result. Please try again.",
+          duration: 3,
+        });
+      }
     }
-  }
-}, [challenge, output, runClicked]);
+  }, [challenge, output, runClicked]);
 
 
   useEffect(() => {
@@ -264,6 +288,22 @@ useEffect(() => {
 
     return () => clearInterval(timer);
   }, [activeTab, solutionTimeExpired]);
+
+  const handleSummaryFeedback = (isHelpful) => {
+    if (isHelpful) {
+      setLikeAnimation(true);
+      setTimeout(() => setLikeAnimation(false), 1000);
+    } else {
+      setDislikeAnimation(true);
+      setTimeout(() => setDislikeAnimation(false), 1000);
+    }
+    setSelectedFeedback(isHelpful);
+    setFeedbackSubmitted(true);
+    setIsHelpful(isHelpful);
+    setFeedbackMessage(`Thank you for your feedback! The summary was ${isHelpful ? 'helpful' : 'not helpful'}.`);
+    setShowFeedbackPopup(true);
+    setTimeout(() => setShowFeedbackPopup(false), 3000);
+  };
 
   if (loading) return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
@@ -320,10 +360,10 @@ useEffect(() => {
                 >
                   Show Solution
                   {!solutionTimeExpired && (
-                  <TimerText>
-                    <PiTimer style={{ marginRight: "5px" }} />
-                    {timeLeft}secs
-                  </TimerText>
+                    <TimerText>
+                      <PiTimer style={{ marginRight: "5px" }} />
+                      {timeLeft}secs
+                    </TimerText>
                   )}
                 </TabButton>
               </div>
@@ -405,21 +445,49 @@ useEffect(() => {
 
                 />
 
-                <div
-                  style={{
-                    background: "#fff",
-                    padding: "20px",
-                    borderRadius: "8px",
-                    minHeight: "300px",
-                    whiteSpace: "pre-wrap",
-                    fontFamily: "monospace",
-                    fontSize: "14px",
-                    border: "1px solid #e1e1e1",
-                  }}
-                >
-                  <h3>Code Explanation:</h3>
-                  <code>{challenge.solutionExplanation || "No solution available."}</code>
-                </div>
+                <CardContainer>
+                  <TitleforSolution>Code Explaination</TitleforSolution>
+
+                  <Paragraph>
+                    {challenge?.solutionExplanation || "No code explaination available."}
+                  </Paragraph>
+
+                  <Footer>
+                    {/* <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink> */}
+
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        flexDirection: "row",
+                        alignItems: "flex-end",
+                        gap: "20px",
+                        marginRight: "20px",
+                      }}
+                    >
+                      <FeedbackButton
+                        onClick={() => handleSummaryFeedback(true)}
+                        isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}
+                        style={{ opacity: feedbackSubmitted && selectedFeedback !== true ? 0.5 : 1 }}
+                      >
+                        <FeedbackIconWrapper isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}>
+                          {feedbackSubmitted && selectedFeedback === true ? <BsHandThumbsUpFill /> : <SlLike />}
+                        </FeedbackIconWrapper>
+                        Helpful
+                      </FeedbackButton>
+                      <FeedbackButton
+                        onClick={() => handleSummaryFeedback(false)}
+                        isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}
+                        style={{ opacity: feedbackSubmitted && selectedFeedback !== false ? 0.5 : 1 }}
+                      >
+                        <FeedbackIconWrapper isActive={dislikeAnimation || (feedbackSubmitted && selectedFeedback === false)}>
+                          {feedbackSubmitted && selectedFeedback === false ? <BsHandThumbsDownFill /> : <SlDislike />}
+                        </FeedbackIconWrapper>
+                        Not helpful
+                      </FeedbackButton>
+                    </div>
+                  </Footer>
+                </CardContainer>
               </>
             )}
           </div>
@@ -440,18 +508,34 @@ useEffect(() => {
               />
               <ButtonGroup>
                 <ModalButton
-onClick={() => {
-  setCode(optimisedCode);
-  setModalOpen(false);
-  setOptimizeClicked(true);
-  setOptimizationApplied(true); // ✅ disable further optimize actions
-}}
+                  onClick={() => {
+                    setCode(optimisedCode);
+                    setModalOpen(false);
+                    setOptimizeClicked(true);
+                    setOptimizationApplied(true); // ✅ disable further optimize actions
+                  }}
                 >
                   Apply to your Code
                 </ModalButton>
               </ButtonGroup>
             </ModalContent>
           </ModalOverlay>
+        )}
+
+        {/* Feedback Popup */}
+        {showFeedbackPopup && (
+          <FeedbackPopup>
+            <FeedbackIcon isHelpful={isHelpful}>
+              {isHelpful ? '✓' : '✕'}
+            </FeedbackIcon>
+            <FeedbackContent>
+              <FeedbackTitle>Feedback Received</FeedbackTitle>
+              <FeedbackMessage>{feedbackMessage}</FeedbackMessage>
+            </FeedbackContent>
+            <FeedbackCloseButton onClick={() => setShowFeedbackPopup(false)}>
+              <IoCloseSharp />
+            </FeedbackCloseButton>
+          </FeedbackPopup>
         )}
       </Wrapper>
     </>

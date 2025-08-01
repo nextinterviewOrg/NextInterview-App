@@ -23,6 +23,11 @@ export const Modal = styled.div`
   border-radius: 10px;
   margin-left: 60px;
   position: relative;
+
+  @media (max-width: 768px) {
+    // width: 90%;
+    margin-left: 0px;
+  }
 `;
 export const Heading = styled.h2`
   font-family: ${theme.fonts.heading};
@@ -37,6 +42,10 @@ export const ModalContent = styled.div`
   gap: 10px;
   margin-top: 10px;
   padding: 50px;
+
+  @media (max-width: 480px) {
+    padding: 10px;
+  }
 `;
 
 export const Dropdown = styled.select`
@@ -90,7 +99,7 @@ export const RadioOption = styled.label`
     background-color: ${({ theme }) => theme.colors.primary};
     border-radius: 50%;
     position: absolute;
-    top: 1.6px;
+    top: 1.8px;
     left: 1.5px;
   }
 `;
@@ -118,8 +127,8 @@ export const Button = styled.button`
 
 export const CloseButton = styled.button`
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 40px;
+  right: 30px;
   background: none;
   border: none;
   font-size: 28px;
