@@ -147,6 +147,19 @@ const Header = ({ toggleMobileSidebar }) => {
     setTitle(getTitleFromPath(location.pathname));
   }, [location.pathname]);
 
+  useEffect(() => {
+  const handlePopState = () => {
+    if (isProfileOpen) {
+      setIsProfileOpen(false);
+    }
+  };
+
+  window.addEventListener("popstate", handlePopState);
+  return () => window.removeEventListener("popstate", handlePopState);
+}, [isProfileOpen]);
+
+
+
   const handleAvatarClick = (event) => {
     const rect = event.target.getBoundingClientRect();
     setAvatarPosition({ top: rect.top + window.scrollY, left: rect.left });

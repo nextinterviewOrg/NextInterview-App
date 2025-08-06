@@ -41,15 +41,21 @@ export default function ContinueLearningmodule() {
                     const userId = userData.data.user._id;
 
                     const statsRes = await getUserProgressStats(userId);
+                    console.log("getUserProgressStats", statsRes);
                     const moduleStats = statsRes?.ModuleProgress || [];
 
                     const progressMap = {};
 
+                    const moduleCodeToTopicsMap = {};
+                    formattedModules.forEach((mod) => {
+                        moduleCodeToTopicsMap[mod.moduleCode] = mod.topics;
+                    });
+
+
                     moduleStats.forEach(({ moduleCode, topicStats }) => {
                         const completed = topicStats?.completed || 0;
                         const ongoing = topicStats?.ongoing || 0;
-                        const total = topicStats?.total || (completed + ongoing);
-
+                        const total = topicStats?.total || moduleCodeToTopicsMap[moduleCode] || 1;
                         if (total > 0 && completed < total) {
                             progressMap[moduleCode] = {
                                 status: "ongoing",
@@ -69,6 +75,7 @@ export default function ContinueLearningmodule() {
                                         userId,
                                         moduleCode: course.moduleCode,
                                     });
+                                    console.log("getUserProgressByModule", res);
                                     if (res.success && res.data.status === "ongoing") {
                                         const completed = res.data.completedTopics || 0;
                                         const total = res.data.totalTopics || course.topics || 1;
@@ -107,7 +114,7 @@ export default function ContinueLearningmodule() {
     });
 
     if (loading) {
-        return <div>Loading your courses...</div>;
+        return <div style={{ textAlign: "center" }}>Loading your courses...</div>;
     }
 
     return (
@@ -145,7 +152,7 @@ export default function ContinueLearningmodule() {
                                         {course.description.slice(0, 110)}...
                                     </p>
                                     <div className={isGridView ? "course-info" : "course-info-list"}>
-                                        <span>{course.topics} topics</span>
+                                        <span>{course.topics} {course.topics > 1 ? "Topics" : "Topic"}</span>
                                         <span>Less than {course.duration} {course.duration > 1 ? "hrs" : "hr"}</span>
                                     </div>
                                 </div>
@@ -164,7 +171,7 @@ export default function ContinueLearningmodule() {
                                     </div>
                                     <div className="progress-details">
                                         <div className="progress-details-count">
-                                            <span>{completedTopics} / {totalTopics} Topics completed</span>
+                                            <span>{completedTopics} / {course.topics} Topics completed</span>
                                         </div>
                                         <div className="progress-details-percentage">
                                             <span>{percentage}%</span>

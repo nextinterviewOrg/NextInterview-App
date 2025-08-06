@@ -218,9 +218,9 @@ const QuestionCollapsible = () => {
       case "coding":
         return (
           <>
-            <CodeMeta
+            {/* <CodeMeta
               dangerouslySetInnerHTML={{ __html: question.description }}
-            ></CodeMeta>
+            ></CodeMeta> */}
                         <CodeDescription>
                             Description:
 <p className={`description-text ${!showMore ? "clamped-text" : ""}`}>

@@ -14,6 +14,8 @@ export default function ProfileUser() {
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordMismatch, setPasswordMismatch] = useState(false);
+  const [confirmTouched, setConfirmTouched] = useState(false);
 
   const [passwords, setPasswords] = useState({
     oldPassword: "",
@@ -21,10 +23,17 @@ export default function ProfileUser() {
     confirmPassword: "",
   });
   const { isSignedIn, user, isLoaded } = useUser();
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setPasswords({ ...passwords, [name]: value });
-  };
+const handleInputChange = (e) => {
+  const { name, value } = e.target;
+  const updatedPasswords = { ...passwords, [name]: value };
+  setPasswords(updatedPasswords);
+
+  if (name === "confirmPassword" || name === "newPassword") {
+    setConfirmTouched(true); // set to true as soon as user types either one
+    const match = updatedPasswords.newPassword === updatedPasswords.confirmPassword;
+    setPasswordMismatch(!match);
+  }
+};
 
   const handleClose = () => {
     setIsOpen(false);
@@ -155,13 +164,19 @@ export default function ProfileUser() {
               <label className="password-reset-modal-label">Confirm Password</label>
               <div style={{ position: "relative" }}>
                 <input
-                  type={showConfirmPassword ? "text" : "password"}
-                  placeholder="Re-enter your new password"
-                  name="confirmPassword"
-                  value={passwords.confirmPassword}
-                  onChange={handleInputChange}
-                  className="password-reset-modal-input"
-                />
+  type={showConfirmPassword ? "text" : "password"}
+  placeholder="Re-enter your new password"
+  name="confirmPassword"
+  value={passwords.confirmPassword}
+  onChange={handleInputChange}
+  className={`password-reset-modal-input ${
+    confirmTouched
+      ? passwordMismatch
+        ? "input-error"
+        : "input-success"
+      : ""
+  }`}
+/>
                 <div
                   style={{
                     position: "absolute",
@@ -176,6 +191,11 @@ export default function ProfileUser() {
                   {showConfirmPassword ? <PiEyeLight /> : <IoEyeOffOutline />}
                 </div>
               </div>
+              {passwordMismatch && confirmTouched && (
+                <p style={{ color: "red", fontSize: "0.85rem", marginTop: "4px" }}>
+                  Passwords do not match.
+                </p>
+              )}
 
 
               <button

@@ -184,7 +184,7 @@ import styled from "styled-components";
   .progress-section {
     padding: 15px;
     text-align: center;
-    margin-bottom: 20px;
+    // margin-bottom: 20px;
   }
 
   .progress-section h3 {
@@ -232,14 +232,14 @@ import styled from "styled-components";
 
    @media (max-width: 480px) {
    margin-top: 10px;
-       font-size: 16px;
+       font-size: 14px;
        word-wrap: break-word;
        overflow: hidden;
        text-overflow: ellipsis;
        display: -webkit-box;
        -webkit-line-clamp: 1;
        -webkit-box-orient: vertical;
-              width: 60px;
+              // width: 60px;
    }
  }
  

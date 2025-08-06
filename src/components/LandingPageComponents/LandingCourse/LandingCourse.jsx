@@ -229,7 +229,7 @@ export default function LandingCourse() {
                         </div>
                         <div className="search-container">
                             <button className='search-button' onClick={() => { navigate(`/signup`) }}>
-                                Start practicing now
+                                Start Practicing Now
                             </button>
                         </div>
                     </div>

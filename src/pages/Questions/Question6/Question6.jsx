@@ -44,6 +44,7 @@ function Question6() {
   useEffect(() => {
     const apiCaller = async () => {
       const data = await getCompanies();
+      console.log("logossss ", data);
       setCompanyData(data.data);
       const desgnation = await getDesignations();
       setDesignationData(desgnation.data);
@@ -74,6 +75,7 @@ function Question6() {
   const companyOptions = comapnyData.map((company) => ({
     value: company._id,
     label: company.company_name,
+    company_logo: company.company_logo,
     customLabel: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
@@ -111,25 +113,25 @@ function Question6() {
       zIndex: 9999, // Ensure the dropdown is above other elements
     }),
   };
-const handleNext = async () => {
-  if (!selectedCompany || selectedCompany.length === 0) {
-    setErrorMessage("Please select a company and role or choose 'Not sure yet'.");
-    return;
-  }
+  const handleNext = async () => {
+    if (!selectedCompany || selectedCompany.length === 0) {
+      setErrorMessage("Please select a company and role or choose 'Not sure yet'.");
+      return;
+    }
 
-  setErrorMessage(""); // clear error if all good
+    setErrorMessage(""); // clear error if all good
 
-  const data = await getUserByClerkId(user.id);
-  const submissionData = {
-    user_id: data.data.user._id,
-    data_planned_interview_response: {
-      companies: selectedCompany,
-      designations: selectedDesignation,
-    },
+    const data = await getUserByClerkId(user.id);
+    const submissionData = {
+      user_id: data.data.user._id,
+      data_planned_interview_response: {
+        companies: selectedCompany,
+        designations: selectedDesignation,
+      },
+    };
+    await createUserProfile(submissionData);
+    navigate("/question7", { state: { backLink: "/question6" } });
   };
-  await createUserProfile(submissionData);
-  navigate("/question7", { state: { backLink: "/question6" } });
-};
 
 
   return (
@@ -146,12 +148,32 @@ const handleNext = async () => {
             options={companyOptions}
             onChange={handleCompanySelect}
             placeholder="Select Company Name"
-            value={companyOptions.filter(
-              (option) => selectedCompany.includes(option.value)
+            value={companyOptions.filter((option) =>
+              selectedCompany.includes(option.value)
             )}
             styles={customStyles}
             isMulti
+            getOptionLabel={(e) => e.label} // needed for internal filtering
+            formatOptionLabel={(data, { context }) => (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <img
+                  src={data.company_logo}
+                  alt={data.label}
+                  style={{
+                    width: 20,
+                    height: 20,
+                    marginRight: 10,
+                    borderRadius: "50%",
+                    objectFit: "contain",
+                  }}
+                />
+                <span style={{ color: context === "menu" ? "black" : "black" }}>
+                  {data.label}
+                </span>
+              </div>
+            )}
           />
+
           <label className="Label">Role</label>
 
           <Select
@@ -182,21 +204,21 @@ const handleNext = async () => {
             </div>
           </div>
 
-{errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
+          {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
 
           <button className="NextButton" onClick={handleNext}>
             Next
           </button>
 
-         <button
-  className="anotherCompany"
-  onClick={() => {
-    setErrorMessage(""); // clear error if user chooses to skip
-    navigate("/question7", { state: { backLink: "/question6" } });
-  }}
->
-  Not sure yet
-</button>
+          <button
+            className="anotherCompany"
+            onClick={() => {
+              setErrorMessage(""); // clear error if user chooses to skip
+              navigate("/question7", { state: { backLink: "/question6" } });
+            }}
+          >
+            Not sure yet
+          </button>
           {/* <SkipButton onClick={() => navigate("/question7")}>Skip</SkipButton> */}
         </div>
       </div>

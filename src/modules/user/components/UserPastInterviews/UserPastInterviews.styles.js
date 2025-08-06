@@ -154,6 +154,14 @@ color:${({ theme }) => theme.colors.black};
     gap: 20px;
     }
 
+    .char-counter {
+  font-size: 12px;
+  color: #666;
+  margin-top: 4px;
+  text-align: right;
+}
+
+
 label {
 flex:40%;
     display: block;

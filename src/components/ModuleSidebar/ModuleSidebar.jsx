@@ -46,7 +46,7 @@ export default function ModuleSidebar({
   const fetchModuleData = useCallback(async () => {
     try {
       const response = await getModuleById(moduleId);
-      console.log("Module data:", response.data);
+      // console.log("Module data:", response.data);
 
       if (!response.data || !response.data.topicData || response.data.topicData.length === 0) {
         console.error("No topic data found in module response");
@@ -54,9 +54,9 @@ export default function ModuleSidebar({
       }
 
       const responseUser = await getUserByClerkId(user.id);
+      console.log("User data:", responseUser.data);
       const userModuleProgress = await getUserProgressByModule({ userId: responseUser.data.user._id, moduleCode: response.data.module_code });
       const userModuleProgressStats = await getUserProgressStats(responseUser.data.user._id);
-
       setExpandedTopic(location.state?.topicIndex || 0);
       setSelectedCurrentSubTopic(location.state?.subtopicIndex || 0);
       setSelectedCurrentTopic(location.state?.topicIndex || 0);
@@ -66,18 +66,19 @@ export default function ModuleSidebar({
           setModuleProgressPercentage(Number.parseFloat(item.topicStats.completed / (response.data.topicData.length) * 100).toFixed(0));
         }
       });
+      console.log("User module progress:", userModuleProgress);
       
       setTotalTopics(response.data.topicData.length);
 
       const data = {
         title: response.data.moduleName,
         topicsList: await Promise.all(response.data.topicData.map(async (item) => {
-          console.log("Processing topic:", item);
+          // console.log("Processing topic:", item);
           return {
             title: item.topicName,
             topic_code: item.topic_code,
             subtopics: await Promise.all(item.subtopicData.map(async (subitem) => {
-              console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
+              // console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
               const subTopicProgress = await getUserProgressBySubTopic({
                 userId: responseUser.data.user._id,
                 moduleCode: response.data.module_code,
@@ -95,7 +96,7 @@ export default function ModuleSidebar({
         })),
       };
 
-      console.log("Final course data structure:", data);
+      // console.log("Final course data structure:", data);
       setCourseData(data);
     } catch (error) {
       console.error("Error in ModuleSidebar apiCaller:", error);

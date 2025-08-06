@@ -453,6 +453,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleChange}
                 placeholder="Enter the question text"
                 rows={4}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -712,6 +713,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleChange}
                 placeholder="Enter the question text"
                 rows={4}
+                maxLength={250}
               />
             </FormGroup>
 
@@ -788,6 +790,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -806,6 +809,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter the description"
+                maxLength={500}
               />
             </FormGroup>
 
@@ -832,6 +836,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={3}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -852,6 +857,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={500}
               />
             </FormGroup>
           </>
@@ -877,6 +883,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={6}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup>
@@ -897,6 +904,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={500}
               />
             </FormGroup>
           </>
@@ -923,6 +931,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the question"
                 rows={8}
+                maxLength={250}
               />
             </FormGroup>
             <FormGroup><FormLabel>Description *</FormLabel>
@@ -932,6 +941,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
+                maxLength={500}
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>

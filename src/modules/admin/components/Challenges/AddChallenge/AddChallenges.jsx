@@ -219,22 +219,27 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
         break;
     }
 
-    const missingFields = [];
-    for (let field of requiredFields) {
-      if (field.startsWith("option")) {
-        const index = parseInt(field.replace("option", ""), 10);
-        if (!formData.options[index] || !formData.options[index].trim()) {
-          missingFields.push(`Option ${index + 1}`);
-        }
-      } else if (!formData[field] || !formData[field].toString().trim()) {
-        missingFields.push(field);
-      }
+   const missingFields = [];
+for (let field of requiredFields) {
+  if (field.startsWith("option")) {
+    const index = parseInt(field.replace("option", ""), 10);
+    if (!formData.options[index] || !formData.options[index].trim()) {
+      missingFields.push(`Option ${index + 1}`);
     }
+  } else if (!formData[field] || !formData[field].toString().trim()) {
+    missingFields.push(field);
+  }
+}
 
-    if (missingFields.length > 0) {
-      setError(`Please fill in the following fields: ${missingFields.join(", ")}`);
-      return;
-    }
+// 🔥 Add this check for challenge date
+if (!formData.challenge_date || !formData.challenge_date.trim()) {
+  missingFields.push("Challenge Date");
+}
+
+if (missingFields.length > 0) {
+  setError(`Please fill in the following fields: ${missingFields.join(", ")}`);
+  return;
+}
 
     const payload = {
       QuestionText: formData.QuestionText.trim(),
@@ -386,6 +391,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 value={formData.challenge_date}
                 onChange={handleChange}
                 min={new Date().toISOString().split("T")[0]}
+                required
               />
             </FormGroup>
             <FormGroup>
@@ -756,7 +762,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 value={formData.description}
                 onChange={handleInputChange}
                 placeholder="Enter the description"
-                maxLength={250}
+                maxLength={500}
               />
             </FormGroup>
           </>
@@ -803,7 +809,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={250}
+                maxLength={500}
               />
             </FormGroup>
           </>
@@ -850,7 +856,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={250}
+                maxLength={500}
               />
             </FormGroup>
           </>
@@ -887,7 +893,7 @@ const AddChallenge = ({ onClose, onChallengeAdded }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={250}
+                maxLength={500}
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>

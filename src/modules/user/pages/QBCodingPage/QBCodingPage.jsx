@@ -345,10 +345,10 @@ const QBCodingPage = () => {
               <QuestionContainer>
                 <Title>Question</Title>
                 <QuestionBox>
-                  <p>
+                  {/* <p>
                     <strong>
                       Description:</strong>
-                  </p>
+                  </p> */}
                   <div
                     dangerouslySetInnerHTML={{ __html: question?.description }}
                   />

@@ -55,6 +55,10 @@ export const UserDashboardWrapper = styled.div`
   @media (max-width: 768px) {
     padding-bottom: 60px;
   }
+
+  @media (max-width: 480px) {
+    margin-left: 0;
+  }
 }
   .UserDashboard-statsContainer-img {
     position: absolute;
@@ -210,6 +214,10 @@ export const UserDashboardWrapper = styled.div`
       @media (max-width: 1024px) {
       margin-left: 20px;
     }
+
+    @media (max-width: 480px) {
+     margin-left: 0px;
+    }
   }
   
   .UserDashboard-charts-title {
@@ -224,6 +232,10 @@ export const UserDashboardWrapper = styled.div`
     }
       @media (max-width: 1024px) {
       margin-left: 20px;
+    }
+
+    @media (max-width: 480px) {
+     margin-left: 0px;
     }
   }
   

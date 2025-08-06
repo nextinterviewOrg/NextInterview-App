@@ -95,7 +95,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
               padding: "15px",
             }}
           >
-            <label>Select issue Category</label>
+            <label>Select Issue Category</label>
             <Dropdown
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -118,7 +118,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
               padding: "15px",
             }}
           >
-            <label>Issue Summary field</label>
+            <label>Issue Summary Field</label>
             <TextBox
               type="text"
               value={query}
@@ -129,7 +129,7 @@ const SupportQuery = ({ isOpen, onClose }) => {
             {/* Show error if query is empty */}
             {errors.query && <div>{errors.query}</div>}
           </div>
-          <div style={{ marginLeft: "20px" }}>You will recieve an email regarding the update on this query</div>
+          <div style={{ marginLeft: "20px" }}>You will receive an email regarding the update on this query</div>
 
           {/* Action Buttons */}
           <div

@@ -225,10 +225,10 @@ const MockInterview = () => {
   return (
     <>
       <div>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
           <HeaderWithLogo />
-          <h2 style={{ margin: "0" }}>MOCK INTERVIEW</h2>
-          <UserHeader />
+          <h2 style={{ display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", marginLeft: "35%" }}>MOCK INTERVIEW</h2>
+          {/* <UserHeader /> */}
         </div>
       </div>
 

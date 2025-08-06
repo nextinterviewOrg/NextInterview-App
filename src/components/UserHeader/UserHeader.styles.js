@@ -16,7 +16,7 @@ margin-left:20px;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     gap: ${theme.spacing(1)};
-    margin-left: 10px;
+    // margin-left: 10px;
   }
 
   @media (max-width: ${theme.breakpoints.tablet}) {
@@ -56,6 +56,7 @@ export const Title = styled.h1`
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
+    margin: 0;
   }
   @media (max-width: ${theme.breakpoints.tablet}) {
     font-size: 20px;
