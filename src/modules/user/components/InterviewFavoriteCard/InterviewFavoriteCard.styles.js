@@ -9,7 +9,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 430px;
+  height: 450px;
   position: relative;
 
   @media (max-width: 480px) {
@@ -22,7 +22,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
     position: relative;
     // height: 40vh;
 
-    @media (max-width: 1024px) {
+    /* @media (max-width: 1024px) {
       height: 28vh;
     }
       
@@ -36,7 +36,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
 
     @media (max-width: 480px) {
       height: 65vh;
-    }
+    } */
   }
 
   .card-image {
@@ -67,7 +67,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
     overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   font-family: "DM Sans";
   font-size: 14px;
@@ -77,6 +77,16 @@ export const InterviewFavoriteCardWrapper = styled.div`
   color: ${({ theme }) => theme.colors.textgray};
   margin-bottom: 20px;
   }
+
+.subtopics-list li {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  word-wrap: break-word;
+  list-style-type: bullet; /* Default bullet */
+}
 
   .card-overlay {
     position: relative;

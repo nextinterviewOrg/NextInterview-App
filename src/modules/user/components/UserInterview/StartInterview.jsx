@@ -80,7 +80,7 @@ const StartInterview = ({ isOpen, onClose, title, moduleCode }) => {
       const response = await fetch(`${EXTERNAL_API_BASE}/init`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ topic: moduleCode, user_id: user_id }),
+        body: JSON.stringify({ module_code: moduleCode, user_id: user_id }),
       });
       if (!response.ok) {
         throw new Error(`Failed to start interview: ${response.status}`);
@@ -95,7 +95,7 @@ const StartInterview = ({ isOpen, onClose, title, moduleCode }) => {
         code_stub: data.code_stub,
         tags: data.tags,
         first_follow_up: data.first_follow_up,
-        topic: moduleCode,
+        module_code: moduleCode,
         userName,
       };
       if (mode === "voice") {

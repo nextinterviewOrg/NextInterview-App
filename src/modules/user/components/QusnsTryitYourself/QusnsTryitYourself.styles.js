@@ -6,8 +6,8 @@ export const Container = styled.div`
   width: 95%;
 
   @media (max-width: 480px) {
-    width: 100%;
-    margin-left: 0px;
+    width: 93%;
+    margin-left: 5px;
   }
 `;
 
@@ -27,7 +27,7 @@ export const QuestionCard = styled.div`
 
   @media (max-width: 480px) {
     padding: 8px 4px;
-    width: 90%
+    width: 97%
   }
 `;
 

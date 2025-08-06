@@ -14,23 +14,7 @@ export const UserReminderWrapper = styled.div`
     height: 260px;
   }
  
-  .user-reminder-content {
-    background: #fdfcfb;
-    border-radius: 16px;
-    box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
-    padding: 30px 40px;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    margin: auto;
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 180px;
-  }
- 
+  
   .reminder-text {
     margin-bottom: 30px;
     text-align: justify;
@@ -107,5 +91,59 @@ export const UserReminderWrapper = styled.div`
   .tick-icon {
     font-size: 60px;
     color: ${({ theme }) => theme.colors.success};
+  }
+`;
+
+export const ReminderCard = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 100%;
+  height: 180px;
+  background: #fdfcfb;
+  border-radius: 16px;
+  box-shadow: 0px 8px 24px rgba(0, 0, 0, 0.3);
+  padding: 30px 40px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+
+  ${({ index, total }) => `
+    transform: scale(${1 - index * 0.02}) translateX(${index * 30}px) translateY(${index * 10}px);
+    z-index: ${total - index};
+    pointer-events: ${index === 0 ? 'auto' : 'none'};
+    opacity: ${index === 0 ? 1 : 0.6};
+
+    @media (max-width: 1024px) {
+      transform: scale(${1 - index * 0.02}) translateX(${index * 25}px) translateY(${index * 8}px);
+    }
+
+    @media (max-width: 768px) {
+      transform: scale(${1 - index * 0.015}) translateX(${index * 20}px) translateY(${index * 8}px);
+    }
+
+    @media (max-width: 480px) {
+      transform: scale(${1 - index * 0.01}) translateX(${index * 10}px) translateY(${index * 5}px);
+    }
+  `}
+
+  @media (max-width: 1024px) {
+    width: 90%;
+    height: 220px;
+    padding: 25px 30px;
+  }
+
+  @media (max-width: 768px) {
+    width: 80%;
+    height: 200px;
+    padding: 20px 25px;
+  } 
+
+  @media (max-width: 480px) {
+    width: 90%;
+    height: 240px;
+    padding: 10px 15px;
   }
 `;
