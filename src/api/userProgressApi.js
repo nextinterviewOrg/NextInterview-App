@@ -25,6 +25,7 @@ export const startTopic = async (userId,topicCode,topicId, moduleCode, moduleID)
     };
     try {
         const response = await api.post(`/userProgress/startTopic`, data); 
+        console.log("sadfghjkljhgfdsfghjkhgfdsafghj",response.data);
         return response.data;
     } catch (error) {
         console.log(error);

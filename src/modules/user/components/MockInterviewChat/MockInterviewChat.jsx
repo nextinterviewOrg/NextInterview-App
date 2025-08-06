@@ -18,6 +18,12 @@ import {
   SendButton,
   InputTab,
   InputWrapper,
+  ModalOverlay,
+    ModalContent,
+    CloseButton,
+    ButtonGroup,
+    ModalButton,
+    ConversationBox,
 } from "./MockInterviewChat.style";
 import { LuSend } from "react-icons/lu";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -27,9 +33,10 @@ import UserHeader from "../../../../components/UserHeader/UserHeader";
 import HeaderWithLogo from "../../../../components/HeaderWithLogo/HeaderWithLogo";
 import { message as antdMessage } from "antd";
 import ReadyToCode from "../../components/Compiler/ReadyToCode";
+import {IoClose } from "react-icons/io5";
+import Editor from "@monaco-editor/react";
 
-const EXTERNAL_API_BASE =
-  "https://nextinterview.ai/fastapi/mock";
+const EXTERNAL_API_BASE = "https://nextinterview.ai/fastapi/mock";
 
 const MockInterview = () => {
   const [messages, setMessages] = useState([]);
@@ -52,6 +59,41 @@ const MockInterview = () => {
   const [selectLang, setSelectLang] = useState("python");
   const [output, setOutput] = useState("");
   const [readyToCode, setReadyToCode] = useState(false);
+  
+  // New states for ReadyToCode component
+  const [runClicked, setRunClicked] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+   const [optimizeClicked, setOptimizeClicked] = useState(false);
+  const [optimisedCode, setOptimisedCode] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [optimizationApplied, setOptimizationApplied] = useState(false);
+
+  // Add this new function for optimization
+  const handleOptimizeCode = async () => {
+    try {
+      const response = await fetch(
+        "https://nextinterview.ai/fastapi/code/optimize-code",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            question: baseQuestion,
+            user_code: code,
+            language: selectLang,
+            session_id: session_id
+          }),
+        }
+      );
+      const data = await response.json();
+      setOptimisedCode(data.optimized_code);
+      setModalOpen(true);
+    } catch (err) {
+      console.error("Error fetching optimized code:", err);
+      antdMessage.error("Failed to optimize code. Please try again.");
+    }
+  };
+
 
   console.log("setlang", selectLang);
  
@@ -94,6 +136,23 @@ const MockInterview = () => {
     }
     return () => clearInterval(timer);
   }, [isRunning, timeLeft]);
+
+  const handleSubmit = () => {
+    setIsSubmitting(true);
+    // Add your submission logic here
+    console.log("Submitting code...");
+    // You might want to call an API to submit the code
+    setTimeout(() => {
+      setIsSubmitting(false);
+      antdMessage.success("Code submitted successfully!");
+    }, 2000);
+  };
+
+  const tryHarderQuestion = () => {
+    console.log("Try harder question requested");
+    // Add logic to fetch a harder question
+    antdMessage.info("Fetching a more challenging question...");
+  };
 
   const countWords = (text) => {
     return text.trim() === "" ? 0 : text.trim().split(/\s+/).length;
@@ -265,6 +324,8 @@ const MockInterview = () => {
               </div>
             )}
 
+            <ConversationBox> 
+
             <Conversation> Conversation </Conversation>
 
             <ChatBox>
@@ -274,7 +335,7 @@ const MockInterview = () => {
                     <Sender sender={msg.sender}>{msg.sender}</Sender>
                     <span className="realtime">{msg.time}</span>
                   </Profile>
-                  <Text>{msg.text}</Text>
+                  <Text sender={msg.sender}>{msg.text}</Text>
                 </Message>
               ))}
               {processingData && (
@@ -316,8 +377,10 @@ const MockInterview = () => {
                 </SendButton>
               )}
             </InputBox>
+            </ConversationBox>
           </Container>
         </div>
+        
 
         {showCodeEditor && (
           <div style={{ width: "40%", height: "100%" }}>
@@ -329,10 +392,45 @@ const MockInterview = () => {
               output={output}
               setOutput={setOutput}
               showCodeEditor={showCodeEditor}
+              setRunClicked={setRunClicked}
+              showOptimiseBtn={true}
+              handleOptimizeCode={handleOptimizeCode}
+              handleSubmit={handleSubmit}
+              isSubmitting={isSubmitting}
+              challenge={false}
+              tryHarderQuestion={tryHarderQuestion}
             />
           </div>
         )}
       </div>
+              {modalOpen && (
+                <ModalOverlay>
+                  <ModalContent>
+                    <CloseButton onClick={() => setModalOpen(false)}>
+                      <IoClose />
+                    </CloseButton>
+                    <h3>Optimised Code</h3>
+                    <Editor
+                      height="300px"
+                      language={selectLang || "plaintext"}
+                      value={optimisedCode}
+                      theme="vs-light"
+                    />
+                    <ButtonGroup>
+                      <ModalButton
+                        onClick={() => {
+                          setCode(optimisedCode);
+                          setModalOpen(false);
+                          setOptimizeClicked(true);
+                          setOptimizationApplied(true); // ✅ disable further optimize actions
+                        }}
+                      >
+                        Apply to your Code
+                      </ModalButton>
+                    </ButtonGroup>
+                  </ModalContent>
+                </ModalOverlay>
+              )}
     </>
   );
 };

@@ -3,7 +3,7 @@ import theme from "../../../../theme/Theme";
 
 export const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: ${theme.spacing(2)};
   padding: ${theme.spacing(3)};
   background: ${theme.colors.light};
@@ -34,6 +34,10 @@ export const Container = styled.div`
     display: block;
   }
 
+  @media (max-width: ${theme.breakpoints.desktop}) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
   @media (max-width: ${theme.breakpoints.tablet}) {
     grid-template-columns: repeat(2, 1fr);
     margin-left: 0px;
@@ -44,22 +48,35 @@ export const Container = styled.div`
 `;
 
 export const Card = styled.div`
-  background: ${theme.colors.white};
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  transition: transform 0.2s;
-  padding: ${theme.spacing(2)};
-  text-align: center;
-  border: 1px solid ${theme.colors.borderblue};
+ background-color: white;
+   border-radius: 10px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+   overflow: hidden;
+  //  width: 100%;
+  height:395px;
+   margin-bottom: 10px;
+   transition: transform 0.3s;
+   display: flex;
+   flex-direction: column;
+   justify-content: space-between;
+ //   padding: 24px;
+ @media (max-width: 768px) {
+   width: 80%;
+   margin: 0 auto;  
+ }
 
-  &:hover {
-    transform: translateY(-5px);
-  }
+  .course-image {
+  width: 100%;
+   border-radius: 15px ;
+   object-fit: cover;
+   
+ }
 `;
 
 export const CardContent = styled.div`
-  padding: ${theme.spacing(2)};
+
+ display: flex;
+ flex-direction: column;
 `;
 
 export const Title = styled.h3`
@@ -67,6 +84,7 @@ export const Title = styled.h3`
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(2)};
   text-align: left;
+  margin-left: 15px;
 `;
 
 export const Details = styled.div`
@@ -101,6 +119,8 @@ export const StartButton = styled.button`
   align-items: center;
   justify-content: center;
   margin-right: auto;
+  margin-bottom: 20px;
+  margin-left: 10px;
 
   &:hover {
     background: ${theme.colors.black};

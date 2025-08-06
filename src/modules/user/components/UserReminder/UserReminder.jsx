@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UserReminderWrapper } from './UserReminder.styles';
+import { UserReminderWrapper, ReminderCard } from './UserReminder.styles';
 import { getCardByUserId, updateStats } from '../../../../api/flashcardApi';
 import { getUserByClerkId } from '../../../../api/userApi'; // assuming you have this
 import { useUser } from '@clerk/clerk-react';
@@ -90,31 +90,22 @@ const UserReminder = () => {
  <UserReminderWrapper>
       <div className="user-reminder-content-wrapper">
         {flashcards.slice(0, 3).map((card, index) => (
-          <div
-            key={card._id}
-            className="user-reminder-content"
-            style={{
-              transform: `scale(${1 - index * 0.02}) translateX(${index * 30}px) translateY(${index * 10}px)`,
-              zIndex: flashcards.length - index,
-              pointerEvents: index === 0 ? 'auto' : 'none',
-              opacity: index === 0 ? 1 : 0.6,
-            }}
-          >
-            <div className="reminder-text">
-              <p className="reminder-text-description">{card.cardContent}</p>
-            </div>
-            {index === 0 && (
-              <div className="reminder-actions">
-                <button className="dismiss-button" onClick={() => handleCardResponse(card._id, false)}>
-                  ✖
-                </button>
-                <button className="thanks-button" onClick={() => handleCardResponse(card._id, true)}>
-                  I Know This
-                </button>
-              </div>
-            )}
-          </div>
-        ))}
+  <ReminderCard key={card._id} index={index} total={flashcards.length}>
+    <div className="reminder-text">
+      <p className="reminder-text-description">{card.cardContent}</p>
+    </div>
+    {index === 0 && (
+      <div className="reminder-actions">
+        <button className="dismiss-button" onClick={() => handleCardResponse(card._id, false)}>
+          ✖
+        </button>
+        <button className="thanks-button" onClick={() => handleCardResponse(card._id, true)}>
+          I Know This
+        </button>
+      </div>
+    )}
+  </ReminderCard>
+))}
  
         {flashcards.length === 0 && (
           <div className="user-reminder-completed">

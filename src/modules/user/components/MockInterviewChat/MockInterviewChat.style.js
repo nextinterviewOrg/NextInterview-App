@@ -2,9 +2,9 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   // width: 97vw;
-  border: 2px solid #ccc;
+  /* border: 2px solid #ccc;
   border-radius: 8px;
-  margin: 0px 30px 0px 30px;
+  margin: 0px 30px 0px 30px; */
   overflow: hidden; 
   display: flex;
   flex-direction: column;
@@ -12,6 +12,76 @@ export const Container = styled.div`
 
   @media (max-width: 768px) {
     height: auto;
+  }
+`;
+
+export const ModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const ModalContent = styled.div`
+  background: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 800px;
+  border-radius: 10px;
+  position: relative;
+
+  /* Hide scrollbar border and make it thin */
+::-webkit-scrollbar {
+  width: 6px; /* thin scrollbar */
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* no border or background */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 10px;
+  border: none; /* removes scrollbar "border" effect */
+}
+
+`;
+
+export const CloseButton = styled.button`
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
+export const ModalButton = styled.button`
+  padding: 10px 15px;
+  background-color: #2290ac;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #2290ac90
   }
 `;
 
@@ -26,9 +96,20 @@ export const Header = styled.div`
 
 export const Conversation = styled.div`
  display: flex;
- font-size: 20px;
+ font-size: 16px;
+ font-weight: 600;
  margin-left: 20px;
  font-family: "DM Sans";
+`;
+
+export const ConversationBox = styled.div`
+    border: 2px solid #F0F8F1;
+  border-radius: 8px;
+  margin: 0px 30px 0px 30px;
+  overflow: hidden; 
+  display: flex;
+  flex-direction: column;
+  height: 85vh;
 `;
 
 export const TimerBtn = styled.button`
@@ -42,7 +123,7 @@ export const TimerBtn = styled.button`
   font-size: 16px;
   margin: 5px;
   background: white;
-  border: 1px solid #ccc
+  border: 1px solid #ccc;
 `;
 
 export const EndBtn = styled.div`
@@ -156,7 +237,7 @@ export const Text = styled.pre`
   white-space: pre-wrap;
   overflow: auto;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: ${(props) => (props.sender === "AI" ? "700" : "400")};
   color: #1a1c1e;
   font-family: DM SANS;
   margin-bottom: 15px;

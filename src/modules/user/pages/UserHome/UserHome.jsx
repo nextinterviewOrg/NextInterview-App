@@ -14,64 +14,72 @@ export default function UserHome() {
   const [interviewFavoriteCardData, setInterviewFavoriteCardData] = useState([]);
   const [startIndex, setStartIndex] = useState(0);
   const [visibleCards, setVisibleCards] = useState([]);
+  const [cardsToShow, setCardsToShow] = useState(4); // default
 
+  // 👇 Adjust cardsToShow based on screen width
+  const updateCardsToShow = () => {
+    const width = window.innerWidth;
+    if (width > 1280) setCardsToShow(4);
+    else if (width > 1024) setCardsToShow(3);
+    else if (width > 576) setCardsToShow(2);
+    else setCardsToShow(1);
+  };
+
+  useEffect(() => {
+    updateCardsToShow(); // initial check
+    window.addEventListener("resize", updateCardsToShow);
+    return () => window.removeEventListener("resize", updateCardsToShow);
+  }, []);
+
+  // 👇 Auto-scroll every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
     }, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [cardsToShow, interviewFavoriteCardData]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await getInterviewFavourites();
-        console.log("Response getInterviewFavourites:", response);
-
-        const preparedData = response.flatMap((module) => {
-          return (module.topicData || []).map((topic) => ({
+        const preparedData = response.flatMap((module) =>
+          (module.topicData || []).map((topic) => ({
             topicName: topic.topicName,
             moduleName: module.moduleName,
             moduleId: module.moduleId,
             imgSrc: module.imageURL,
             allSubtopics: (topic.subtopicData || []).map((s) => s.subtopicName),
-          }));
-        });
-
-
-
-
-        console.log("Prepared Data:", preparedData); // 🛠️ log what you're rendering
-
+          }))
+        );
         setInterviewFavoriteCardData(preparedData);
       } catch (e) {
         console.error("Error fetching interview favorites:", e);
       }
     };
-
     fetchData();
   }, []);
 
-
   useEffect(() => {
+    const endIndex = startIndex + cardsToShow;
     const visibleCardsData = interviewFavoriteCardData.slice(
       startIndex,
-      startIndex + 4
+      endIndex
     );
     setVisibleCards(visibleCardsData);
-  }, [startIndex, interviewFavoriteCardData]);
+  }, [startIndex, interviewFavoriteCardData, cardsToShow]);
 
   const handleNext = () => {
     if (interviewFavoriteCardData.length === 0) return;
     setStartIndex((prev) =>
-      (prev + 1) % interviewFavoriteCardData.length
+      (prev + cardsToShow) % interviewFavoriteCardData.length
     );
   };
 
   const handlePrev = () => {
     if (interviewFavoriteCardData.length === 0) return;
     setStartIndex((prev) =>
-      (prev - 1 + interviewFavoriteCardData.length) %
+      (prev - cardsToShow + interviewFavoriteCardData.length) %
       interviewFavoriteCardData.length
     );
   };

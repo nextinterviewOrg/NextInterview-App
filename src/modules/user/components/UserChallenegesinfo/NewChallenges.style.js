@@ -19,6 +19,15 @@ export const BackButton = styled.button`
   @media (max-width: 1024px) {
     font-size: 14px;
   }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding-left: 10px;
+  }
 `;
 
 export const Card = styled.div`
@@ -40,6 +49,15 @@ export const Card = styled.div`
   @media (max-width: 1024px) {
     width: 100%;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  @media (max-width: 480px) {
+    width: 88%;
+    margin-left: 0px;
+  } 
 `;
 
 export const BackIcon = styled.div`
@@ -59,6 +77,10 @@ export const BackIcon = styled.div`
   @media (max-width: 1024px) {
     margin-left: 20px;
   }
+
+  @media (max-width: 480px) {
+    margin-left: 0px;
+  }
 `;
 
 export const Header = styled.div`
@@ -74,6 +96,20 @@ export const Tag = styled.div`
   padding: 10px;
   text-align: center;
   border-radius: 6px;
+
+  @media (max-width: 1024px) {
+    font-size: 14px;
+    width: 20%;
+  }
+  @media (max-width: 768px) {
+    font-size: 12px;
+    width: 25%;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+    width: 50%;
+  }
 `;
 
 export const Title = styled.h2`
@@ -318,6 +354,10 @@ justify-content: space-between;
   background-color: #EDF1F3;
   padding: 6px;
   border-radius: 5px;
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
 
 export const QusnText = styled.h2`
