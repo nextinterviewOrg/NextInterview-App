@@ -46,10 +46,10 @@ export const BackIcon = styled.div`
   border: 0.1rem solid ${theme.colors.textgray};
   border-radius: 0.25rem;
 
-  &:hover {
-    background-color: ${theme.colors.secondary};
-    color: ${theme.colors.light};
-  }
+  // &:hover {
+  //   background-color: ${theme.colors.secondary};
+  //   color: ${theme.colors.light};
+  // }
 `;
 
 export const Title = styled.h1`

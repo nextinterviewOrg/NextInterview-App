@@ -58,15 +58,15 @@ export const Button = styled.button`
   width: 20%;
   padding: ${theme.spacing(1)};
   font-size: 1rem;
-  color: ${theme.colors.white};
-  background-color: ${theme.colors.info};
-  border: none;
+  color: ${theme.colors.text};
+  background-color: transparent;
+  border: 1px solid ${theme.colors.text};
   border-radius: 0.25rem;
   cursor: pointer;
   transition: all 0.3s;
 
   &:hover {
-    background-color: ${theme.colors.secondary};
+    background-color: ${theme.colors.primary};
     color: ${theme.colors.light};
   }
 

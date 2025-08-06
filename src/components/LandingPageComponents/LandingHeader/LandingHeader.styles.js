@@ -66,19 +66,14 @@ export const NavLinkItem = styled.a`
   align-items: center;
   justify-content: center;
   padding: 10px 20px;
-  
-  text-decoration: none;
+  border-radius: 50px;
+
+  background-color: ${(props) => (props.$active ? theme.colors.bluetext : 'transparent')};
+  color: ${(props) => (props.$active ? theme.colors.light : '#262524')};
 
   &:hover {
-    background-color: ${theme.colors.bluetext};
-    color: ${theme.colors.light};
-    border-radius: 50px;
-  }
-
-  &:active {
-    background-color: ${theme.colors.bluetext};
-    color: ${theme.colors.light};
-    border-radius: 50px;
+    // background-color: ${theme.colors.bluetext};
+    // color: ${theme.colors.light};
   }
 
   @media (max-width: 1024px) {

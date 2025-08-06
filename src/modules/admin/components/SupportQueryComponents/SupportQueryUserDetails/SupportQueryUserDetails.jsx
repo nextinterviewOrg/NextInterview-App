@@ -233,8 +233,9 @@ const SupportQueryUserDetails = () => {
             onChange={(e) => setAdminReply(e.target.value)} // <-- key fix
           />
         </QueryInput>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}> 
         <button
-          style={{ marginTop: "10px" }}
+          style={{ marginTop: "10px", backgroundColor: "#2290ac", color: "white", padding: "10px 20px", display: "flex", justifyContent: "center", alignItems: "center", borderRadius: "5px", border: "none", cursor: "pointer" }}
           onClick={() => {
             if (!adminReply.trim()) {
               message.warning("Please enter a reply before sending.");
@@ -245,6 +246,7 @@ const SupportQueryUserDetails = () => {
         >
           Send Reply
         </button>
+        </div>
       </QueryText>
       <CommunicationLog>
         <QueryHeading>Communication Log</QueryHeading>

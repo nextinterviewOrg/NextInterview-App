@@ -209,7 +209,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
   <div
     className="mock-card-icon collapsed"
     title="Take a Mock Interview"
- 
+    onClick={() => navigate("/user/interview")}
+    style={{ cursor: "pointer" }}
   >
     <PiVideoConference  className="collapsed-icon"/>
   </div>

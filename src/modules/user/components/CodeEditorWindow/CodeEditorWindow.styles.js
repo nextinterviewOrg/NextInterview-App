@@ -16,6 +16,19 @@ export const BackButton = styled.button`
   padding: 10px;
     padding-left: 60px;
 
+  @media (max-width: 1024px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 14px;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 14px;
+    padding-left: 10px;
+  }
+
 `;
 
 export const Wrapper = styled.div`

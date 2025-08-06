@@ -2,6 +2,10 @@ import styled from "styled-components";
 
 export const ProfileUserWrapper = styled.div`
 margin-left: 60px;
+
+@media (max-width: 768px) {
+  margin-left: 0;
+}
 .password-reset-container{
 border-radius: 16px;
 border: 1px solid #F5F5F5;
@@ -140,13 +144,21 @@ color:${({ theme }) => theme.colors.black};
   margin-bottom: 10px;
   border-radius: 4px;
   border: 1px solid #ccc;
+
+    &.input-error {
+    border: 2px solid red !important;
+  }
+
+  &.input-success {
+    border: 2px solid green !important;
+  }
 }
 
 /* Reset Password button in the modal */
 .password-reset-modal-reset-btn {
   margin-top: 1rem;
   width: 100%;
-  background-color: #aae0e8;
+  background-color: #2290ac;
   border: none;
   padding: 0.8rem;
   border-radius: 4px;
@@ -156,7 +168,7 @@ color:${({ theme }) => theme.colors.black};
 }
 
 .password-reset-modal-reset-btn:hover {
-  background-color: #86cbd1;
+  background-color: #2290AC90;
 }
   @media (max-width: 768px) {
     .password-reset-modal-content {

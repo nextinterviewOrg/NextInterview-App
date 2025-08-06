@@ -10,7 +10,7 @@ import api from '../../../../../config/axiosconfig';
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { getUserProgressByModule } from "../../../../../api/userProgressApi";
-// import ContinueLearningmodule from '../../../components/ContinueLearningmodule/ContinueLearningmodule';
+import ContinueLearningmodule from '../../../components/ContinueLearningmodule/ContinueLearningmodule';
 
 export default function UserLearning() {
     const [isGridView, setIsGridView] = useState(true); // Toggle between grid and list view
@@ -51,7 +51,7 @@ export default function UserLearning() {
                                     userId: userData.data.user._id,
                                     moduleCode: course.moduleCode,
                                 });
-console.log("res",res);
+                                console.log("res", res);
                                 if (res.success) {
                                     progressMap[course.moduleCode] = res.data.status; // 'completed' or 'ongoing'
                                 }
@@ -78,7 +78,7 @@ console.log("res",res);
     );
     return (
         <>
-            {/* <ContinueLearningmodule /> */}
+            <ContinueLearningmodule />
             <UserLearningWrapper>
                 <div className="courses-container">
                     <div className="header">
@@ -119,7 +119,7 @@ console.log("res",res);
                                     {/* <p className={isGridView?'course-description':'course-description-list'}>{course.description}</p> */}
                                     <p className={isGridView ? 'course-description' : 'course-description-list'}>{course.description.slice(0, 110)}...</p>
                                     <div className={isGridView ? "course-info" : "course-info-list"}>
-                                        <span>{course.topics} topics</span>
+                                        <span>{course.topics} {course.topics > 1 ? "Topics" : "Topic"}</span>
                                         <span>Less than {course.duration} {course.duration > 1 ? "hrs" : "hr"}</span>
                                     </div>
                                 </div>

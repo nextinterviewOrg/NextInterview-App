@@ -129,4 +129,25 @@ height: 34px;
     }
   }
 
+
+.phone-input {
+  width: 60%;
+}
+
+@media (max-width: 768px) {
+  .phone-input {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .phone-input {
+    width: 100%;
+    font-size: 14px;
+  }
+}
+
+
 `
+
+

@@ -215,23 +215,27 @@ import styled from "styled-components";
        display: -webkit-box;
        -webkit-line-clamp: 1;
        -webkit-box-orient: vertical;
-              width: 60px;
+              // width: 60px;
    }
  }
  
- .course-description{
-   padding-left: 15px;
+.course-description {
+  padding-left: 15px;
   overflow: hidden;
- 
- text-overflow: ellipsis;
- font-family: "DM Sans";
- font-size: 14px;
- font-style: normal;
- font-weight: 400;
- line-height: 20px;
- color:${({ theme }) => theme.colors.textgray};
- margin-bottom: 20px;
- }
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 20px;
+  color: ${({ theme }) => theme.colors.textgray};
+  margin-bottom: 20px;
+}
+
  .course-description-list{
  display:none;
  }

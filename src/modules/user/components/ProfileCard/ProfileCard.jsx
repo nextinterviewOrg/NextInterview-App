@@ -174,7 +174,7 @@ const ProfileCard = () => {
     <>
       <div style={{ display: "flex", justifyContent: "flex-end" }}>
         <button style={{ margin: "10px", background: "transparent", color: "#2290ac", border: "1px solid #2290ac", borderRadius: "5px", padding: "10px 30px", marginBottom: "10px", cursor: "pointer" }} onClick={handlelogout}>
-          logout
+          Logout
         </button>
       </div>
       <ProfileCardWrapper>
@@ -261,7 +261,7 @@ const ProfileCard = () => {
               <div className="form-group">
                 <label>Phone Number</label>
                 <PhoneInput
-                style={{ width: "60%" }}
+                    className="phone-input"
                   international
                   defaultCountry="IN"
                   value={formData.phone}

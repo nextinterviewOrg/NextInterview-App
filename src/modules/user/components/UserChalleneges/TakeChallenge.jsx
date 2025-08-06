@@ -25,7 +25,7 @@ const Card = styled.div`
 const ChallengeTitle = styled.h2`
   font-size: 1.2rem;
   padding-top: 16px;
-  margin: 0;
+  margin: 0px 10px 15px 0px;
   color: #1e293b; 
   font-weight: 600;
   @media (max-width: 768px) {
@@ -226,7 +226,7 @@ const fetchData = async () => {
     const userId = userData.data.user._id;
 
     const response = await getTodaysUserChallenges(userId, questionType);
-    console.log("Response:", response);
+    console.log("Response from getTodaysUserChallenges:", response);
     const challengeList = response?.data;
     console.log("challengeList", challengeList);
 
@@ -311,9 +311,9 @@ const fetchData = async () => {
 
               <ChallengeTitle>{challenge.QuestionText}</ChallengeTitle>
 
-              <ChallengeSubtitle>
+              {/* <ChallengeSubtitle>
                 {challenge.question_type === "coding" ? "N/A" : (challenge.description || "No description provided.")}
-              </ChallengeSubtitle>
+              </ChallengeSubtitle> */}
 
               <Tags>
                 {challenge.programming_language && <Tag>{challenge.programming_language}</Tag>}
@@ -323,6 +323,11 @@ const fetchData = async () => {
                   </Tag>
                 )}
                 {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
+
+                 {/* New: Topic tags */}
+  {challenge.topics?.map((topic, idx) => (
+    <Tag key={`topic-${idx}`}>{topic.topic_name}</Tag>
+  ))}
               </Tags>
 
               <Buttons>

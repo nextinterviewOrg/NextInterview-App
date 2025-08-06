@@ -146,7 +146,7 @@ const UserChallenges = () => {
                                     )}
                                 </CardLabels>
                                 <CardTitle>{challenge.title}</CardTitle>
-                                <CardSubtitle>
+                                {/* <CardSubtitle>
                                     {challenge.description ? (
                                         <span
                                             dangerouslySetInnerHTML={{
@@ -156,7 +156,7 @@ const UserChallenges = () => {
                                     ) : (
                                         "No description provided."
                                     )}
-                                </CardSubtitle>
+                                </CardSubtitle> */}
                             </CardDesc>
 
                             <CardStatus>

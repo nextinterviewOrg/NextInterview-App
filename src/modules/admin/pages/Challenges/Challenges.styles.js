@@ -47,6 +47,7 @@ export const RowContainer = styled.div`
   border-radius: 12px;
   padding: 20px;
   align-items: center;
+  gap: 20px;
 `;
 
 export const Type = styled.div`

@@ -76,9 +76,7 @@ const UserLearningModule = () => {
           setModuleStatus(false);
         } else {
           setModuleStatus(true);
-          const moduleProgressData = moduleStatusData.data.progress.find(
-            (item) => item.moduleCode === response.data.module_code,
-          );
+          const moduleProgressData = moduleStatusData.data.progress.find((item) => item.moduleCode === response.data.module_code);
           console.log("moduleProgressData", moduleProgressData);
           if (!moduleProgressData) {
             setModuleStatus(false);

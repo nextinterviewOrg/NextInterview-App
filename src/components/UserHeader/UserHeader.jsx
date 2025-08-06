@@ -40,6 +40,7 @@ import { getUserByClerkId } from "../../api/userApi";
 import { getNotificationByUser } from "../../api/notificationApi";
 import { IoClose } from "react-icons/io5";
 import notification from "../../assets/BellIcon.svg";
+import { useLocation } from "react-router-dom"; // already partially used
 
 // **Logout Confirmation Modal Component**
 
@@ -161,6 +162,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const notify = [];
   const { userId } = useParams();
+      const location = useLocation(); 
 
 
 
@@ -180,7 +182,9 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if (path.includes("interview")) return "Mock Interview";
       if (path.includes("qusnstryityourself")) return "Try It Yourself";
       if (path.includes("tiyQuestion")) return "Try It Yourself";
+if (/\/takechallenge\/[^/]+/.test(path)) return "Challenges";
  if (/challengeinfo\/[^/]+\/[^/]+/.test(path)) return "Challenges"; 
+ 
       // Add more routes as needed
       return "Dashboard"; // Default title
     };
@@ -192,6 +196,13 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
     useEffect(() => {
       setTitle(getTitleFromPath(location.pathname));
     }, [location.pathname]);
+
+
+useEffect(() => {
+  setIsProfileOpen(false); // Close dropdown on route change
+  setIsNotificationOpen(false); // Optional: also close notification if needed
+}, [location.pathname]);
+
   const handleNotifyClick = async () => {
     setLoading(true);
     const cleanedUserId = user.id.replace(/^user_/, ""); // Remove 'user_' prefix

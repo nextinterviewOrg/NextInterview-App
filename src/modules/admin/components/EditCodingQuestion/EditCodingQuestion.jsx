@@ -409,7 +409,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                         </HintList>
                     </HintContainer>
                 </FormGroup>
-                <FormGroup>
+                {/* <FormGroup>
                     <FormLabel>Interview Topic</FormLabel>
                     <Select
                         style={{ width: '100%' }}
@@ -431,14 +431,14 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
                         value={formData.topicId}
                         onChange={(e) => { setFormData({ ...formData, topicId: e }); }}
                     />
-                </FormGroup>
+                </FormGroup> */}
                 <FormGroup>
                     <FormLabel>
                         <input
                             type="checkbox"
                             name="isAvailableForMockInterview"
                             checked={formData.isAvailableForMockInterview}
-                            onChange={(e) => { if (formData.topicId == null) return; handleCheckboxChange(e) }}
+                            onChange={(e) => { if (formData.module_code === null) return; handleCheckboxChange(e) }}
                         />   <>     </> Mark this question as available for Mock Interviews
                     </FormLabel>
                 </FormGroup>

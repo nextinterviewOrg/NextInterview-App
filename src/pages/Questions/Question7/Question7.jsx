@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import HeaderWithLogo from "../../../components/HeaderWithLogo/HeaderWithLogo";
-import { Question7Wrapper,SkipButton } from "./Question7.styles";
+import { Question7Wrapper, SkipButton } from "./Question7.styles";
 import { useLocation, useNavigate } from "react-router";
 import { RxArrowLeft } from "react-icons/rx";
 import { useUser } from "@clerk/clerk-react";
@@ -18,7 +18,7 @@ function Question7() {
   const location = useLocation();
   const [companiesDetails, setCompaniesDetails] = useState([]);
   const { isSignedIn, user, isLoaded } = useUser();
-  
+
   useEffect(() => {
     const apiCaller = async () => {
       if (!user) return;
@@ -38,7 +38,7 @@ function Question7() {
 
         // Set state once with complete array
         setCompaniesDetails(initialCompanies);
-      }else{
+      } else {
         const initialCompanies = [{
           selectedCompany: "",
           selectedDesignation: "",
@@ -48,7 +48,7 @@ function Question7() {
         }];
         setCompaniesDetails(initialCompanies);
       }
-      if(userData.data.user.profile_status){
+      if (userData.data.user.profile_status) {
         navigate("/user")
       }
     };
@@ -108,6 +108,7 @@ function Question7() {
   const companyOptions = companyData.map((company) => ({
     value: company._id,
     label: company.company_name,
+    company_logo: company.company_logo,
     customLabel: (
       <div style={{ display: "flex", alignItems: "center", color: "black" }}>
         <img
@@ -184,6 +185,7 @@ function Question7() {
               value={companyOptions.find(
                 (option) => option.value === companyDetail.selectedCompany
               )}
+              isMulti={false}
               styles={{
                 control: (base) => ({
                   ...base,
@@ -194,18 +196,38 @@ function Question7() {
                 singleValue: (base) => ({
                   ...base,
                   color: "black",
+                  display: "flex",
+                  alignItems: "center",
                 }),
                 option: (base, state) => ({
                   ...base,
                   backgroundColor: state.isSelected ? "#3399cc" : "white",
                   color: state.isSelected ? "white" : "black",
                   padding: "10px",
+                  display: "flex",
+                  alignItems: "center",
                 }),
                 menu: (base) => ({
                   ...base,
                   zIndex: 9999,
                 }),
               }}
+              formatOptionLabel={(data, { context }) => (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img
+                    src={data.company_logo}
+                    alt={data.label}
+                    style={{
+                      width: 20,
+                      height: 20,
+                      borderRadius: "50%",
+                      marginRight: 10,
+                      objectFit: "contain",
+                    }}
+                  />
+                  <span>{data.label}</span>
+                </div>
+              )}
             />
 
             <label className="Label">Role</label>
@@ -253,7 +275,7 @@ function Question7() {
               }}
               placeholder="What went well during the interview?"
               className="input"
-              maxLength={5000}
+              maxLength={1000}
             />
 
             <label className="Label">What went wrong?</label>
@@ -267,7 +289,7 @@ function Question7() {
               }}
               placeholder="What went wrong during the interview?"
               className="input"
-              maxLength={5000}
+              maxLength={1000}
             />
 
             <label className="Label">Topic asked</label>
@@ -318,7 +340,7 @@ function Question7() {
         <button className="NextButton" onClick={handleNext}>
           Next
         </button>
-         <SkipButton onClick={handleSkip}>Skip</SkipButton>
+        <SkipButton onClick={handleSkip}>Skip</SkipButton>
 
         <button className="anotherCompany" onClick={handleAddAnotherCompany}>
           Add Another Company
