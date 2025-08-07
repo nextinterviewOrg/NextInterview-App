@@ -67,6 +67,42 @@ font-weight: 600;
 line-height: 20px; /* 125% */
 color:${({ theme }) => theme.colors.black};
 }
+.textarea-wrapper {
+  position: relative;
+  width: 60%;
+  box-sizing: border-box;
+
+  @media (max-width: 520px) {
+    width: 100%;
+  }
+}
+
+textarea {
+  padding-bottom: 24px; /* Prevent overlap with counter */
+  box-sizing: border-box;
+  box-shadow: none;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-size: 12px;
+  color: #666;
+  background: white;
+  padding-left: 4px;
+}
+
+.edit-btn {
+  background-color: #f5f5f5;
+  color: #007bff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 5px;
+}
 
 .role {
     font-family: "DM Sans";
@@ -187,6 +223,7 @@ font-size: 16px;
 font-style: normal;
 font-weight: 400;
 color:${({ theme }) => theme.colors.black};
+box-sizing: border-box;
 }
 textarea {
     height: 170px;
@@ -241,5 +278,8 @@ gap: 4px;
 
     .modal-content-formgroup-select{
     width: 60%;
+
+    @media (max-width: 520px) {
+        width: 100%;
     }
 `
