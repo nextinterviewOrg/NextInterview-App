@@ -204,15 +204,16 @@ line-height: normal;
 
 .course-description{
   padding: 0 10px;
- overflow: hidden;
+  overflow: hidden;
 text-overflow: ellipsis;
-font-family: "DM Sans";
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: 20px;
+  font-family: "DM Sans";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  // line-height: 20px;
 color:${({ theme }) => theme.colors.textgray};
-margin-bottom: 20px;
+  margin-bottom: 20px;
+  height: 35px;
 }
 
 /* Info and Button Styling */
@@ -222,6 +223,17 @@ margin-bottom: 20px;
 //   padding: 10px;
   gap: 10px;
   margin-left: 10px;
+}
+
+.edit-btn {
+  background-color: #f5f5f5;
+  color: #007bff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 5px;
 }
 
 .course-info span {

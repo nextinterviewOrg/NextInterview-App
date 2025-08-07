@@ -211,7 +211,7 @@ const ProfileCard = () => {
           <div className="profile-content">
             <div className="form-fields">
               <div className="form-group">
-                <label>User Name</label>
+                <label>Full Name</label>
                 <input
                   type="text"
                   name="username"
@@ -222,7 +222,7 @@ const ProfileCard = () => {
               </div>
 
               <div className="form-group">
-                <label>User Mail ID</label>
+                <label>Email Address</label>
                 <div className="input-container">
                   <input
                     type="email"

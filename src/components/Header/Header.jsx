@@ -170,7 +170,7 @@ const Header = ({ toggleMobileSidebar }) => {
   const handleCompleteLogout = async () => {
     await signOut();
     setTitle("Dashboard"); // Explicitly reset title
-    navigate("/sign-in");
+    navigate("/login");
   };
 
   // Fetch user data

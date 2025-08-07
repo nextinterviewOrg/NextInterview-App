@@ -127,6 +127,18 @@ export const deletePastInterview = async (user_id, interview_id) => {
   }
 };
 
+export const updatePastinterview = async (user_id, interview_id, data) => {
+  try {
+    const response = await api.put(
+      `/users/updatePastinterview/${user_id}/past-interviews/${interview_id}`,
+      data
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Failed to update past interview", error);
+    throw error;
+  }
+};
 
 export const getUserBySessionId = async (data) => {
   try {

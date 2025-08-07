@@ -88,6 +88,7 @@ font-weight: 400;
 color:${({ theme }) => theme.colors.textgray};
 margin-bottom: 10px;
 flex :40%;
+text-transform: capitalize;
 }
 
 .form-group input {

@@ -6,13 +6,16 @@ import {
   addPastInterview,
   getUserByClerkId,
   getUserQuestionariesByUserId,
-  deletePastInterview
+  deletePastInterview,
+  updatePastinterview,
 } from "../../../../api/userApi";
 import { getCompanies } from "../../../../api/comapniesApi";
 import { getDesignations } from "../../../../api/designationApi";
 import Select from "react-select";
 import { getTopics } from "../../../../api/topicApi";
 import { RiDeleteBinLine } from "react-icons/ri";
+// import { RiEditLine } from "react-icons/ri"; 
+import { FiEdit3 } from "react-icons/fi";
 import DeleteModule from "../../../admin/components/DeleteModule/DeleteModule";
 const UserPastInterviews = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,6 +47,8 @@ const UserPastInterviews = () => {
   const [comapnyData, setCompanyData] = useState([]);
   const [jobRoleData, setJobRoleData] = useState([]);
   const [topicData, setTopicData] = useState([]);
+  const [isEditing, setIsEditing] = useState(false); 
+const [editingInterviewId, setEditingInterviewId] = useState(null); 
 
   useEffect(() => {
     const apiCaller = async () => {
@@ -126,12 +131,34 @@ const UserPastInterviews = () => {
       console.error("Failed to delete interview:", err);
     }
   };
+
+  const handleUpdateInterview = async () => {
+  const submissionData = {
+    date_attended: interviewData.attendedDate,
+    company_Name: interviewData.companyName,
+    designation: interviewData.jobRole,
+    topics: interviewData.questionsAsked,
+    what_went_well: interviewData.whatWentWell,
+    what_went_bad: interviewData.whatDidntGoWell,
+  };
+  try {
+    await updatePastinterview(userId, editingInterviewId, submissionData);
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingInterviewId(null);
+    window.location.reload();
+  } catch (err) {
+    console.error("Failed to update interview:", err);
+  }
+};
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setInterviewData({ ...interviewData, [name]: value });
   };
 
-  const handleAddInterview = async () => {
+const handleAddInterview = async () => {
+  try {
     const submissionData = {
       date_attended: interviewData.attendedDate,
       company_Name: interviewData.companyName,
@@ -140,7 +167,25 @@ const UserPastInterviews = () => {
       what_went_well: interviewData.whatWentWell,
       what_went_bad: interviewData.whatDidntGoWell,
     };
+   
+    // Add the new interview
     await addPastInterview(userId, submissionData);
+   
+    // Refresh the interviews list
+    const questionariesResponse = await getUserQuestionariesByUserId(userId);
+    const updatedInterviews =
+      questionariesResponse.data.data_past_interview_response?.map((interview) => {
+        return {
+          id: interview._id,
+          company: interview.company_Name?.company_name || "Unknown Company",
+          role: interview.designation?.designation_name || "N/A",
+          logo: interview.company_Name?.company_logo || "",
+        };
+      }) || [];
+   
+    setPastInterview(updatedInterviews);
+   
+    // Reset the form and close the modal
     setInterviewData({
       companyName: "",
       jobRole: "",
@@ -150,8 +195,30 @@ const UserPastInterviews = () => {
       questionsAsked: [],
     });
     setIsModalOpen(false);
-    window.location.reload();
-  };
+  } catch (error) {
+    console.error("Error adding interview:", error);
+    // Handle error appropriately
+  }
+};
+
+  const handleEditInterview = async (interviewId) => {
+  const data = await getUserQuestionariesByUserId(userId);
+  const interview = data.data.data_past_interview_response.find(int => int._id === interviewId);
+
+  if (interview) {
+    setInterviewData({
+      companyName: interview.company_Name?._id || "",
+      jobRole: interview.designation?._id || "",
+      attendedDate: interview.date_attended?.split("T")[0] || "",
+      whatWentWell: interview.what_went_well || "",
+      whatDidntGoWell: interview.what_went_bad || "",
+      questionsAsked: interview.topics?.map(t => t._id) || [],
+    });
+    setIsModalOpen(true);
+    setIsEditing(true);
+    setEditingInterviewId(interviewId);
+  }
+};
 
   const handleTopicSelect = (topics, index) => {
     const updatedCompaniesDetails = { ...interviewData };
@@ -182,6 +249,12 @@ const UserPastInterviews = () => {
                 >
                   <RiDeleteBinLine />
                 </button>
+                <button
+    className="edit-btn"
+    onClick={() => handleEditInterview(interview.id)}
+  >
+    <FiEdit3 />
+  </button>
               </div>
             ))}
           </div>
@@ -198,12 +271,24 @@ const UserPastInterviews = () => {
           <div className="modal-overlay">
             <div className="modal-content">
               <h2 className="modal-content-title">Add Interview</h2>
-              <button
-                className="close-modal"
-                onClick={() => setIsModalOpen(false)}
-              >
-                ×
-              </button>
+             <button
+  className="close-modal"
+  onClick={() => {
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingInterviewId(null);
+    setInterviewData({
+      companyName: "",
+      jobRole: "",
+      attendedDate: "",
+      whatWentWell: "",
+      whatDidntGoWell: "",
+      questionsAsked: [],
+    });
+  }}
+>
+  ×
+</button>
               <div className="modal-content-formgroup">
                 <label>Company Name</label>
                 <select
@@ -247,32 +332,36 @@ const UserPastInterviews = () => {
                   name="attendedDate"
                   value={interviewData.attendedDate}
                   onChange={handleInputChange}
-                  // max={new Date().toISOString().split("T")[0]}
+                  max={new Date().toISOString().split("T")[0]}
                 />
               </div>
               <div className="modal-content-formgroup">
-                <label>What Went Well</label>
-                <textarea
-                  name="whatWentWell"
-                  value={interviewData.whatWentWell}
-                  onChange={handleInputChange}
-                  maxLength={1000}
-                ></textarea>
-                {/* <div className="char-counter">
-                  {interviewData.whatWentWell.length}/1000 characters
-                </div> */}
-              </div>
+  <label>What Went Well</label>
+  <div className="textarea-wrapper">
+    <textarea
+      name="whatWentWell"
+      value={interviewData.whatWentWell}
+      onChange={handleInputChange}
+      maxLength={1000}
+    ></textarea>
+    <div className="char-counter">
+      {interviewData.whatWentWell.length}/1000
+    </div>
+  </div>
+</div>
               <div className="modal-content-formgroup">
                 <label>What Didn't Go Well</label>
+                <div className="textarea-wrapper">
                 <textarea
                   name="whatDidntGoWell"
                   value={interviewData.whatDidntGoWell}
                   onChange={handleInputChange}
                   maxLength={1000}
                 ></textarea>
-                {/* <div className="char-counter">
-                  {interviewData.whatDidntGoWell.length}/1000 characters
-                </div> */}
+                <div className="char-counter">
+                  {interviewData.whatDidntGoWell.length}/1000
+                </div>
+                </div>
               </div>
               <div className="modal-content-formgroup">
                 <label>Topics Asked in the Interview</label>
@@ -312,10 +401,13 @@ const UserPastInterviews = () => {
                 {/* <textarea name="questionsAsked" value={interviewData.questionsAsked} onChange={handleInputChange}></textarea> */}
               </div>
               <div className="model-btn-container">
-                <button className="add-btn" onClick={handleAddInterview}>
-                  Add
-                </button>
-              </div>
+  <button
+    className="add-btn"
+    onClick={isEditing ? handleUpdateInterview : handleAddInterview}
+  >
+    {isEditing ? "Update" : "Add"}
+  </button>
+</div>
             </div>
           </div>
         )}
