@@ -904,7 +904,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={500}
+                maxLength={1000}
               />
             </FormGroup>
           </>
@@ -941,7 +941,7 @@ const EditChallenge = ({ challenge, onClose, onChallengeUpdated }) => {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={500}
+                maxLength={1000}
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>

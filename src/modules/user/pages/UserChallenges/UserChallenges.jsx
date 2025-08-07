@@ -41,57 +41,43 @@ const UserChallenges = () => {
             try {
                 // Fetch user data
                 const userDataRes = await getUserByClerkId(user.id);
-                console.log("User Data:", userDataRes);
                 const userId = userDataRes.data.user._id;
                 setUserId(userId);
-
-                // Inside useEffect > loadUserDataAndChallenges
-                const registeredDate = new Date(userDataRes.data.user.createdAt);
-                console.log("Registered Date:", registeredDate);
 
                 // Fetch past challenges
                 const challengesRes = await getPastChallengesWithUserResults(userId);
                 if (challengesRes?.success && Array.isArray(challengesRes.data)) {
-                    const mappedChallenges = challengesRes.data
-                        .filter((challenge) => {
-                            const challengeDate = challenge.challenge_date ? new Date(challenge.challenge_date) : null;
+                    const mappedChallenges = challengesRes.data.map((challenge) => {
+                        // Safely parse challenge date
+                        let challengeDate = challenge.challenge_date;
+                        let formattedChallengeDate = 'No date available';
 
-                            return (
-                                challengeDate &&
-                                !isNaN(challengeDate) &&
-                                challengeDate >= registeredDate &&
-                                !challenge?.isDeleted || challenge.isDeleted === false
-                            );
-                        })
-                        .map((challenge) => {
-                            const challengeDate = new Date(challenge.challenge_date);
-                            const formattedChallengeDate = isNaN(challengeDate)
-                                ? 'No date available'
-                                : challengeDate.toLocaleDateString('en-US', {
+                        if (challengeDate) {
+                            const dateObj = new window.Date(challengeDate);
+                            if (!isNaN(dateObj.getTime())) {
+                                formattedChallengeDate = dateObj.toLocaleDateString('en-US', {
                                     year: 'numeric',
                                     month: 'short',
-                                    day: 'numeric',
+                                    day: 'numeric'
                                 });
+                            }
+                        }
 
-                            return {
-                                id: challenge.challengeId || challenge._id,
-                                title: challenge.questionText || "Untitled Challenge",
-                                description: challenge.description || "",
-                                category: challenge.category || "Other",
-                                difficulty: challenge.difficulty ? capitalizeFirstLetter(challenge.difficulty) : "Easy",
-                                type: challenge.type === 'text' ? 'text' : 'code',
-                                status: challenge.isCompleted ? 'Completed' : (challenge.userStatus || 'Pending'),
-                                date: formattedChallengeDate,
-                                question_type: challenge.question_type
-                            };
-            
-                        });
+                        return {
+                            id: challenge.challengeId || challenge._id,
+                            title: challenge.questionText || "Untitled Challenge",
+                            description: challenge.description || "",
+                            category: challenge.category || "Other",
+                            difficulty: challenge.difficulty ? capitalizeFirstLetter(challenge.difficulty) : "Easy",
+                            type: challenge.type === 'text' ? 'text' : 'code',
+                            status: challenge.isCompleted ? 'Completed' : (challenge.userStatus || 'Pending'),
+                            date: formattedChallengeDate,
+                            question_type: challenge.question_type
+                        };
+                    });
 
                     setChallenges(mappedChallenges);
-                    console.log("Mapped Challenges:", mappedChallenges);
                 }
-
-                console.log("Challenges:", challengesRes.data);
             } catch (error) {
                 console.error("Failed to fetch past challenges:", error);
             }
@@ -101,6 +87,7 @@ const UserChallenges = () => {
             loadUserDataAndChallenges();
         }
     }, [user]);
+
     const questionTypeDisplayNames = {
         'mcq': 'MCQ',
         'single-line': 'Single Line',
