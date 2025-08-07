@@ -96,6 +96,7 @@ const StartInterview = ({ isOpen, onClose, title, moduleCode }) => {
         tags: data.tags,
         first_follow_up: data.first_follow_up,
         module_code: moduleCode,
+        interview_type: data.interview_type,
         userName,
       };
       if (mode === "voice") {

@@ -85,6 +85,8 @@ export const Title = styled.h3`
   margin-bottom: ${theme.spacing(2)};
   text-align: left;
   margin-left: 15px;
+  word-wrap: break-word;
+    
 `;
 
 export const Details = styled.div`
