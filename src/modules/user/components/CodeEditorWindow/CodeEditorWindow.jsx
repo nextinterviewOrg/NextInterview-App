@@ -40,7 +40,6 @@ import {
   Footer,
   TryHarderLink,
   FeedbackButton,
-  // FeedbackIconWrapper,  
   FeedbackPopup,
   FeedbackIcon,
   FeedbackContent,
@@ -60,9 +59,6 @@ import { VscDebugRestart } from "react-icons/vsc";
 import { notification } from "antd";
 import { BsHandThumbsUpFill, BsHandThumbsDownFill } from "react-icons/bs";
 import { SlLike, SlDislike } from "react-icons/sl";
-// import { VscInfo, VscDebugRestart } from "react-icons/vsc";
-// import { PiTimer, PiStarFour } from "react-icons/pi";
-// ... (imports remain unchanged)
 
 const CodeEditorWindow = () => {
   const { id } = useParams();
@@ -97,19 +93,21 @@ const CodeEditorWindow = () => {
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
 
-  // const [timeLeft, setTimeLeft] = useState(20);
-  // const [solutionTimeExpired, setSolutionTimeExpired] = useState(false);
   const [timeLeft, setTimeLeft] = useState(() => {
-    // Get saved time from localStorage or use default (20)
     const savedTime = localStorage.getItem(`challengeTimer_${id}`);
     return savedTime ? parseInt(savedTime) : 60;
   });
 
   const [solutionTimeExpired, setSolutionTimeExpired] = useState(() => {
-    // Check if timer was previously expired
     return localStorage.getItem(`challengeExpired_${id}`) === 'true';
   });
 
+  // Store optimized code in localStorage
+const [storedOptimizedCode, setStoredOptimizedCode] = useState(() => {
+  return localStorage.getItem(`optimizedCode_${id}`) || null; // Remove JSON.parse
+});
+
+    const [optimizationUsed, setOptimizationUsed] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -118,17 +116,13 @@ const CodeEditorWindow = () => {
       timer = setInterval(() => {
         setTimeLeft((prev) => {
           const newTime = prev - 1;
-
-          // Save to localStorage on every change
           localStorage.setItem(`challengeTimer_${id}`, newTime.toString());
-
           if (newTime <= 0) {
             clearInterval(timer);
             setSolutionTimeExpired(true);
             localStorage.setItem(`challengeExpired_${id}`, 'true');
             return 0;
           }
-
           return newTime;
         });
       }, 1000);
@@ -137,10 +131,8 @@ const CodeEditorWindow = () => {
     return () => clearInterval(timer);
   }, [activeTab, solutionTimeExpired, id]);
 
-  // Reset timer when needed (e.g., when changing challenges)
   useEffect(() => {
     return () => {
-      // Cleanup when component unmounts or challenge changes
       localStorage.removeItem(`challengeTimer_${id}`);
       localStorage.removeItem(`challengeExpired_${id}`);
     };
@@ -175,14 +167,12 @@ const CodeEditorWindow = () => {
           message: "Congratulations!\n Your solution is correct and progress has been saved.",
           duration: 3
         });
-        // alert("Congratulations! Your solution is correct and progress has been saved.");
         navigate("/user/challenges");
       } else {
         notification.error({
           message: "Your output doesn't match the expected result. Please try again.",
           duration: 3,
         })
-        // alert("Your output doesn't match the expected result. Please try again.");
       }
     } catch (err) {
       console.error("Submission error:", err);
@@ -193,58 +183,102 @@ const CodeEditorWindow = () => {
   };
 
   const handleOptimizeCode = () => {
-    setModalOpen(true);
+    // Only allow optimization if output is not an error and not already optimized
+    if (!output.includes("Error") && !output.includes("error") && !output.includes("Exception")) {
+      setModalOpen(true);
+      fetchOptimizedCode();
+    } else {
+      notification.error({
+        message: "Cannot optimize code with errors. Please fix your code first.",
+        duration: 3,
+      });
+    }
   };
 
   const normalize = (str) =>
     str?.replace(/\r\n/g, '\n').replace(/\s+$/, '').trim();
 
+const fetchOptimizedCode = async () => {
+  const userId = await getUserByClerkId(user.id);
+  const user_id = userId.data.user._id;
+  try {
+    const response = await fetch(
+      "https://nextinterview.ai/fastapi/code/optimize-code",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: challenge?.QuestionText,
+          description: challenge?.description,
+          user_code: code,
+          sample_input: challenge?.input,
+          sample_output: challenge?.output,
+          user_id: user_id,
+        }),
+      }
+    );
+    const data = await response.json();
+    setOptimisedCode(data.optimized_code);
+    
+    // Store optimized code directly (no JSON.stringify needed)
+    localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
+    setStoredOptimizedCode(data.optimized_code);
+  } catch (err) {
+    console.error("Error fetching optimized code:", err);
+  }
+};
 
-  const fetchOptimizedCode = async () => {
-
-    const userId = await getUserByClerkId(user.id);
-    const user_id = userId.data.user._id;
-    try {
-      const response = await fetch(
-        "https://nextinterview.ai/fastapi/code/optimize-code",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            question: challenge?.QuestionText,
-            user_code: code,
-            sample_input: challenge?.input,
-            sample_output: challenge?.output,
-            user_id: user_id,
-          }),
-        }
-      );
-      const data = await response.json();
-      setOptimisedCode(data.optimized_code);
-    } catch (err) {
-      console.error("Error fetching optimized code:", err);
-    }
+  const applyOptimizedCode = () => {
+    setCode(optimisedCode);
+    setModalOpen(false);
+    setOptimizationUsed(true); // Mark optimization as used in this session
+    setShowOptimiseBtn(false); // Hide optimize button after applying
   };
 
-  useEffect(() => {
-    const fetchChallenge = async () => {
-      try {
-        const response = await getChallengeById(id);
-        setChallenge(response.data);
-        console.log("Fetched challenge:", response);
-        setCode(response.data?.base_code);
-        setInput(response.data?.input);
-        setSelectedLang(
-          response.data.programming_language === "Python" ? "python" : "mysql"
-        );
-      } catch (err) {
-        setError("Failed to load challenge data.", err);
-      } finally {
-        setLoading(false);
+    useEffect(() => {
+    if (code !== optimisedCode && code !== storedOptimizedCode?.code) {
+      setOptimizationUsed(false);
+    }
+  }, [code, optimisedCode, storedOptimizedCode]);
+
+  // Show optimize button logic
+  const shouldShowOptimizeBtn = () => {
+    // Don't show if already optimized in this session
+    if (optimizationUsed) return false;
+    
+    // Show if there's output and no errors
+    return output && 
+           !output.includes("Error") && 
+           !output.includes("error") && 
+           !output.includes("Exception");
+  };
+
+
+// In the fetchChallenge function:
+useEffect(() => {
+  const fetchChallenge = async () => {
+    try {
+      const response = await getChallengeById(id);
+      setChallenge(response.data);
+      setCode(response.data?.base_code);
+      setInput(response.data?.input);
+      setSelectedLang(
+        response.data.programming_language === "Python" ? "python" : "mysql"
+      );
+      
+      // Get stored optimized code directly (no JSON.parse needed)
+      const storedCode = localStorage.getItem(`optimizedCode_${id}`);
+      if (storedCode) {
+        setStoredOptimizedCode(storedCode);
       }
-    };
-    fetchChallenge();
-  }, [id]);
+    } catch (err) {
+      setError("Failed to load challenge data.", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  fetchChallenge();
+}, [id]);
 
   useEffect(() => {
     if (!challenge || !output) return;
@@ -252,13 +286,15 @@ const CodeEditorWindow = () => {
     const expectedOutput = normalize(challenge.output);
     const actualOutput = normalize(output);
 
-    console.log("Expected:", JSON.stringify(expectedOutput));
-    console.log("Actual:", JSON.stringify(actualOutput));
-
     if (expectedOutput === actualOutput) {
-      // proceed (you could optionally auto-trigger submit or show message)
+      // Show success message if run was clicked
+      if (runClicked) {
+        notification.success({
+          message: "Your output matches the expected result!",
+          duration: 2,
+        });
+      }
     } else {
-      // Don't show error here unless user explicitly runs
       if (runClicked) {
         notification.error({
           message: "Your output doesn't match the expected result. Please try again.",
@@ -267,27 +303,6 @@ const CodeEditorWindow = () => {
       }
     }
   }, [challenge, output, runClicked]);
-
-
-  useEffect(() => {
-    let timer;
-
-    if (activeTab === "mycode" && !solutionTimeExpired) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setSolutionTimeExpired(true);
-            return 0;
-          }
-
-          return prev - 1;
-        });
-      }, 1000);
-    }
-
-    return () => clearInterval(timer);
-  }, [activeTab, solutionTimeExpired]);
 
   const handleSummaryFeedback = (isHelpful) => {
     if (isHelpful) {
@@ -325,10 +340,8 @@ const CodeEditorWindow = () => {
             <Title>Question</Title>
             <QuestionBox>
               <p>
-                <strong>Description:</strong>
-                <div dangerouslySetInnerHTML={{ __html: challenge?.description }}  className="description"/>
+                <div dangerouslySetInnerHTML={{ __html: challenge?.description }} className="description"/>
               </p>
-              <p><strong>Input:</strong>{challenge?.programming_language === "Python" ? <p> {challenge?.input}</p> : <pre style={{maxwidth: '300px', overflowX: 'auto', wordBreak: 'break-word'}} > {challenge?.input}</pre>}</p>
               <p><strong>Output:</strong>
                 {challenge.programming_language === "Python" ? (
                   <p> {challenge?.output}</p>
@@ -351,15 +364,19 @@ const CodeEditorWindow = () => {
 
                 <TabButton
                   active={activeTab === 'solution'}
-                  onClick={() => solutionTimeExpired && setActiveTab('solution')}
-                  disabled={!solutionTimeExpired}
+                  onClick={() => {
+                    if (solutionTimeExpired || storedOptimizedCode) {
+                      setActiveTab('solution');
+                    }
+                  }}
+                  disabled={!solutionTimeExpired && !storedOptimizedCode}
                   style={{
-                    opacity: solutionTimeExpired ? 1 : 0.6,
-                    cursor: solutionTimeExpired ? 'pointer' : 'not-allowed',
+                    opacity: (solutionTimeExpired || storedOptimizedCode) ? 1 : 0.6,
+                    cursor: (solutionTimeExpired || storedOptimizedCode) ? 'pointer' : 'not-allowed',
                   }}
                 >
-                  Show Solution
-                  {!solutionTimeExpired && (
+                  {storedOptimizedCode ? "Show Solution" : "Solution"}
+                  {!solutionTimeExpired && !storedOptimizedCode && (
                     <TimerText>
                       <PiTimer style={{ marginRight: "5px" }} />
                       {timeLeft}secs
@@ -412,49 +429,43 @@ const CodeEditorWindow = () => {
               </LanguageSelectWrapper>
             </TabsWrapper>
 
-            {activeTab === "mycode" && (
-              <ReadyToCode
-                selectLang={selectedLang}
-                setSelectLang={setSelectedLang}
-                code={code}
-                setCode={setCode}
-                output={output}
-                setOutput={setOutput}
-                dbSetupCommands={challenge.dbSetupCommands}
-                input={input}
-                setInput={setInput}
-                setRunClicked={setRunClicked}
-                showOptimiseBtn={showOptimiseBtn}
-                handleOptimizeCode={handleOptimizeCode}
-                optimizeClicked={optimizeClicked}
-                handleSubmit={handleSubmit}
-                isSubmitting={isSubmitting}
-                solutionTimeExpired={solutionTimeExpired}
-                challenge={true}
-              />
-            )}
-
-            {activeTab === "solution" && (
-              <>
-                <Editor
-                  height="200px"
-                  language={setSelectedLang === "python" ? "python" : "mysql"}
-                  value={challenge.solutionCode}
-                  // onChange={setCode}
-                  theme="vs-light"
-
-                />
+  {activeTab === "mycode" && (
+    <ReadyToCode
+      selectLang={selectedLang}
+      setSelectLang={setSelectedLang}
+      code={code}
+      setCode={setCode}
+      output={output}
+      setOutput={setOutput}
+      dbSetupCommands={challenge.dbSetupCommands}
+      input={input}
+      setInput={setInput}
+      setRunClicked={setRunClicked}
+      showOptimiseBtn={shouldShowOptimizeBtn()}
+      handleOptimizeCode={handleOptimizeCode}
+      optimizeClicked={optimizeClicked}
+      handleSubmit={handleSubmit}
+      isSubmitting={isSubmitting}
+      solutionTimeExpired={solutionTimeExpired}
+      challenge={true}
+    />
+  )}
+{activeTab === "solution" && (
+  <>
+    <Editor
+      height="200px"
+      language={selectedLang === "python" ? "python" : "mysql"}
+      value={storedOptimizedCode || challenge.solutionCode} // Use directly
+      theme="vs-light"
+    />
 
                 <CardContainer>
-                  <TitleforSolution>Code Explaination</TitleforSolution>
-
+                  <TitleforSolution>Code Explanation</TitleforSolution>
                   <Paragraph>
-                    {challenge?.solutionExplanation || "No code explaination available."}
+                    {challenge?.solutionExplanation || "No code explanation available."}
                   </Paragraph>
 
                   <Footer>
-                    {/* <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink> */}
-
                     <div
                       style={{
                         display: "flex",
@@ -508,12 +519,7 @@ const CodeEditorWindow = () => {
               />
               <ButtonGroup>
                 <ModalButton
-                  onClick={() => {
-                    setCode(optimisedCode);
-                    setModalOpen(false);
-                    setOptimizeClicked(true);
-                    setOptimizationApplied(true); // ✅ disable further optimize actions
-                  }}
+                  onClick={applyOptimizedCode}
                 >
                   Apply to your Code
                 </ModalButton>
@@ -522,7 +528,6 @@ const CodeEditorWindow = () => {
           </ModalOverlay>
         )}
 
-        {/* Feedback Popup */}
         {showFeedbackPopup && (
           <FeedbackPopup>
             <FeedbackIcon isHelpful={isHelpful}>

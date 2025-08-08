@@ -140,7 +140,7 @@ const UserModuleTopic = () => {
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
       setDelayedText((prevText) => [...prevText, nextWord]);
-    }, 35 * index);
+    }, 25 * index);
   };
   const delayText = () => {
     for (let i = 0; i < gptSummaryText.length; i++) {

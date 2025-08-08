@@ -187,6 +187,9 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                     key={index}
                     isSelected={selectedRows.includes(user.clerkId)}
                     onClick={() => onRowSelectionChange(user.clerkId)}
+                    style={{
+                      backgroundColor: user.bellIcon ? "#ffe5e5" : undefined, // red background if restricted
+                    }}
                   >
                     <Td>
                       <Checkbox
@@ -239,7 +242,7 @@ const UserTable = ({ users, selectedRows, onRowSelectionChange }) => {
                       </ActiveHours>
                     </Td>
                     <Td>{user.lastActive}</Td>
-                                        <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td>
+                    {/* <Td>{user.bellIcon ? <FaBell /> : <FaBan color="#dc3545" />}</Td> */}
                     <Td>
                       <Link
                         to={`/admin/userProfile`}

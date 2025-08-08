@@ -284,7 +284,8 @@ if (missingFields.length > 0) {
             ? new Date(formData.challenge_date).toISOString()
             : todayISO,
           description: formData.description
-        })
+        });
+        break;
       case "Multi-line":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
@@ -293,7 +294,8 @@ if (missingFields.length > 0) {
             ? new Date(formData.challenge_date).toISOString()
             : todayISO,
           description: formData.description
-        })
+        });
+        break;
       case "Approach Analysis":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
@@ -302,7 +304,8 @@ if (missingFields.length > 0) {
             ? new Date(formData.challenge_date).toISOString()
             : todayISO,
           description: formData.description
-        })
+        });
+        break;
       case "Case Study":
         Object.assign(payload, {
           QuestionText: formData.QuestionText.trim(),
@@ -856,7 +859,7 @@ if (missingFields.length > 0) {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={500}
+                maxLength={1000}
               />
             </FormGroup>
           </>
@@ -893,7 +896,7 @@ if (missingFields.length > 0) {
                 onChange={handleInputChange}
                 placeholder="Enter the description"
                 rows={3}
-                maxLength={500}
+                maxLength={1000}
               />
             </FormGroup>
             <FormGroup><FormLabel>Answer *</FormLabel>

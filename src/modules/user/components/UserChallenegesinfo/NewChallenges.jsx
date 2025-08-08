@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getChallengeById } from "../../../../api/challengesApi"; // Adjust the path if needed
+import { getChallengeById } from "../../../../api/challengesApi";
 import {
   Card,
-  Header,
   Tag,
-  Title,
-  Description,
-  TopicsList,
-  TopicItem,
   Button,
   Footer,
-  // Icons,
-  Tags,
   TextInput,
   TextArea,
   OptionWrapper,
@@ -20,36 +13,33 @@ import {
   SolutionBox,
   SolutionAnswer,
   SolutionText,
-  HelpIcons,
   QusnType,
   QusnText,
   QusnDifficulty,
-} from "./NewChallenges.style"; // You’ll need to add these styled components if not already
-// import { RxArrowLeft } from "react-icons/rx";
+} from "./NewChallenges.style";
 import amazon from "../../../../assets/Avatar.svg";
 import flipkart from "../../../../assets/PersonPhoto.svg";
 import google from "../../../../assets/image.svg";
 import { IoChevronBackSharp } from "react-icons/io5";
-import { PiThumbsUpLight, PiThumbsDownLight } from "react-icons/pi"; // Adjust the import path if needed
 import {
   submitUserChallengeProgress,
   getPastChallengesNextQuestion,
   getTodayChallengesNextQuestion,
-} from "../../../../api/challengesApi"; // Adjust the path if needed
+} from "../../../../api/challengesApi";
 import { getUserByClerkId } from "../../../../api/userApi";
-import { useUser } from "@clerk/clerk-react"; // Adjust the import path if needed
+import { useUser } from "@clerk/clerk-react";
 
-const EXTERNAL_API_BASE =
-  "https://nextinterview.ai/fastapi/approach";
+const EXTERNAL_API_BASE = "https://nextinterview.ai/fastapi/approach";
 const NewChallenge = () => {
   const { id, past } = useParams();
-  const { user } = useUser(); // Get the current user from Clerk
+  const { user } = useUser();
   const [challenge, setChallenge] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [textAnswer, setTextAnswer] = useState("");
   const [showSolution, setShowSolution] = useState(false);
   const [feedbackData, setFeedbackData] = useState(null);
+  const [showFeedback, setShowFeedback] = useState(false);
   const navigate = useNavigate();
   const [feedbackLoading, setFeedbackLoading] = useState(false);
 
@@ -69,29 +59,30 @@ const NewChallenge = () => {
 
     fetchChallenge();
   }, [id]);
+
   const handleNextQuestion = async () => {
     try {
-      // 1. current user id
       const { data: { user: { _id: userId } = {} } = {} } =
         await getUserByClerkId(user.id);
 
       console.log("User ID:", userId);
-
       console.log("Challenge ID:", challenge._id);
       const questionId = challenge._id;
 
-      // 2. decide which API
       const apiCall =
         past === "true"
           ? getPastChallengesNextQuestion
           : getTodayChallengesNextQuestion;
 
-      // 3. hit the endpoint
-      const result = await apiCall(userId, questionId); // ← always pass current question id
+      const result = await apiCall(userId, questionId);
       console.log("Next‑question API result →", result);
+      
+      // Reset all states for new question
       setShowSolution(false);
+      setShowFeedback(false);
       setTextAnswer("");
-      // 4. check for the new question id
+      setFeedbackData(null);
+
       const nextId = result?.nextQuestion?._id;
       console.log("Next question id →", nextId);
       if (result?.success && nextId) {
@@ -104,15 +95,10 @@ const NewChallenge = () => {
       alert("Unable to load next question.");
     }
   };
+
   if (loading)
     return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
-
-  const iconList = [
-    { src: amazon, alt: "Amazon" },
-    { src: flipkart, alt: "Flipkart" },
-    { src: google, alt: "Google" },
-  ];
 
   const handleGoBack = () => {
     navigate(`/user/challenges`);
@@ -122,11 +108,12 @@ const NewChallenge = () => {
     navigate(`/user/takeChallenge/${id}`);
   };
 
-  console.log("Question Type:", challenge?.question_type);
+ 
 
   const renderInput = () => {
     const type = challenge?.question_type?.trim().toLowerCase();
     console.log("Question Type:", type);
+     console.log("Question difficulty:", challenge?.difficulty);
 
     switch (type) {
       case "mcq": {
@@ -147,7 +134,7 @@ const NewChallenge = () => {
                 name="mcq"
                 value={option}
                 checked={textAnswer === option}
-                disabled={showSolution} // 🔒 Disable after submission
+                disabled={showSolution}
                 onChange={(e) => setTextAnswer(e.target.value)}
               />{" "}
               {option}
@@ -163,7 +150,7 @@ const NewChallenge = () => {
             placeholder="Type your answer..."
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
-            disabled={showSolution} // 🔒 Disable after submission
+            disabled={showSolution}
           />
         );
 
@@ -174,7 +161,7 @@ const NewChallenge = () => {
             rows={4}
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
-            disabled={showSolution} // 🔒 Disable after submission
+            disabled={showSolution}
           />
         );
 
@@ -185,7 +172,7 @@ const NewChallenge = () => {
             rows={4}
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
-            disabled={showSolution} // 🔒 Disable after submission
+            disabled={showSolution}
           />
         );
       case "case-study":
@@ -195,7 +182,7 @@ const NewChallenge = () => {
             rows={4}
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
-            disabled={showSolution} // 🔒 Disable after submission
+            disabled={showSolution}
           />
         );
 
@@ -237,7 +224,6 @@ const NewChallenge = () => {
   };
 
   const handleSolutionClick = async () => {
-    console.log("Show Solution:", showSolution);
     if (showSolution) {
       handleNextQuestion(challenge._id);
       return;
@@ -275,7 +261,7 @@ const NewChallenge = () => {
           "option_e",
         ]
           .map((key) => challenge[key])
-          .filter(Boolean); // exclude undefined or null
+          .filter(Boolean);
 
         const optionIndex = options.findIndex(
           (option) => option === textAnswer
@@ -290,7 +276,7 @@ const NewChallenge = () => {
         ];
         if (optionIndex !== -1) {
           payload.answer = optionMap[optionIndex];
-          payload.choosen_option = optionMap[optionIndex]; // if required by your backend
+          payload.choosen_option = optionMap[optionIndex];
         }
       }
 
@@ -302,7 +288,7 @@ const NewChallenge = () => {
       if (response?.data && response.data._id) {
         console.log("Answer submitted successfully:", response.data);
         setShowSolution(true);
-        setError(null); // clear any existing error
+        setError(null);
       } else {
         console.error("Unexpected response structure:", response.data);
         setError("Unexpected response. Please try again.");
@@ -316,7 +302,6 @@ const NewChallenge = () => {
   };
 
   const handleGetFeedbackClick = async () => {
-    console.log("this functionality is calling");
     if (!textAnswer.trim()) {
       setError("Please provide an answer before getting feedback.");
       return;
@@ -326,11 +311,8 @@ const NewChallenge = () => {
     const userData = await getUserByClerkId(user?.id);
     const userId = userData?.data?.user?._id;
     const challengeId = challenge._id;
-    console.log("User ID:", userId);
-    console.log("Question IDhjgfdsgahjk ch:", challengeId);
 
     try {
-      // optional spinner
       const res = await fetch(`${EXTERNAL_API_BASE}/analyze-approach`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -343,10 +325,9 @@ const NewChallenge = () => {
       });
 
       const data = await res.json();
-      console.log("data ejfhh", data);
+      console.log("Feedback data:", data);
 
       if (!res.ok) {
-        // FastAPI validation errors come as { detail: [...] }
         const msg =
           Array.isArray(data.detail) && data.detail.length
             ? `${data.detail[0].loc.join(".")}: ${data.detail[0].msg}`
@@ -355,14 +336,26 @@ const NewChallenge = () => {
         return;
       }
 
-      setFeedbackData(data); // { feedback, strengths, areas_for_improvement, score }
-      setShowSolution(true);
+      setFeedbackData(data);
+      setShowFeedback(true);
       setError(null);
+      
+      // Submit the answer to our backend
+      const payload = {
+        userId: userId,
+        questionId: challenge._id,
+        question_type: challenge.question_type,
+        answer: textAnswer,
+        finalResult: true,
+        skip: false,
+      };
+      await submitUserChallengeProgress(payload);
+      
     } catch (err) {
       console.error("Error getting feedback:", err);
       setError("Network error. Please try again.");
     } finally {
-      setLoading(false);
+      setFeedbackLoading(false);
     }
   };
 
@@ -376,10 +369,6 @@ const NewChallenge = () => {
       today.getDate() === challengeDate.getDate()
     );
   };
-
-  if (loading)
-    return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
-  if (error) return <div style={{ color: "red" }}>{error}</div>;
 
   return (
     <>
@@ -395,16 +384,12 @@ const NewChallenge = () => {
               : "# Past Challenge"} &nbsp;
               {challenge.serialNo}
           </Tag>
-          {/* <Tag>
-            {challenge.question_type === "coding"
-              ? `# ${challenge.programming_language}`
-              : `# ${challenge.question_type}`}
-          </Tag> */}
         </div>
         <QusnType>
           <QusnText>{challenge.QuestionText}</QusnText>
           <QusnDifficulty difficulty={challenge.difficulty}>{challenge.difficulty}</QusnDifficulty>
-        </QusnType>        {renderInput()}
+        </QusnType>
+        {renderInput()}
 
         {["multi-line", "mcq", "single-line"].includes(
           challenge.question_type
@@ -425,7 +410,7 @@ const NewChallenge = () => {
             </>
           )}
 
-        {(challenge.question_type === "approach"|| challenge.question_type === "case-study") && showSolution && (
+        {(challenge.question_type === "approach" || challenge.question_type === "case-study") && showFeedback && (
           <SolutionBox>
             <SolutionText>Feedback:</SolutionText>
             {feedbackData ? (
@@ -462,7 +447,14 @@ const NewChallenge = () => {
           </SolutionBox>
         )}
 
-        {/* ✅ Always visible button */}
+        {(challenge.question_type === "approach" || challenge.question_type === "case-study") && showSolution && (
+          <SolutionBox>
+            <SolutionText>Solution:</SolutionText>
+            <SolutionAnswer>
+              {challenge.answer || "No solution provided."}
+            </SolutionAnswer>
+          </SolutionBox>
+        )}
 
         <Footer>
           {/* ――― Non‑coding, non‑approach questions ――― */}
@@ -472,19 +464,19 @@ const NewChallenge = () => {
                 onClick={handleSolutionClick}
                 disabled={!textAnswer.trim()}
               >
-                Show Solution
+                Show Solution
               </Button>
             )}
 
           {showSolution &&
-            !["coding", "approach"].includes(challenge.question_type) && (
+            !["coding", "approach", "case-study"].includes(challenge.question_type) && (
               <Button onClick={() => handleNextQuestion(challenge._id)}>
-                Next Question
+                Next Question
               </Button>
             )}
 
-          {/* ――― Approach questions ――― */}
-          {!showSolution &&
+          {/* ――― Approach and Case Study questions ――― */}
+          {!showFeedback && !showSolution &&
             (challenge.question_type === "approach" || challenge.question_type === "case-study") && (
               <Button
                 onClick={handleGetFeedbackClick}
@@ -494,11 +486,21 @@ const NewChallenge = () => {
               </Button>
             )}
 
-          {showSolution && challenge.question_type === "approach" && (
-            <Button onClick={() => handleNextQuestion(challenge._id)}>
-              Next Question
-            </Button>
-          )}
+          {showFeedback && !showSolution &&
+            (challenge.question_type === "approach" || challenge.question_type === "case-study") && (
+              <Button
+                onClick={() => setShowSolution(true)}
+              >
+                Show Solution
+              </Button>
+            )}
+
+          {showSolution && 
+            (challenge.question_type === "approach" || challenge.question_type === "case-study") && (
+              <Button onClick={() => handleNextQuestion(challenge._id)}>
+                Next Question
+              </Button>
+            )}
         </Footer>
       </Card>
     </>

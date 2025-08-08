@@ -197,14 +197,20 @@ import styled from "styled-components";
 //  margin-bottom: 20px;
  }
  .course-title {
-   padding-left: 5px;
-   margin: 0 10px;
+  padding-left: 5px;
+  margin: 0 10px;
   font-family: "DM Sans";
- font-size: 18px;
- font-style: normal;
- font-weight: 600;
- line-height: normal;
-   color:${({ theme }) => theme.colors.black};
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: ${({ theme }) => theme.colors.black};
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 
    @media (max-width: 480px) {
    margin-top: 10px;

@@ -8,6 +8,7 @@ import { getModule } from '../../../../api/addNewModuleApi';
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
 import { getUserProgressByModule, getUserProgressStats } from "../../../../api/userProgressApi";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 export default function ContinueLearningmodule() {
     const [isGridView, setIsGridView] = useState(true);
@@ -17,6 +18,32 @@ export default function ContinueLearningmodule() {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { user, isLoaded } = useUser();
+    const [startIndex, setStartIndex] = useState(0);
+
+        const [visibleCards, setVisibleCards] = useState(4);
+
+            useEffect(() => {
+      const updateVisibleCards = () => {
+        if (window.innerWidth <= 540) {
+          setVisibleCards(1); // mobile
+        } else if (window.innerWidth <= 768) {
+          setVisibleCards(2); // tablet
+        } else if (window.innerWidth <= 853) {
+          setVisibleCards(1); // small desktop
+        } else if (window.innerWidth <= 1024) {
+          setVisibleCards(2); // medium desktop
+        } else if (window.innerWidth <= 1360) {
+          setVisibleCards(3); // large desktop
+        }
+        else {
+          setVisibleCards(4); // desktop
+        }
+      };
+
+      updateVisibleCards(); // run on mount
+      window.addEventListener('resize', updateVisibleCards);
+      return () => window.removeEventListener('resize', updateVisibleCards);
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -113,6 +140,19 @@ export default function ContinueLearningmodule() {
         return course.title.toLowerCase().includes(searchQuery.toLowerCase()) && isOngoing;
     });
 
+    const handleNext = () => {
+        if (startIndex + visibleCards < filteredCourses.length) {
+            setStartIndex(prev => prev + 1);
+        }
+    };
+
+    const handlePrev = () => {
+        if (startIndex > 0) {
+            setStartIndex(prev => prev - 1);
+        }
+    };
+
+
     if (loading) {
         return <div style={{ textAlign: "center" }}>Loading your courses...</div>;
     }
@@ -122,7 +162,7 @@ export default function ContinueLearningmodule() {
             <div className="courses-container">
                 <div className="header">
                     <h1 className='header-title'>Continue Learning</h1>
-                    <div className="header-actions">
+                    {/* <div className="header-actions">
                         <input
                             type="text"
                             placeholder=" Search"
@@ -133,11 +173,30 @@ export default function ContinueLearningmodule() {
                         <button onClick={() => setIsGridView(!isGridView)} className="toggle-btn">
                             {isGridView ? <CiBoxList /> : <CiGrid41 />}
                         </button>
-                    </div>
+                    </div> */}
                 </div>
 
+                {filteredCourses.length > visibleCards && (
+                    <div className="carousel-wrapper">
+                        <button
+                            className="arrow-button left"
+                            onClick={handlePrev}
+                            disabled={startIndex === 0}
+                        >
+                            <FaChevronLeft />
+                        </button>
+                        <button
+                            className="arrow-button right"
+                            onClick={handleNext}
+                            disabled={startIndex + visibleCards >= filteredCourses.length}
+                        >
+                            <FaChevronRight />
+                        </button>
+                    </div>
+                )}
+
                 <div className={isGridView ? "course-cards grid-view" : "course-cards list-view"}>
-                    {filteredCourses.map((course, index) => {
+                    {filteredCourses.slice(startIndex, startIndex + visibleCards).map((course, index) => {
                         const progress = moduleProgressMap[course.moduleCode];
                         const percentage = progress?.percentage || 0;
                         const completedTopics = progress?.completedTopics || 0;
@@ -163,9 +222,9 @@ export default function ContinueLearningmodule() {
                                             className="progress-bar"
                                             style={{
                                                 width: `${percentage}%`,
-                                                backgroundColor:
-                                                    percentage >= 75 ? "green" :
-                                                        percentage >= 35 ? "orange" : "red"
+                                                // backgroundColor:
+                                                //     percentage >= 75 ? "green" :
+                                                //         percentage >= 35 ? "orange" : "red"
                                             }}
                                         ></div>
                                     </div>

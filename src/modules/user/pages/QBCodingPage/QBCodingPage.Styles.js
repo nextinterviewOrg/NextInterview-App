@@ -115,6 +115,7 @@ export const Wrapper = styled.div`
     justify-content: flex-end;
     width: 100%;
   }
+}
 `;
 
 export const Title = styled.h2`
@@ -183,7 +184,7 @@ export const QuestionBox = styled.div`
   color: #444;
   max-height: 375px;    
   overflow-y: auto;  
-  scollbar-width: thin;    
+  scrollbar-width: thin;    
 `;
 
 export const EditorContainer = styled.div`

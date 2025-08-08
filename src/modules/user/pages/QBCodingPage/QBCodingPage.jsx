@@ -88,6 +88,8 @@ const QBCodingPage = () => {
   const [selectedFeedback, setSelectedFeedback] = useState(null);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [hasOptimized, setHasOptimized] = useState(false);
+  const [optimizationDisabled, setOptimizationDisabled] = useState(true);
 
   const [timeLeft, setTimeLeft] = useState(() => {
     const savedTime = localStorage.getItem(`challengeTimer_${id}`);
@@ -117,14 +119,26 @@ const QBCodingPage = () => {
     };
     fetchUserId();
   }, [user]);
+
   useEffect(() => {
-    if (runClicked && output?.trim() === question?.output?.trim()) {
-      setShowOptimiseBtn(true);
-      // fetchOptimizedCode();
-    } else {
-      setShowOptimiseBtn(false);
+    // Check if output contains error messages
+    const isErrorOutput = output && (
+      output.includes('Error') || 
+      output.includes('error') || 
+      output.includes('Exception') || 
+      output.includes('Traceback')
+    );
+    
+    // Enable optimization button only if there's output and no errors
+    setOptimizationDisabled(!output || isErrorOutput);
+    
+    // Check if we already have optimized code in localStorage
+    const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
+    if (savedOptimizedCode) {
+      setOptimisedCode(savedOptimizedCode);
+      setHasOptimized(true);
     }
-  }, [output, runClicked]);
+  }, [output, id]);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -169,47 +183,45 @@ const QBCodingPage = () => {
     fetchQuestion();
   }, [questionID, id]);
 
-  // Trigger code optimization if output matches expected
-  useEffect(() => {
-    const optimizeCode = async () => {
-      if (!output || !question) return;
-      const userId = await getUserByClerkId(user.id);
-      console.log("Fetched user ID:", userId);
-      const user_id = userId.data.user._id;
-      console.log("User ID:", user_id);
+  const optimizeCode = async () => {
+    if (!output || optimizationDisabled) return;
+    
+    const userId = await getUserByClerkId(user.id);
+    console.log("Fetched user ID:", userId);
+    const user_id = userId.data.user._id;
+    console.log("User ID:", user_id);
 
-      if (output.trim() === question.output.trim()) {
-        setShowOptimiseBtn(true);
-        try {
-          const response = await fetch(
-            "https://nextinterview.ai/fastapi/code/optimize-code",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                question: question.QuestionText,
-                user_code: code,
-                sample_input: question.input,
-                sample_output: question.output,
-                user_id: user_id,
-              }),
-            }
-          );
-
-          const data = await response.json();
-          setOptimisedCode(data.optimized_code || "");
-        } catch (error) {
-          console.error("Error optimizing code:", error);
+    try {
+      const response = await fetch(
+        "https://nextinterview.ai/fastapi/code/optimize-code",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            question: question.QuestionText,
+            description: question.description,
+            user_code: code,
+            sample_input: question.input,
+            sample_output: question.output,
+            user_id: user_id,
+          }),
         }
-      } else {
-        setShowOptimiseBtn(false);
-      }
-    };
+      );
 
-    optimizeCode();
-  }, [output, question, code]);
+      const data = await response.json();
+      if (data.optimized_code) {
+        setOptimisedCode(data.optimized_code);
+        localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
+        setHasOptimized(true);
+        setModalOpen(true);
+      }
+    } catch (error) {
+      console.error("Error optimizing code:", error);
+      notification.error({ message: "Failed to optimize code" });
+    }
+  };
 
   useEffect(() => {
     if (activeTab !== "mycode" || solutionTimeExpired) return;
@@ -231,21 +243,6 @@ const QBCodingPage = () => {
 
     return () => clearInterval(timer);
   }, [activeTab, solutionTimeExpired]);
-
-
-  useEffect(() => {
-    if (timeLeft === 0) {
-      setSolutionTimeExpired(true);
-      return;
-    }
-
-    const timer = setInterval(() => {
-      setTimeLeft((prevTime) => prevTime - 1);
-    }, 1000);
-
-    return () => clearInterval(timer); // cleanup
-  }, [timeLeft]);
-
 
   const handleGoBack = () => navigate(-1);
 
@@ -312,7 +309,6 @@ const QBCodingPage = () => {
         navigate(`/user/mainQuestionBank/questionbank/${response.data._id}`);
       } else {
         notification.info({ message: "No harder question found." });
-        // alert('No harder question found.');
         navigate(`/user/mainQuestionBank`)
       }
     } catch (error) {
@@ -320,6 +316,15 @@ const QBCodingPage = () => {
       alert('Something went wrong. Please try again later.');
     }
   };
+
+  const handleOptimizeClick = () => {
+    if (hasOptimized) {
+      setActiveTab("solution");
+    } else {
+      optimizeCode();
+    }
+  };
+
   return (
     <>
       <BackButton onClick={handleGoBack}>
@@ -336,26 +341,17 @@ const QBCodingPage = () => {
               <QusnDifficulty difficulty={question?.difficulty}>
                 {question?.difficulty?.charAt(0).toUpperCase() + question?.difficulty?.slice(1)}
               </QusnDifficulty>
-
             </QusnType>
 
-            <div
-              className="question-container"
-            >
+            <div className="question-container">
               <QuestionContainer>
                 <Title>Question</Title>
                 <QuestionBox>
-                  {/* <p>
-                    <strong>
-                      Description:</strong>
-                  </p> */}
-                  <div
-                    dangerouslySetInnerHTML={{ __html: question?.description }}
-                  />
+                  <div dangerouslySetInnerHTML={{ __html: question?.description }} />
                   <p>
                     <strong>Input:</strong> {question?.input}
                   </p>
-                  <p >
+                  <p>
                     <strong>
                       Output:
                       <br />
@@ -375,13 +371,11 @@ const QBCodingPage = () => {
 
               <div style={{ flex: 1 }}>
                 <TabsWrapper>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                    }}
-                  >
+                  <div style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}>
                     <TabButton
                       active={activeTab === "mycode"}
                       onClick={() => setActiveTab("mycode")}
@@ -392,25 +386,24 @@ const QBCodingPage = () => {
                     <TabButton
                       active={activeTab === "solution"}
                       onClick={() => {
-                        if (solutionTimeExpired) {
+                        if (solutionTimeExpired || hasOptimized) {
                           setActiveTab("solution");
                         }
                       }}
-                      disabled={!solutionTimeExpired}
+                      disabled={!solutionTimeExpired && !hasOptimized}
                       style={{
-                        opacity: solutionTimeExpired ? 1 : 0.6,
-                        cursor: solutionTimeExpired ? "pointer" : "not-allowed",
+                        opacity: (solutionTimeExpired || hasOptimized) ? 1 : 0.6,
+                        cursor: (solutionTimeExpired || hasOptimized) ? "pointer" : "not-allowed",
                       }}
                     >
-                      Show Solution
-                      {!solutionTimeExpired && (
+                      {hasOptimized ? "Show Solution" : "Solution"}
+                      {!solutionTimeExpired && !hasOptimized && (
                         <TimerText>
                           <PiTimer style={{ marginRight: "5px" }} />
                           {timeLeft}secs
                         </TimerText>
                       )}
                     </TabButton>
-
                   </div>
 
                   <LanguageSelectWrapper>
@@ -475,8 +468,10 @@ const QBCodingPage = () => {
                     input={input}
                     setInput={setInput}
                     dbSetupCommands={question?.dbSetupCommands}
-                    showOptimiseBtn={showOptimiseBtn}
-                    handleOptimizeCode={() => setModalOpen(true)}
+                    showOptimiseBtn={true} // Always show the button
+                    optimizationDisabled={optimizationDisabled}
+                    handleOptimizeCode={handleOptimizeClick}
+                    hasOptimized={hasOptimized}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
                     solutionTimeExpired={solutionTimeExpired}
@@ -491,32 +486,28 @@ const QBCodingPage = () => {
                     <Editor
                       height="200px"
                       language={setSelectedLang === "python" ? "python" : "mysql"}
-                      value={question?.solutionCode}
-                      // onChange={setCode}
+                      value={hasOptimized ? optimisedCode : question?.solutionCode}
                       theme="vs-light"
-
                     />
 
                     <CardContainer>
-                      <TitleforSolution>Code Explaination</TitleforSolution>
-
+                      <TitleforSolution>Code Explanation</TitleforSolution>
                       <Paragraph>
-                        {question?.solutionExplanation || "No code explaination available."}
+                        {hasOptimized 
+                          ? "This is the optimized version of your code." 
+                          : question?.solutionExplanation || "No code explanation available."}
                       </Paragraph>
 
                       <Footer>
                         <TryHarderLink onClick={handleTryHarderQuestion} ><PiStarFour /> Try harder question</TryHarderLink>
-
-                        <div
-                          style={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            flexDirection: "row",
-                            alignItems: "flex-end",
-                            gap: "20px",
-                            marginRight: "20px",
-                          }}
-                        >
+                        <div style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          flexDirection: "row",
+                          alignItems: "flex-end",
+                          gap: "20px",
+                          marginRight: "20px",
+                        }}>
                           <FeedbackButton
                             onClick={() => handleSummaryFeedback(true)}
                             isActive={likeAnimation || (feedbackSubmitted && selectedFeedback === true)}
@@ -542,7 +533,6 @@ const QBCodingPage = () => {
                     </CardContainer>
                   </>
                 )}
-
               </div>
             </div>
           </>
@@ -576,7 +566,6 @@ const QBCodingPage = () => {
           </ModalOverlay>
         )}
 
-        {/* Feedback Popup */}
         {showFeedbackPopup && (
           <FeedbackPopup>
             <FeedbackIcon isHelpful={isHelpful}>

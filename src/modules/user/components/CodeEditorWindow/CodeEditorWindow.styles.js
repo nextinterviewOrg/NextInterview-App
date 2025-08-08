@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import theme from '../../../../theme/Theme';
 
 export const BackButton = styled.button`
   border: none;
@@ -195,9 +194,12 @@ export const QuestionBox = styled.div`
   font-size: 16px;
   line-height: 1.6;
   color: #444;
+    max-height: 375px;    
+  overflow-y: auto;  
+  scrollbar-width: thin;    
 
   .description {
-    overflow: auto;
+    overflow-y: auto;
     width: 100%;
   }
  

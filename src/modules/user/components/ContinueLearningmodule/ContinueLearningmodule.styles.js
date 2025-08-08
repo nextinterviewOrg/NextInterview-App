@@ -24,7 +24,7 @@ import styled from "styled-components";
    display: flex;
    justify-content: space-between;
    align-items: center;
-   margin-bottom: 30px;
+  //  margin-bottom: 30px;
  }
  
  .header-title {
@@ -169,6 +169,12 @@ import styled from "styled-components";
    margin-bottom: 10px;
    
  }
+
+ .progress-details{
+   display: flex;
+   flex-direction: row;
+   justify-content: space-between;
+   }
    .course-image-list{
   width: 104.5px;
  height: 65.015px;
@@ -182,7 +188,7 @@ import styled from "styled-components";
    }
  
   .progress-section {
-    padding: 15px;
+    padding: 5px 15px;
     text-align: center;
     // margin-bottom: 20px;
   }
@@ -200,9 +206,31 @@ import styled from "styled-components";
     margin: 10px 0;
   }
 
+  .carousel-wrapper{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .arrow-button {
+  background-color: white;
+    border: 1px solid #f5f5f5;
+    color: #68c184;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-size: 16px;
+    margin: 0 5px;
+
+    &:disabled {
+      color: #68c1844d;
+    cursor: not-allowed;
+    }
+}
+
   .progress-bar {
     height: 100%;
-    background-color: #4caf50;
+    background-color: #68C184;
     border-radius: 5px;
   }
  /* Course Text Styling */
@@ -221,14 +249,20 @@ import styled from "styled-components";
 //  margin-bottom: 20px;
  }
  .course-title {
-   padding-left: 5px;
-   margin: 0 10px;
+  padding-left: 5px;
+  margin: 0 10px;
   font-family: "DM Sans";
- font-size: 18px;
- font-style: normal;
- font-weight: 600;
- line-height: normal;
-   color:${({ theme }) => theme.colors.black};
+  font-size: 25px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: ${({ theme }) => theme.colors.black};
+  word-wrap: break-word;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 
    @media (max-width: 480px) {
    margin-top: 10px;

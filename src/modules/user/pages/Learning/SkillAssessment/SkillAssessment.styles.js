@@ -30,22 +30,24 @@ export const QuestionHeader = styled.div`
   align-items: center;
   font-weight: bold;
   margin-bottom: 10px;
-  padding: 5px 10px;
-  background-color: #f6fef6;
+  padding: 18px 18px;
+  background-color: #f0f8f1;
   font-size: 18px;
+  border-radius: 6px;
 
 
-  span {
+  .question-index {
     display: flex;
     width: 30px;
     height: 30px;
-    background-color: black;
-    color: white;
+    background-color: #262524;
+    color: #ffffff;
     text-align: center;
    justify-content: center; 
     align-items: center; 
     border-radius: 50%;
     margin-right: 10px;
+    font-size: 14px;
   }
 `;
 
@@ -57,7 +59,7 @@ export const Option = styled.div`
 
   input {
     margin-right: 10px;
-    accent-color: #2290AC;
+    accent-color: #68C184;
   }
 `;
 
@@ -124,4 +126,47 @@ export const TextArea = styled.textarea`
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+`;
+
+export const RadioOption = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+  margin-bottom: 10px;
+
+  input[type='radio'] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #999;
+    border-radius: 50%;
+    margin: 0;
+    position: relative;
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    background-color: white;
+  }
+
+  input[type='radio']:checked {
+    border-color: ${({ theme }) => theme.colors.primary || '#68C184'};
+    background-color: white;
+  }
+
+  input[type='radio']:checked::before {
+    content: '';
+    display: block;
+    width: 7px;
+    height: 7px;
+    background-color: ${({ theme }) => theme.colors.primary || '#68C184'};
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 1.5px;
+  }
 `;
