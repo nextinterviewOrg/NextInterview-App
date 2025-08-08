@@ -336,7 +336,7 @@ export const UserDashboardWrapper = styled.div`
     border-radius: 10px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     text-align: center;
-    width: 320px;
+    width: 385px;
     min-width: 280px;
     cursor: pointer;
     transition: transform 0.3s ease-in-out;
@@ -352,6 +352,28 @@ export const UserDashboardWrapper = styled.div`
       min-width: 240px;
     }
   }
+
+  .carousel-nav {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.carousel-nav button {
+  background-color: #eee;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 18px;
+  border-radius: 4px;
+  color: #68c184;
+}
+
+.carousel-nav button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
   .card-dashboard img {
     width: 100%;

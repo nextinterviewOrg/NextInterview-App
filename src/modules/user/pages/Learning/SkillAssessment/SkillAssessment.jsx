@@ -3,7 +3,7 @@ import {
   AssessmentContainer,
   QuestionWrapper,
   QuestionHeader,
-  Option,
+  RadioOption,
   ButtonWrapper,
   SkipButton,
   SubmitButton,
@@ -215,21 +215,24 @@ const SkillAssessment = ({
       <h1>Skill Assessment</h1>
       {filteredQuestions.map((q, index) => (
         <QuestionWrapper key={q._id || index}>
-          <QuestionHeader>{index + 1}. {q.question}</QuestionHeader>
+          <QuestionHeader> <span className="question-index">{index + 1}</span>  {q.question}</QuestionHeader>
 
           {q.question_type === "mcq" && !submitted && (
             <>
-              {[q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean).map((option, idx) => (
-                <Option key={idx}>
-                  <input
-                    type="radio"
-                    name={`question-${q._id}`}
-                    value={option}
-                    onChange={() => handleOptionChange(q._id, option, `option_${String.fromCharCode(97 + idx)}`)}
-                  />
-                  {option}
-                </Option>
-              ))}
+            {[q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean).map((option, idx) => (
+  <RadioOption key={`option-${q._id}-${idx}`}>
+    <input
+      type="radio"
+      name={`question-${q._id}`}
+      value={`option_${String.fromCharCode(97 + idx)}`}
+      onChange={() =>
+        handleOptionChange(q._id, option, `option_${String.fromCharCode(97 + idx)}`)
+      }
+      checked={answers[q._id] === `option_${String.fromCharCode(97 + idx)}`}
+    />
+    {option}
+  </RadioOption>
+))}
             </>
           )}
 
