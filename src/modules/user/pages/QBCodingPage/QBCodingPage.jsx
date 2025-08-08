@@ -201,6 +201,7 @@ const QBCodingPage = () => {
           },
           body: JSON.stringify({
             question: question.QuestionText,
+            description: question.description,
             user_code: code,
             sample_input: question.input,
             sample_output: question.output,
