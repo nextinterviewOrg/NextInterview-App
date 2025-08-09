@@ -22,7 +22,7 @@ import {
 } from "./TIYQBCodingQuestions.styles";
 import { Select } from 'antd';
 import { getModuleCode } from "../../../../api/addNewModuleApi";
-import { getAllQBCodingQuestions, getAllTIYCodingQuestions, getAllTiyQbCodingQuestions, softDeleteTiyQbCodingQuestion } from "../../../../api/tiyQbCodingQuestionApi";
+import { getAllQBCodingQuestions, getAllTIYCodingQuestions, getAllTiyQbCodingQuestions } from "../../../../api/tiyQbCodingQuestionApi";
 import AddCodingQuestion from "../../components/AddCodingQuestion/AddCodingQuestion";
 import EditCodingQuestion from "../../components/EditCodingQuestion/EditCodingQuestion";
 import { RiDeleteBinLine } from "react-icons/ri";
@@ -33,7 +33,8 @@ import {
     TinyMCEplugins,
     TinyMCEToolbar,
 } from "../../../../config/TinyMceConfig";
-import { getAllMainbqQBCodingQuestions, getAllMainQBCodingQuestions, getAllMainQbQBCodingQuestionsByModule, getAllMainTIYQBCodingQuestions, getAllMainTIYQBCodingQuestionsByModule } from "../../../../api/userMainQuestionBankApi";
+import { getAllMainbqQBCodingQuestions, getAllMainQBCodingQuestions, getAllMainQbQBCodingQuestionsByModule, getAllMainTIYQBCodingQuestions, getAllMainTIYQBCodingQuestionsByModule, softDeleteQuestion } from "../../../../api/userMainQuestionBankApi";
+import DeleteModule from "../../components/DeleteModule/DeleteModule";
 
 const TIYQBCodingQuestions = () => {
     const [showAddModal, setShowAddModal] = useState(false);
@@ -57,6 +58,8 @@ const TIYQBCodingQuestions = () => {
     const [selectedTypeOption, setSelectedTypeOption] = useState('All');
     // const moduleOptions = ["All", "Module 1", "Module 2", "Module 3"];
     // const typeOptions = ["All", "TIY", "QB"];
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+const [deleteId, setDeleteId] = useState(null);
 
     const fetchChallenges = useCallback(async () => {
         try {
@@ -175,25 +178,28 @@ const TIYQBCodingQuestions = () => {
             setLoading(false);
         }
     }, []);
-    const handleDelete = async (id) => {
-        try {
-            setLoading(true);
-            await softDeleteTiyQbCodingQuestion(id);
-            const moduleCodesData = await getModuleCode();
-            const preparedModuleOptions = moduleCodesData.data.map((module) => { return ({ value: module.module_code, label: module.module_name }) });
-            setModuleOptions(preparedModuleOptions);
-            setSelectedModuleCode(preparedModuleOptions.length > 0 ? preparedModuleOptions[0].value : null);
-            setSelectedTypeOption('tiy');
-            const response = await getAllMainQBCodingQuestions();
-            setChallenges(response.data);
-            setFilteredChallenges(response.data);
-            setError(null);
-        } catch (err) {
-            setError(err.message || "Failed to fetch questions.");
-        } finally {
-            setLoading(false);
-        }
-    }
+   const handleDelete = async () => {
+  try {
+    setLoading(true);
+    await softDeleteQuestion(deleteId);
+    console.log("deleted", deleteId);
+
+    setChallenges(prev => prev.filter(q => q._id !== deleteId));
+    setFilteredChallenges(prev => prev.filter(q => q._id !== deleteId));
+
+    setSuccessMessage("Question deleted successfully.");
+    setError(null);
+  } catch (err) {
+    console.error(err);
+    setError(err.response?.data?.message || "Failed to delete question.");
+  } finally {
+    setLoading(false);
+    setShowDeleteModal(false);
+    setDeleteId(null);
+    setTimeout(() => setSuccessMessage(null), 3000);
+  }
+};
+
 
     if (loading) return <LoadingMessage>Loading questions...</LoadingMessage>;
 
@@ -265,11 +271,15 @@ const TIYQBCodingQuestions = () => {
                                 <IconButton onClick={() => handleOpenEditModal(item)}>
                                     <FiEdit />
                                 </IconButton>
-                                <IconButton onClick={() => {
-                                    handleDelete(item._id)
-                                }}>
-                                    <RiDeleteBinLine color="#dc3545" />
-                                </IconButton>
+                                <IconButton
+  onClick={() => {
+    setDeleteId(item._id);
+    setShowDeleteModal(true);
+  }}
+>
+  <RiDeleteBinLine color="#dc3545" />
+</IconButton>
+
                             </Action>
                         </RowContainer>
                     ))
@@ -297,6 +307,17 @@ const TIYQBCodingQuestions = () => {
                     onQuestionUpdated={handleChallengeUpdated}
                 />
             )}
+
+            {showDeleteModal && (
+  <DeleteModule
+    onDelete={handleDelete}
+    onCancel={() => {
+      setShowDeleteModal(false);
+      setDeleteId(null);
+    }}
+  />
+)}
+
         </Container>
     );
 };

@@ -185,6 +185,16 @@ export const getAllMainQuestionBankQuestionWithFilter  = async (module_code,topi
     }
 }
 
+export const softDeleteQuestion = async (id) => {
+    try{
+        const response = await api.delete(`/mainQuestionBank/softDelete/${id}`);
+        return response.data;
+    }catch(error){
+        console.log(error);
+        throw error;
+    }
+};
+
 export const nextTiyQuestion = async (id) => {
     try {
         const response = await api.post(`/mainQuestionBank/nextTiyQuestion`,{questionId:id});

@@ -19,6 +19,17 @@ export const getModule = async (data) => {
   }
 };
 
+export const getAllModuleswithQuickRevise = async () => {
+  try {
+    const response = await api.get("/addNewModule/modules-with-revision-points");
+    console.log("Response from getAllModuleswithQuickRevise:", response.data);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 export const deleteModule = async (id) => {
   try {
     

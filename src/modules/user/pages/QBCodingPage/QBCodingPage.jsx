@@ -121,24 +121,31 @@ const QBCodingPage = () => {
   }, [user]);
 
   useEffect(() => {
-    // Check if output contains error messages
-    const isErrorOutput = output && (
-      output.includes('Error') || 
-      output.includes('error') || 
-      output.includes('Exception') || 
-      output.includes('Traceback')
-    );
-    
-    // Enable optimization button only if there's output and no errors
-    setOptimizationDisabled(!output || isErrorOutput);
-    
-    // Check if we already have optimized code in localStorage
-    const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
-    if (savedOptimizedCode) {
-      setOptimisedCode(savedOptimizedCode);
-      setHasOptimized(true);
-    }
-  }, [output, id]);
+  return () => {
+    // Clear the optimized code when component unmounts or question changes
+    localStorage.removeItem(`optimizedCode_${id}`);
+  };
+}, [id]);
+
+useEffect(() => {
+  // Check if output contains error messages
+  const isErrorOutput = output && (
+    output.includes('Error') || 
+    output.includes('error') || 
+    output.includes('Exception') || 
+    output.includes('Traceback')
+  );
+  
+  // Enable optimization button only if there's output and no errors
+  setOptimizationDisabled(!output || isErrorOutput);
+  
+  // Check if we already have optimized code in localStorage
+  const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
+  if (savedOptimizedCode) {
+    setOptimisedCode(savedOptimizedCode);
+    setHasOptimized(true);
+  }
+}, [output, id]);
 
   useEffect(() => {
     const fetchQuestion = async () => {
@@ -183,45 +190,43 @@ const QBCodingPage = () => {
     fetchQuestion();
   }, [questionID, id]);
 
-  const optimizeCode = async () => {
-    if (!output || optimizationDisabled) return;
-    
-    const userId = await getUserByClerkId(user.id);
-    console.log("Fetched user ID:", userId);
-    const user_id = userId.data.user._id;
-    console.log("User ID:", user_id);
+const optimizeCode = async () => {
+  if (!output || optimizationDisabled) return;
+  
+  const userId = await getUserByClerkId(user.id);
+  const user_id = userId.data.user._id;
 
-    try {
-      const response = await fetch(
-        "https://nextinterview.ai/fastapi/code/optimize-code",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            question: question.QuestionText,
-            description: question.description,
-            user_code: code,
-            sample_input: question.input,
-            sample_output: question.output,
-            user_id: user_id,
-          }),
-        }
-      );
-
-      const data = await response.json();
-      if (data.optimized_code) {
-        setOptimisedCode(data.optimized_code);
-        localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
-        setHasOptimized(true);
-        setModalOpen(true);
+  try {
+    const response = await fetch(
+      "https://nextinterview.ai/fastapi/code/optimize-code",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          question: question.QuestionText,
+          description: question.description,
+          user_code: code,
+          sample_input: question.input,
+          sample_output: question.output,
+          user_id: user_id,
+        }),
       }
-    } catch (error) {
-      console.error("Error optimizing code:", error);
-      notification.error({ message: "Failed to optimize code" });
+    );
+
+    const data = await response.json();
+    if (data.optimized_code) {
+      setOptimisedCode(data.optimized_code);
+      localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
+      setHasOptimized(true);
+      setModalOpen(true);
     }
-  };
+  } catch (error) {
+    console.error("Error optimizing code:", error);
+    notification.error({ message: "Failed to optimize code" });
+  }
+};
 
   useEffect(() => {
     if (activeTab !== "mycode" || solutionTimeExpired) return;
@@ -318,8 +323,11 @@ const QBCodingPage = () => {
   };
 
   const handleOptimizeClick = () => {
-    if (hasOptimized) {
-      setActiveTab("solution");
+    // Check if we already have optimized code
+    const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
+    if (savedOptimizedCode) {
+      setOptimisedCode(savedOptimizedCode);
+      setModalOpen(true);
     } else {
       optimizeCode();
     }
@@ -386,18 +394,18 @@ const QBCodingPage = () => {
                     <TabButton
                       active={activeTab === "solution"}
                       onClick={() => {
-                        if (solutionTimeExpired || hasOptimized) {
+                        if (solutionTimeExpired ) {
                           setActiveTab("solution");
                         }
                       }}
-                      disabled={!solutionTimeExpired && !hasOptimized}
+                      disabled={!solutionTimeExpired}
                       style={{
-                        opacity: (solutionTimeExpired || hasOptimized) ? 1 : 0.6,
-                        cursor: (solutionTimeExpired || hasOptimized) ? "pointer" : "not-allowed",
+                        opacity: (solutionTimeExpired ) ? 1 : 0.6,
+                        cursor: (solutionTimeExpired ) ? "pointer" : "not-allowed",
                       }}
                     >
-                      {hasOptimized ? "Show Solution" : "Solution"}
-                      {!solutionTimeExpired && !hasOptimized && (
+                      Solution
+                      {!solutionTimeExpired && (
                         <TimerText>
                           <PiTimer style={{ marginRight: "5px" }} />
                           {timeLeft}secs
@@ -469,9 +477,9 @@ const QBCodingPage = () => {
                     setInput={setInput}
                     dbSetupCommands={question?.dbSetupCommands}
                     showOptimiseBtn={true} // Always show the button
-                    optimizationDisabled={optimizationDisabled}
-                    handleOptimizeCode={handleOptimizeClick}
-                    hasOptimized={hasOptimized}
+    handleOptimizeCode={handleOptimizeClick}
+    hasOptimized={hasOptimized}
+    optimizationDisabled={optimizationDisabled}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
                     solutionTimeExpired={solutionTimeExpired}
@@ -538,33 +546,33 @@ const QBCodingPage = () => {
           </>
         )}
 
-        {modalOpen && (
-          <ModalOverlay>
-            <ModalContent>
-              <CloseButton onClick={() => setModalOpen(false)}>
-                <IoClose />
-              </CloseButton>
-              <h3>Optimised Code</h3>
-              <Editor
-                height="300px"
-                language={selectedLang || "plaintext"}
-                value={optimisedCode}
-                theme="vs-light"
-              />
-              <ButtonGroup>
-                <ModalButton
-                  onClick={() => {
-                    setCode(optimisedCode);
-                    setOutput("");
-                    setModalOpen(false);
-                  }}
-                >
-                  Apply to your Code
-                </ModalButton>
-              </ButtonGroup>
-            </ModalContent>
-          </ModalOverlay>
-        )}
+{modalOpen && (
+  <ModalOverlay>
+    <ModalContent>
+      <CloseButton onClick={() => setModalOpen(false)}>
+        <IoClose />
+      </CloseButton>
+      <h3>{hasOptimized ? "Optimised Solution" : "Optimised Code"}</h3>
+      <Editor
+        height="300px"
+        language={selectedLang || "plaintext"}
+        value={optimisedCode}
+        theme="vs-light"
+      />
+      <ButtonGroup>
+        <ModalButton
+          onClick={() => {
+            setCode(optimisedCode);
+            setOutput("");
+            setModalOpen(false);
+          }}
+        >
+          Apply to your Code
+        </ModalButton>
+      </ButtonGroup>
+    </ModalContent>
+  </ModalOverlay>
+)}
 
         {showFeedbackPopup && (
           <FeedbackPopup>

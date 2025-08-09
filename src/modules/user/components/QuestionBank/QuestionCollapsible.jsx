@@ -87,9 +87,9 @@ const QuestionCollapsible = () => {
             topics: q.topics?.map((t) => t.topic_name) || [],
             solution: q.output || "",
             option_a: q.option_a,
-            option_b:q.option_b,
-            option_c:q.option_c,
-            option_d:q.option_d,
+            option_b: q.option_b,
+            option_c: q.option_c,
+            option_d: q.option_d,
             options,
             moduleId: q.moduleId || q.module_code || "",
             correctOption: q.correct_option || "",
@@ -149,7 +149,7 @@ const QuestionCollapsible = () => {
   };
 
   const handleSolutionButton = async () => {
-    console.log("Show Solution:", showSolution,"getFeedback", getFeedback);
+    console.log("Show Solution:", showSolution, "getFeedback", getFeedback);
     if (showSolution) {
       handleNextQuestion();
       return;
@@ -221,24 +221,24 @@ const QuestionCollapsible = () => {
             {/* <CodeMeta
               dangerouslySetInnerHTML={{ __html: question.description }}
             ></CodeMeta> */}
-                        <CodeDescription>
-                            Description:
-<p className={`description-text ${!showMore ? "clamped-text" : ""}`}>
-  <span
-    dangerouslySetInnerHTML={{
-      __html: showMore
-        ? question.longDescription
-        : question.longDescription.split(/\s+/).slice(0, 50).join(" ") + "..."
-    }}
-  />
-</p>
+            <CodeDescription>
+              Description:
+              <p className={`description-text ${!showMore ? "clamped-text" : ""}`}>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: showMore
+                      ? question.longDescription
+                      : question.longDescription.split(/\s+/).slice(0, 50).join(" ") + "..."
+                  }}
+                />
+              </p>
 
-  {question.longDescription.split(/\s+/).length > 50 && (
-    <ViewMore onClick={() => setShowMore(!showMore)}>
-      {showMore ? 'View Less' : 'View More'}
-    </ViewMore>
-  )}
-                        </CodeDescription>
+              {question.longDescription.split(/\s+/).length > 50 && (
+                <ViewMore onClick={() => setShowMore(!showMore)}>
+                  {showMore ? 'View Less' : 'View More'}
+                </ViewMore>
+              )}
+            </CodeDescription>
             <TopicsCovered>
               <strong>Topics Covered</strong>
               <ul style={{ paddingLeft: 0 }}>
@@ -319,7 +319,7 @@ const QuestionCollapsible = () => {
     const userData = await getUserByClerkId(user?.id);
     const userId = userData?.data?.user?._id;
     console.log("User ID:", userId);
-    console.log ("Question ID:", question.id);
+    console.log("Question ID:", question.id);
 
     try {
       // optional spinner
@@ -345,7 +345,7 @@ const QuestionCollapsible = () => {
         setError(msg);
         return;
       }
-    
+
       setFeedbackData(data); // { feedback, strengths, areas_for_improvement, score }
       setShowSolution(true);
     } catch (err) {
@@ -407,14 +407,14 @@ const QuestionCollapsible = () => {
                 <SolutionAnswer>
                   <strong>Strengths:</strong>{" "}
                   {Array.isArray(feedbackData.strengths) &&
-                  feedbackData.strengths.length > 0
+                    feedbackData.strengths.length > 0
                     ? feedbackData.strengths.join(", ")
                     : "No strengths identified."}
                 </SolutionAnswer>
                 <SolutionAnswer>
                   <strong>Areas for Improvement:</strong>{" "}
                   {Array.isArray(feedbackData.areas_for_improvement) &&
-                  feedbackData.areas_for_improvement.length > 0
+                    feedbackData.areas_for_improvement.length > 0
                     ? feedbackData.areas_for_improvement.join(", ")
                     : "No improvement areas identified."}
                 </SolutionAnswer>
@@ -435,26 +435,26 @@ const QuestionCollapsible = () => {
         {["text", "multi-line", "approach", "mcq", "single-line", "case-study"].includes(
           question.type
         ) && (
-          <Footer>
-            <Button
-              onClick={handleSolutionButton}
-              disabled={
-                !showSolution && // we’re still answering
-                textAnswer.trim().length === 0 && // nothing typed
-                question.type !== "approach" // “approach” may send empty → API will complain, so keep same guard
-              }
-            >
-              {showSolution
-                ? "Next question"
-                : question.type === "approach"
-                ? "Get Feedback"
-                : "Show Solution"}
-            </Button>
-            <TryHarder onClick={handleTryHarderQuestion}>
-              <PiStarFour /> Try harder question
-            </TryHarder>
-          </Footer>
-        )}
+            <Footer>
+              <Button
+                onClick={handleSolutionButton}
+                disabled={
+                  !showSolution && // we’re still answering
+                  textAnswer.trim().length === 0 && // nothing typed
+                  question.type !== "approach" // “approach” may send empty → API will complain, so keep same guard
+                }
+              >
+                {showSolution
+                  ? "Next question"
+                  : question.type === "approach"
+                    ? "Get Feedback"
+                    : "Show Solution"}
+              </Button>
+              <TryHarder onClick={handleTryHarderQuestion}>
+                <PiStarFour /> Try harder question
+              </TryHarder>
+            </Footer>
+          )}
       </Container>
     </>
   );

@@ -60,43 +60,43 @@ const NewChallenge = () => {
     fetchChallenge();
   }, [id]);
 
-  const handleNextQuestion = async () => {
-    try {
-      const { data: { user: { _id: userId } = {} } = {} } =
-        await getUserByClerkId(user.id);
+const handleNextQuestion = async () => {
+  try {
+    const { data: { user: { _id: userId } = {} } = {} } =
+      await getUserByClerkId(user.id);
 
-      console.log("User ID:", userId);
-      console.log("Challenge ID:", challenge._id);
-      const questionId = challenge._id;
+    console.log("User ID:", userId);
+    console.log("Current Challenge ID:", challenge._id);
+    
+    const apiCall = past === "true"
+      ? getPastChallengesNextQuestion
+      : getTodayChallengesNextQuestion;
 
-      const apiCall =
-        past === "true"
-          ? getPastChallengesNextQuestion
-          : getTodayChallengesNextQuestion;
+    const result = await apiCall(userId, challenge._id);
+    console.log("Full API response:", result);
 
-      const result = await apiCall(userId, questionId);
-      console.log("Next‑question API result →", result);
-      
-      // Reset all states for new question
-      setShowSolution(false);
-      setShowFeedback(false);
-      setTextAnswer("");
-      setFeedbackData(null);
+    // Reset all states for new question
+    setShowSolution(false);
+    setShowFeedback(false);
+    setTextAnswer("");
+    setFeedbackData(null);
 
-      const nextId = result?.nextQuestion?._id;
-      console.log("Next question id →", nextId);
-      if (result?.success && nextId) {
-        navigate(`/user/challengeInfo/${nextId}/${past}`);
-      } else {
-        alert("No more questions available.");
-      }
-    } catch (err) {
-      console.error("Failed to fetch next question", err);
-      alert("Unable to load next question.");
+    // Handle the response with the correct property name (challengeId instead of _id)
+    const nextId = result?.nextQuestion?.challengeId; // Changed from _id to challengeId
+    console.log("Next question id →", nextId);
+    
+    if (result?.success && nextId) {
+      navigate(`/user/challengeInfo/${nextId}/${past}`);
+    } else {
+      alert(result?.message || "No more questions available.");
     }
-  };
+  } catch (err) {
+    console.error("Failed to fetch next question", err);
+    alert("Unable to load next question. Please try again.");
+  }
+};
 
-  if (loading)
+if (loading)
     return <div style={{ textAlign: "center" }}>Loading challenge...</div>;
   if (error) return <div style={{ color: "red" }}>{error}</div>;
 

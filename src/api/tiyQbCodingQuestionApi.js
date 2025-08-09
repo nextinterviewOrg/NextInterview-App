@@ -53,6 +53,7 @@ export const updateTiyQbCodingQuestion = async (id, data) => {
 export const softDeleteTiyQbCodingQuestion = async (id) => {
     try {
         const response = await api.delete(`/tiyQbQuestion/soft-delete/${id}`);
+        console.log("soft deleeeee",response.data);
         return response.data;
     } catch (error) {
         throw error;
