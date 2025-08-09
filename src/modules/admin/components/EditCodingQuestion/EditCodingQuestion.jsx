@@ -226,7 +226,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Module</FormLabel>
-                    <FormTextArea value={(moduleOptions?.find(e => { return e.value === formData.module_code })?.label)} readOnly />
+                    <FormInput value={(moduleOptions?.find(e => { return e.value === formData.module_code })?.label)} readOnly />
                     {/* <Select
                         style={{ width: '100%' }}
                         showSearch
@@ -251,7 +251,7 @@ const EditCodingQuestion = ({ onClose, questionData, onQuestionUpdated }) => {
 
                 <FormGroup>
                     <FormLabel>Topic</FormLabel>
-                    <FormTextArea value={(topicOptions?.find(e => { return e.value === formData.topic_code })?.label)} readOnly />
+                    <FormInput value={(topicOptions?.find(e => { return e.value === formData.topic_code })?.label)} readOnly />
                     {/* <Select
                         style={{ width: '100%' }}
                         showSearch
