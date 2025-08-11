@@ -42,6 +42,8 @@ export default function ModuleSidebar({
   const [isMobile, setIsMobile] = useState(window.innerWidth < 800);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [immediatelyCompleted, setImmediatelyCompleted] = useState({});
+
 
   const fetchModuleData = useCallback(async () => {
     try {
@@ -102,6 +104,28 @@ export default function ModuleSidebar({
       console.error("Error in ModuleSidebar apiCaller:", error);
     }
   }, [moduleId, user, location.state]);
+
+useEffect(() => {
+    const handleSubtopicCompleted = (e) => {
+      const { topicIndex, subtopicIndex } = e.detail;
+      
+      // Immediate state update
+      setImmediatelyCompleted(prev => ({
+        ...prev,
+        [`${topicIndex}-${subtopicIndex}`]: true
+      }));
+      
+      // Trigger data refresh
+      setLastUpdate(Date.now());
+    };
+
+    window.addEventListener('subtopicCompleted', handleSubtopicCompleted);
+    
+    return () => {
+      window.removeEventListener('subtopicCompleted', handleSubtopicCompleted);
+    };
+  }, []);
+
 
   useEffect(() => {
     fetchModuleData();
@@ -179,6 +203,8 @@ export default function ModuleSidebar({
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMobile, sidebarOpen]);
+
+  
   return (
     <>
       {isMobile && (
@@ -250,54 +276,57 @@ export default function ModuleSidebar({
               </div>
               {expandedTopic === index && (
                 <div className="subtopics">
-                  {topic.subtopics.length === 0 ? (
-                    <p>No subtopics available</p>
-                  ) : (
-                    topic.subtopics?.map((subtopic, subIndex) => (
-                      <Link
-                        key={`${index}-${subIndex}`}
-                        className="subtopic-link"
-                        to={`/user/learning/${moduleId}/topic`}
-                        state={{
-                          topicIndex: index,
-                          subtopicIndex: subIndex,
-                        }}
-                        onClick={() => isMobile && setSidebarOpen(false)}
-                      >
-                        <div key={subIndex} className="subtopic">
-                          <div className="subtopic-info" style={{ backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", borderRadius: "5px" }}>
-                            <span
-                              className={
-                                subtopic.completed ? "completed" : "pending"
-                              }
-                            >
-                              <div
-                                style={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: "5px",
-                                  minHeight: "fit-content",
-                                  height: "auto",
-                                }}
-                              >
-                                <span>
-                                  {subtopic.completed ? (
-                                    <FaCheckCircle />
-                                  ) : (
-                                    <FaCheckCircle style={{ color: "gray" }} />
-                                  )}
-                                </span>
-                                <span className="subtopic-title">
-                                  {subtopic.title}
-                                </span>
-                              </div>
-                            </span>
-                          </div>
+                {topic.subtopics.length === 0 ? (
+                  <p>No subtopics available</p>
+                ) : (
+                  topic.subtopics?.map((subtopic, subIndex) => (
+                    <Link
+                      key={`${index}-${subIndex}`}
+                      className="subtopic-link"
+                      to={`/user/learning/${moduleId}/topic`}
+                      state={{
+                        topicIndex: index,
+                        subtopicIndex: subIndex,
+                      }}
+                      onClick={() => {
+                        setSelectedCurrentSubTopic(subIndex);
+                        setSelectedCurrentTopic(index);
+                        if (isMobile) setSidebarOpen(false);
+                      }}
+                    >
+                      <div key={subIndex} className="subtopic">
+                        <div className="subtopic-info" 
+                          style={{ 
+                            backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", 
+                            borderRadius: "5px" 
+                          }}
+                        >
+                          <span className={subtopic.completed ? "completed" : "pending"}>
+                            <div style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "5px",
+                              minHeight: "fit-content",
+                              height: "auto",
+                            }}>
+                              <span>
+                                {subtopic.completed || immediatelyCompleted[`${index}-${subIndex}`] ? (
+                                  <FaCheckCircle style={{ color: "#4CAF50" }} />
+                                ) : (
+                                  <FaCheckCircle style={{ color: "gray" }} />
+                                )}
+                              </span>
+                              <span className="subtopic-title">
+                                {subtopic.title}
+                              </span>
+                            </div>
+                          </span>
                         </div>
-                      </Link>
-                    ))
-                  )}
-                </div>
+                      </div>
+                    </Link>
+                  ))
+                )}
+              </div>
               )}
             </div>
           ))}
