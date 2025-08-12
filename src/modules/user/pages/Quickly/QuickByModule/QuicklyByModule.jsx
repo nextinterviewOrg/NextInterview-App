@@ -40,6 +40,7 @@ const QuicklyByModule = () => {
         setCompletedSubtopics(completedSubtopicsData.completedOngoingSubtopics);
        
         setModuleData(response.data);
+        console.log("moduleData", response.data);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching module data:", err);
@@ -144,7 +145,7 @@ const QuicklyByModule = () => {
                                 ) : (
                                   <p
                                     dangerouslySetInnerHTML={{
-                                      __html: parseJSONContent(subtopic.subtopicSummary),
+                                      __html: parseJSONContent(subtopic.revisionPoints),
                                     }}
                                     style={{ margin: "0" }}
                                   ></p>

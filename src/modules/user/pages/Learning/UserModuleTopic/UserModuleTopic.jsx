@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Container,
   Title,
@@ -100,6 +100,28 @@ const courseData1 = {
   ],
 };
 
+const initialCourseData = {
+  title: "",
+  topicsList: [
+    {
+      title: "",
+      subtopics: [
+        {
+          title: "",
+          time: "",
+          completed: true,
+          subtopicContent: "",
+          subtopicSummary: "",
+          gptSummary: "",
+          cheatSheetURL: "",
+        },
+      ],
+    },
+  ],
+};
+
+const apiCache = new Map();
+
 const UserModuleTopic = () => {
   const [feedback, setFeedback] = useState(""); // State to store feedback
   const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
@@ -136,6 +158,24 @@ const UserModuleTopic = () => {
   const [topicCODE, setTopicCODE] = useState(null)
   const [contentReady, setContentReady] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
+
+    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+
+  // Pre-fetch module data when component mounts
+  useEffect(() => {
+    const fetchModuleData = async () => {
+      try {
+        const response = await getModuleById(moduleId);
+        setModuleName(response.data.moduleName);
+        setModuleCODE(response.data.module_code);
+        setContentReady(true);
+      } catch (error) {
+        console.error("Error fetching module data:", error);
+      }
+    };
+
+    fetchModuleData();
+  }, [moduleId]);
 
   const delayPara = (index, nextWord) => {
     setTimeout(() => {
@@ -322,6 +362,147 @@ if (!feedback1.found && !feedback2.found) {
     // }
     navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
   };
+
+
+const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
+    if (apiCache.has(key)) {
+      return apiCache.get(key);
+    }
+    const result = await apiFunction(...args);
+    apiCache.set(key, result);
+    return result;
+  }, []);
+
+  // Pre-fetch all module data when component mounts
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const [moduleResponse, userData] = await Promise.all([
+          cachedApiCall(`module-${moduleId}`, getModuleById, moduleId),
+          cachedApiCall(`user-${user?.id}`, getUserByClerkId, user?.id)
+        ]);
+        
+        setModuleName(moduleResponse.data.moduleName);
+        setModuleCODE(moduleResponse.data.module_code);
+        
+        // Pre-cache all topics and subtopics
+        moduleResponse.data.topicData.forEach((topic, tIdx) => {
+          topic.subtopicData.forEach((subtopic, sIdx) => {
+            const cacheKey = `content-${moduleId}-${tIdx}-${sIdx}`;
+            if (!apiCache.has(cacheKey)) {
+              apiCache.set(cacheKey, {
+                title: subtopic.subtopicName,
+                description: subtopic.subtopicContent,
+                summary: subtopic.subtopicSummary,
+                cheatSheetURL: subtopic.cheatSheetURL || "#"
+              });
+            }
+          });
+        });
+      } catch (error) {
+        console.error("Initial data loading error:", error);
+      }
+    };
+
+    fetchInitialData();
+  }, [moduleId, user?.id, cachedApiCall]);
+
+  // Ultra-fast subtopic loading
+  const loadSubtopic = useCallback(async () => {
+    if (!user || !moduleId || topicIndex === undefined || subtopicIndex === undefined) return;
+
+    setLoading(true);
+    setContentReady(false);
+
+    try {
+      const startTime = performance.now();
+      
+      // First check cache for instant response
+      const cacheKey = `content-${moduleId}-${topicIndex}-${subtopicIndex}`;
+      if (apiCache.has(cacheKey)) {
+        const cachedData = apiCache.get(cacheKey);
+        setTopicData([cachedData]);
+        setSelectedCheetSheetURL(cachedData.cheatSheetURL);
+        setGptSummaryText(cachedData.summary);
+        setContentReady(true);
+        setLoading(false);
+        console.log(`Loaded from cache in ${performance.now() - startTime}ms`);
+        return;
+      }
+
+      // Fallback to API if not in cache (should rarely happen)
+      const [userData, moduleResponse] = await Promise.all([
+        cachedApiCall(`user-${user.id}`, getUserByClerkId, user.id),
+        cachedApiCall(`module-${moduleId}`, getModuleById, moduleId)
+      ]);
+
+      const currentSubtopic = moduleResponse.data.topicData[topicIndex].subtopicData[subtopicIndex];
+      const subtopicData = {
+        title: currentSubtopic.subtopicName,
+        description: currentSubtopic.subtopicContent,
+        summary: currentSubtopic.subtopicSummary,
+        cheatSheetURL: currentSubtopic.cheatSheetURL || "#"
+      };
+
+      // Update cache for future visits
+      apiCache.set(cacheKey, subtopicData);
+      
+      setTopicData([subtopicData]);
+      setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
+      setGptSummaryText(subtopicData.summary);
+
+      // Start progress tracking in background
+      const module_code = moduleResponse.data.module_code;
+      const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
+      const subtopic_code = currentSubtopic.subtopic_code;
+      
+      Promise.all([
+        startTopic(
+          userData.data.user._id,
+          topic_code,
+          moduleResponse.data.topicData[topicIndex]._id,
+          module_code,
+          moduleId
+        ),
+        startSubTopic(
+          userData.data.user._id,
+          module_code,
+          topic_code,
+          moduleResponse.data.topicData[topicIndex]._id,
+          moduleId,
+          subtopic_code,
+          currentSubtopic._id,
+        )
+      ]).catch(e => console.error("Background progress tracking error:", e));
+
+      console.log(`Subtopic loaded in ${performance.now() - startTime}ms`);
+      setContentReady(true);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error loading subtopic:", error);
+      setLoading(false);
+      setContentReady(true);
+    }
+  }, [user, moduleId, topicIndex, subtopicIndex, cachedApiCall]);
+
+  // Immediate subtopic loading with debounce
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      loadSubtopic();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [loadSubtopic]);
+
+
+    useEffect(() => {
+    const timer = setTimeout(() => {
+      loadSubtopic();
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [loadSubtopic]);
+
   useEffect(() => {
     const apiCaller = async () => {
       try {
@@ -645,13 +826,20 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
   };
 
   const handleMarkAsCompleted = async () => {
-    const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
-    if (allSubtopicsCompleted) {
-      setIsModuleCompleted(true); // Show feedback only after the last subtopic
-      // setShowFeedbackModal(true); // Show feedback modal directly
-    } else {
-      console.log("Not all subtopics are completed.");
+  const event = new CustomEvent('subtopicCompleted', {
+    detail: {
+      moduleId,
+      topicIndex: location.state?.topicIndex,
+      subtopicIndex: location.state?.subtopicIndex
     }
+  });
+  window.dispatchEvent(event);
+
+  // Rest of your existing mark as completed logic
+  const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
+  if (allSubtopicsCompleted) {
+    setIsModuleCompleted(true);
+  }
 
     try {
       console.log("Fetching module_code...");
@@ -725,8 +913,17 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
       setAssessmentParams(params);
       setShowModal(true);
     } catch (error) {
-      console.error(" Error in fetching data:", error);
-    }
+         const rollbackEvent = new CustomEvent('subtopicCompleted', {
+      detail: {
+        moduleId,
+        topicIndex: location.state?.topicIndex,
+        subtopicIndex: location.state?.subtopicIndex,
+        completed: false
+      }
+    });
+    window.dispatchEvent(rollbackEvent);
+    console.error("Error marking as completed:", error);
+  }
   };
 
   const handleTryButton = () => {
@@ -796,10 +993,9 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
   return (
     <Container>
       {!contentReady ? (
-        // Only show loading spinner for content, not for buttons
         <div style={{ textAlign: "center", marginTop: "40px" }}>
           <Spinner />
-          <p>Loading...</p>
+          <p>Loading subtopic...</p>
         </div>
       ) : (
         <>
@@ -1006,7 +1202,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
               }}
               onClick={handleNext}
             >
-              Next
+              Next Module 
             </Button>
           ) : (
             <Button

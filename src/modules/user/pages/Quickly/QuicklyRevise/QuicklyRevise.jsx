@@ -11,7 +11,8 @@ import { ShimmerThumbnail } from "react-shimmer-effects";
 import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
-import { getcompletedModuleByUser, getcompletedOngoingModuleByUser, getUserProgress } from "../../../../../api/userProgressApi";
+import {  getcompletedModuleByUser  } from "../../../../../api/userProgressApi";
+import { getAllModuleswithQuickRevise} from "../../../../../api/addNewModuleApi";
 import Lottie from "lottie-react";
 import dataNot from "../../../../../../src/assets/Lottie/5nvMVE1u7L.json";
 
@@ -20,27 +21,47 @@ const QuicklyRevise = () => {
   const [loading, setLoading] = useState(true);
   const [imageLoaded, setImageLoaded] = useState({});
   const { user } = useUser();
+  const [error, setError] = useState(null); 
 
-  useEffect(() => {
+   useEffect(() => {
     const fetchModules = async () => {
       try {
-        console.log("user", user);
+        setLoading(true);
+        setError(null);
+        
         const userData = await getUserByClerkId(user.id);
-        const userProgress = await getcompletedOngoingModuleByUser(userData.data.user._id);
-        console.log("userProgress", userProgress);
-        const completedModules = userProgress.data.map((item) => item.moduleId);
-        let allModules = await Promise.all(completedModules.map(async (id) => {
-          const module = await getModuleById(id);
-          return module.data;
-        }));
-        console.log("allModules", allModules);
-        if (Array.isArray(allModules)) {
-          setModules(allModules);
-        } else {
-          throw new Error("Invalid API response format.");
+        
+        // Get data in parallel
+        const [quickReviseModules, userProgress] = await Promise.all([
+          getAllModuleswithQuickRevise(userData.data.user._id),
+          getcompletedModuleByUser(userData.data.user._id)
+        ]);
+        
+        console.log("Quick Revise Modules:", quickReviseModules.data);
+        console.log("User Progress:", userProgress.data);
+        
+        // Create Set for faster lookup - use moduleId from userProgress
+        const completedModuleIds = new Set(
+          userProgress.data.map(module => module.moduleId)
+        );
+        
+        // Filter modules that have quick revise AND are completed
+        const completedQuickReviseModules = quickReviseModules.data
+          .filter(module => completedModuleIds.has(module._id)); // Changed to module._id
+        
+        console.log("Completed Quick Revise Modules:", completedQuickReviseModules);
+
+        if (completedQuickReviseModules.length === 0) {
+          setError("You can access Quick Revision after completing modules");
+          setModules([]);
+          return;
         }
+
+        // Since quickReviseModules already contains all needed data, we can use it directly
+        setModules(completedQuickReviseModules);
       } catch (err) {
         console.error("Failed to fetch modules:", err);
+        setError("Failed to load modules. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -49,12 +70,14 @@ const QuicklyRevise = () => {
     fetchModules();
   }, [user]);
 
+  
   const handleImageLoad = (id) => {
     setImageLoaded((prev) => ({
       ...prev,
       [id]: true,
     }));
   };
+
 
   return (
     <Container>
@@ -92,6 +115,8 @@ const QuicklyRevise = () => {
             </div>
           </Card>
         ))
+      ) : error ? (
+        <span style={{ fontSize: "20px", fontWeight: "bold", textAlign: "center", width:"90vw", height: "30vh", display:"flex", justifyContent:"center", alignItems:"center" }}>{error}</span>
       ) : modules.length > 0 ? (
         modules.map((module) => (
           <Link
@@ -148,7 +173,7 @@ const QuicklyRevise = () => {
             }}
           /> */}
 
-          <span style={{  fontSize: "20px", fontWeight: "bold", textAlign: "center" ,width:"90vw", height: "30vh", display: "flex", justifyContent: "center", alignItems: "center"}}>'You can access Quick Revision after completing the modules'</span>
+          <span style={{  fontSize: "20px", fontWeight: "bold", textAlign: "center" ,width:"90vw", height: "30vh", display: "flex", justifyContent: "center", alignItems: "center"}}>&apos;You can access Quick Revision after completing the modules&apos;</span>
         </>
       )}
     </Container>

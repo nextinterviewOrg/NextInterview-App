@@ -68,6 +68,16 @@ const MockInterview = () => {
   const [optimisedCode, setOptimisedCode] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [optimizationApplied, setOptimizationApplied] = useState(false);
+const { 
+  feedbacks, 
+  metrics, 
+  summary, 
+  base_question, 
+  questions,
+  user_code, 
+  code_output, 
+  language 
+} = location.state || {};
 
   // Add this new function for optimization
   const handleOptimizeCode = async () => {
@@ -246,40 +256,53 @@ const MockInterview = () => {
     }
   };
 
-  const handleEndInterview = async () => {
-    if (!session_id) return;
-    setProcessingData(true);
-    setError("");
-    try {
-      const response = await fetch(`${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-      });
+const handleEndInterview = async () => {
+  if (!session_id) return;
+  setProcessingData(true);
+  setError("");
+  try {
+    // Determine if this is a coding interview (we can check if readyToCode was true)
+    const isCodingInterview = readyToCode;
+    
+    const requestBody = isCodingInterview 
+      ? { code, output } 
+      : {};
 
-      if (!response.ok) {
-        setError("Failed to fetch feedback. Please try again.");
-        setProcessingData(false);
-        return;
-      }
+    const response = await fetch(`${EXTERNAL_API_BASE}/feedback/${encodeURIComponent(session_id)}`, {
+      method: "POST", // Changed from GET to POST
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(requestBody),
+    });
 
-      const data = await response.json();
-      setFeedback(data);
-
-      navigate("/user/interview/interview-feedback", {
-        state: {
-          feedback: data,
-          metrics: data.metrics,
-          summary: data.summary,
-          base_question: data.base_question,
-          questions: data.questions,
-        },
-      });
-    } catch {
+    if (!response.ok) {
       setError("Failed to fetch feedback. Please try again.");
-    } finally {
       setProcessingData(false);
+      return;
     }
-  };
+
+    const data = await response.json();
+    setFeedback(data);
+
+    navigate("/user/interview/interview-feedback", {
+      state: {
+        feedbacks: data,
+        metrics: data.metrics,
+        summary: data.summary,
+        base_question: data.base_question,
+        questions: data.questions,
+        ...(isCodingInterview && { // Include code-related data if coding interview
+          user_code: code,
+          code_output: output,
+          language: selectLang
+        })
+      },
+    });
+  } catch {
+    setError("Failed to fetch feedback. Please try again.");
+  } finally {
+    setProcessingData(false);
+  }
+};
 
   return (
     <>
