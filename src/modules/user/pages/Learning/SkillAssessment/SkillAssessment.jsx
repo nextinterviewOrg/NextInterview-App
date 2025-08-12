@@ -10,18 +10,17 @@ import {
   AnswerFeedback,
   TextArea,
   CloseButton,
-  CorrectAnswer
+  CorrectAnswer,
+  UserTextAnswer, // New styled component
 } from "../SkillAssessment/SkillAssessment.styles";
 import { evaluateSkillAssessment, getSkillAssessment } from "../../../../../api/skillAssessmentApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../../api/userApi";
-import { completeModule, completeSubTopic, completeTopic } from "../../../../../api/userProgressApi";
-import { getLastSubTopicByTopicCode, getLastTopicByModuleCode } from "../../../../../api/addNewModuleApi";
+// import { completeModule, completeSubTopic, completeTopic } from "../../../../../api/userProgressApi";
+// import { getLastSubTopicByTopicCode, getLastTopicByModuleCode } from "../../../../../api/addNewModuleApi";
 import { useNavigate } from "react-router-dom";
-import { on } from "codemirror";
-import { Feedback } from "@mui/icons-material";
 import { addQuestionToUserSkillAssessmentProgress } from "../../../../../api/userSkillAssessmentProgressApi";
-import { Input, notification } from "antd";
+import { notification } from "antd";
 
 const SkillAssessment = ({
   module_code,
@@ -43,6 +42,7 @@ const SkillAssessment = ({
   const { isLoaded, user, isSignedIn } = useUser();
   const [showClosebtn, setShowClosebtn] = useState(false);
   const navigate = useNavigate();
+  console.log("filteredQuestions", filteredQuestions);
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
@@ -56,7 +56,7 @@ const SkillAssessment = ({
           question_type,
           level
         );
-        console.log("response", response);
+        console.log("responsefdghjkljhgfds", response);
 
         if (response && response.success && Array.isArray(response.data)) {
           setFilteredQuestions(response.data);
@@ -83,12 +83,23 @@ const SkillAssessment = ({
 
     fetchQuestions();
   }, [module_code, topic_code, subtopic_code, question_type, level]);
+
+
   useEffect(() => {
     if (Object.keys(feedback).length > 0) {
       // Log feedback after it has been updated
       console.log("Feedback updated:", feedback);
     }
   }, [feedback]);
+  
+    const getQuestionStatus = (question) => {
+    if (!submitted) return 'unattempted';
+    if (!feedback[question._id]) return 'unattempted';
+    return feedback[question._id].isCorrect ? 'correct' : 'incorrect';
+  };
+
+
+
   const handleOptionChange = (questionId, option, optionText) => {
     console.log(questionId, option, optionText);
     setAnswers((prev) => ({ ...prev, [questionId]: optionText }));
@@ -97,6 +108,17 @@ const SkillAssessment = ({
   const handleTextAnswer = (questionId, value) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
   };
+
+    const getOptionText = (question, optionKey) => {
+    switch(optionKey) {
+      case 'option_a': return question.option_a;
+      case 'option_b': return question.option_b;
+      case 'option_c': return question.option_c;
+      case 'option_d': return question.option_d;
+      default: return optionKey; // For text answers
+    }
+  };
+
   const checkAnswer = (question) => {
     const userAnswer = answers[question._id]; // User's input
     let UserOption;
@@ -189,18 +211,45 @@ const SkillAssessment = ({
       )
       console.log(isCorrect);
       newFeedback[question._id] = {
+        userAnswer: userAnswer,
         text: isCorrect.result ? "Correct" : "Incorrect",
         isCorrect: isCorrect.result,
-        answer: isCorrect.skillAssessment[isCorrect.skillAssessment.correct_option],
+        answer: isCorrect.skillAssessment.answer,
+        correctOption: isCorrect.skillAssessment.correct_option ? getOptionText(question, isCorrect.skillAssessment.correct_option) : null
       };
     };
+    console.log("newFeedback", newFeedback);  
     console.log(feedback);
     setFeedback(newFeedback);
+      console.log("newFeedback", newFeedback); 
     setSubmitted(true); // Mark the form as submitted
     setShowClosebtn(true);
 
     // Don't automatically close the modal - let the user close it manually
     // The feedback modal will be shown after the user closes this modal
+  };
+
+    const renderUserAnswer = (question) => {
+    if (!submitted || !feedback[question._id]) return null;
+
+    if (question.question_type === "mcq") {
+      return (
+        <RadioOption  isCorrect={feedback[question._id].isCorrect}>
+          <input
+            type="radio"
+            checked={true}
+            readOnly
+          />
+          {feedback[question._id].userAnswer ? getOptionText(question, feedback[question._id].userAnswer) : "No answer provided"}
+        </RadioOption>
+      );
+    } else {
+      return (
+        <UserTextAnswer isCorrect={feedback[question._id].isCorrect}>
+          {feedback[question._id].userAnswer || "No answer provided"}
+        </UserTextAnswer>
+      );
+    }
   };
 
   if (loading) return <div>Loading questions...</div>;
@@ -214,8 +263,15 @@ const SkillAssessment = ({
       {showClosebtn ? <CloseButton onClick={onCloseModal}>X</CloseButton> : null}
       <h1>Skill Assessment</h1>
       {filteredQuestions.map((q, index) => (
-        <QuestionWrapper key={q._id || index}>
-          <QuestionHeader> <span className="question-index">{index + 1}</span>  {q.question}</QuestionHeader>
+        <QuestionWrapper key={q._id || index} status={getQuestionStatus(q)}              isCorrect={submitted && feedback[q._id]?.isCorrect}
+            isAttempted={submitted && answers[q._id]}>
+                    <QuestionHeader 
+            status={getQuestionStatus(q)}
+            isCorrect={submitted && feedback[q._id]?.isCorrect}
+            isAttempted={submitted && answers[q._id]}
+          >
+            <span className="question-index">{index + 1}</span> {q.question}
+          </QuestionHeader>
 
           {q.question_type === "mcq" && !submitted && (
             <>
@@ -246,6 +302,9 @@ const SkillAssessment = ({
 
           {submitted && feedback[q._id] && (
             <>
+
+             {renderUserAnswer(q)}
+
               <AnswerFeedback isCorrect={feedback[q._id].isCorrect}>
                 {/* <div className="error-message" style={{ color: 'red' }}>
                   {feedback[q._id]}
@@ -255,7 +314,7 @@ const SkillAssessment = ({
               {
                 !feedback[q._id].isCorrect &&
                 <CorrectAnswer>
-                  <strong>Correct Answer:</strong> {feedback[q._id].answer}
+                  Correct Answer - {feedback[q._id].correctOption || feedback[q._id].answer}
                 </CorrectAnswer>}
             </>
           )}

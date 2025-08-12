@@ -48,12 +48,12 @@ import {
 } from "../../../../../api/userProgressApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
-import {
-  ShimmerTitle,
-  ShimmerText,
-  ShimmerButton,
-} from "react-shimmer-effects";
-import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
+// import {
+//   ShimmerTitle,
+//   ShimmerText,
+//   ShimmerButton,
+// } from "react-shimmer-effects";
+// import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
@@ -100,30 +100,30 @@ const courseData1 = {
   ],
 };
 
-const initialCourseData = {
-  title: "",
-  topicsList: [
-    {
-      title: "",
-      subtopics: [
-        {
-          title: "",
-          time: "",
-          completed: true,
-          subtopicContent: "",
-          subtopicSummary: "",
-          gptSummary: "",
-          cheatSheetURL: "",
-        },
-      ],
-    },
-  ],
-};
+// const initialCourseData = {
+//   title: "",
+//   topicsList: [
+//     {
+//       title: "",
+//       subtopics: [
+//         {
+//           title: "",
+//           time: "",
+//           completed: true,
+//           subtopicContent: "",
+//           subtopicSummary: "",
+//           gptSummary: "",
+//           cheatSheetURL: "",
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 const apiCache = new Map();
 
 const UserModuleTopic = () => {
-  const [feedback, setFeedback] = useState(""); // State to store feedback
+  // const [feedback, setFeedback] = useState(""); // State to store feedback
   const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
   const [showSummary, setShowSummary] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // State for feedback popup
@@ -146,7 +146,7 @@ const UserModuleTopic = () => {
   const [moduleName, setModuleName] = useState("");
   const [markAsCompleteBtnStatus, setMarkAsCompleteBtnStatus] = useState(false);
   const navigate = useNavigate();
-  const [curIndex, setCurIndex] = useState(0);
+  // const [curIndex, setCurIndex] = useState(0);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [popupContent, setPopupContent] = useState(null);
@@ -166,6 +166,7 @@ const UserModuleTopic = () => {
     const fetchModuleData = async () => {
       try {
         const response = await getModuleById(moduleId);
+        console.log("Module data fetched successfully:", response);
         setModuleName(response.data.moduleName);
         setModuleCODE(response.data.module_code);
         setContentReady(true);
@@ -194,6 +195,7 @@ const UserModuleTopic = () => {
     let finalSubTopicIndex = location.state?.subtopicIndex;
     const userData = await getUserByClerkId(user.id);
     const moduleResponse = await getModuleById(moduleId);
+    console.log("fdsghjkljhgfdfghjk", moduleResponse)
     const module_code = moduleResponse.data.module_code;
     const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
     const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
@@ -729,33 +731,50 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
     apiCaller();
   }, [location.state]); // Add location.state as a dependency to ensure it runs when state changes
 
-  const renderConceptClarifiers = (text, clarifiers) => {
-    if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
+const renderConceptClarifiers = (text, clarifiers) => {
+  if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
 
-    let result = text;
-    clarifiers.forEach(({ conceptClarifier, hoverExplanation, popupExplanation }) => {
-      if (!conceptClarifier) return;
+  // Create a safe copy of the text to modify
+  let result = text;
 
-      const escapedConcept = conceptClarifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const escapedHover = hoverExplanation.replace(/"/g, '"').replace(/'/g, '&#39;');
-      const escapedPopup = popupExplanation
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '<')
-        .replace(/>/g, '>')
-        .replace(/"/g, '\\"')
-        .replace(/'/g, "\\'");
+  // Process each clarifier in order
+  clarifiers.forEach((clarifier) => {
+    if (!clarifier?.conceptClarifier) return;
 
-      result = result.replace(
-        new RegExp(`\\b${escapedConcept}\\b`, "g"),
-        `<span class="concept-tooltip" 
-          title="${escapedHover}" 
-          onClick="window.showPopupHandler('${escapedPopup}')">
-          ${conceptClarifier}
-        </span>`
+    try {
+      // Escape special regex characters in the concept
+      const escapedConcept = clarifier.conceptClarifier.replace(
+        /[.*+?^${}()|[\]\\]/g, 
+        '\\$&'
       );
-    });
-    return result;
-  };
+
+      // Escape HTML and quotes for hover text
+      const escapedHover = (clarifier.hoverExplanation || '')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+      // Escape HTML and quotes for popup text
+      const escapedPopup = DOMPurify.sanitize(clarifier.popupExplanation || '');
+
+      // Create the replacement HTML
+      const replacement = `<span class="concept-tooltip" 
+        title="${escapedHover}" 
+        onClick="window.showPopupHandler('${escapedPopup.replace(/'/g, "\\'")}')"
+        style="color: #2390ac; cursor: pointer; text-decoration: underline;"
+      >
+        ${clarifier.conceptClarifier}
+      </span>`;
+
+      // Replace all occurrences (global flag)
+      const regex = new RegExp(`\\b${escapedConcept}\\b`, "gi");
+      result = result.replace(regex, replacement);
+    } catch (error) {
+      console.error('Error processing clarifier:', clarifier, error);
+    }
+  });
+
+  return result;
+};
 
 
   const handleSummarizeClick = async () => {
@@ -825,7 +844,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
     }
   };
 
-  const handleMarkAsCompleted = async () => {
+const handleMarkAsCompleted = async () => {
   const event = new CustomEvent('subtopicCompleted', {
     detail: {
       moduleId,
@@ -835,7 +854,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
   });
   window.dispatchEvent(event);
 
-  // Rest of your existing mark as completed logic
+   // Rest of your existing mark as completed logic
   const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
   if (allSubtopicsCompleted) {
     setIsModuleCompleted(true);
@@ -989,7 +1008,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
       console.error("Error in handleNext:", error);
     }
   };
-
+  
   return (
     <Container>
       {!contentReady ? (
@@ -1202,7 +1221,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
               }}
               onClick={handleNext}
             >
-              Next Module 
+              Next
             </Button>
           ) : (
             <Button
