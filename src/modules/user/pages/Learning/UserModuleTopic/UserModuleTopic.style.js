@@ -68,10 +68,10 @@ export const ModalContent = styled.div`
   // background: white;
   padding: 20px;
   border-radius: 10px;
-  text-align: center;
+  /* text-align: center; */
   // max-width: 400px;
   width: 90%;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
 `;
 
 export const CCModalContent = styled.div`

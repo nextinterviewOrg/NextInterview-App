@@ -363,7 +363,7 @@ const handleOptimizeClick = () => {
                 <QuestionBox>
                   <div dangerouslySetInnerHTML={{ __html: question?.description }} />
                   <p>
-                    <strong>Input:</strong> {question?.input}
+                     {question?.input}
                   </p>
                   <p>
                     <strong>
@@ -491,6 +491,9 @@ const handleOptimizeClick = () => {
                     showOptimiseBtn={!optimizationUsed}// Always show the button
     handleOptimizeCode={handleOptimizeClick}
     hasOptimized={hasOptimized}
+
+
+    
     optimizationDisabled={optimizationDisabled}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}

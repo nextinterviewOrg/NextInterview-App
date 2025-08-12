@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Link,
   useLocation,
@@ -43,6 +43,18 @@ export default function ModuleSidebar({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [immediatelyCompleted, setImmediatelyCompleted] = useState({});
+
+    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+
+  useEffect(() => {
+    if (topicIndex !== undefined) {
+      setSelectedCurrentTopic(topicIndex);
+      setExpandedTopic(topicIndex);
+    }
+    if (subtopicIndex !== undefined) {
+      setSelectedCurrentSubTopic(subtopicIndex);
+    }
+  }, [topicIndex, subtopicIndex]);
 
 
   const fetchModuleData = useCallback(async () => {
