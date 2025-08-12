@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import theme from "../../../../theme/Theme";
 
 export const ProfileUserWrapper = styled.div`
 margin-left: 60px;
@@ -156,19 +157,19 @@ color:${({ theme }) => theme.colors.black};
 
 /* Reset Password button in the modal */
 .password-reset-modal-reset-btn {
-  margin-top: 1rem;
-  width: 100%;
-  background-color: #2290ac;
+width: 100%;
+  background-color: ${theme.colors.info};
+  color: white;
   border: none;
   padding: 0.8rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  color: #fff;
+  margin-top: 1rem;
 }
 
 .password-reset-modal-reset-btn:hover {
-  background-color: #2290AC90;
+    background-color: ${theme.colors.bluetext};
 }
   @media (max-width: 768px) {
     .password-reset-modal-content {

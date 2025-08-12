@@ -162,7 +162,7 @@ setFilteredModules(prev => prev.filter(mod => mod.moduleCode !== selectedModuleI
                   </Link>
                 </h4>
                 <p>
-                  {module.topics} {module.topics === 1 ? "topic" : "topics"}
+                  {module.topics} {module.topics === 1 ? "Topic" : "Topics"}
                 </p>
               </div>
               <ModuleActions>

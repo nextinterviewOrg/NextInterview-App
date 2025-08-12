@@ -83,6 +83,13 @@ const TiyCodingPage = () => {
     });
     const [runClicked, setRunClicked] = useState(false);
 
+    const [storedOptimizedCode, setStoredOptimizedCode] = useState(() => {
+        return localStorage.getItem(`optimizedCode_${id}`) || null;
+    });
+    const [optimizationUsed, setOptimizationUsed] = useState(false);
+    const [showOutput, setShowOutput] = useState(false);
+
+
     // Get question ID from location.state
     useEffect(() => {
         if (location.state?.questionID) {
@@ -108,14 +115,56 @@ const TiyCodingPage = () => {
         fetchUserId();
     }, [user]);
     useEffect(() => {
+        setShowOptimiseBtn(shouldShowOptimizeBtn());
+    }, [output, question, optimizationUsed]);
 
-        if (runClicked && output?.trim() === question?.output?.trim()) {
-            setShowOptimiseBtn(true);
-            // fetchOptimizedCode();
-        } else {
-            setShowOptimiseBtn(false);
+    const handleOptimizeCode = async () => {
+        if (!output || output.includes("Error") || output.includes("error") || output.includes("Exception")) {
+            notification.error({
+                message: "Cannot optimize code with errors. Please fix your code first.",
+                duration: 3,
+            });
+            return;
         }
-    }, [output, runClicked]);
+
+        try {
+            const userData = await getUserByClerkId(user.id);
+            const user_id = userData.data.user._id;
+
+            const response = await fetch("https://nextinterview.ai/fastapi/code/optimize-code", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    question: question?.QuestionText,
+                    description: question?.description,
+                    user_code: code,
+                    sample_input: question?.input,
+                    sample_output: question?.output,
+                    user_id: user_id,
+                }),
+            });
+
+            const data = await response.json();
+            setOptimisedCode(data.optimized_code);
+            localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
+            setStoredOptimizedCode(data.optimized_code);
+            setModalOpen(true);
+        } catch (err) {
+            console.error("Error optimizing code:", err);
+            notification.error({ message: "Failed to optimize code" });
+        }
+    };
+
+
+    const shouldShowOptimizeBtn = () => {
+        if (optimizationUsed) return false;
+        return output &&
+            !output.includes("Error") &&
+            !output.includes("error") &&
+            !output.includes("Exception") &&
+            output.trim() === question?.output?.trim();
+    };
+
 
     // Fetch question details
     useEffect(() => {
@@ -168,7 +217,7 @@ const TiyCodingPage = () => {
         const optimizeCode = async () => {
             if (!output || !question) return;
 
-            const userId = await getUserIdByClerkId(user.id);
+            const userId = await getUserByClerkId(user.id);
             const user_id = userId.data.user._id;
 
             if (output.trim() === question.output.trim()) {
@@ -187,6 +236,7 @@ const TiyCodingPage = () => {
                                 sample_input: question.input,
                                 sample_output: question.output,
                                 user_id: user_id,
+                                description: question.description
                             }),
                         }
                     );
@@ -452,14 +502,16 @@ const TiyCodingPage = () => {
                                         input={input}
                                         setInput={setInput}
                                         dbSetupCommands={question?.dbSetupCommands}
-                                        showOptimiseBtn={showOptimiseBtn}
-                                        handleOptimizeCode={() => setModalOpen(true)}
+                                        showOptimiseBtn={shouldShowOptimizeBtn()}
+                                        handleOptimizeCode={handleOptimizeCode}
+                                        // handleOptimizeCode={() => setModalOpen(true)}
                                         handleSubmit={handleSubmit}
                                         isSubmitting={isSubmitting}
                                         solutionTimeExpired={solutionTimeExpired}
                                         challenge={false}
                                         setRunClicked={setRunClicked}
                                         tryHarderQuestion={handleTryHarderQuestion}
+                                        setShowOutput= {setShowOutput}
                                     />
                                 )}
 
@@ -515,7 +567,12 @@ const TiyCodingPage = () => {
                                 <ModalButton
                                     onClick={() => {
                                         setCode(optimisedCode);
-                                        setOutput("");
+                                        // Only clear output if it’s the very first run
+if (!output) {
+  setOutput("");
+}
+                                        setOptimizationUsed(true);
+                                        setShowOptimiseBtn(false);
                                         setModalOpen(false);
                                     }}
                                 >
