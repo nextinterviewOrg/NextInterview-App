@@ -16,6 +16,10 @@ import {
   SendButton,
   InputTab,
   Tab,
+    ModalOverlay,
+      ModalContent,
+      ButtonGroup,
+      ModalButton,
 } from "./MockInterviewVoice.style";
 import { BiSolidMicrophone } from "react-icons/bi";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -55,6 +59,7 @@ const MockInterview = () => {
   const [output, setOutput] = useState("");
   const [showCodeEditor, setShowCodeEditor] = useState(false);
   const [readyToCode, setReadyToCode] = useState(false);
+  const [showEndInterviewConfirm, setShowEndInterviewConfirm] = useState(false);
  
   const session_id = location.state?.session_id;
   const initialQuestion = location.state?.first_follow_up;
@@ -72,6 +77,32 @@ const MockInterview = () => {
     }
     setProcessingData(false);
   }, [session_id, initialQuestion]);
+
+  useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (messages.length > 0) { // Only show if interview has started
+      e.preventDefault();
+      e.returnValue = 'Are you sure you want to leave? Your interview progress may be lost.';
+      return e.returnValue;
+    }
+  };
+
+  const handlePopState = (e) => {
+    if (messages.length > 0) { // Only show if interview has started
+      if (!window.confirm('Are you sure you want to leave? Your interview progress may be lost.')) {
+        navigate(location.pathname, { state: location.state });
+      }
+    }
+  };
+
+  window.addEventListener('beforeunload', handleBeforeUnload);
+  window.addEventListener('popstate', handlePopState);
+
+  return () => {
+    window.removeEventListener('beforeunload', handleBeforeUnload);
+    window.removeEventListener('popstate', handlePopState);
+  };
+}, [messages.length, navigate, location]);
  
   const handleSend = async (message) => {
     if (!message.trim() || !session_id) return;
@@ -281,6 +312,11 @@ const MockInterview = () => {
   }, [isRunning, timeLeft]);
  
   const handleEndInterview = async () => {
+      if (!confirmed) {
+    setShowEndInterviewConfirm(true);
+    return;
+  }
+
     if (!session_id) return;
     setProcessingData(true);
     try {
@@ -326,7 +362,7 @@ const MockInterview = () => {
                 : "15:00 mins"}
           </TimerBtn>
           <hr style={{ margin: "0" }} />
-          <EndBtn onClick={handleEndInterview}>End interview</EndBtn>
+          <EndBtn onClick={() => handleEndInterview(false)}>End interview</EndBtn>
         </Header>
  
        
@@ -436,6 +472,8 @@ const MockInterview = () => {
         </InputBox>
       </Container>
       </div>
+
+      
  
       {showCodeEditor && (
         <div style={{width: "40%", height: "100%"}}>
@@ -452,6 +490,32 @@ const MockInterview = () => {
         </div>
       )}
        </div>
+
+       {showEndInterviewConfirm && (
+  <ModalOverlay>
+    <ModalContent style={{ width: '400px', textAlign: 'center' }}>
+      <h3>End Interview Confirmation</h3>
+      <p>Are you sure you want to end the interview?</p>
+      <ButtonGroup>
+        <ModalButton 
+          onClick={() => setShowEndInterviewConfirm(false)}
+          style={{ backgroundColor: '#f5f5f5', color: '#333' }}
+        >
+          Cancel
+        </ModalButton>
+        <ModalButton 
+          onClick={() => {
+            setShowEndInterviewConfirm(false);
+            handleEndInterview(true);
+          }}
+          style={{ backgroundColor: '#DA2C43', color: 'white' }}
+        >
+          End Interview
+        </ModalButton>
+      </ButtonGroup>
+    </ModalContent>
+  </ModalOverlay>
+)}
     </>
   );
 };

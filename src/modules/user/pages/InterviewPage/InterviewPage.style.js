@@ -128,3 +128,15 @@ export const StartButton = styled.button`
     background: ${theme.colors.black};
   }
 `;
+
+export const LimitMessage = styled.div`
+  width: 100%;
+  padding: 15px;
+  background-color: #fff3f3;
+  color: #d32f2f;
+  border: 1px solid #ffcdd2;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+`;
