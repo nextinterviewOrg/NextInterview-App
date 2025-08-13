@@ -70,5 +70,7 @@ export const ResponsiveContainer = styled.div`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex-direction: column;
+    gap: 0px;
+    margin-bottom: 20px;
   }
 `;

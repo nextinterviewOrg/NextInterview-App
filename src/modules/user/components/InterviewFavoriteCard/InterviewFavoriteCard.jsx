@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { InterviewFavoriteCardWrapper } from "./InterviewFavoriteCard.styles";
+import { useNavigate } from "react-router-dom";
 
 const InterviewFavoriteCard = ({
   title = "",
@@ -8,7 +9,11 @@ const InterviewFavoriteCard = ({
   imgSrc = "",
   moduleId = "",
   allSubtopics = [],
+  topicIndex = "",
+  subtopicIndex=""
 }) => {
+
+  const navigate = useNavigate();
   return (
     <InterviewFavoriteCardWrapper>
       <div className="card">
@@ -37,12 +42,20 @@ const InterviewFavoriteCard = ({
           )}
 
           <div className="card-footer">
-            <button
-              className="learn-btn"
-              onClick={() => window.location.href = `/user/learning/${moduleId}`}
-            >
-              Learn
-            </button>
+           <button
+        className="learn-btn"
+                      onClick={() => window.location.href = `/user/learning/${moduleId}`}
+        // onClick={() =>
+        //   navigate(`/user/learning/${moduleId}/topic`, {
+        //     state: {
+        //       topicIndex: Number(topicIndex),
+        //       subtopicIndex: Number(subtopicIndex)
+        //     }
+        //   })
+        // }
+      >
+        Learn
+      </button>
           </div>
         </div>
       </div>
@@ -56,6 +69,8 @@ InterviewFavoriteCard.propTypes = {
   imgSrc: PropTypes.string,
   moduleId: PropTypes.string,
   allSubtopics: PropTypes.arrayOf(PropTypes.string),
+    topicIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  subtopicIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default InterviewFavoriteCard;
