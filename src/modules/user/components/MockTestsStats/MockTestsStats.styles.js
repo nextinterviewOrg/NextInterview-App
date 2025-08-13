@@ -20,14 +20,14 @@ width: 100%;
   justify-content: space-between;
   }
   .rowOneLeftTitle{
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
 color:${({ theme }) => theme.colors.textgray};
   }
 .rowOneLeftValue{
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 34px;
 font-style: normal;
 font-weight: 700;

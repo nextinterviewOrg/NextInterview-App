@@ -134,14 +134,14 @@ const UserModuleTopic = () => {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // Track if feedback has been submitted
   const [selectedFeedback, setSelectedFeedback] = useState(null); // Track which feedback option was selected
 
-  const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
+  // const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
   const moduleId = useParams().id;
   const location = useLocation();
   const [courseData, setCourseData] = useState(courseData1);
   const [topicData, setTopicData] = useState(null);
   const [gptSummaryText, setGptSummaryText] = useState([]);
   const [delayedText, setDelayedText] = useState([]);
-  const [selectedCheetSheetURL, setSelectedCheetSheetURL] = useState("");
+  // const [selectedCheetSheetURL, setSelectedCheetSheetURL] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [moduleName, setModuleName] = useState("");
   const [markAsCompleteBtnStatus, setMarkAsCompleteBtnStatus] = useState(false);
@@ -424,7 +424,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       if (apiCache.has(cacheKey)) {
         const cachedData = apiCache.get(cacheKey);
         setTopicData([cachedData]);
-        setSelectedCheetSheetURL(cachedData.cheatSheetURL);
+        // setSelectedCheetSheetURL(cachedData.cheatSheetURL);
         setGptSummaryText(cachedData.summary);
         setContentReady(true);
         setLoading(false);
@@ -450,7 +450,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       apiCache.set(cacheKey, subtopicData);
       
       setTopicData([subtopicData]);
-      setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
+      // setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
       setGptSummaryText(subtopicData.summary);
 
       // Start progress tracking in background
@@ -644,17 +644,17 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
           location.state.subtopicIndex
           ];
         if (topic) {
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
           setTopicData([
             {
               title: topic.title,
               description: topic.subtopicContent,
               summary: topic.subtopicSummary,
               gptSummary: topic.gptSummary,
-              cheatSheetURL: topic.cheatSheetURL || "#",
+              // cheatSheetURL: topic.cheatSheetURL || "#",
             },
           ]);
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
           setGptSummaryText(topic.subtopicSummary);
 
           const userData = await getUserByClerkId(user.id);
@@ -780,7 +780,7 @@ const renderConceptClarifiers = (text, clarifiers) => {
   const handleSummarizeClick = async () => {
     setLoadingSummary(true);         // Start spinner
     setShowSummary(true);            // Show the summary section
-    setShowDownloadButton(false);    // Hide the cheat sheet button
+    // setShowDownloadButton(false);    // Hide the cheat sheet button
 
     // Clear previous text if any
     setDelayedText([]);
@@ -1008,7 +1008,7 @@ const handleMarkAsCompleted = async () => {
       console.error("Error in handleNext:", error);
     }
   };
-  
+
   return (
     <Container>
       {!contentReady ? (
@@ -1072,7 +1072,7 @@ const handleMarkAsCompleted = async () => {
               }}
             >
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
-                {showDownloadButton && (
+                {/* {showDownloadButton && (
                   <div
                     style={{
                       display: "flex",
@@ -1094,7 +1094,7 @@ const handleMarkAsCompleted = async () => {
                       Download Cheat Sheet (pdf)
                     </a>
                   </div>
-                )}
+                )} */}
 
                 {!showSummary && (
                   <Button
@@ -1154,7 +1154,7 @@ const handleMarkAsCompleted = async () => {
                     justifyContent: "center",
                   }}
                 >
-                  <a
+                  {/* <a
                     style={{
                       backgroundColor: "transparent",
                       color: "#2390ac",
@@ -1166,7 +1166,7 @@ const handleMarkAsCompleted = async () => {
                     download={"cheatSheet.pdf"}
                   >
                     Download Cheat Sheet (pdf)
-                  </a>
+                  </a> */}
                 </div>
                 <div
                   style={{

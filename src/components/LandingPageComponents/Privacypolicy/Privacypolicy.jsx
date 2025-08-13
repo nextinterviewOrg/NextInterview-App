@@ -16,7 +16,7 @@ const Container = styled.div`
 const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
-  font-family: "Arial", sans-serif;
+  /* font-family: "Arial", sans-serif; */
   max-width: 800px;
 `;
 

@@ -14,7 +14,7 @@ export const BackButton = styled.button`
   width: 100%;
   padding: 10px;
     padding-left: 50px;
-     font-family: "DM Sans";
+     /* font-family: "DM Sans"; */
 
   @media (max-width: 1024px) {
     font-size: 14px;
@@ -38,7 +38,7 @@ export const Card = styled.div`
   border-radius: 12px;
   border: 1px solid #f5f5f5;
   /* box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); */
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 
   .hrtag {
     border: 1px solid #f5f5f5;

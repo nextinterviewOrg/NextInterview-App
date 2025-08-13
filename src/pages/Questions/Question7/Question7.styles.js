@@ -55,7 +55,7 @@ export const Question7Wrapper = styled.div`
     margin-bottom: 10px;
     display: block;
 
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 15px;
     font-style: normal;
     font-weight: 400;
@@ -166,7 +166,7 @@ export const Question7Wrapper = styled.div`
     color: #151e28;
     border-radius: 4px;
 
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 15px;
     font-style: normal;
     font-weight: 500;
@@ -191,7 +191,7 @@ export const Question7Wrapper = styled.div`
     color: red;
     border-radius: 4px;
 
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 15px;
     font-style: normal;
     font-weight: 500;

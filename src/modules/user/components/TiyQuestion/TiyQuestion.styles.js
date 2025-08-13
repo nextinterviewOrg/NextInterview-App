@@ -348,7 +348,7 @@ export const Card = styled.div`
   background-color: #ffffff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   text-align: left;
-  font-family: "Segoe UI", sans-serif;
+  /* font-family: "Segoe UI", sans-serif; */
   margin: 24px
 `;
 

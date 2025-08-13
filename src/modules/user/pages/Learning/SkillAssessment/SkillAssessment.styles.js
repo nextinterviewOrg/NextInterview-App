@@ -14,7 +14,7 @@ export const AssessmentContainer = styled.div`
   position: relative;
 
   .sillheading{
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 24px;
   }
 `;

@@ -2,7 +2,7 @@ import styled from "styled-components";
  
 export const Container = styled.div`
   padding: 20px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   margin-left: 40px;
   display: flex;
   flex-direction: column;
@@ -170,7 +170,7 @@ export const Actions = styled.div`
 `;
 
 export const NotificationContainer = styled.div`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   display: flex;
   flex-direction: column;
   justify-content: center;

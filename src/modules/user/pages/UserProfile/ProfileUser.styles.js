@@ -32,7 +32,7 @@ color:${({ theme }) => theme.colors.secondary};
     text-align: center;
     border: 1px solid ${({ theme }) => theme.colors.secondary};
 
-     font-family: "DM Sans";
+     /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -105,7 +105,7 @@ font-weight: 500;
 
 /* Title and subtext */
 .password-reset-modal-title {
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 23px;
 font-style: normal;
 font-weight: 600;
@@ -114,7 +114,7 @@ color:${({ theme }) => theme.colors.black};
 }
 
 .password-reset-modal-subtext {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 15px;
 font-style: normal;
 font-weight: 500;
@@ -127,7 +127,7 @@ color:${({ theme }) => theme.colors.textgray};
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
@@ -137,7 +137,7 @@ color:${({ theme }) => theme.colors.textgray};
 .password-reset-modal-input {
   width: 96%;
   padding: 0.5rem;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 400;

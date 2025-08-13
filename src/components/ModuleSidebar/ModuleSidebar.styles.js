@@ -120,7 +120,7 @@ export const ModuleSidebarContainer = styled.div`
 
   .course-topics-title {
     text-overflow: ellipsis;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 24px;
     font-style: normal;
     font-weight: 600;
@@ -139,7 +139,7 @@ export const ModuleSidebarContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     color: ${({ theme }) => theme.colors.black};
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 12px;
     font-style: normal;
     font-weight: 600;
@@ -166,7 +166,7 @@ export const ModuleSidebarContainer = styled.div`
     margin-top: 10px;
     overflow: hidden;
     color: ${({ theme }) => theme.colors.black};
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 600;
@@ -209,7 +209,7 @@ export const ModuleSidebarContainer = styled.div`
   .subtopic-title {
     overflow: hidden;
     color: ${({ theme }) => theme.colors.black};
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -224,7 +224,7 @@ export const ModuleSidebarContainer = styled.div`
   }
 
   .module-sidebar-topic-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 24px;
     font-style: normal;
     font-weight: 500;
@@ -236,7 +236,7 @@ export const ModuleSidebarContainer = styled.div`
   .progress-details {
     display: flex;
     justify-content: space-between;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
@@ -246,7 +246,7 @@ export const ModuleSidebarContainer = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
   }
   .subtopic-link {
@@ -268,7 +268,7 @@ export const ModuleSidebarContainer = styled.div`
     gap: 10px;
     text-align: center;
     /* Body Text/Small/Body Small (Medium) */
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 11px;
     font-style: normal;
     font-weight: 500;

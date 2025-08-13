@@ -4,7 +4,7 @@ import theme from "../../../../../theme/Theme";
 export const Container = styled.div`
   padding: ${theme.spacing(4)};
   background-color: ${theme.colors.light};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   margin-left: 5%;
   width: 90%;
 

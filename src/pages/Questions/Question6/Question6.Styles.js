@@ -139,7 +139,7 @@ export const Question6Wrapper = styled.div`
     margin-top: 12px;
     color: #151e28;
     border-radius: 4px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 15px;
     font-style: normal;
     font-weight: 500;

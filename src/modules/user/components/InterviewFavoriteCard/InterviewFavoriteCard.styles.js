@@ -54,7 +54,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
   }
 
   .card-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 18px;
     font-style: normal;
     font-weight: 700;
@@ -69,7 +69,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -102,7 +102,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
     position: absolute;
     top: 15px;
     right: 15px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 12px;
     font-style: normal;
     font-weight: 500;
@@ -116,7 +116,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
 
   .card-subtitle {
     text-overflow: ellipsis;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     color: ${({ theme }) => theme.colors.textgray};
@@ -144,7 +144,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
     flex-shrink: 0;
     text-align: center;
     /* Body Text/Small/Body Small (Medium) */
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     font-weight: 500;
@@ -208,7 +208,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
     color: #333;
   }
   .tag-interview {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 10px;
     font-style: normal;
     font-weight: 400;

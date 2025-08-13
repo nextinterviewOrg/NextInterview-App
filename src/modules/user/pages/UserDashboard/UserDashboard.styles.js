@@ -161,7 +161,7 @@ export const UserDashboardWrapper = styled.div`
   }
   
   .UserDashboard-statsbox-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
@@ -174,7 +174,7 @@ export const UserDashboardWrapper = styled.div`
   }
   
   .UserDashboard-statsbox-value {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 32px;
     font-style: normal;
     font-weight: 700;
@@ -221,7 +221,7 @@ export const UserDashboardWrapper = styled.div`
   }
   
   .UserDashboard-charts-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 24px;
     font-style: normal;
     font-weight: 700;
@@ -279,7 +279,7 @@ export const UserDashboardWrapper = styled.div`
     font-weight: bold;
     margin-bottom: 15px;
     padding: 0 20px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     display: flex;
     align-items: flex-start;
     text-align: left;

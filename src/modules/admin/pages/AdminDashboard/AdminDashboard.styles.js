@@ -8,7 +8,7 @@ export const DashboardContainer = styled.div`
   max-width: 100%;
   // width: 100%;
   background-color: ${(props) => props.theme.colors.light};
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
 
   .topic-performance {
     display: grid;
@@ -39,5 +39,5 @@ export const DashboardContainer = styled.div`
 export const Title = styled.h1`
   font-size: 1.5rem;
   color: ${(props) => props.theme.colors.text};
-  font-family: ${(props) => props.theme.fonts.heading};
+  /* font-family: ${(props) => props.theme.fonts.heading}; */
 `;

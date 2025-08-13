@@ -5,7 +5,7 @@ export const Container = styled.div`
   background-color: ${theme.colors.light};
   padding: ${({ theme }) => theme.spacing(4)};
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   margin-left: 30px;
   display: flex;
   flex-direction: column;
@@ -21,7 +21,7 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.h1`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  /* font-family: ${({ theme }) => theme.fonts.heading}; */
   font-size: 1.5rem;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -127,7 +127,7 @@ export const FormGroup = styled.div`
 
 export const Label = styled.label`
   font-weight: 300;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.textgray};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
@@ -145,7 +145,7 @@ export const Input = styled.input`
   border-radius: 4px;
   font-size: 0.9rem;
   width: 100%;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
 
   @media (max-width: ${({ theme }) => theme.breakpoints.tablet}) {
     font-size: 0.8rem;
@@ -170,7 +170,7 @@ export const UploadButton = styled.button`
   color: ${({ theme }) => theme.colors.secondary};
   border: 1px solid ${({ theme }) => theme.colors.secondary};
   border-radius: 4px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   cursor: pointer;
   font-size: 0.9rem;
 
@@ -235,7 +235,7 @@ export const NavButton = styled.button`
   border: 1px solid ${theme.colors.textgray};
   border-radius: 4px;
   font-size: 0.9rem;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -289,7 +289,7 @@ export const TextArea = styled.textarea`
   padding: ${({ theme }) => theme.spacing(1)};
   border: 1px solid ${({ theme }) => theme.colors.black};
   border-radius: 4px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   font-size: 0.9rem;
   resize: vertical;
   width: 100%;

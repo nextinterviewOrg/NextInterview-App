@@ -138,7 +138,7 @@ padding: 10px 20px;
 font-style: normal;
 font-weight: 500;
 line-height: 24px; 
-font-family:${({ theme }) => theme.fonts.body};
+/* font-family:${({ theme }) => theme.fonts.body}; */
     background-color: ${theme.colors.secondary};
     &:hover {
         background-color: ${theme.colors.secondary};
@@ -154,7 +154,7 @@ font-family:${({ theme }) => theme.fonts.body};
 export const MetaInfo1 = styled.div`
   font-size: 14px;
   color: ${({ theme }) => theme.colors.textgray};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
 
 `;
 
@@ -187,7 +187,7 @@ export const Type1 = styled.span`
 export const Companies1 = styled.span`
   font-size: 14px;
   margin-top: 4px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   font-weight:600;
   padding: 4px;
   line-height: 20px;

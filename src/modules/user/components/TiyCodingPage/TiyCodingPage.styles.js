@@ -34,7 +34,7 @@ export const Wrapper = styled.div`
   margin: 0 auto;
   padding: 1rem;
   // margin-left: 40px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
    .modal {
     display: flex;
     justify-content: center;

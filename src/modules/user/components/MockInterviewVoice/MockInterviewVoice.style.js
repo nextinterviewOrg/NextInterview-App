@@ -31,7 +31,7 @@ export const TimerBtn = styled.button`
   font-size: 16px;
   margin: 5px;
   background: white;
-  border: 1px solid #ccc
+  border: 1px solid #ccc;
 `;
 
 export const Conversation = styled.div`
@@ -151,7 +151,9 @@ export const Text = styled.p`
   overflow: auto;
   font-size: 14px;
   font-weight: 500;
-  font-family: DM SANS;`;
+  font-family: DM SANS;
+`;
+
 
 export const Img = styled.img`
   text-align: center;
@@ -231,7 +233,7 @@ export const Sendicon = styled.div`
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
-}
+
 `;
 
 

@@ -3,7 +3,7 @@ import theme from '../../../../../theme/Theme';
 
 export const Container = styled.div`
 margin-left: 60px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
 //   width: 100%;
   max-width: 100vw;
   padding: 20px ;
@@ -23,7 +23,7 @@ padding: 0px 24px;
 align-items: center;
 gap: 777px;
 align-self: stretch;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 24px;
 font-style: normal;
 font-weight: 700;
@@ -55,7 +55,7 @@ export const Header = styled.div`
 `;
 export const HeaderHeading = styled.h2`
   color: ${theme.colors.black};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 18px;
 font-style: normal;
 font-weight: 700;
@@ -66,7 +66,7 @@ export const HeaderDiscription = styled.p`
   color: ${theme.colors.textgray};
 overflow: hidden;
 text-overflow: ellipsis;
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 400;
@@ -84,7 +84,7 @@ letter-spacing: -0.28px;
 `;
 export const HeaderInfo = styled.p`
 color: ${theme.colors.textgray};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 400;
@@ -121,7 +121,7 @@ export const StartButton = styled.button`
   color:${theme.colors.white};
 text-align: center;
 /* Body Text/Small/Body Small (Medium) */
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -172,7 +172,7 @@ export const TabsContainer = styled.div`
 
 export const Tab = styled.div`
 color: ${theme.colors.textgray};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 18px;
 font-style: normal;
 font-weight: 600;

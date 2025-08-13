@@ -11,7 +11,7 @@ border: 1px solid #F5F5F5;
   padding: 1rem;
   max-width: 100%;
   margin: 1rem auto;
-  font-family: 'Helvetica', sans-serif;
+  /* font-family: 'Helvetica', sans-serif; */
 }
 
 .stats-row {
@@ -36,7 +36,7 @@ letter-spacing: -0.32px;
 }
 
 .stat-value {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 24px;
 font-style: normal;
 font-weight: 600;

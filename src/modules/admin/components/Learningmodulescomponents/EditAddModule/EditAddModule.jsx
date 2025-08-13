@@ -816,7 +816,7 @@ const EditAddModule = () => {
               </FormGroup>
 
               {/* CHEAT SHEET VIDEO */}
-              <FormGroup>
+              {/* <FormGroup>
                 <Label>Upload Cheat Sheet </Label>
                 <div
                   style={{
@@ -873,7 +873,6 @@ const EditAddModule = () => {
                               Preview File
                             </a>
                           )}
-                          {/* {subtopic.cheatSheet?.file.name} */}
                           <ActionButton
                             variant="danger"
                             onClick={() =>
@@ -893,7 +892,7 @@ const EditAddModule = () => {
                     </>
                   )}
                 </div>
-              </FormGroup>
+              </FormGroup> */}
 
               {/* INTERVIEW FAVORITE CHECKBOX */}
               <CheckboxContainer>

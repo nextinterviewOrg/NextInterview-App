@@ -849,7 +849,7 @@ const AddNewModule = () => {
               </FormGroup>
 
               {/* CHEAT SHEET VIDEO */}
-              <FormGroup>
+              {/* <FormGroup>
                 <Label>Upload Cheat Sheet </Label>
                 <div
                   style={{
@@ -910,7 +910,7 @@ const AddNewModule = () => {
                     </>
                   )}
                 </div>
-              </FormGroup>
+              </FormGroup> */}
 
               {/* INTERVIEW FAVORITE CHECKBOX */}
               <CheckboxContainer>

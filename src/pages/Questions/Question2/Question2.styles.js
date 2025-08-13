@@ -237,7 +237,7 @@ export const Section = styled.div`
   justify-content: center;
   height: 80vh;
   background-color: ${theme.colors.light};
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   padding: 0 15px;
 
   @media (max-width: 480px) {

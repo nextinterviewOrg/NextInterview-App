@@ -30,7 +30,7 @@ const ModalContainer = styled.div`
 const Title = styled.h3`
   
   margin-bottom: 20px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   font-size: 17px;
 font-style: normal;
@@ -42,7 +42,7 @@ const Label = styled.label`
   margin-bottom: 8px;
   width: 100%;
   color: ${theme.colors.subtext};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 const Input = styled.input`
@@ -52,7 +52,7 @@ const Input = styled.input`
   border-radius: 5px;
   margin-bottom: 15px;
   font-size: 14px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 const TextArea = styled.textarea`
@@ -63,7 +63,7 @@ const TextArea = styled.textarea`
   height: 120px;
   font-size: 14px;
   margin-bottom: 15px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 const Note = styled.p`
@@ -71,12 +71,12 @@ const Note = styled.p`
   color: ${theme.colors.textgray};
   margin-bottom: 20px;
   gap: 16px;
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
 `;
 
 const Button = styled.button`
   background: ${theme.colors.secondary};
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.white};
   border: none;
   padding: 12px 20px;

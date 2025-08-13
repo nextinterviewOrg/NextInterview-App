@@ -7,7 +7,7 @@ export const TableWrapper = styled.div`
     margin-top: 20px;
     border-collapse: collapse;
     background-color: ${({ theme }) => theme.colors.light};
-    font-family: ${({ theme }) => theme.fonts.body};
+    /* font-family: ${({ theme }) => theme.fonts.body}; */
     font-size: 14px;
     border: 1px solid ${({ theme }) => theme.colors.sidebarBgColor};
 
@@ -30,7 +30,7 @@ export const TableWrapper = styled.div`
           padding: ${({ theme }) => theme.spacing(1)};
           color: ${({ theme }) => theme.colors.text};
           text-align: left;
-          font-family: ${({ theme }) => theme.fonts.body};
+          /* font-family: ${({ theme }) => theme.fonts.body}; */
     border: 1px solid ${({ theme }) => theme.colors.sidebarBgColor};
         }
       }
@@ -62,6 +62,6 @@ export const ToggleSwitch = styled.div`
 export const StatusLabel = styled.span`
   color: ${({ isActive, theme }) =>
     isActive ? theme.colors.text : theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
 
 `;

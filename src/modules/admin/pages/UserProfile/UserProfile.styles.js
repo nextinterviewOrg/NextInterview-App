@@ -30,7 +30,7 @@ background-color: #ffe5e5;  /* Light pink background */
 
     /* The warning message text */
     .restriction-banner-text {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;

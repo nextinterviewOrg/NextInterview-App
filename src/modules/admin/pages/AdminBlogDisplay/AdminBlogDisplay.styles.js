@@ -37,7 +37,7 @@ export const Title = styled.h1`
   line-height: 1.5;
   color: black;
   font-weight: 400;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;

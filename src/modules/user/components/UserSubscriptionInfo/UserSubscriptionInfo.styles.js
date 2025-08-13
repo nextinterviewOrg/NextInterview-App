@@ -11,7 +11,7 @@ export const UserSubscriptionInfoWrapper1 = styled.div`
   }
 
   .subscription-title {
-    font-family: "DM Sans", sans-serif;
+    /* font-family: "DM Sans", sans-serif; */
     font-size: 24px;
     font-weight: 600;
     color: ${({ theme }) => theme.colors.black};
@@ -30,7 +30,7 @@ export const UserSubscriptionInfoWrapper1 = styled.div`
   }
 
   .detail-item-title {
-    font-family: "DM Sans", sans-serif;
+    /* font-family: "DM Sans", sans-serif; */
     font-size: 16px;
     font-weight: 400;
     line-height: 20px;
@@ -39,7 +39,7 @@ export const UserSubscriptionInfoWrapper1 = styled.div`
   }
 
   .detail-item-value {
-    font-family: "DM Sans", sans-serif;
+    /* font-family: "DM Sans", sans-serif; */
     font-size: 16px;
     font-weight: 600;
     line-height: 20px;

@@ -11,7 +11,7 @@ const Card = styled.div`
   border-radius: 12px;
   padding: ${(props) => props.theme.spacing(2)};
   box-shadow: 0 8px 12px #7090b018;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   display: flex;
   
   justify-content: space-between;
@@ -90,7 +90,7 @@ const Button = styled.button`
   border: ${(props) => props.secondary ? "none" : `1px solid ${props.theme.colors.secondary}`};
   padding: ${(props) => props.theme.spacing(1)} ${(props) => props.theme.spacing(2)};
   border-radius: 8px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   font-size: 14px;
   cursor: pointer;
   transition: all 0.3s ease;

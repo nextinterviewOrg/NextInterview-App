@@ -17,7 +17,7 @@ export const FeedbackContainer = styled.div`
 
     h4 {
       margin-bottom: ${theme.spacing(2)};
-      font-family: ${theme.fonts.heading};
+      /* font-family: ${theme.fonts.heading}; */
       color: ${theme.colors.secondary};
     }
 

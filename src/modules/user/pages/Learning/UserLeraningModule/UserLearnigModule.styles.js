@@ -10,7 +10,7 @@ export const UserLearningModuleWrapper = styled.div`
   .learning-module-container {
     max-width: 1200px;
     margin: 0 auto;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     padding: 40px;
   }
 
@@ -38,7 +38,7 @@ export const UserLearningModuleWrapper = styled.div`
   }
 
   .course-info-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 38px;
     font-style: normal;
     font-weight: 800;
@@ -127,14 +127,14 @@ export const UserLearningModuleWrapper = styled.div`
     gap: 10px;
   }
   .topics-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     font-weight: 400;
     color: ${({ theme }) => theme.colors.textgray};
   }
   .topics-count {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 500;
@@ -148,7 +148,7 @@ export const UserLearningModuleWrapper = styled.div`
   .view-sample-btn,
   .start-learning-btn {
     padding: 12px 20px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     font-weight: 500;
@@ -193,7 +193,7 @@ export const UserLearningModuleWrapper = styled.div`
   }
 
   .course-overview-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 20px;
     font-style: normal;
     font-weight: 700;
@@ -203,7 +203,7 @@ export const UserLearningModuleWrapper = styled.div`
 
   .course-overview-description {
     text-overflow: ellipsis;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -227,7 +227,7 @@ export const UserLearningModuleWrapper = styled.div`
     text-overflow: ellipsis;
     display: flex;
     align-items: center;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -277,7 +277,7 @@ export const UserLearningModuleWrapper = styled.div`
   }
 
   .topic-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 18px;
     font-style: normal;
     font-weight: 700;
@@ -313,7 +313,7 @@ export const UserLearningModuleWrapper = styled.div`
   .subtopics p {
     margin: 20px;
     text-overflow: ellipsis;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;

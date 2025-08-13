@@ -80,7 +80,7 @@ export const CardContent = styled.div`
 `;
 
 export const Title = styled.h3`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(2)};
   text-align: left;
@@ -90,7 +90,7 @@ export const Title = styled.h3`
 `;
 
 export const Details = styled.div`
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   display: flex;
   gap: 10px;
   align-items: center;
@@ -111,7 +111,7 @@ export const Details = styled.div`
 export const StartButton = styled.button`
   background: ${theme.colors.black};
   color: ${theme.colors.white};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   padding: ${theme.spacing(1)} ${theme.spacing(2)};
   border: none;
   border-radius: 16px;

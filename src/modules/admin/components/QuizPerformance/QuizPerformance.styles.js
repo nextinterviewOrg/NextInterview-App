@@ -10,7 +10,7 @@ export const QuizPerformanceWrapper = styled.div`
     border: 1px solid #F5F5F5;
     padding: 1rem;
     max-width: 100%;
-    font-family: "Helvetica", sans-serif;
+    /* font-family: "Helvetica", sans-serif; */
 
     @media (max-width: 480px) {
       flex-direction: column;

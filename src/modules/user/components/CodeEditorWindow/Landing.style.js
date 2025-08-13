@@ -8,7 +8,7 @@ justify-content:space-between;
 margin-top: 10px;
 gap: 10px;
 padding: 10px;
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 400;

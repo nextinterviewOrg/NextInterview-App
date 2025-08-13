@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const Container = styled.div`
   padding: 20px;
   background-color: #f9fefc;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   margin-left: 40px;
 
   @media (max-width: 768px) {
@@ -210,7 +210,7 @@ export const TableWrapperCategory = styled.div`
 export const TableCategory = styled.table`
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Segoe UI', sans-serif;
+  /* font-family: 'Segoe UI', sans-serif; */
     min-width: 600px;
 `;
 

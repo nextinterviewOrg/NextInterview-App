@@ -6,7 +6,7 @@ export const FilterContainer = styled.div`
   border-radius: 8px;
 `;
 export const Title = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  /* font-family: ${({ theme }) => theme.fonts.heading}; */
   font-size: 20px;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -17,7 +17,7 @@ export const FilterSection = styled.div`
 `;
 
 export const FilterTitle = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.heading};
+  /* font-family: ${({ theme }) => theme.fonts.heading}; */
   font-size: 16px;
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: ${({ theme }) => theme.spacing(1)};

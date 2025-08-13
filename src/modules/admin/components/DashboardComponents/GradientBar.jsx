@@ -26,7 +26,7 @@ const GradientBackground = styled.div`
 const WelcomeText = styled.h1`
   font-size: 1.2rem;
   padding: 1rem;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   margin: 0;
   color: ${(props) => props.theme.colors.light};
 `;

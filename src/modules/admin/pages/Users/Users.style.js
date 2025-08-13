@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const TableContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   background-color: ${({ theme }) => theme.colors.lightgreen};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   margin-left: 60px;
   margin-Top: 20px;
   border-radius: 8px;

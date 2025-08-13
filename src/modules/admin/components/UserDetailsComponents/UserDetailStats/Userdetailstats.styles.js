@@ -16,7 +16,7 @@ export const Header = styled.div`
     border-radius: 50%;
   }
   h1 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     color: ${theme.colors.text};
   }
 

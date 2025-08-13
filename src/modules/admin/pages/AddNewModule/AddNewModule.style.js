@@ -3,7 +3,7 @@ import theme from "../../../../theme/Theme";
 
 export const AddContainer = styled.div`
   margin-left: 30px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.text};
   padding: ${theme.spacing(3)};
   overflow-x: hidden;
@@ -17,7 +17,7 @@ export const AddContainer = styled.div`
 `;
 
 export const Heading = styled.h1`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   font-size: 1.5rem;
   margin-bottom: ${theme.spacing(4)};
   text-align: left; /* Center align the heading */
@@ -50,7 +50,7 @@ export const SectionHeader = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   font-size: 1rem;
   margin: 0;
 
@@ -142,7 +142,7 @@ export const TextInput = styled.input`
   border: 1px solid ${theme.colors.black};
   border-radius: 4px;
   font-size: 0.875rem;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   outline: none;
   box-sizing: border-box; /* Ensure padding doesn't overflow */
 
@@ -162,7 +162,7 @@ export const TextArea = styled.textarea`
   border: 1px solid ${theme.colors.black};
   border-radius: 4px;
   font-size: 0.875rem;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   resize: vertical;
   outline: none;
   box-sizing: border-box; /* Ensure padding doesn't overflow */
@@ -238,7 +238,7 @@ export const ConceptClarifierContainer = styled.div`
 `;
 
 export const ClarifierHeading = styled.h3`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   font-size: 1rem;
   margin-bottom: ${theme.spacing(2)};
 
@@ -277,7 +277,7 @@ export const ActionButton = styled.button`
   color: ${(props) =>
     props.variant === "primary" ? "#fff" : theme.colors.secondary};
   padding: ${theme.spacing(1)} ${theme.spacing(2)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 0.875rem;
   cursor: pointer;
   display: flex;

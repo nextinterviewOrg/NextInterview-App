@@ -3,7 +3,7 @@ import theme from '../../../../../theme/Theme';
 
 export const TopicContainer = styled.div`
 //   margin-left: 60px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   max-width: 100vw;
   padding: 40px 100px 40px 40px;
     @media (max-width: 1024px) {
@@ -19,7 +19,7 @@ export const TopicHeader = styled.div`
 export const TopicTopicInfo = styled.div`
   h1 {
    color: ${theme.colors.black};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 18px;
 font-style: normal;
 font-weight: 700;
@@ -48,7 +48,7 @@ export const TopicFaqTitle = styled.h4`
   cursor: pointer;
   span {
       color: ${theme.colors.black};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 18px;
 font-style: normal;
 font-weight: 500;
@@ -58,7 +58,7 @@ line-height: 28px; /* 155.556% */
 
 export const TopicFaqContent = styled.p`
  color: ${theme.colors.textgray};
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;

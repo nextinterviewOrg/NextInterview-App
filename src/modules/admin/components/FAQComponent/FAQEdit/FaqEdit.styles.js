@@ -27,13 +27,13 @@ export const ModalHeader = styled.div`
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 export const ModalTitle = styled.h2`
   font-size: 18px;
   font-weight: 600;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   margin: 0;
 `;
 
@@ -54,7 +54,7 @@ export const InputContainer = styled.div`
 export const Label = styled.label`
   font-size: 14px;
   font-weight: 500;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   width: 80px; /* Adjust width for alignment */
   text-align: right;
 `;
@@ -74,7 +74,7 @@ export const ModalTextarea = styled.textarea`
   border-radius: 4px;
   font-size: 14px;
   resize: none;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 export const UploadButton = styled.button`
@@ -85,7 +85,7 @@ export const UploadButton = styled.button`
   border-radius: 4px;
   font-size: 14px;
   cursor: pointer;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
 
   display: flex;

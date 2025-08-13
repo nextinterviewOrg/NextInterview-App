@@ -14,7 +14,7 @@ export const ModulesSection = styled.div`
     margin-bottom: ${theme.spacing(2)};
 
     h3 {
-      font-family: ${theme.fonts.heading};
+      /* font-family: ${theme.fonts.heading}; */
     }
       @media (max-width: ${theme.breakpoints.tablet}) {
         h3 {
@@ -69,7 +69,7 @@ export const ModuleCard = styled.div`
 
     h4 {
       margin: 0;
-      font-family: ${theme.fonts.accent};
+      /* font-family: ${theme.fonts.accent}; */
 
       a {
         text-decoration: none;
@@ -143,7 +143,7 @@ export const NewUploadButton = styled.button`
 export const SearchBar = styled.input`
   border: none;
   outline: none;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   flex: 1;
   background-color: ${theme.colors.sidebarBgColor};

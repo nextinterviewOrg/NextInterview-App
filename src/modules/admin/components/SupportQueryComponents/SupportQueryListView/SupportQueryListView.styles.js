@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 export const Container = styled.div`
   padding: ${theme.spacing(4)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   gap: 30px;
 
  @media (max-width: ${theme.breakpoints.mobile}) {
@@ -49,7 +49,7 @@ export const SearchInput = styled.input`
   flex: 1;
   border: none;
   font-size: 1rem;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   &:focus {
     outline: none;

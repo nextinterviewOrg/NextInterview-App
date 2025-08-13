@@ -6,7 +6,7 @@ export const ChartSection = styled.div`
 
   h3 {
     margin-bottom: ${theme.spacing(2)};
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     color: ${theme.colors.secondary};
   }
 

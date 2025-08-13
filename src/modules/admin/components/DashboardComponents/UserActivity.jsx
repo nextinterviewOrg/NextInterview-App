@@ -34,7 +34,7 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: ${(props) => props.theme.fonts.heading};
+  /* font-family: ${(props) => props.theme.fonts.heading}; */
   font-size: 1.2rem;
   color: ${(props) => props.theme.colors.text};
   margin-bottom: ${(props) => props.theme.spacing(3)};

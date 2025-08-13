@@ -25,7 +25,7 @@ export const Modal = styled.div`
 export const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 export const Dropdown = styled.select`
@@ -33,7 +33,7 @@ export const Dropdown = styled.select`
   padding: 10px;
   border: 1px solid #ccc;
 
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   border-radius: 5px;
   font-size: 16px;
   background: #f9f9f9;
@@ -54,7 +54,7 @@ export const TextBox = styled.textarea`
   resize: none;
   background: ${theme.colors.light};
   box-sizing: border-box;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   &:focus {
     border-color: #007bff;
     outline: none;
@@ -65,7 +65,7 @@ export const Button = styled.button`
   padding: 10px 15px;
   font-size: 14px;
   border: none;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   border-radius: 5px;
   color: white;
   cursor: pointer;
@@ -81,12 +81,12 @@ export const CloseButton = styled.button`
   cursor: pointer;
   color: ${theme.colors.black};
   background-color: ${theme.colors.light};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 export const Title = styled.h2`
   font-size: 24px;
   font-weight: 600;
   color: ${theme.colors.text};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;

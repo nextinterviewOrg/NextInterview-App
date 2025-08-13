@@ -10,7 +10,7 @@ export const ArsenalContainer = styled.div`
 max-width: 80%;
   margin: 0 auto;
   text-align: center;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: 1320px) {
     max-width: 90%;

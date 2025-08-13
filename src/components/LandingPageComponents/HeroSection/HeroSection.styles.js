@@ -6,7 +6,7 @@ export const HeroWrapper = styled.section`
   flex-direction: column;
 background: linear-gradient(165deg, #2290ac, #68c184);
   padding: 80px 10% 40px 10%;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   
   color: white;
 

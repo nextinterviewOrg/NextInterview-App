@@ -20,7 +20,7 @@ export const Container = styled.div`
 `;
 
 export const Text = styled.p`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.text};
   font-size: 20px;
   line-height: 1;
@@ -70,7 +70,7 @@ export const Title = styled.h3`
   color: ${({ theme }) => theme.colors.text};
   width: 100%;
   text-align: left;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   border-radius: 0 0 8px 8px;
   margin-top: 10px;
 `;

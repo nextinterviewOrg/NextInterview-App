@@ -8,7 +8,7 @@ export const Container = styled.div`
   margin-left: 40px;
   padding: ${theme.spacing(2)};
   background-color: ${theme.colors.light};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     margin-left: 0px;
@@ -35,7 +35,7 @@ export const Date = styled.div`
 
 export const Title = styled.h3`
   font-size: 1.2rem;
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   color: ${theme.colors.text};
   margin: ${theme.spacing(1)} 0;
 `;

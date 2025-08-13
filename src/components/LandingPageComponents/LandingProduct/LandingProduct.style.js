@@ -12,7 +12,7 @@ export const UserLearningWrapper = styled.div`
   margin-left:130px;
   margin-right:130px;
   gap:8px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
 
   @media (max-width: 1024px) {
     margin-left: 50px;
@@ -35,7 +35,7 @@ export const UserLearningWrapper = styled.div`
 }
 
 .header-title {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 34px;
 font-style: normal;
 font-weight: 700;
