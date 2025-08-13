@@ -205,7 +205,7 @@ width: 100px;
 `;
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../../../api/userApi";
-const TakeChallenge = ({ questionType = "coding" }) => {
+const TakeChallenge = ({ questionType = "coding", showLatestOnly = false }) => {
   const navigate = useNavigate();
   const { user, isLoaded } = useUser();
 
@@ -216,36 +216,35 @@ const TakeChallenge = ({ questionType = "coding" }) => {
   useEffect(() => {
     if (!isLoaded) return;
 
-const fetchData = async () => {
-  try {
-    setLoading(true);
-    setError(null);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
 
-    const userData = await getUserByClerkId(user.id);
-    console.log("User Data:", userData);
-    const userId = userData.data.user._id;
+        const userData = await getUserByClerkId(user.id);
+        const userId = userData.data.user._id;
 
-    const response = await getTodaysUserChallenges(userId, questionType);
-    console.log("Response from getTodaysUserChallenges:", response);
-    const challengeList = response?.data;
-    console.log("challengeList", challengeList);
+        const response = await getTodaysUserChallenges(userId, questionType);
+        let challengeList = response?.data || [];
 
-    if (Array.isArray(challengeList)) {
-      setChallenges(challengeList);
-    } else {
-      throw new Error("Invalid challenge data");
-    }
-  } catch (err) {
-    console.error("API Error:", err); // ✅ fixed
-    setError(err.response?.data?.message || err.message || "Failed to load challenges");
-  } finally {
-    setLoading(false);
-  }
-};
+        // ✅ Sort latest first by createdAt
+        challengeList = challengeList.sort((a, b) => b.serialNo - a.serialNo);
 
+        // ✅ If home page, show only the latest
+        if (showLatestOnly && challengeList.length > 0) {
+          challengeList = [challengeList[0]];
+        }
+
+        setChallenges(challengeList);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message || "Failed to load challenges");
+      } finally {
+        setLoading(false);
+      }
+    };
 
     fetchData();
-  }, [user, isLoaded, questionType]);
+  }, [user, isLoaded, questionType, showLatestOnly]);
 
   if (loading) {
     return (
@@ -272,7 +271,7 @@ const fetchData = async () => {
   }
   const getStatus = (challenge) => {
     // hasAnswered → attempted; hasAnswered + finalResult → completed
-    if (challenge.userStatus==="answered") {
+    if (challenge.userStatus === "answered") {
       return challenge.finalResult ? "Completed" : "Attempted";
     }
     return "Not Attempted";
@@ -294,16 +293,16 @@ const fetchData = async () => {
       {challenges.map((challenge, index) => {
         const statusText = getStatus(challenge);
         const statusKey = getStatusColor(statusText);
-       
+
         return (
           <Card key={challenge._id}>
             <div>
 
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-           
-          <small style={badgeStyle}>
-            #Today's Challenge {challenge.serialNo} 
-          </small>
+
+                <small style={badgeStyle}>
+                  #Today's Challenge {challenge.serialNo}
+                </small>
                 {/* <StatusBadge status={challenge.userStatus || 'not attempted'}>
                  {challenge.userStatus}
                </StatusBadge> */}
@@ -324,10 +323,10 @@ const fetchData = async () => {
                 )}
                 {challenge.tags?.map((tag, idx) => <Tag key={idx}>{tag}</Tag>)}
 
-                 {/* New: Topic tags */}
-  {challenge.topics?.map((topic, idx) => (
-    <Tag key={`topic-${idx}`}>{topic.topic_name}</Tag>
-  ))}
+                {/* New: Topic tags */}
+                {challenge.topics?.map((topic, idx) => (
+                  <Tag key={`topic-${idx}`}>{topic.topic_name}</Tag>
+                ))}
               </Tags>
 
               <Buttons>

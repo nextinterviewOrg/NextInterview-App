@@ -16,7 +16,7 @@ const data = [
   { name: "Skill assessment", value: 0 },
   { name: "Question bank", value: 0 },
   { name: "Learning path", value: 0 },
-  { name: "Quickly revise", value: 0 },
+  { name: "Quick revise", value: 0 },
 ];
 
 function UserDropOffs() {

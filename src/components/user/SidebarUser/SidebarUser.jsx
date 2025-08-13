@@ -17,7 +17,7 @@ import { MdNotificationsNone } from "react-icons/md";
 import { TfiHeadphoneAlt } from "react-icons/tfi";
 import { IoSettingsOutline } from "react-icons/io5";
 import { FaMoneyCheckAlt } from "react-icons/fa";
-import { useNavigate,} from "react-router-dom";
+import { useNavigate, } from "react-router-dom";
 import { useState } from "react";
 import { PiVideoConference } from "react-icons/pi";
 import dboard from "../../../assets/Dashboard.svg";
@@ -35,64 +35,74 @@ import lock from "../../../assets/lock.svg"
 const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSidebarOpen, isSubscriptionActive }) => {
   const location = useLocation();
   const navigate = useNavigate();
-// const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Track sidebar visibility for mobile
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Track sidebar visibility for mobile
 
   const SidebarItem = [
     {
-      id: 1,
-      name: "Dashboard",
-      path: "/user",
-      icon: <img className="svgicon" src={dboard} alt="Users Icon" />,
-      lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    },
-    {
-      id: 2,
-      name: "Home",
-      path: "/user/home",
-      icon: <img className="svgicon" src={homeicon} alt="homeicon" />,
-            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    },
-    {
-      id: 3,
-      name: "Learning Module",
-      path: "/user/learning",
-      icon: <img className="svgicon" src={learnmod} alt="Users Icon" />,
-      
-    },
-    {
-      id: 4,
-      name: "Quickly Revise",
-      path: "/user/revise",
-      icon: <img className="svgicon" src={quick} alt="quick" />,
-            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    },
-    {
-      id: 5,
-      name: "Question Bank",
-      path: "/user/mainQuestionBank/questionbank",
-      icon: <img className="svgicon" src={question} alt="question" />,
-            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    },
-    {
-      id: 6,
-      name: "Challenges",
-      path: "/user/challenges",
-      icon: <img className="svgicon" src={challenge} alt="Users Icon" />,
-            lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    },
+    id: 1,
+    name: "Dashboard",
+    path: "/user",
+    img: dboard,
+    alt: "Dashboard",
+    lockIcon: lock
+  },
+  {
+     id: 2,
+    name: "Home",
+    path: "/user/home",
+    img: homeicon,
+    alt: "Home",
+    lockIcon: lock
+  },
+  {
+    id: 3,
+    name: "Learning Module",
+    path: "/user/learning",
+    img: learnmod,
+    alt: "Learning Module"
+  },
+{
+  id: 4,
+  name: "Quick Revise",
+  path: "/user/revise",
+  img: quick,
+  alt: "Quick Revise",
+  lockIcon: lock
+},
+{
+  id: 5,
+  name: "Question Bank",
+  path: "/user/mainQuestionBank/questionbank",
+  img: question,
+  alt: "Question Bank",
+  lockIcon: lock
+},
+{
+  id: 6,
+  name: "Challenges",
+  path: "/user/challenges",
+  img: challenge,
+  alt: "Challenges",
+  lockIcon: lock
+},
     // {
     //   id: 8,
     //   name: "Subscription",
     //   path: "/user/subscription",
     //   icon: <FaMoneyCheckAlt />,
     // },
-    {
-      id: 7,
-      name: "Blogs",
-      path: "/user/blogs",
-     icon: <img className="svgicon" width={20} height={20} src={blog} alt="Users Icon" />,
-           lock: <img className="svgicon" src={lock} alt="Users Icon" />,
-    }
+{
+  id: 7,
+  name: "Blogs",
+  path: "/user/blogs",
+  img: blog,
+  alt: "Blogs",
+  imgWidth: 20,
+  imgHeight: 20,
+  lockIcon: lock
+}
+
+
   ];
 
 
@@ -103,17 +113,17 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
   }, [location.pathname]);
 
   useEffect(() => {
-  console.log("Subscription status in SidebarUser:", isSubscriptionActive);
-}, [isSubscriptionActive]);
+    console.log("Subscription status in SidebarUser:", isSubscriptionActive);
+  }, [isSubscriptionActive]);
 
   const sidebarRef = useRef(null); // Create a ref for the sidebar
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (window.innerWidth <= 768 && 
-          isSidebarOpen && 
-          sidebarRef.current && 
-          !sidebarRef.current.contains(event.target)) {
+      if (window.innerWidth <= 768 &&
+        isSidebarOpen &&
+        sidebarRef.current &&
+        !sidebarRef.current.contains(event.target)) {
         setIsSidebarOpen(false);
       }
     };
@@ -131,94 +141,112 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
 
   return (
     <SideBarwrapper
-    ref={sidebarRef}
-          // onMouseEnter={() => setIsExpanded(true)}
-          // onMouseLeave={() => setIsExpanded(false)}
-          isExpanded={isExpanded}
-          isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
-        >
-          <div className="logo">
-            <img src={isExpanded ? LogoBig : LogoSmall} alt="logo" />
-          </div>
-          <div className="menu">
-            <ul className="menu-list">
-              {SidebarItem.map((item) => (
-                <li className="menu-item" key={item.id}>
-<NavLink
-  to={
-    isSubscriptionActive || item.name === "Learning Module"
-      ? item.path
-      : "#"
-  }
-  end // <-- add this line
-  className={({ isActive }) => {
-    const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
-    const baseClass = "menu-link";
-    if (isActive && !isLocked) return `${baseClass} active`;
-    if (isLocked) return `${baseClass} disabled`;
-    return baseClass;
-  }}
-  onClick={(e) => {
-    const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
-    if (isLocked) {
-      e.preventDefault();
-    } else {
-      setTitle(item.name);
-    }
-  }}
->
-
-  <span className="menu-link-icon">{item.icon}</span>
-  <span className="menu-link-text">{item.name}</span>
-{!isSubscriptionActive && (
-  <span className="menu-link-lock"> {item.lock}</span>
-)}
-</NavLink>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-           {/* Arrow toggle (desktop) */}
-     <div
-       className="arrow-toggle"
-       onClick={() => setIsExpanded(!isExpanded)}
-       title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
-     >
-       {isExpanded ? <FaChevronLeft size={14} /> : <FaChevronRight size={14} />}
-     </div>
-
-           
-      {isExpanded ? (
-  <div className="mock-card">
-    <div className="mock-card-icon">
-      <PiVideoConference />
-    </div>
-    <h2 className="mock-card-title">Take a Mock Interview</h2>
-    <p className="mock-card-description">
-      Take a Mock interview to understand whether you are Interview Ready!
-    </p>
-    <button
-      className="mock-card-button"
-      onClick={() => navigate("/user/interview")}
+      ref={sidebarRef}
+      // onMouseEnter={() => setIsExpanded(true)}
+      // onMouseLeave={() => setIsExpanded(false)}
+      isExpanded={isExpanded}
+      isSidebarOpen={isSidebarOpen} // Pass the open state to the styled component
     >
-      Start interview
-    </button>
-  </div>
-) : (
-  <div
-    className="mock-card-icon collapsed"
-    title="Take a Mock Interview"
-    onClick={() => navigate("/user/interview")}
-    style={{ cursor: "pointer" }}
-  >
-    <PiVideoConference  className="collapsed-icon"/>
-  </div>
+      <div className="logo">
+        <img src={isExpanded ? LogoBig : LogoSmall} alt="logo" />
+      </div>
+      <div className="menu">
+        <ul className="menu-list">
+          {SidebarItem.map((item) => (
+            <li className="menu-item" key={item.id}>
+              <NavLink
+                to={
+                  isSubscriptionActive || item.name === "Learning Module"
+                    ? item.path
+                    : "#"
+                }
+                end // <-- add this line
+                className={({ isActive }) => {
+                  const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
+                  const baseClass = "menu-link";
+                  if (isActive && !isLocked) return `${baseClass} active`;
+                  if (isLocked) return `${baseClass} disabled`;
+                  return baseClass;
+                }}
+                onClick={(e) => {
+                  const isLocked = !isSubscriptionActive && item.name !== "Learning Module";
+                  if (isLocked) {
+                    e.preventDefault();
+                  } else {
+                    setTitle(item.name);
+                  }
+                }}
+              >
+
+<span className="menu-link-icon">
+  {!isExpanded ? (
+    <abbr title={item.name}>
+      <img className="svgicon" src={item.img} alt={item.alt}   width={item.imgWidth || undefined}
+        height={item.imgHeight || undefined}/>
+    </abbr>
+  ) : (
+    <img className="svgicon" src={item.img} alt={item.alt}   width={item.imgWidth || undefined}
+        height={item.imgHeight || undefined} />
+  )}
+</span>
+                <span className="menu-link-text">{item.name}</span>
+               {!isSubscriptionActive && item.lockIcon && (
+  <span className="menu-link-lock">
+    {!isExpanded ? (
+      <abbr title={item.name}>
+        <img className="svgicon" src={item.lockIcon} alt="Locked" />
+      </abbr>
+    ) : (
+      <img className="svgicon" src={item.lockIcon} alt="Locked" />
+    )}
+  </span>
 )}
- 
-    
-        </SideBarwrapper>
-      );
-    };
+              </NavLink>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Arrow toggle (desktop) */}
+      <div
+        className="arrow-toggle"
+        onClick={() => setIsExpanded(!isExpanded)}
+        title={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
+      >
+        {isExpanded ? <FaChevronLeft size={14} /> : <FaChevronRight size={14} />}
+      </div>
+
+
+      {isExpanded ? (
+        <div className="mock-card">
+          <div className="mock-card-icon">
+            <PiVideoConference />
+          </div>
+          <h2 className="mock-card-title">Take a Mock Interview</h2>
+          <p className="mock-card-description">
+            Take a Mock interview to understand whether you are Interview Ready!
+          </p>
+          <button
+            className="mock-card-button"
+            onClick={() => navigate("/user/interview")}
+          >
+            Start interview
+          </button>
+        </div>
+      ) : (
+        <div
+          className="mock-card-icon collapsed"
+          title="Take a Mock Interview"
+          onClick={() => navigate("/user/interview")}
+          style={{ cursor: "pointer" }}
+        >
+          <PiVideoConference className="collapsed-icon" />
+        </div>
+      )}
+
+
+    </SideBarwrapper>
+  );
+};
 
 export default Sidebar;
