@@ -1,3 +1,4 @@
+// BaseLayout.js
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/admin/Sidebar/Sidebar";
@@ -17,11 +18,11 @@ const BaseLayout = () => {
     JSON.parse(localStorage.getItem("title")) || ""
   );
   const [subscriptionStatus, setSubscriptionStatus] = useState(null);
+  const [moduleNavigationState, setModuleNavigationState] = useState(null);
 
   const location = useLocation();
   const navigate = useNavigate();
-
-  const { isSignedIn, user, isLoaded, sessionId } = useUser();
+  const { isSignedIn, user, isLoaded } = useUser();
 
   const isAdminPath = location.pathname.startsWith("/admin");
   const isUserPath = location.pathname.startsWith("/user");
@@ -40,35 +41,21 @@ const BaseLayout = () => {
       if (isSignedIn && isLoaded && user) {
         try {
           const data = await getUserByClerkId(user.id);
-const role = data.data.user.user_role;
-const subscription = data.data.user.subscription_status;
+          const role = data.data.user.user_role;
+          const subscription = data.data.user.subscription_status;
 
-setSubscriptionStatus(subscription); // <-- Add this
+          setSubscriptionStatus(subscription);
 
-if (role === "user") {
-  if (data.data.user.profile_status === true) {
-    if (subscription === "active") {
-      // ok
-    } else {
-      navigate("/user/subscription");
-    }
-  } else {
-    navigate("/personalInfo");
-  }
-}
-          if (data.data.user.user_role === "user") {
+          if (role === "user") {
             if (data.data.user.profile_status === true) {
-              if (data.data.user.subscription_status === "active") {
-                // setRedirectPath("/user");
+              if (subscription === "active") {
+                // ok
               } else {
                 navigate("/user/subscription");
               }
-              // navigate("/user", { state: sessionId });
             } else {
               navigate("/personalInfo");
             }
-          } else if (data.data.user.user_role === "admin") {
-            // navigate("/admin");
           }
         } catch (error) {
           console.log(error);
@@ -76,7 +63,7 @@ if (role === "user") {
       }
     };
     apiCaller();
-  }, [user]);
+  }, [user, isSignedIn, isLoaded, navigate]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -94,6 +81,13 @@ if (role === "user") {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isMobileSidebarOpen]);
+
+  // Handle module navigation state
+  useEffect(() => {
+    if (isModulePath && location.state) {
+      setModuleNavigationState(location.state);
+    }
+  }, [isModulePath, location.state]);
 
   return (
     <PageWrapper isExpanded={isExpanded}>
@@ -120,23 +114,24 @@ if (role === "user") {
             setTitle={setTitle}
             isSidebarOpen={isMobileSidebarOpen}
             setIsSidebarOpen={setIsMobileSidebarOpen}
+            isSubscribed={subscriptionStatus === "active"}
+            key={moduleNavigationState ? JSON.stringify(moduleNavigationState) : 'default'}
           />
           <ContentWrapper isExpanded={isExpanded}>
             <UserHeader title={title} toggleMobileSidebar={toggleMobileSidebar} />
-            <Outlet />
+            <Outlet context={[moduleNavigationState, setModuleNavigationState]} />
           </ContentWrapper>
         </>
       ) : isUserPath ? (
         <>
-<SidebarUser
-  isExpanded={isExpanded}
-  setIsExpanded={setIsExpanded}
-  setTitle={setTitle}
-  isSidebarOpen={isMobileSidebarOpen}
-  setIsSidebarOpen={setIsMobileSidebarOpen}
-  isSubscriptionActive={subscriptionStatus === "active"} // <--- Pass the prop correctly
-/>
-
+          <SidebarUser
+            isExpanded={isExpanded}
+            setIsExpanded={setIsExpanded}
+            setTitle={setTitle}
+            isSidebarOpen={isMobileSidebarOpen}
+            setIsSidebarOpen={setIsMobileSidebarOpen}
+            isSubscriptionActive={subscriptionStatus === "active"}
+          />
           <ContentWrapper isExpanded={isExpanded}>
             <UserHeader title={title} toggleMobileSidebar={toggleMobileSidebar} />
             <Outlet />

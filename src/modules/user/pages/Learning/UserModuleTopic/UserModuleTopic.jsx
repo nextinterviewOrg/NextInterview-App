@@ -1,3 +1,4 @@
+// UserModuleTopic.js
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
   Container,
@@ -32,7 +33,7 @@ import {
   getLastTopicByModuleCode,
   getModuleById,
 } from "../../../../../api/addNewModuleApi";
-import { useLocation, useParams, useNavigate } from "react-router-dom";
+import { useLocation, useParams, useNavigate, useOutletContext } from "react-router-dom";
 import { summariseTopic } from "../../../../../api/gptApi";
 import SkillAssessment from "../SkillAssessment/SkillAssessment";
 import {
@@ -48,19 +49,11 @@ import {
 } from "../../../../../api/userProgressApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
-// import {
-//   ShimmerTitle,
-//   ShimmerText,
-//   ShimmerButton,
-// } from "react-shimmer-effects";
-// import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
 import SummarizeIcon from "../../../../../assets/SampleInterviewIcon.svg";
 import DOMPurify from 'dompurify';
-
-// Sample Data for Dynamic Rendering
 
 const courseData1 = {
   title: "",
@@ -100,53 +93,31 @@ const courseData1 = {
   ],
 };
 
-// const initialCourseData = {
-//   title: "",
-//   topicsList: [
-//     {
-//       title: "",
-//       subtopics: [
-//         {
-//           title: "",
-//           time: "",
-//           completed: true,
-//           subtopicContent: "",
-//           subtopicSummary: "",
-//           gptSummary: "",
-//           cheatSheetURL: "",
-//         },
-//       ],
-//     },
-//   ],
-// };
-
 const apiCache = new Map();
 
 const UserModuleTopic = () => {
-  // const [feedback, setFeedback] = useState(""); // State to store feedback
-  const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
+  const [moduleNavigationState, setModuleNavigationState] = useOutletContext();
+  const [feedback, setFeedback] = useState("");
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
-  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // State for feedback popup
-  const [feedbackMessage, setFeedbackMessage] = useState(""); // Message to show in feedback popup
-  const [isHelpful, setIsHelpful] = useState(null); // Track if feedback was helpful
-  const [likeAnimation, setLikeAnimation] = useState(false); // Animation state for like icon
-  const [dislikeAnimation, setDislikeAnimation] = useState(false); // Animation state for dislike icon
-  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // Track if feedback has been submitted
-  const [selectedFeedback, setSelectedFeedback] = useState(null); // Track which feedback option was selected
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [isHelpful, setIsHelpful] = useState(null);
+  const [likeAnimation, setLikeAnimation] = useState(false);
+  const [dislikeAnimation, setDislikeAnimation] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [selectedFeedback, setSelectedFeedback] = useState(null);
 
-  // const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
   const moduleId = useParams().id;
   const location = useLocation();
   const [courseData, setCourseData] = useState(courseData1);
   const [topicData, setTopicData] = useState(null);
   const [gptSummaryText, setGptSummaryText] = useState([]);
   const [delayedText, setDelayedText] = useState([]);
-  // const [selectedCheetSheetURL, setSelectedCheetSheetURL] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [moduleName, setModuleName] = useState("");
   const [markAsCompleteBtnStatus, setMarkAsCompleteBtnStatus] = useState(false);
   const navigate = useNavigate();
-  // const [curIndex, setCurIndex] = useState(0);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [popupContent, setPopupContent] = useState(null);
@@ -154,19 +125,30 @@ const UserModuleTopic = () => {
   const [isModuleCompleted, setIsModuleCompleted] = useState(false);
   const [feedbackOrder, setFeedbackOrder] = useState(1);
   const [returnUrl, setReturnUrl] = useState(null);
-  const [moduleCODE, setModuleCODE] = useState(null)
-  const [topicCODE, setTopicCODE] = useState(null)
+  const [moduleCODE, setModuleCODE] = useState(null);
+  const [topicCODE, setTopicCODE] = useState(null);
   const [contentReady, setContentReady] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
+  const [assessmentParams, setAssessmentParams] = useState({});
 
-    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+  // Use navigation state from context if available, otherwise from location
+  const { topicIndex, subtopicIndex } = useMemo(() => {
+    return moduleNavigationState || location.state || {};
+  }, [moduleNavigationState, location.state]);
 
-  // Pre-fetch module data when component mounts
+  const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
+    if (apiCache.has(key)) {
+      return apiCache.get(key);
+    }
+    const result = await apiFunction(...args);
+    apiCache.set(key, result);
+    return result;
+  }, []);
+
   useEffect(() => {
     const fetchModuleData = async () => {
       try {
         const response = await getModuleById(moduleId);
-        console.log("Module data fetched successfully:", response);
         setModuleName(response.data.moduleName);
         setModuleCODE(response.data.module_code);
         setContentReady(true);
@@ -183,199 +165,120 @@ const UserModuleTopic = () => {
       setDelayedText((prevText) => [...prevText, nextWord]);
     }, 25 * index);
   };
+
   const delayText = () => {
     for (let i = 0; i < gptSummaryText.length; i++) {
       delayPara(i, gptSummaryText[i]);
     }
   };
 
-  const handleCloseModal = async () => {
-    setShowModal(false);
-    let finalTopicIndex = location.state?.topicIndex;
-    let finalSubTopicIndex = location.state?.subtopicIndex;
+const handleCloseModal = async () => {
+  setShowModal(false);
+  let finalTopicIndex = topicIndex;
+  let finalSubTopicIndex = subtopicIndex;
+  
+  try {
     const userData = await getUserByClerkId(user.id);
     const moduleResponse = await getModuleById(moduleId);
-    console.log("fdsghjkljhgfdfghjk", moduleResponse)
+    
+    // Verify the subtopic exists before trying to complete it
+    if (!moduleResponse.data?.topicData?.[topicIndex]?.subtopicData?.[subtopicIndex]) {
+      throw new Error('Subtopic not found');
+    }
+
     const module_code = moduleResponse.data.module_code;
-    const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
-    const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
-    const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
+    const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
+    const subtopic_code = moduleResponse.data.topicData[topicIndex].subtopicData[subtopicIndex].subtopic_code;
+    
+    // Add loading state
+    setLoading(true);
+    
+    const markingSubTopicCompleted = await completeSubTopic(
+      userData.data.user._id, 
+      module_code, 
+      topic_code, 
+      subtopic_code
+    ).catch(error => {
+      console.error('Error completing subtopic:', error);
+      throw error; // Re-throw to be caught by outer try-catch
+    });
+
     finalSubTopicIndex = finalSubTopicIndex + 1;
 
-    const subTopicCompletionData = await getSubtopicCompletionStatus(userData.data.user._id, module_code, topic_code, subtopic_code);
+    const subTopicCompletionData = await getSubtopicCompletionStatus(
+      userData.data.user._id, 
+      module_code, 
+      topic_code, 
+      subtopic_code
+    );
 
-    if (subTopicCompletionData.allSubtopicCompleted == true) {
-      const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
+    if (subTopicCompletionData.allSubtopicCompleted) {
+      await completeTopic(userData.data.user._id, module_code, topic_code);
       finalTopicIndex = finalTopicIndex + 1;
       finalSubTopicIndex = 0;
-      const topicCompletionData = await getAllTopicsCompletionStatus(userData.data.user._id, module_code,);
-      const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-      await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-        if (item.moduleCode === moduleResponse.data.module_code) {
+      
+      const topicCompletionData = await getAllTopicsCompletionStatus(
+        userData.data.user._id, 
+        module_code
+      );
+      
+      if (topicCompletionData.allTopicsCompleted) {
+        await completeModule(userData.data.user._id, module_code);
 
-          if (Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0) > 50) {
-            const statusData = await checkUserFeedBackExists({
-              userId: userData.data.user._id,
-              feedback_order: 1,
-              moduleId: moduleResponse.data._id,
-            })
-            console.log("🚀 Feedback statusData (order 2):", statusData);
-            if (statusData.found === false) {
+        const feedbackExists = await checkUserFeedBackExists({
+          userId: userData.data.user._id,
+          moduleId: moduleResponse.data._id,
+        });
 
-              /// logic for feedback
-              setShowFeedbackModal(true);
-              setFeedbackOrder(1);
-
-            }
-
-          };
+        if (!feedbackExists.found) {
+          setShowFeedbackModal(true);
+          setFeedbackOrder(1);
+          setReturnUrl(`/user/learning/`);
+          return;
         }
-      }));
-      if (topicCompletionData.allTopicsCompleted == true) {
-        const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-        //logic for feedback
-        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-        await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-          if (item.moduleCode === moduleResponse.data.module_code) {
-            // setTotalCompletedTopics(item.topicStats.completed);
-            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-           const feedback1 = await checkUserFeedBackExists({
-  userId: userData.data.user._id,
-  feedback_order: 1,
-  moduleId: moduleResponse.data._id,
-});
-
-const feedback2 = await checkUserFeedBackExists({
-  userId: userData.data.user._id,
-  feedback_order: 2,
-  moduleId: moduleResponse.data._id,
-});
-
-console.log("Feedback order 1:", feedback1);
-console.log("Feedback order 2:", feedback2);
-
-// ✅ Only show feedback if BOTH are missing
-if (!feedback1.found && !feedback2.found) {
-  setShowFeedbackModal(true);
-  setFeedbackOrder(2);
-  setReturnUrl(`/user/learning/`);
-}
-
-            }
-          }
-        ));
-        // navigate(`/user/learning`);
-        return
       }
     }
 
-    //checking is this last topic
-    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
+    const newState = { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex };
+    setModuleNavigationState(newState);
+    navigate(`/user/learning/${moduleId}/topic`, { state: newState });
+  } catch (error) {
+    console.error('Error in handleCloseModal:', error);
+    // Show error to user (you might want to add a toast or error message state)
+    setLoading(false);
+    // Optionally: Re-open modal or show error message
+  } finally {
+    setLoading(false);
+  }
+};
 
-    // if (lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code, subtopic_code);
-    //   const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
-    //   finalTopicIndex = finalTopicIndex + 1;
-    //   finalSubTopicIndex = 0;
-    //   // const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //   // await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //   //   if (item.moduleCode === moduleResponse.data.module_code) {
-    //   //     // setTotalCompletedTopics(item.topicStats.completed);
-    //   //     if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //   //       const statusData = await checkUserFeedBackExists({
-    //   //         userId: userData.data.user._id,
-    //   //         feedback_order: 1,
-    //   //         moduleId: moduleResponse.data._id,
-    //   //       })
-    //   //       console.log("statusData", statusData);
-    //   //       if (statusData?.found === false) {
+  useEffect(() => {
+    const checkCompletionStatus = async () => {
+      if (!user || !moduleId || topicIndex === undefined || subtopicIndex === undefined) return;
 
-    //   //         /// logic for feedback
-    //   //         setShowFeedbackModal(true);
-    //   //         setFeedbackOrder(1);
+      try {
+        const userData = await getUserByClerkId(user.id);
+        const moduleResponse = await getModuleById(moduleId);
+        const module_code = moduleResponse.data.module_code;
+        const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
+        const subtopic_code = moduleResponse.data.topicData[topicIndex].subtopicData[subtopicIndex].subtopic_code;
 
-    //   //       }
+        const progress = await getUserProgressBySubTopic({
+          userId: userData.data.user._id,
+          moduleCode: module_code,
+          topicCode: topic_code,
+          subtopicCode: subtopic_code,
+        });
 
-    //   //     }
-    //   //   }
-    //   // }));
-    //   if (lastTopic.data.topic_code === topic_code) {
-    //     const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-    //     const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //     //logic for feedback
-    //     await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //       if (item.moduleCode === moduleResponse.data.module_code) {
-    //         // setTotalCompletedTopics(item.topicStats.completed);
-    //         console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-    //         if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //           const statusData = await checkUserFeedBackExists({
-    //             userId: userData.data.user._id,
-    //             feedback_order: 2,
-    //             moduleId: moduleResponse.data._id,
-    //           })
-    //           console.log("statusData", statusData);
-    //           if (statusData.found === false) {
+        setMarkAsCompleteBtnStatus(progress.data.status === "completed");
+      } catch (error) {
+        console.error("Error checking completion status:", error);
+      }
+    };
 
-    //             /// logic for feedback
-    //             setShowFeedbackModal(true);
-    //             setFeedbackOrder(2);
-    //             setReturnUrl(`/user/learning/`);
-    //           }
+    checkCompletionStatus();
+  }, [user, moduleId, topicIndex, subtopicIndex]);
 
-    //         }
-    //       }
-    //     }));
-    //     // navigate(`/user/learning`);
-    //     return
-    //   }
-    //   navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-    //   return
-    // }
-    // if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-    //   const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //   //logic for feedback
-    //   await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //     if (item.moduleCode === moduleResponse.data.module_code) {
-    //       // setTotalCompletedTopics(item.topicStats.completed);
-    //       console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-    //       if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //         const statusData = await checkUserFeedBackExists({
-    //           userId: userData.data.user._id,
-    //           feedback_order: 2,
-    //           moduleId: moduleResponse.data._id,
-    //         })
-    //         console.log("statusData", statusData);
-    //         if (statusData.found === false) {
-
-    //           /// logic for feedback
-    //           setShowFeedbackModal(true);
-    //           setFeedbackOrder(2);
-    //           setReturnUrl(`/user/learning/`);
-    //         }
-
-    //       }
-    //     }
-    //   }));
-
-    //   // navigate(`/user/learning`);
-    //   return
-    // }
-    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-  };
-
-
-const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
-    if (apiCache.has(key)) {
-      return apiCache.get(key);
-    }
-    const result = await apiFunction(...args);
-    apiCache.set(key, result);
-    return result;
-  }, []);
-
-  // Pre-fetch all module data when component mounts
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
@@ -387,7 +290,6 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
         setModuleName(moduleResponse.data.moduleName);
         setModuleCODE(moduleResponse.data.module_code);
         
-        // Pre-cache all topics and subtopics
         moduleResponse.data.topicData.forEach((topic, tIdx) => {
           topic.subtopicData.forEach((subtopic, sIdx) => {
             const cacheKey = `content-${moduleId}-${tIdx}-${sIdx}`;
@@ -409,7 +311,6 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
     fetchInitialData();
   }, [moduleId, user?.id, cachedApiCall]);
 
-  // Ultra-fast subtopic loading
   const loadSubtopic = useCallback(async () => {
     if (!user || !moduleId || topicIndex === undefined || subtopicIndex === undefined) return;
 
@@ -419,12 +320,10 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
     try {
       const startTime = performance.now();
       
-      // First check cache for instant response
       const cacheKey = `content-${moduleId}-${topicIndex}-${subtopicIndex}`;
       if (apiCache.has(cacheKey)) {
         const cachedData = apiCache.get(cacheKey);
         setTopicData([cachedData]);
-        // setSelectedCheetSheetURL(cachedData.cheatSheetURL);
         setGptSummaryText(cachedData.summary);
         setContentReady(true);
         setLoading(false);
@@ -432,7 +331,6 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
         return;
       }
 
-      // Fallback to API if not in cache (should rarely happen)
       const [userData, moduleResponse] = await Promise.all([
         cachedApiCall(`user-${user.id}`, getUserByClerkId, user.id),
         cachedApiCall(`module-${moduleId}`, getModuleById, moduleId)
@@ -446,14 +344,11 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
         cheatSheetURL: currentSubtopic.cheatSheetURL || "#"
       };
 
-      // Update cache for future visits
       apiCache.set(cacheKey, subtopicData);
       
       setTopicData([subtopicData]);
-      // setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
       setGptSummaryText(subtopicData.summary);
 
-      // Start progress tracking in background
       const module_code = moduleResponse.data.module_code;
       const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
       const subtopic_code = currentSubtopic.subtopic_code;
@@ -487,17 +382,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
     }
   }, [user, moduleId, topicIndex, subtopicIndex, cachedApiCall]);
 
-  // Immediate subtopic loading with debounce
   useEffect(() => {
-    const timer = setTimeout(() => {
-      loadSubtopic();
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [loadSubtopic]);
-
-
-    useEffect(() => {
     const timer = setTimeout(() => {
       loadSubtopic();
     }, 0);
@@ -510,7 +395,6 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       try {
         setLoading(true);
         const response = await getModuleById(moduleId);
-        console.log("Module data received in UserModuleTopic:", response.data);
         setModuleName(response.data.moduleName);
         setModuleCODE(response.data.module_code);
 
@@ -518,24 +402,17 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
           title: response.data.moduleName,
           topicsList: await Promise.all(
             response.data.topicData.map(async (item, topicIndex) => {
-              console.log("Processing topic:", item.topicName, "with code:", item.topic_code);
-
               return {
                 title: item.topicName,
-                topic_code: item.topic_code || "", // Preserve topic_code
+                topic_code: item.topic_code || "",
                 subtopics: await Promise.all(
                   item.subtopicData.map(async (subitem, subIndex) => {
-                    console.log("Processing subtopic:", subitem.subtopicName, "with code:", subitem.subtopic_code);
-                    // const gptSumm = await summariseTopic({
-                    //   message: subitem.subtopicContent,
-                    // });
                     return {
                       title: subitem.subtopicName,
-                      subtopic_code: subitem.subtopic_code || "", // Preserve subtopic_code
+                      subtopic_code: subitem.subtopic_code || "",
                       completed: subitem.completed,
                       subtopicContent: subitem.subtopicContent,
                       subtopicSummary: subitem.subtopicSummary,
-                      // gptSummary: gptSumm.data,
                       cheatSheetURL: subitem.cheatSheetURL || "#",
                       conceptClarifiers: subitem.conceptClarifier || [],
                     };
@@ -545,7 +422,6 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
             })
           ),
         };
-        console.log("Final course data structure in UserModuleTopic:", data);
         setLoading(false);
         setCourseData(data);
       } catch (error) {
@@ -558,248 +434,64 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       if (explanation) {
         setPopupContent(explanation);
         setShowPopup(true);
-        console.log("Works");
-      } else {
-        console.error("Explanation is undefined!");
       }
     };
 
     apiCaller();
-  }, []);
+  }, [moduleId]);
 
-  useEffect(() => {
-    setDelayedText([]);
-    setShowSummary(false);
-    if (!location.state) return; // Ensure location.state is defined
+  const renderConceptClarifiers = (text, clarifiers) => {
+    if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
 
-    // Reset feedback state when subtopic changes
-    setFeedbackSubmitted(false);
-    setSelectedFeedback(null);
-    setLikeAnimation(false);
-    setDislikeAnimation(false);
-    setShowFeedbackPopup(false);
+    let result = text;
 
-    const apiCaller = async () => {
+    clarifiers.forEach((clarifier) => {
+      if (!clarifier?.conceptClarifier) return;
+
       try {
-        // Make sure you're calling the API correctly and checking the response
-        const userData = await getUserByClerkId(user.id);
-        const response = await getModuleById(moduleId);
-        console.log("Module data in location state effect:", response.data);
+        const escapedConcept = clarifier.conceptClarifier.replace(
+          /[.*+?^${}()|[\]\\]/g, 
+          '\\$&'
+        );
 
-        if (!response.data || !response.data.topicData || response.data.topicData.length === 0) {
-          console.error("No topic data found in module response");
-          return;
-        }
+        const escapedHover = (clarifier.hoverExplanation || '')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
 
-        let currentMooduleCode = response.data.module_code;
-        let currentModuleId = response.data._id;
-        let currentTopicCode = null;
-        let currentTopicId = null;
-        let currentSubtopicCode = null;
-        let currentSubtopicId = null;
+        const escapedPopup = DOMPurify.sanitize(clarifier.popupExplanation || '');
 
-        // Ensure the response is valid before setting the state
-        const data = {
-          title: response.data.moduleName,
-          topicsList: await Promise.all(
-            response.data.topicData.map(async (item, topicIndex) => {
-              if (topicIndex === location.state.topicIndex) {
-                currentTopicCode = item.topic_code;
-                setTopicCODE(item.topic_code);
-                currentTopicId = item._id;
-                currentSubtopicCode = null;
-              }
-              return {
-                title: item.topicName,
-                topic_code: item.topic_code || "",
-                subtopics: await Promise.all(
-                  item.subtopicData.map(async (subitem, subIndex) => {
-                    if (topicIndex === location.state.topicIndex && subIndex === location.state.subtopicIndex) {
-                      currentSubtopicCode = subitem.subtopic_code;
-                      currentSubtopicId = subitem._id;
-                    }
-                    const gptSumm = await summariseTopic({
-                      message: subitem.subtopicContent,
-                    });
-                    return {
-                      title: subitem.subtopicName,
-                      subtopic_code: subitem.subtopic_code || "",
-                      completed: subitem.completed,
-                      subtopicContent: subitem.subtopicContent,
-                      subtopicSummary: subitem.subtopicSummary,
-                      gptSummary: gptSumm.data,
-                      cheatSheetURL: subitem.cheatSheetURL || "#",
-                      conceptClarifiers: subitem.conceptClarifier || [],
-                    };
-                  })
-                ),
-              };
-            })
-          ),
-        };
+        const replacement = `<span class="concept-tooltip" 
+          title="${escapedHover}" 
+          onClick="window.showPopupHandler('${escapedPopup.replace(/'/g, "\\'")}')"
+          style="color: #2390ac; cursor: pointer; text-decoration: underline;"
+        >
+          ${clarifier.conceptClarifier}
+        </span>`;
 
-        // Now, after setting courseData, use location.state to update topicData
-        const topic =
-          data.topicsList?.[location.state.topicIndex]?.subtopics?.[
-          location.state.subtopicIndex
-          ];
-        if (topic) {
-          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          setTopicData([
-            {
-              title: topic.title,
-              description: topic.subtopicContent,
-              summary: topic.subtopicSummary,
-              gptSummary: topic.gptSummary,
-              // cheatSheetURL: topic.cheatSheetURL || "#",
-            },
-          ]);
-          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
-          setGptSummaryText(topic.subtopicSummary);
-
-          const userData = await getUserByClerkId(user.id);
-          console.log("userData", userData, " ", userData.data.user._id);
-          if (currentTopicCode && currentTopicId && currentMooduleCode && currentModuleId) {
-            const markingTopicOngoing = await startTopic(
-              userData.data.user._id,
-              currentTopicCode,
-              currentTopicId,
-              currentMooduleCode,
-              currentModuleId
-            );
-            console.log("markingTopicOngoing", markingTopicOngoing);
-            const markingSubTopicOngoing = await startSubTopic(
-              userData.data.user._id,
-              currentMooduleCode,
-              currentTopicCode,
-              currentTopicId,
-              currentModuleId,
-              currentSubtopicCode,
-              currentSubtopicId,
-            );
-            console.log("markingSubTopicOngoing", markingSubTopicOngoing, "currentSubtopicCode", currentSubtopicCode);
-          }
-
-
-          if (currentMooduleCode && currentTopicCode && currentSubtopicCode) {
-            const moduleStatus = await getUserProgressBySubTopic({
-              userId: userData.data.user._id,
-              moduleCode: currentMooduleCode,
-              topicCode: currentTopicCode,
-              subtopicCode: currentSubtopicCode,
-            });
-            console.log("moduleStatus", moduleStatus);
-            if (moduleStatus.data.status !== "ongoing") {
-              console.log("moduleStatus status", moduleStatus.data.status);
-              setMarkAsCompleteBtnStatus(true);
-            } else {
-              setMarkAsCompleteBtnStatus(false);
-            }
-          }
-          setContentReady(true);
-        }
-
-        const moduleResponse = await getModuleById(moduleId);
-        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-        await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-          if (item.moduleCode === moduleResponse.data.module_code) {
-            // setTotalCompletedTopics(item.topicStats.completed);
-            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50) && (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50));
-            if ((Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) >= 50) && (Number.parseFloat((item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) <= 50)) {
-              const statusData = await checkUserFeedBackExists({
-                userId: userData.data.user._id,
-                feedback_order: 1,
-                moduleId: moduleResponse.data._id,
-              })
-console.log("🚀 Feedback statusData (order 1):", statusData);
-              if (statusData?.found === false) {
-
-                /// logic for feedback
-                setShowFeedbackModal(true);
-                setFeedbackOrder(1);
-
-              }
-
-            }
-          }
-        }));
+        const regex = new RegExp(`\\b${escapedConcept}\\b`, "gi");
+        result = result.replace(regex, replacement);
       } catch (error) {
-        console.error("Error in UserModuleTopic location state effect:", error);
+        console.error('Error processing clarifier:', clarifier, error);
       }
-    };
+    });
 
-    apiCaller();
-  }, [location.state]); // Add location.state as a dependency to ensure it runs when state changes
-
-const renderConceptClarifiers = (text, clarifiers) => {
-  if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
-
-  // Create a safe copy of the text to modify
-  let result = text;
-
-  // Process each clarifier in order
-  clarifiers.forEach((clarifier) => {
-    if (!clarifier?.conceptClarifier) return;
-
-    try {
-      // Escape special regex characters in the concept
-      const escapedConcept = clarifier.conceptClarifier.replace(
-        /[.*+?^${}()|[\]\\]/g, 
-        '\\$&'
-      );
-
-      // Escape HTML and quotes for hover text
-      const escapedHover = (clarifier.hoverExplanation || '')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-
-      // Escape HTML and quotes for popup text
-      const escapedPopup = DOMPurify.sanitize(clarifier.popupExplanation || '');
-
-      // Create the replacement HTML
-      const replacement = `<span class="concept-tooltip" 
-        title="${escapedHover}" 
-        onClick="window.showPopupHandler('${escapedPopup.replace(/'/g, "\\'")}')"
-        style="color: #2390ac; cursor: pointer; text-decoration: underline;"
-      >
-        ${clarifier.conceptClarifier}
-      </span>`;
-
-      // Replace all occurrences (global flag)
-      const regex = new RegExp(`\\b${escapedConcept}\\b`, "gi");
-      result = result.replace(regex, replacement);
-    } catch (error) {
-      console.error('Error processing clarifier:', clarifier, error);
-    }
-  });
-
-  return result;
-};
-
-
-  const handleSummarizeClick = async () => {
-    setLoadingSummary(true);         // Start spinner
-    setShowSummary(true);            // Show the summary section
-    // setShowDownloadButton(false);    // Hide the cheat sheet button
-
-    // Clear previous text if any
-    setDelayedText([]);
-
-    // Simulate a short delay before the typing starts (like AI "thinking")
-    setTimeout(() => {
-      delayText();                   // Animate the summary display
-      setLoadingSummary(false);      // Stop spinner after delay
-    }, 1000); // Adjust delay if needed
+    return result;
   };
 
+  const handleSummarizeClick = async () => {
+    setLoadingSummary(true);
+    setShowSummary(true);
+    setDelayedText([]);
 
-  const [assessmentParams, setAssessmentParams] = useState({});
+    setTimeout(() => {
+      delayText();
+      setLoadingSummary(false);
+    }, 1000);
+  };
 
   const handleFeedbackSubmit = async (feedbackData) => {
     try {
       console.log("Feedback submitted:", feedbackData);
-      // TODO: Implement API call to save feedback
-      // navigate(`/user/learning`);
     } catch (error) {
       console.error("Error submitting feedback:", error);
     }
@@ -807,17 +499,6 @@ const renderConceptClarifiers = (text, clarifiers) => {
 
   const handleSummaryFeedback = (isHelpful) => {
     try {
-      console.log(`Summary feedback: ${isHelpful ? 'Helpful' : 'Not helpful'}`);
-      // Here you could implement an API call to save the summary feedback
-      // For example:
-      // saveSummaryFeedback({
-      //   moduleId,
-      //   topicIndex: location.state?.topicIndex,
-      //   subtopicIndex: location.state?.subtopicIndex,
-      //   isHelpful
-      // });
-
-      // Set animation state
       if (isHelpful) {
         setLikeAnimation(true);
         setTimeout(() => setLikeAnimation(false), 1000);
@@ -826,16 +507,12 @@ const renderConceptClarifiers = (text, clarifiers) => {
         setTimeout(() => setDislikeAnimation(false), 1000);
       }
 
-      // Save the selected feedback state
       setSelectedFeedback(isHelpful);
       setFeedbackSubmitted(true);
-
-      // Show feedback popup
       setIsHelpful(isHelpful);
       setFeedbackMessage(`Thank you for your feedback! The summary was ${isHelpful ? 'helpful' : 'not helpful'}.`);
       setShowFeedbackPopup(true);
 
-      // Auto-hide popup after 3 seconds
       setTimeout(() => {
         setShowFeedbackPopup(false);
       }, 3000);
@@ -844,81 +521,53 @@ const renderConceptClarifiers = (text, clarifiers) => {
     }
   };
 
-const handleMarkAsCompleted = async () => {
-  const event = new CustomEvent('subtopicCompleted', {
-    detail: {
-      moduleId,
-      topicIndex: location.state?.topicIndex,
-      subtopicIndex: location.state?.subtopicIndex
-    }
-  });
-  window.dispatchEvent(event);
+  const handleMarkAsCompleted = async () => {
+    const event = new CustomEvent('subtopicCompleted', {
+      detail: {
+        moduleId,
+        topicIndex,
+        subtopicIndex
+      }
+    });
+    window.dispatchEvent(event);
 
-   // Rest of your existing mark as completed logic
-  const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
-  if (allSubtopicsCompleted) {
-    setIsModuleCompleted(true);
-  }
+    const allSubtopicsCompleted = courseData.topicsList[topicIndex].subtopics.every(subtopic => subtopic.completed);
+    if (allSubtopicsCompleted) {
+      setIsModuleCompleted(true);
+    }
 
     try {
-      console.log("Fetching module_code...");
-
       const moduleResponse = await getModuleById(moduleId);
-      console.log("🛠 moduleResponse Full Data:", moduleResponse);
-
-      if (
-        !moduleResponse ||
-        !moduleResponse.data ||
-        !moduleResponse.data.module_code
-      ) {
-        console.error(" Module data missing!", moduleResponse);
+      
+      if (!moduleResponse || !moduleResponse.data || !moduleResponse.data.module_code) {
+        console.error("Module data missing!");
         return;
       }
       const module_code = moduleResponse.data.module_code;
-      console.log("module_code fetched:", module_code);
 
-      if (
-        !moduleResponse.data.topicData ||
-        moduleResponse.data.topicData.length === 0
-      ) {
+      if (!moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
         console.error("No topics found for module_code:", module_code);
         return;
       }
-      console.log(" Available Topics:", moduleResponse.data.topicData);
 
-      const topicIndex = location.state?.topicIndex ?? 0;
       const topicData = moduleResponse.data.topicData[topicIndex];
-
       if (!topicData || !topicData.topic_code) {
-        console.error(
-          " topic_code not found. Available Topics:",
-          moduleResponse.data.topicData
-        );
+        console.error("topic_code not found.");
         return;
       }
       const topic_code = topicData.topic_code;
-      console.log("topic_code fetched:", topic_code);
 
-      // 3️⃣ Ensure subtopicData exists
       if (!topicData.subtopicData || topicData.subtopicData.length === 0) {
-        console.error(" No subtopics found for topic_code:", topic_code);
+        console.error("No subtopics found for topic_code:", topic_code);
         return;
       }
 
-      console.log(" Available Subtopics:", topicData.subtopicData);
-
-      const subtopicIndex = location.state?.subtopicIndex ?? 0;
       const subtopicData = topicData.subtopicData[subtopicIndex];
-
       if (!subtopicData || !subtopicData.subtopic_code) {
-        console.error(
-          " subtopic_code not found. Available Subtopics:",
-          topicData.subtopicData
-        );
+        console.error("subtopic_code not found.");
         return;
       }
       const subtopic_code = subtopicData.subtopic_code;
-      console.log("subtopic_code fetched:", subtopic_code);
 
       const params = {
         module_code,
@@ -928,32 +577,29 @@ const handleMarkAsCompleted = async () => {
         level: subtopicData.level,
       };
 
-      console.log("Final Skill Assessment Params:", params);
       setAssessmentParams(params);
       setShowModal(true);
     } catch (error) {
-         const rollbackEvent = new CustomEvent('subtopicCompleted', {
-      detail: {
-        moduleId,
-        topicIndex: location.state?.topicIndex,
-        subtopicIndex: location.state?.subtopicIndex,
-        completed: false
-      }
-    });
-    window.dispatchEvent(rollbackEvent);
-    console.error("Error marking as completed:", error);
-  }
+      const rollbackEvent = new CustomEvent('subtopicCompleted', {
+        detail: {
+          moduleId,
+          topicIndex,
+          subtopicIndex,
+          completed: false
+        }
+      });
+      window.dispatchEvent(rollbackEvent);
+      console.error("Error marking as completed:", error);
+    }
   };
 
   const handleTryButton = () => {
     navigate(`/user/QusnsTryitYourself/${moduleCODE}/${topicCODE}`);
-    // navigate(`/user/learning/${moduleName}/topic/tryityourself`);
   };
 
   const handleNext = async () => {
     try {
       const moduleResponse = await getModuleById(moduleId);
-      console.log("Module data in handleNext:", moduleResponse.data);
 
       if (!moduleResponse.data || !moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
         console.error("No topic data found in module response");
@@ -961,16 +607,8 @@ const handleMarkAsCompleted = async () => {
       }
 
       const module_code = moduleResponse.data.module_code;
-      const topic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.topic_code;
-      const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.subtopicData[location.state?.subtopicIndex]?.subtopic_code;
-
-      console.log("Navigation data:", {
-        module_code,
-        topic_code,
-        subtopic_code,
-        topicIndex: location.state?.topicIndex,
-        subtopicIndex: location.state?.subtopicIndex
-      });
+      const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
+      const subtopic_code = moduleResponse.data.topicData[topicIndex].subtopicData[subtopicIndex].subtopic_code;
 
       const lastTopic = await getLastTopicByModuleCode({
         moduleCode: module_code,
@@ -980,29 +618,25 @@ const handleMarkAsCompleted = async () => {
         topicCode: topic_code,
       });
 
-      let finalTopicIndex = location.state?.topicIndex;
-      let finalSubTopicIndex = location.state?.subtopicIndex;
+      let finalTopicIndex = topicIndex;
+      let finalSubTopicIndex = subtopicIndex;
 
-      // Check if we're at the last subtopic of the current topic
       if (lastSubTopic.data.subtopic_code === subtopic_code) {
-        // Move to the next topic
         finalTopicIndex = finalTopicIndex + 1;
         finalSubTopicIndex = 0;
       } else {
-        // Move to the next subtopic in the current topic
         finalSubTopicIndex = finalSubTopicIndex + 1;
       }
 
-      // Check if we're at the last topic and subtopic
       if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-        console.log("Navigating to /user/learning as last topic is reached");
         navigate(`/user/learning`);
         return;
       }
 
-      // Navigate to the next topic/subtopic
+      const newState = { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex };
+      setModuleNavigationState(newState);
       navigate(`/user/learning/${moduleId}/topic`, {
-        state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
+        state: newState,
       });
     } catch (error) {
       console.error("Error in handleNext:", error);
@@ -1021,14 +655,8 @@ const handleMarkAsCompleted = async () => {
           <div style={{ display: "flex", justifyContent: "flex-end" }}>
             <TryItYourself>
               <TryButton onClick={handleTryButton}>Try it yourself</TryButton>
-            </TryItYourself >
-            {/* <TryItYourself >
-              <TryButton onClick={() => {
-                navigate(`/user/titcodinglist`, { state: { moduleCode: moduleCODE, topicCode: topicCODE, topicIndex: location.state?.topicIndex, subtopicIndex: location.state?.subtopicIndex, returnUrl: `/user/learning/${moduleId}/topic` } })
-              }}>Try Coding Questions</TryButton>
-            </TryItYourself> */}
+            </TryItYourself>
           </div>
-
 
           <div>
             {topicData && (
@@ -1036,13 +664,12 @@ const handleMarkAsCompleted = async () => {
                 {topicData?.map((topic, index) => (
                   <div key={index}>
                     <Title>{topic.title}</Title>
-
                     <Text
                       dangerouslySetInnerHTML={{
                         __html: renderConceptClarifiers(
                           topic.description,
-                          courseData?.topicsList?.[location.state?.topicIndex]
-                            ?.subtopics?.[location.state?.subtopicIndex]
+                          courseData?.topicsList?.[topicIndex]
+                            ?.subtopics?.[subtopicIndex]
                             ?.conceptClarifiers || []
                         ),
                       }}
@@ -1053,49 +680,15 @@ const handleMarkAsCompleted = async () => {
             )}
           </div>
 
-          {!contentReady && (
-            <div style={{ textAlign: "center", marginTop: "20px" }}>
-              <Spinner />
-              <p>Loading tools...</p>
-            </div>
-          )}
-
           {contentReady && (
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-                // alignContent: "center",
-                alignItems: "center",
-                gap: "20px",
-              }}
-            >
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
-                {/* {showDownloadButton && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <a
-                      style={{
-                        backgroundColor: "transparent",
-                        fontWeight: "bold",
-                        color: "#2390ac",
-                        textDecoration: "none",
-                      }}
-                      target="_blank"
-                      download={"cheatSheet.pdf"}
-                      href={selectedCheetSheetURL}
-                    >
-                      Download Cheat Sheet (pdf)
-                    </a>
-                  </div>
-                )} */}
-
+            <div style={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "20px",
+            }}>
+              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px" }}>
                 {!showSummary && (
                   <Button
                     style={{
@@ -1121,10 +714,10 @@ const handleMarkAsCompleted = async () => {
               </div>
             </div>
           )}
+          
           {showSummary && (
             <SummaryContainer>
               <SummaryTitle>Summary</SummaryTitle>
-
               {loadingSummary ? (
                 <SummaryText style={{ fontStyle: "italic", color: "#888" }}>
                   Generating summary...
@@ -1136,7 +729,6 @@ const handleMarkAsCompleted = async () => {
                   }}
                 />
               )}
-
               <ButtonGroup
                 style={{
                   display: "flex",
@@ -1154,19 +746,6 @@ const handleMarkAsCompleted = async () => {
                     justifyContent: "center",
                   }}
                 >
-                  {/* <a
-                    style={{
-                      backgroundColor: "transparent",
-                      color: "#2390ac",
-                      fontWeight: "bold",
-                      textDecoration: "none",
-                    }}
-                    href={selectedCheetSheetURL}
-                    target="_blank"
-                    download={"cheatSheet.pdf"}
-                  >
-                    Download Cheat Sheet (pdf)
-                  </a> */}
                 </div>
                 <div
                   style={{
@@ -1207,7 +786,7 @@ const handleMarkAsCompleted = async () => {
 
       {contentReady && (
         <>
-          {markAsCompleteBtnStatus && !isModuleCompleted ? (
+          {markAsCompleteBtnStatus ? (
             <Button
               style={{
                 backgroundColor: "#2390ac",
@@ -1242,14 +821,15 @@ const handleMarkAsCompleted = async () => {
           )}
         </>
       )}
+      
       {showModal && (
         <ModalOverlay>
           <ModalContent>
             <SkillAssessment
               {...assessmentParams}
               onCloseModal={handleCloseModal}
-              currentTopicIndex={location.state.topicIndex}
-              currentSubTopicIndex={location.state.subtopicIndex}
+              currentTopicIndex={topicIndex}
+              currentSubTopicIndex={subtopicIndex}
               moduleId={moduleId}
             />
           </ModalContent>
@@ -1283,7 +863,6 @@ const handleMarkAsCompleted = async () => {
         </ModalOverlay>
       )}
 
-      {/* Feedback Popup */}
       {showFeedbackPopup && (
         <FeedbackPopup>
           <FeedbackIcon isHelpful={isHelpful}>

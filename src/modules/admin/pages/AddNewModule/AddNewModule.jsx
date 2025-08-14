@@ -712,6 +712,8 @@ const AddNewModule = () => {
                   </div>
                 )}
 
+
+
                 {/* TEXT SELECTION BUTTON*/}
                 {selectedText.text &&
                   selectedText.topicIndex === topicIndex &&
@@ -926,109 +928,107 @@ const AddNewModule = () => {
               </CheckboxContainer>
 
               {/* CONCEPT CLARIFIER SECTION */}
-              <ConceptClarifierContainer>
-                <ClarifierHeading>Concept Clarifier</ClarifierHeading>
-                {subtopic.conceptClarifiers.map((clarifier, clarifierIndex) => (
-                  <div key={clarifierIndex} style={{ marginBottom: "10px" }}>
-                    <FormGroup>
-                      <Label>Concept Clarifier (Enter a Word or Phrase)</Label>
-                      <TextInput
-                        value={clarifier.clarifierWordOrPhrase}
-                        onChange={(e) =>
-                          handleConceptClarifierChange(
-                            e,
-                            e.target.value,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "clarifierWordOrPhrase"
-                          )
-                        }
-                        style={{ backgroundColor: theme.colors.backgray }}
-                      />
-                    </FormGroup>
+<ConceptClarifierContainer>
+  <ClarifierHeading>Concept Clarifier</ClarifierHeading>
+  {subtopic.conceptClarifiers.map((clarifier, clarifierIndex) => (
+    <div key={clarifierIndex} style={{ marginBottom: "10px" }}>
+      <FormGroup>
+        <Label>Concept Clarifier (Enter a Word or Phrase)</Label>
+        <TextInput
+          value={clarifier.clarifierWordOrPhrase}
+          onChange={(e) =>
+            handleConceptClarifierChange(
+              e,
+              null,
+              topicIndex,
+              subIndex,
+              clarifierIndex,
+              "clarifierWordOrPhrase"
+            )
+          }
+          style={{ backgroundColor: theme.colors.backgray }}
+        />
+      </FormGroup>
 
-                    <FormGroup>
-                      <Label>Explanation on Hover</Label>
-                      <TextInput
-                        value={clarifier.explanationOnHover}
-                        onChange={(e) =>
-                          handleConceptClarifierChange(
-                            e,
-                            e.target.value,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "explanationOnHover"
-                          )
-                        }
-                        style={{ backgroundColor: theme.colors.backgray }}
-                      />
+      <FormGroup>
+        <Label>Explanation on Hover</Label>
+        <TextInput
+          value={clarifier.explanationOnHover}
+          onChange={(e) =>
+            handleConceptClarifierChange(
+              e,
+              null,
+              topicIndex,
+              subIndex,
+              clarifierIndex,
+              "explanationOnHover"
+            )
+          }
+          style={{ backgroundColor: theme.colors.backgray }}
+        />
+      </FormGroup>
 
-                    </FormGroup>
+      <FormGroup>
+        <Label>More Explanation on Popup</Label>
+        <TextArea
+          rows="3"
+          value={clarifier.moreExplanation}
+          onChange={(e) =>
+            handleConceptClarifierChange(
+              e,
+              null,
+              topicIndex,
+              subIndex,
+              clarifierIndex,
+              "moreExplanation"
+            )
+          }
+          style={{ backgroundColor: theme.colors.backgray }}
+        />
+      </FormGroup>
 
-                    <FormGroup>
-                      <Label>More Explanation on Popup</Label>
-                      <TextArea
-                        rows="3"
-                        value={clarifier.moreExplanation}
-                        onChange={(e) =>
-                          handleConceptClarifierChange(
-                            e,
-                            e.target.value,
-                            topicIndex,
-                            subIndex,
-                            clarifierIndex,
-                            "moreExplanation"
-                          )
-                        }
-                        style={{ backgroundColor: theme.colors.backgray }}
-                      />
-                    </FormGroup>
+      {/* DELETE CLARIFIER BUTTON/ICON */}
+      {/* Show delete button if there's more than one clarifier OR if it's not the first one */}
+      {(subtopic.conceptClarifiers.length > 1 || clarifierIndex > 0) && (
+        <ButtonRow>
+          <ActionButton
+            variant="danger"
+            style={{
+              marginLeft: "0px",
+              border: "1px solid #2390ac",
+              color: "#2390ac",
+              backgroundColor: "transparent",
+            }}
+            onClick={() =>
+              openDeleteModal(
+                "clarifier",
+                topicIndex,
+                subIndex,
+                null,
+                clarifierIndex
+              )
+            }
+          >
+            Delete Clarifier
+          </ActionButton>
+        </ButtonRow>
+      )}
+    </div>
+  ))}
 
-                    {/* DELETE CLARIFIER BUTTON/ICON */}
-                    {clarifierIndex > 1 && (
-                      <ButtonRow>
-                        <ActionButton
-                          variant="danger"
-                          style={{
-                            marginLeft: "0px",
-                            border: "1px solid #2390ac",
-                            color: "#2390ac",
-                            backgroundColor: "transparent",
-                          }}
-                          onClick={() =>
-                            openDeleteModal(
-                              "clarifier",
-                              topicIndex,
-                              subIndex,
-                              null,
-                              clarifierIndex
-                            )
-                          }
-                        >
-                          Delete Clarifier
-                        </ActionButton>
-                      </ButtonRow>
-                    )}
-                  </div>
-                ))}
-                <hr></hr>
-                <ButtonRow style={{ justifyContent: "flex-end" }}>
-                  <ActionButton
-                    style={{
-                      border: "1px solid #2390ac",
-                      color: "#2390ac",
-                      backgroundColor: "transparent",
-                    }}
-                    onClick={() =>
-                      handleAddConceptClarifier(topicIndex, subIndex)
-                    }
-                  >
-                    + Add Concept Clarifier
-                  </ActionButton>
-                </ButtonRow>
-              </ConceptClarifierContainer>
+  <ButtonRow>
+    <ActionButton
+      style={{
+        border: "1px solid #2390ac",
+        color: "#2390ac",
+        backgroundColor: "transparent",
+      }}
+      onClick={() => handleAddConceptClarifier(topicIndex, subIndex)}
+    >
+      + Add Concept Clarifier
+    </ActionButton>
+  </ButtonRow>
+</ConceptClarifierContainer>
               {/* DELETE SUBTOPIC BUTTON */}
               {topics[topicIndex].subtopics.length > 1 && (
                 <ButtonRow>

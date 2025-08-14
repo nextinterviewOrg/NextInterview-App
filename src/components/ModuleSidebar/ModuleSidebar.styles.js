@@ -259,6 +259,16 @@ export const ModuleSidebarContainer = styled.div`
     color: ${({ theme }) => theme.colors.black};
   }
 
+  // Add to your ModuleSidebar.styles.js
+.subtopic-link.disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+  
+  &:hover {
+    background-color: transparent;
+  }
+}
+
   .start-button {
     width: 170px;
     height: 34px;
@@ -307,3 +317,94 @@ export const Overlay = styled.div`
   z-index: 999;
   display: ${props => props.visible ? 'block' : 'none'};
 `;
+
+export const SubscriptionModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
+
+export const SubscriptionModal = styled.div`
+  background-color: white;
+  padding: 1rem;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+
+  /* @media (max-width: 480px) {
+    max-width: 200px;
+  } */
+
+  h3 {
+    margin: 10px 0px 20px 0;
+    color: #333;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 700;
+  }
+
+  p {
+    margin-bottom: 1.5rem;
+    color: #666;
+  }
+
+  button {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+
+  }
+
+  .primary-btn {
+  background-color: ${(props) => props.theme.colors.info}!important;
+    color: white!important;
+
+    &:hover {
+  background-color: ${(props) => props.theme.colors.secondary}!important;
+    }
+
+    @media (max-width: 480px) {
+      width: 100%;
+      margin-top: 10px; 
+    }
+  }
+
+  .secondary-btn {
+    background-color: #fff;
+    color: ${(props) => props.theme.colors.secondary};
+      border: 1px solid ${(props) => props.theme.colors.secondary}!important;
+
+    @media (max-width: 480px) {
+      width: 100%;
+    }
+  }
+
+  .close-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    background: transparent!important;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: black!important;
+
+    @media (max-width: 768px) {
+      font-size: 16px;
+    }
+  }
+
+`;
+

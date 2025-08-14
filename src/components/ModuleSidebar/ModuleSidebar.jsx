@@ -10,12 +10,13 @@ import { MdExpandMore } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { RiGeminiLine } from "react-icons/ri";
 import { GiHamburgerMenu } from "react-icons/gi";
-import { ModuleSidebarContainer, MobileToggleButton, Overlay } from "./ModuleSidebar.styles";
+import { ModuleSidebarContainer, MobileToggleButton, Overlay, SubscriptionModal, SubscriptionModalOverlay  } from "./ModuleSidebar.styles";
 import Logo from "../../assets/Logo.png";
 import { getModuleById } from "../../api/addNewModuleApi";
 import { getUserProgressByModule, getUserProgressBySubTopic, getUserProgressStats } from "../../api/userProgressApi";
 import { useUser } from "@clerk/clerk-react";
 import { getUserByClerkId } from "../../api/userApi";
+import { IoClose } from "react-icons/io5";
 
 const courseData1 = {
   title: "",
@@ -27,6 +28,7 @@ export default function ModuleSidebar({
   setIsExpanded,
   setTitle,
   courseProgress,
+  isSubscribed 
 }) {
   const location = useLocation();
   const [expandedTopic, setExpandedTopic] = useState(null);
@@ -43,6 +45,7 @@ export default function ModuleSidebar({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [immediatelyCompleted, setImmediatelyCompleted] = useState({});
+  const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
     const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
 
@@ -216,6 +219,87 @@ useEffect(() => {
     };
   }, [isMobile, sidebarOpen]);
 
+    // Modify the subtopic rendering to handle subscription restrictions
+const renderSubtopic = (topic, subtopic, index, subIndex) => {
+  // Allow access to first topic if not subscribed
+  const isAllowed = isSubscribed || index === 0;
+  
+  if (!isAllowed) {
+    return (
+      <div 
+        key={`${index}-${subIndex}`} 
+        className="subtopic-link disabled"
+        onClick={() => setShowSubscribeModal(true)}
+      >
+        <div className="subtopic">
+          <div className="subtopic-info">
+            <span className="pending">
+              <div style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+                <span>
+                  <FaCheckCircle style={{ color: "gray" }} />
+                </span>
+                <span className="subtopic-title">
+                  {subtopic.title}
+                </span>
+                <span style={{ marginLeft: 'auto', color: '#ff6b6b' }}>
+                  (Subscribe to access)
+                </span>
+              </div>
+            </span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      key={`${index}-${subIndex}`}
+      className="subtopic-link"
+      to={`/user/learning/${moduleId}/topic`}
+      state={{
+        topicIndex: index,
+        subtopicIndex: subIndex,
+      }}
+      onClick={() => {
+        setSelectedCurrentSubTopic(subIndex);
+        setSelectedCurrentTopic(index);
+        if (isMobile) setSidebarOpen(false);
+      }}
+    >
+        <div className="subtopic">
+          <div className="subtopic-info" 
+            style={{ 
+              backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", 
+              borderRadius: "5px" 
+            }}
+          >
+            <span className={subtopic.completed ? "completed" : "pending"}>
+              <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "5px",
+                minHeight: "fit-content",
+                height: "auto",
+              }}>
+                <span>
+                  {subtopic.completed || immediatelyCompleted[`${index}-${subIndex}`] ? (
+                    <FaCheckCircle style={{ color: "#4CAF50" }} />
+                  ) : (
+                    <FaCheckCircle style={{ color: "gray" }} />
+                  )}
+                </span>
+                <span className="subtopic-title">
+                  {subtopic.title}
+                </span>
+              </div>
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  };
+
   
   return (
     <>
@@ -275,75 +359,93 @@ useEffect(() => {
           </button>
         </div>
 
-        <div className="course-topics" style={{ overflowY: "auto" }}>
-          <h3 className="course-topics-title">Topics</h3>
-          {courseData.topicsList?.map((topic, index) => (
-            <div key={index} className="topic">
-              <div className="topic-title" onClick={() => toggleExpand(index)}>
-                <span className="topic-name">{topic.title}</span>
-                <span
-                >
-                  {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-                </span>
-              </div>
-              {expandedTopic === index && (
-                <div className="subtopics">
-                {topic.subtopics.length === 0 ? (
-                  <p>No subtopics available</p>
-                ) : (
-                  topic.subtopics?.map((subtopic, subIndex) => (
-                    <Link
-                      key={`${index}-${subIndex}`}
-                      className="subtopic-link"
-                      to={`/user/learning/${moduleId}/topic`}
-                      state={{
-                        topicIndex: index,
-                        subtopicIndex: subIndex,
-                      }}
-                      onClick={() => {
-                        setSelectedCurrentSubTopic(subIndex);
-                        setSelectedCurrentTopic(index);
-                        if (isMobile) setSidebarOpen(false);
-                      }}
-                    >
-                      <div key={subIndex} className="subtopic">
-                        <div className="subtopic-info" 
-                          style={{ 
-                            backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", 
-                            borderRadius: "5px" 
-                          }}
-                        >
-                          <span className={subtopic.completed ? "completed" : "pending"}>
-                            <div style={{
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "5px",
-                              minHeight: "fit-content",
-                              height: "auto",
-                            }}>
-                              <span>
-                                {subtopic.completed || immediatelyCompleted[`${index}-${subIndex}`] ? (
-                                  <FaCheckCircle style={{ color: "#4CAF50" }} />
-                                ) : (
-                                  <FaCheckCircle style={{ color: "gray" }} />
-                                )}
-                              </span>
-                              <span className="subtopic-title">
-                                {subtopic.title}
-                              </span>
-                            </div>
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))
-                )}
-              </div>
-              )}
-            </div>
-          ))}
+
+<div className="course-topics" style={{ overflowY: "auto" }}>
+  <h3 className="course-topics-title">Topics</h3>
+  {courseData.topicsList?.map((topic, index) => {
+    // Only allow access to first topic if not subscribed
+    const isAllowed = isSubscribed || index === 0;
+    
+    return (
+      <div key={index} className="topic">
+        <div 
+          className="topic-title" 
+          onClick={() => {
+            if (isAllowed) {
+              toggleExpand(index);
+            } else {
+              setShowSubscribeModal(true);
+            }
+          }}
+          style={{
+            cursor: isAllowed ? 'pointer' : 'not-allowed',
+            opacity: isAllowed ? 1 : 0.6
+          }}
+        >
+          <span className="topic-name">{topic.title}</span>
+          {isAllowed && (
+            <span>
+              {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+            </span>
+          )}
+          {!isAllowed && (
+            <span style={{ color: '#ff6b6b', fontSize: '12px' }}>
+              (Subscribe)
+            </span>
+          )}
         </div>
+        {expandedTopic === index && isAllowed && (
+          <div className="subtopics">
+            {topic.subtopics.length === 0 ? (
+              <p>No subtopics available</p>
+            ) : (
+              topic.subtopics?.map((subtopic, subIndex) => (
+                renderSubtopic(topic, subtopic, index, subIndex)
+              ))
+            )}
+          </div>
+        )}
+      </div>
+    );
+  })}
+</div>
       </ModuleSidebarContainer>
+
+  {showSubscribeModal && (
+  <SubscriptionModalOverlay
+    onClick={() => setShowSubscribeModal(false)} // Close when clicking outside
+  >
+    <SubscriptionModal
+      onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+    >
+      {/* Close icon */}
+      <button
+        className="close-icon"
+        onClick={() => setShowSubscribeModal(false)}
+      >
+        <IoClose />
+      </button>
+
+      <h3>Upgrade Your Account</h3>
+      <p>Subscribe to access all topics and features.</p>
+
+      <button
+        className="secondary-btn"
+        onClick={() => setShowSubscribeModal(false)}
+      >
+        Maybe Later
+      </button>
+
+      <button
+        className="primary-btn"
+        onClick={() => navigate('/user/subscription')}
+      >
+        View Subscription Plans
+      </button>
+    </SubscriptionModal>
+  </SubscriptionModalOverlay>
+)}
+
     </>
   );
 }

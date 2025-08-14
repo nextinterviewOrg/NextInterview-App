@@ -73,6 +73,7 @@ export const SubscriptionCardWrapper = styled.div`
     text-align: left;
     max-height: 180px;
     height: 20vh;
+    width: 200px;
     overflow-y: scroll;
     scrollbar-width: none;
   }
