@@ -47,17 +47,30 @@ export default function ModuleSidebar({
   const [immediatelyCompleted, setImmediatelyCompleted] = useState({});
   const [showSubscribeModal, setShowSubscribeModal] = useState(false);
 
-    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+    const { topicCode, subtopicCode } = useMemo(() => location.state || {}, [location.state]);
+
+  // Find indices based on codes (only if needed for other logic)
+  const topicIndex = useMemo(() => {
+    return courseData.topicsList?.findIndex(t => t.topic_code === topicCode);
+  }, [courseData, topicCode]);
+
+  console.log("topicIndex", topicIndex);
+
+  const subtopicIndex = useMemo(() => {
+    return courseData.topicsList?.[topicIndex]?.subtopics?.findIndex(s => s.subtopic_code === subtopicCode);
+  }, [courseData, topicIndex, subtopicCode]);
+
+  console.log("subtopicIndex", subtopicIndex);
 
   useEffect(() => {
-    if (topicIndex !== undefined) {
+    if (topicCode) {
       setSelectedCurrentTopic(topicIndex);
       setExpandedTopic(topicIndex);
     }
-    if (subtopicIndex !== undefined) {
+    if (subtopicCode) {
       setSelectedCurrentSubTopic(subtopicIndex);
     }
-  }, [topicIndex, subtopicIndex]);
+  }, [topicCode, subtopicCode, topicIndex, subtopicIndex]);
 
 
   const fetchModuleData = useCallback(async () => {
@@ -359,56 +372,74 @@ const renderSubtopic = (topic, subtopic, index, subIndex) => {
           </button>
         </div>
 
-
-<div className="course-topics" style={{ overflowY: "auto" }}>
-  <h3 className="course-topics-title">Topics</h3>
-  {courseData.topicsList?.map((topic, index) => {
-    // Only allow access to first topic if not subscribed
-    const isAllowed = isSubscribed || index === 0;
-    
-    return (
-      <div key={index} className="topic">
-        <div 
-          className="topic-title" 
-          onClick={() => {
-            if (isAllowed) {
-              toggleExpand(index);
-            } else {
-              setShowSubscribeModal(true);
-            }
-          }}
-          style={{
-            cursor: isAllowed ? 'pointer' : 'not-allowed',
-            opacity: isAllowed ? 1 : 0.6
-          }}
-        >
-          <span className="topic-name">{topic.title}</span>
-          {isAllowed && (
-            <span>
-              {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
-            </span>
-          )}
-          {!isAllowed && (
-            <span style={{ color: '#ff6b6b', fontSize: '12px' }}>
-              (Subscribe)
-            </span>
-          )}
+        <div className="course-topics" style={{ overflowY: "auto" }}>
+          <h3 className="course-topics-title">Topics</h3>
+          {courseData.topicsList?.map((topic, index) => (
+            <div key={index} className="topic">
+              <div className="topic-title" onClick={() => toggleExpand(index)}>
+                <span className="topic-name">{topic.title}</span>
+                <span
+                >
+                  {expandedTopic === index ? <MdExpandLess size={20} /> : <MdExpandMore size={20} />}
+                </span>
+              </div>
+              {expandedTopic === index && (
+                <div className="subtopics">
+                {topic.subtopics.length === 0 ? (
+                  <p>No subtopics available</p>
+                ) : (
+  topic.subtopics?.map((subtopic, subIndex) => (
+    <Link
+      key={`${index}-${subIndex}`}
+      className="subtopic-link"
+      to={`/user/learning/${moduleId}/topic`}
+      state={{
+        topicCode: topic.topic_code,
+        subtopicCode: subtopic.subtopic_code,
+      }}
+      onClick={() => {
+        setSelectedCurrentSubTopic(subIndex);
+        setSelectedCurrentTopic(index);
+        if (isMobile) setSidebarOpen(false);
+      }}
+    >
+                      <div key={subIndex} className="subtopic">
+                        <div className="subtopic-info" 
+                          style={{ 
+                            backgroundColor: slectectedCurrentSubTopic == subIndex && slectectedCurrentTopic == index ? "lightgray" : "transparent", 
+                            borderRadius: "5px" 
+                          }}
+                        >
+                          <span className={subtopic.completed ? "completed" : "pending"}>
+                            <div style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "5px",
+                              minHeight: "fit-content",
+                              height: "auto",
+                            }}>
+                              <span>
+                                {subtopic.completed || immediatelyCompleted[`${index}-${subIndex}`] ? (
+                                  <FaCheckCircle style={{ color: "#4CAF50" }} />
+                                ) : (
+                                  <FaCheckCircle style={{ color: "gray" }} />
+                                )}
+                              </span>
+                              <span className="subtopic-title">
+                                {subtopic.title}
+                              </span>
+                            </div>
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+                )}
+              </div>
+              )}
+            </div>
+          ))}
         </div>
-        {expandedTopic === index && isAllowed && (
-          <div className="subtopics">
-            {topic.subtopics.length === 0 ? (
-              <p>No subtopics available</p>
-            ) : (
-              topic.subtopics?.map((subtopic, subIndex) => (
-                renderSubtopic(topic, subtopic, index, subIndex)
-              ))
-            )}
-          </div>
-        )}
-      </div>
-    );
-  })}
-</div>
       </ModuleSidebarContainer>
 
   {showSubscribeModal && (

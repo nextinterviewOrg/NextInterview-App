@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import theme from "../../../../theme/Theme";
 
 export const InterviewFavoriteCardWrapper = styled.div`
   width: 100%;
@@ -9,7 +10,7 @@ export const InterviewFavoriteCardWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  height: 450px;
+  height: 370px;
   position: relative;
 
   @media (max-width: 480px) {
@@ -61,7 +62,32 @@ export const InterviewFavoriteCardWrapper = styled.div`
     color: ${({ theme }) => theme.colors.black};
     margin-bottom: 8px;
     margin: 0;
+     display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; 
   }
+
+  .topic {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; 
+}
+
+
+  .subtopic {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal; /* needed for multi-line clamps */
+}
 
   .subtopics-list {
     overflow: hidden;
@@ -140,31 +166,30 @@ export const InterviewFavoriteCardWrapper = styled.div`
     width: 100%;
   }
 
-  .learn-btn {
-    flex-shrink: 0;
-    text-align: center;
-    /* Body Text/Small/Body Small (Medium) */
-    /* font-family: "DM Sans"; */
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 500;
-    background-color: ${({ theme }) => theme.colors.secondary};
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 10px 20px;
-    position: absolute;
-    top: 0px;
-    // bottom: 0;
+ .learn-btn {
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  background-color: ${({ theme }) => theme.colors.info};
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 20px;
+  position: absolute;
+  top: 0px;
+  cursor: pointer;
 
-    // @media (max-width: 375px) {
-    //  top: 0px; 
-    // }
-
-    @media (max-width: 768px) {
-      top: 30px;
-    }
+  @media (max-width: 768px) {
+    top: 30px;
   }
+
+  &:hover {
+    background-color: ${({ theme }) => theme.colors.bluetext}!important;
+  }
+}
+
   .card-companylogo {
     width: 30px;
     height: 30px;

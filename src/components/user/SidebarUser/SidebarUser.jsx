@@ -228,7 +228,9 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
           </p>
           <button
             className="mock-card-button"
-            onClick={() => navigate("/user/interview")}
+            // onClick={() => navigate("/user/interview")}
+                  onClick={() => alert("This feature is coming soon...")}
+
           >
             Start interview
           </button>
@@ -237,7 +239,8 @@ const Sidebar = ({ isExpanded, setIsExpanded, setTitle, isSidebarOpen, setIsSide
         <div
           className="mock-card-icon collapsed"
           title="Take a Mock Interview"
-          onClick={() => navigate("/user/interview")}
+          // onClick={() => navigate("/user/interview")}
+                onClick={() => alert("This feature is coming soon...")}
           style={{ cursor: "pointer" }}
         >
           <PiVideoConference className="collapsed-icon" />
