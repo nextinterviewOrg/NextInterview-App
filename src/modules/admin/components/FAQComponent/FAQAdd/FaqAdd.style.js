@@ -29,7 +29,7 @@ export const ModalContent = styled.div`
 export const ModalHeader = styled.h2`
   font-size: 20px;
   margin-bottom: 15px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 // Input Container
@@ -47,14 +47,14 @@ export const Label = styled.label`
   color: ${theme.colors.textgray};
   margin-top: 10px;
   margin-right: 10px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 // Input
 export const Input = styled.input`
   width: 100%;
   padding: 10px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   border: 1px solid ${theme.colors.textgray};
   border-radius: 5px;
 `;
@@ -63,7 +63,7 @@ export const Input = styled.input`
 export const TextArea = styled.textarea`
   width: 100%;
   padding: 10px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   border: 1px solid ${theme.colors.textgray};
   border-radius: 5px;
   resize: none;

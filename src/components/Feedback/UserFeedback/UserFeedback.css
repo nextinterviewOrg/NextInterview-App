@@ -1,5 +1,5 @@
 .user-feedback {
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
 }
 
 .feedback-container {
@@ -110,7 +110,7 @@
   border: 1px solid #ddd;
   border-radius: 6px;
   resize: vertical;
-  font-family: inherit;
+  /* font-family: inherit; */
   margin-bottom: 20px;
   transition: border-color 0.3s;
   box-sizing: border-box;

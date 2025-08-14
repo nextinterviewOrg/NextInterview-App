@@ -24,7 +24,7 @@ export const ModalContainer = styled.div`
 `;
 
 export const ModalTitle = styled.h2`
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 1.25rem;
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(3)};
@@ -43,7 +43,7 @@ export const ModalButtonContainer = styled.div`
 export const ModalButton = styled.button`
   background-color: ${theme.colors.light};
   color: ${theme.colors.secondary};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 1rem;
   border: 1px solid ${theme.colors.secondary};
   border-radius: ${theme.spacing(0.5)};
@@ -59,7 +59,7 @@ export const ModalButton = styled.button`
 export const CancelButton = styled.button`
   background-color: ${theme.colors.secondary};
   color: ${theme.colors.light};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 1rem;
   border: none;
   border-radius: ${theme.spacing(0.5)};

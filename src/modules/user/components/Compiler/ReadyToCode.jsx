@@ -40,8 +40,8 @@ const ReadyToCode = ({
   showOptimiseBtn,
   handleOptimizeCode,
   optimizeClicked,
-  hasOptimized,
-  optimizationDisabled,
+  // hasOptimized,
+  // optimizationDisabled,
   handleSubmit,
   isSubmitting,
   dbSetupCommands,
@@ -160,9 +160,10 @@ const runCode = async () => {
                 {showOptimiseBtn && (
         <OptimiseButton
           onClick={handleOptimizeCode}
-          disabled={optimizationDisabled}
+          // disabled={optimizationDisabled}
         >
-          {hasOptimized ? (isSubmitting ? "showing solution" : "Show Solution") : (isSubmitting ? "Optimizing..." : "Optimise Code")}
+          Optimise Code
+          {/* {hasOptimized ? (isSubmitting ? "showing solution" : "Show Solution") : (isSubmitting ? "Optimizing..." : "Optimise Code")} */}
         </OptimiseButton>
       )}
                 {/* ) : ( */}

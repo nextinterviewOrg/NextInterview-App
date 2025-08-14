@@ -15,7 +15,7 @@ border: 1px solid #F5F5F5;
   padding: 1rem;
   max-width: 600px;
   margin: 1rem auto;
-  font-family: "Helvetica", sans-serif;
+  /* font-family: "Helvetica", sans-serif; */
 }
 
 .engagementGrid {

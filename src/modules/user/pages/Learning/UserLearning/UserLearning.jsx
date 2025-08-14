@@ -82,7 +82,7 @@ export default function UserLearning() {
             <UserLearningWrapper>
                 <div className="courses-container">
                     <div className="header">
-                        <h1 className='header-title'>Data Science Lite Modules</h1>
+                        <h1 className='header-title'>Next Interview Modules</h1>
                         <div className="header-actions">
                             {/* <div className="searchContainer"> */}
                             <input

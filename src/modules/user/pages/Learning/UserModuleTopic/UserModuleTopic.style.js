@@ -9,7 +9,7 @@ import theme from "../../../../../theme/Theme";
 export const Container = styled.div`
   background-color: ${({ theme }) => theme.colors.light};
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   padding: ${({ theme }) => theme.spacing(4)};
   margin-left: 40px;
   transition: margin-left 0.3s ease-in-out; /* Smooth transition */
@@ -32,7 +32,7 @@ export const TryButton = styled.button`
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
   border: 1px solid ${({ theme }) => theme.colors.bluetext};
   border-radius: 4px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   cursor: pointer;
   margin-right: ${({ theme }) => theme.spacing(1)};
   font-size: 16px;
@@ -68,10 +68,10 @@ export const ModalContent = styled.div`
   // background: white;
   padding: 20px;
   border-radius: 10px;
-  text-align: center;
+  /* text-align: center; */
   // max-width: 400px;
   width: 90%;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); */
 `;
 
 export const CCModalContent = styled.div`
@@ -86,7 +86,7 @@ export const CCModalContent = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.text};
   font-size: 20px;
   font-style: normal;
@@ -96,7 +96,7 @@ export const Title = styled.h2`
 `;
 
 export const SectionTitle = styled.h3`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.text};
   margin-top: ${({ theme }) => theme.spacing(2)};
 `;
@@ -153,7 +153,7 @@ export const Button = styled.button`
   padding: ${({ theme }) => theme.spacing(1)} ${({ theme }) => theme.spacing(2)};
   border: none;
   border-radius: 4px;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   cursor: pointer;
   margin-right: ${({ theme }) => theme.spacing(1)};
 
@@ -165,7 +165,7 @@ export const Button = styled.button`
 export const SummaryContainer = styled.div`
   background-color: ${({ theme }) => theme.colors.light};
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   padding: ${({ theme }) => theme.spacing(0.5)};
   padding-top: 0px;
   transition: margin-left 0.3s ease-in-out;
@@ -175,7 +175,7 @@ export const SummaryContainer = styled.div`
 `;
 
 export const SummaryTitle = styled.h4`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.secondary};
   font-weight: bold;
   padding: 0px 0px 10px 0px;

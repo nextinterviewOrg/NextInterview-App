@@ -7,7 +7,7 @@ export const Section = styled.div`
   overflow-x: auto;
 
   h3 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     margin-bottom: ${theme.spacing(2)};
     color: ${theme.colors.secondary};
   }
@@ -24,7 +24,7 @@ export const TableHeader = styled.th`
   padding: ${theme.spacing(1)};
   background: ${theme.colors.primary};
   color: white;
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
 `;
 
 export const TableRow = styled.tr`
@@ -51,7 +51,7 @@ export const UserCell = styled.div`
   }
 
   span {
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     font-size: 14px;
     color: ${theme.colors.text};
   }

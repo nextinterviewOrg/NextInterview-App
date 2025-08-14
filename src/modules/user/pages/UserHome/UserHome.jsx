@@ -43,15 +43,19 @@ export default function UserHome() {
     const fetchData = async () => {
       try {
         const response = await getInterviewFavourites();
-        const preparedData = response.flatMap((module) =>
-          (module.topicData || []).map((topic) => ({
-            topicName: topic.topicName,
-            moduleName: module.moduleName,
-            moduleId: module.moduleId,
-            imgSrc: module.imageURL,
-            allSubtopics: (topic.subtopicData || []).map((s) => s.subtopicName),
-          }))
-        );
+       const preparedData = response.flatMap((module) =>
+  (module.topicData || []).flatMap((topic, topicIndex) =>
+    (topic.subtopicData || []).map((sub, subtopicIndex) => ({
+      topicName: topic.topicName,
+      moduleName: module.moduleName,
+      moduleId: module.moduleId,
+      imgSrc: module.imageURL,
+      allSubtopics: (topic.subtopicData || []).map((s) => s.subtopicName),
+      topicIndex,
+      subtopicIndex
+    }))
+  )
+);
         setInterviewFavoriteCardData(preparedData);
       } catch (e) {
         console.error("Error fetching interview favorites:", e);
@@ -87,7 +91,7 @@ export default function UserHome() {
   return (
     <UserHomeWrapper>
       <div className="userHomerowOne">
-        <TakeChallenge />
+        <TakeChallenge showLatestOnly={true} />
       </div>
 
       <div className="reminderContainer">
@@ -116,6 +120,8 @@ export default function UserHome() {
                   moduleId={card.moduleId}
                   imgSrc={card.imgSrc}
                   allSubtopics={card.allSubtopics}
+                  topicIndex={card.topicIndex}
+                  subtopicIndex={card.subtopicIndex}
                 />
               ))
             )}

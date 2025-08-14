@@ -30,7 +30,7 @@ export const Modal = styled.div`
   }
 `;
 export const Heading = styled.h2`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(1)};
   text-align: left;
@@ -116,7 +116,7 @@ export const Button = styled.button`
   cursor: pointer;
   font-weight: 500;
   font-size: 16px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   margin-top: 15px;
   display: flex;
   flex-direction: row;
@@ -146,5 +146,5 @@ export const Title = styled.h2`
   padding: 0px;
   margin: 0px;
   color: ${theme.colors.text};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;

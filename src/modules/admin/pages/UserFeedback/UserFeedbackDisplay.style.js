@@ -12,7 +12,7 @@ margin-right: 60px;
 `;
 export const TableContainer = styled.div`
   width: 100%;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
  
  
 `;

@@ -49,7 +49,7 @@ export const UserLearningWrapper = styled.div`
   margin-left:130px;
   margin-right:130px;
   gap:8px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
 
   @media ( max-width:768px){
   margin-left:0px;
@@ -67,7 +67,7 @@ export const UserLearningWrapper = styled.div`
 }
 
 .header-title {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 34px;
 font-style: normal;
 font-weight: 700;
@@ -194,7 +194,7 @@ flex-direction: column;
 .course-title {
   padding: 5px;
   margin: 0 10px;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 18px;
 font-style: normal;
 font-weight: 700;
@@ -206,7 +206,7 @@ line-height: normal;
   padding: 0 10px;
   overflow: hidden;
 text-overflow: ellipsis;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -237,7 +237,7 @@ color:${({ theme }) => theme.colors.textgray};
 }
 
 .course-info span {
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 400;
@@ -260,7 +260,7 @@ color:${({ theme }) => theme.colors.textgray};
   color: white;
   border: none;
   border-radius: 4px;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;

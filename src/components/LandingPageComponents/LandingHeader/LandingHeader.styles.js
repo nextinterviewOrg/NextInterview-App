@@ -61,7 +61,7 @@ export const NavLinkItem = styled.a`
   color: #262524;
   font-weight: 500;
   font-size: 21px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   display: flex;
   align-items: center;
   justify-content: center;

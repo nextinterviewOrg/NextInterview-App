@@ -70,7 +70,7 @@ background-color:#F0F8F1;
 }
 
 .model-title {
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 17px;
 font-style: normal;
 font-weight: 600;
@@ -110,7 +110,7 @@ border: 1px solid ${({ theme }) => theme.colors.black};
   }
 
 modal-form-group-label {
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
@@ -120,7 +120,7 @@ color:${({ theme }) => theme.colors.textgray};
   margin-bottom: 8px;
 }
 .modal-form-group-value{
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 500;
@@ -172,7 +172,7 @@ border-radius: 30px!important;
   border-radius: 5px;
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.secondary};
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   background-color: ${({ theme }) => theme.colors.white};
   color: ${({ theme }) => theme.colors.secondary};
   font-size: 14px;
@@ -194,7 +194,7 @@ border-radius: 30px!important;
   border-radius: 5px;
   cursor: pointer;
   border: 1px solid ${({ theme }) => theme.colors.secondary};
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   background-color: ${({ theme }) => theme.colors.secondary};
   color: ${({ theme }) => theme.colors.white};
   font-size: 14px;

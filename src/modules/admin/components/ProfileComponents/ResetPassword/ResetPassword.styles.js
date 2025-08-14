@@ -21,7 +21,7 @@ export const ResetPasswordModal = styled.div`
   max-width: 400px;
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   position: relative;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -74,7 +74,7 @@ export const InputField = styled.input`
   border: 1px solid ${theme.colors.sidebarHoverBgColor};
   border-radius: 4px;
   font-size: 14px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   box-sizing: border-box;
 
   &:focus {
@@ -95,7 +95,7 @@ export const SubmitButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   width: 100%;
 
   &:hover {

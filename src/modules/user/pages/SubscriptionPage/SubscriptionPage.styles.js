@@ -14,7 +14,7 @@ export const UserSubscriptionWrapper = styled.div`
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 20px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     display: flex;
     align-items: center;
     text-align: center;
@@ -25,7 +25,7 @@ export const UserSubscriptionWrapper = styled.div`
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 20px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     display: flex;
     align-items: center;
     text-align: center;

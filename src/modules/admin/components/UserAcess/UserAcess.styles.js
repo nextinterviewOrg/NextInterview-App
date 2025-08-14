@@ -70,7 +70,7 @@ export const SortSelect = styled.select`
   border: 1px solid ${(props) => props.theme.colors.grey};
   background-color: ${(props) => props.theme.colors.backgrounGrey};
   padding: 4px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   font-size: 12px;
   color: ${(props) => props.theme.colors.test};
   cursor: pointer;
@@ -106,7 +106,7 @@ export const TableHead = styled.thead`
 export const TableHeader = styled.th`
   text-align: center;
   padding: 16px;
-  font-family: ${(props) => props.theme.fonts.heading};
+  /* font-family: ${(props) => props.theme.fonts.heading}; */
   font-size: 16px;
   font-weight:normal;
   color: ${(props) => props.theme.colors.test};
@@ -204,7 +204,7 @@ export const CreateButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s ease;

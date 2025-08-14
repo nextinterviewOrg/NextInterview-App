@@ -3,7 +3,7 @@ import theme from "../../../../theme/Theme";
 
 export const Container = styled.div`
   padding: ${theme.spacing(2)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     padding: ${theme.spacing(0)};
@@ -12,7 +12,7 @@ export const Container = styled.div`
   h1,
   h3,
   h4 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     color: ${theme.colors.text};
   }
 

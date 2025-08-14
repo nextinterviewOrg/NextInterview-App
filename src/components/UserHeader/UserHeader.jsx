@@ -173,7 +173,7 @@ const UserHeader = ({  toggleMobileSidebar  }) => {
       if (path.includes("learning")) return "Learning Module";
       if (path.includes("profile")) return "Profile";
       if (path.includes("home")) return "Home";
-      if(path.includes("revise")) return "Quickly revise";
+      if(path.includes("revise")) return "Quick Revise";
       if(path.includes("notification")) return "Notifications";
       if(path.includes("blogs")) return "Real World Scenarios";
       if(path.includes("challenges")) return "Challenges";

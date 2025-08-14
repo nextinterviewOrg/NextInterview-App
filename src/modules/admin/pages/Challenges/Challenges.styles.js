@@ -26,7 +26,7 @@ background-color: ${({ theme }) => theme.colors.lightgreen};
 
 export const TableContainer = styled.div`
   width: 100%;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   margin-top: 20px;
 `;
 

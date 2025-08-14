@@ -52,7 +52,7 @@ export const Flashcard = styled.div`
   }
 
   h4 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     margin-bottom: ${theme.spacing(1)};
     background-color: ${theme.colors.sidebarBgColor};
     border: 1px solid ${theme.colors.sidebarHoverBgColor};
@@ -63,14 +63,14 @@ export const Flashcard = styled.div`
   }
 
   p {
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     color: ${theme.colors.text};
     margin-bottom: ${theme.spacing(2)};
    
   }
 
 .flashcard-text {
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(2)};
   flex-grow: 1;
@@ -117,7 +117,7 @@ export const Header = styled.div`
 export const SearchBar = styled.input`
   padding: ${theme.spacing(1)};
   font-size: 14px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   border: none;
   background: ${theme.colors.sidebarBgColor};
   border-radius: 4px;
@@ -161,7 +161,7 @@ export const SearchBarWrapper = styled.div`
 
 export const InteractionStats = styled.div`
   margin-top: ${theme.spacing(1)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   display: flex;
   flex-wrap: wrap;
@@ -204,7 +204,7 @@ export const ActionButton = styled.button`
   border: none;
   border-radius: 50%;
   padding: ${theme.spacing(0.5)} ${theme.spacing(1)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   cursor: pointer;
   float: right;
@@ -230,7 +230,7 @@ export const AddButton = styled.button`
   border: none;
   border-radius: 4px;
   padding: ${theme.spacing(1)} ${theme.spacing(2)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   cursor: pointer;
 

@@ -34,7 +34,7 @@ height: 100%;
 }
 
 .metric {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 400;
@@ -51,7 +51,7 @@ line-height: normal;
 }
   .metric-value{
   text-align: center;
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;

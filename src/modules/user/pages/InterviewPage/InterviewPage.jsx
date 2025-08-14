@@ -1,63 +1,88 @@
 import React, { useEffect, useState } from "react";
-import { LuHeart } from "react-icons/lu";
-import theme from "../../../../theme/Theme"; // Adjust the path according to your structure
 import {
   Container,
-  // Details,
   Card,
   CardContent,
   StartButton,
   Title,
+  LimitMessage,
 } from "./InterviewPage.style";
-import StartInterview from "../../components/UserInterview/StartInterview"; // Import the modal component
+import StartInterview from "../../components/UserInterview/StartInterview";
 import { getModule } from "../../../../api/addNewModuleApi";
 
+const MAX_DAILY_ATTEMPTS = 2;
+
 const InterviewPage = () => {
-  const [selectedCourse, setSelectedCourse] = useState(null); // Store the selected course
-  const [likedCourses, setLikedCourses] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState(null);
   const [courses, setCourses] = useState([]);
+  const [attemptsToday, setAttemptsToday] = useState(0);
+  const [limitReached, setLimitReached] = useState(false);
+
   useEffect(() => {
-    const apiCaller = async () => {
+    // Load courses
+    const fetchCourses = async () => {
       const response = await getModule();
-      console.log("Raw API response:", response.data);
       const data = response.data.map((item) => ({
         id: item._id,
         title: item.moduleName,
-        level: "Beginner",
-        difficulty: "Easy Level",
-        totalTime: "10h",
         image: item.imageURL,
         moduleCode: item.module_code,
       }));
-      console.log("Mapped courses with moduleCode:", data);
       setCourses(data);
     };
-    apiCaller();
+    fetchCourses();
+
+    // Check daily attempts from localStorage
+    const checkDailyAttempts = () => {
+      const attemptsData = localStorage.getItem('interviewAttempts');
+      if (attemptsData) {
+        const { date, count } = JSON.parse(attemptsData);
+        const today = new Date().toDateString();
+        
+        if (date === today) {
+          setAttemptsToday(count);
+          setLimitReached(count >= MAX_DAILY_ATTEMPTS);
+        } else {
+          // Reset if it's a new day
+          localStorage.removeItem('interviewAttempts');
+          setAttemptsToday(0);
+          setLimitReached(false);
+        }
+      }
+    };
+
+    checkDailyAttempts();
   }, []);
 
-  const toggleLike = (id) => {
-    setLikedCourses((prev) => ({
-      ...prev,
-      [id]: !prev[id], // Toggle like status for the specific course
+  const handleStartInterview = (course) => {
+    if (limitReached) return;
+
+    const today = new Date().toDateString();
+    const newCount = attemptsToday + 1;
+    
+    // Update localStorage
+    localStorage.setItem('interviewAttempts', JSON.stringify({
+      date: today,
+      count: newCount
     }));
+
+    setAttemptsToday(newCount);
+    setLimitReached(newCount >= MAX_DAILY_ATTEMPTS);
+    setSelectedCourse(course);
   };
 
   return (
     <>
       <Container>
+        {limitReached && (
+          <LimitMessage>
+            You have utilized the daily limit of {MAX_DAILY_ATTEMPTS} Mock Interviews, please try again tomorrow.
+          </LimitMessage>
+        )}
+
         {courses.map((course) => (
           <Card key={course.id}>
             <div style={{ position: "relative", display: "inline-block" }}>
-              {/* <button
-                onClick={() => toggleLike(course.id)}
-                className="like-button"
-              >
-                <LuHeart
-                  className={`heart-icon ${
-                    likedCourses[course.id] ? "liked" : ""
-                  }`}
-                />
-              </button> */}
               <img
                 src={course.image}
                 alt={course.title}
@@ -66,22 +91,26 @@ const InterviewPage = () => {
             </div>
             <CardContent>
               <Title>{course.title}</Title>
-              {/* <Details>
-                <p> {course.level} </p>
-                <div className="dot"></div>
-                <p> {course.difficulty}</p>
-                <div className="dot"></div>
-                <p> {course.totalTime}</p>
-              </Details> */}
-              <StartButton onClick={() => setSelectedCourse(course)}>
+              <StartButton 
+                onClick={() => handleStartInterview(course)}
+                disabled={limitReached}
+              >
                 Start Now
               </StartButton>
+              {limitReached && (
+                <div style={{ 
+                  fontSize: "12px", 
+                  color: "red",
+                  marginTop: "5px"
+                }}>
+                  Daily limit reached
+                </div>
+              )}
             </CardContent>
           </Card>
         ))}
       </Container>
 
-      {/* Modal Component */}
       {selectedCourse && (
         <StartInterview
           isOpen={!!selectedCourse}

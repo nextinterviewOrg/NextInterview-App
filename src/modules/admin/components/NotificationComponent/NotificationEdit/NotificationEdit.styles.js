@@ -35,7 +35,7 @@ export const ModalContent = styled.div`
   width: 600px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   position: relative;
   display: flex;
   flex-direction: column; /* Stack content vertically */
@@ -47,7 +47,7 @@ export const ModalContent = styled.div`
  
 export const ModalHeader = styled.h2`
   font-size: 1.2rem;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.text};
   margin-bottom: 20px;
 
@@ -110,7 +110,7 @@ select {
 export const Label = styled.label`
   font-size: 0.8rem;
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   @media (max-width: 768px) {
     font-size: 0.7rem;
   }
@@ -137,14 +137,14 @@ export const RadioLabel = styled.label`
   margin-left: 8px;
   font-size: 0.8rem;
   color: ${({ theme }) => theme.colors.text};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   @media (max-width: 768px) {
     font-size: 0.7rem;
   }
 `;
 export const Input = styled.input`
   width: 100%;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   height: 20px; /* Add a fixed height */
   @media (max-width: 768px) {
     height: 18px; /* Adjust the height for smaller screens */
@@ -156,7 +156,7 @@ export const Input = styled.input`
 export const TextArea = styled.textarea`
   width: 100%;
   resize: none;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   height: 40px; /* Add a fixed height */
 
   @media (max-width: 768px) {
@@ -168,7 +168,7 @@ export const TextArea = styled.textarea`
  
 export const Select = styled.select`
   width: 100%;
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   height: 40px; /* Add a fixed height */
 
   @media (max-width: 768px) {
@@ -194,7 +194,7 @@ export const Button = styled.button`
   border-radius: 5px;
   // cursor: pointer;
  
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
  
   &:hover {
     background-color: ${({ theme }) => theme.colors.secondary};

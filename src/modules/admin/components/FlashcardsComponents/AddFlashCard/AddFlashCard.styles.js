@@ -24,7 +24,7 @@ export const Container = styled.div`
   background-color: ${theme.colors.white};
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   position: fixed;
   top: 50%;
   left: 50%;
@@ -39,7 +39,7 @@ export const Container = styled.div`
 
 export const Header = styled.div`
   font-size: 1.5rem;
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(3)};
   display: flex;
@@ -98,7 +98,7 @@ export const TextArea = styled.textarea`
   padding: ${theme.spacing(2)};
   border: 1px solid ${theme.colors.sidebarHoverBgColor};
   border-radius: 4px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 1rem;
   resize: none;
   box-sizing: border-box;

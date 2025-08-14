@@ -12,7 +12,7 @@ import styled from "styled-components";
  /* General Page Styling */
  .courses-container {
    padding: 40px;
-   font-family: Arial, sans-serif;
+   /* font-family: Arial, sans-serif; */
 
    @media (max-width: 768px) {
      padding: 20px;
@@ -28,7 +28,7 @@ import styled from "styled-components";
  }
  
  .header-title {
-   font-family: "DM Sans";
+   /* font-family: "DM Sans"; */
  font-size: 24px;
  font-style: normal;
  font-weight: 700;
@@ -199,7 +199,7 @@ import styled from "styled-components";
  .course-title {
   padding-left: 5px;
   margin: 0 10px;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   font-size: 25px;
   font-style: normal;
   font-weight: 600;
@@ -233,7 +233,7 @@ import styled from "styled-components";
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
 
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -268,7 +268,7 @@ import styled from "styled-components";
  }
  }
  .course-info-list span{
-      font-family: "DM Sans";
+      /* font-family: "DM Sans"; */
  font-size: 14px;
  font-style: normal;
  font-weight: 400;
@@ -289,7 +289,7 @@ import styled from "styled-components";
  }
  
  .course-info span {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
  font-size: 14px;
  font-style: normal;
  font-weight: 400;
@@ -321,7 +321,7 @@ import styled from "styled-components";
    color: white;
    border: none;
    border-radius: 4px;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
  font-size: 14px;
  font-style: normal;
  font-weight: 500;

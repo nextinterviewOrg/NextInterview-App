@@ -38,14 +38,14 @@ const MetricCard = styled.div`
 `;
 
 const MetricTitle = styled.div`
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   color: ${(props) => props.theme.colors.textgray};
   font-size: 0.9rem;
   margin-bottom: ${(props) => props.theme.spacing(1)};
 `;
 
 const MetricValue = styled.div`
-  font-family: ${(props) => props.theme.fonts.heading};
+  /* font-family: ${(props) => props.theme.fonts.heading}; */
   color: ${(props) => props.theme.colors.black};
   font-size: 1.5rem;
   font-weight: bold;

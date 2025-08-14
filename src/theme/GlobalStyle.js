@@ -1,26 +1,15 @@
 import { createGlobalStyle } from "styled-components";
-import styled from "styled-components";
 
 const GlobalStyle = createGlobalStyle`
-  body {
-    font-family: ${(props) => props.theme.fonts.body};
-    color: ${(props) => props.theme.colors.text};
-    margin: 0;
-    padding: 0;
+    /* Body text & UI Elements use Inter */
+  body, p, span, li, button, input, textarea, label {
+    font-family: 'Inter', sans-serif;
   }
 
+  /* Headings use Poppins */
   h1, h2, h3, h4, h5, h6 {
-    font-family: ${(props) => props.theme.fonts.heading};
+    font-family: 'Poppins', sans-serif;
   }
-
-  .accent-text {
-    font-family: ${(props) => props.theme.fonts.accent};
-  }
-
-  .display-text {
-    font-family: ${(props) => props.theme.fonts.display};
-  }
-
 
       .page-wrapper{
         min-height: 100vh;

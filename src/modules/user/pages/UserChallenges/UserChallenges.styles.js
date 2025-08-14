@@ -222,3 +222,39 @@ export const Label = styled.span`
     '#e2e8f0'};                             // default gray
 `;
 
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  padding: 10px;
+`;
+
+export const PageButton = styled.button`
+  padding: 8px 16px;
+  background-color: #fff;
+  border: 1px solid #2290ac;
+  color: #2290ac;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  
+  &:disabled {
+    background-color: #ccc;
+    color: #666;
+    border: 1px solid #666;
+    cursor: not-allowed;
+  }
+  
+  &:not(:disabled):hover {
+    background-color: ${({ theme }) => theme.colors.primaryDark};
+  }
+`;
+
+export const PageInfo = styled.span`
+  font-size: 14px;
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
+

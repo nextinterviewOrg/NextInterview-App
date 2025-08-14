@@ -12,7 +12,7 @@ border: 1px solid #F5F5F5;
   max-height: 100%;
   margin: 1rem auto;
   margin-left: 20px;
-  font-family: "Helvetica", sans-serif;
+  /* font-family: "Helvetica", sans-serif; */
   display: flex;
   flex-direction: column;
   align-content: center;

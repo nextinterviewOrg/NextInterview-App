@@ -48,12 +48,12 @@ import {
 } from "../../../../../api/userProgressApi";
 import { getUserByClerkId } from "../../../../../api/userApi";
 import { useUser } from "@clerk/clerk-react";
-import {
-  ShimmerTitle,
-  ShimmerText,
-  ShimmerButton,
-} from "react-shimmer-effects";
-import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
+// import {
+//   ShimmerTitle,
+//   ShimmerText,
+//   ShimmerButton,
+// } from "react-shimmer-effects";
+// import ConceptTooltip from "../../../../../components/ConceptTooltip/ConceptTooltip";
 import { IoCloseSharp } from "react-icons/io5";
 import UserFeedback from "../../../../../components/Feedback/UserFeedback/UserFeedback";
 import { checkUserFeedBackExists } from "../../../../../api/moduleFeedbackApi";
@@ -100,30 +100,30 @@ const courseData1 = {
   ],
 };
 
-const initialCourseData = {
-  title: "",
-  topicsList: [
-    {
-      title: "",
-      subtopics: [
-        {
-          title: "",
-          time: "",
-          completed: true,
-          subtopicContent: "",
-          subtopicSummary: "",
-          gptSummary: "",
-          cheatSheetURL: "",
-        },
-      ],
-    },
-  ],
-};
+// const initialCourseData = {
+//   title: "",
+//   topicsList: [
+//     {
+//       title: "",
+//       subtopics: [
+//         {
+//           title: "",
+//           time: "",
+//           completed: true,
+//           subtopicContent: "",
+//           subtopicSummary: "",
+//           gptSummary: "",
+//           cheatSheetURL: "",
+//         },
+//       ],
+//     },
+//   ],
+// };
 
 const apiCache = new Map();
 
 const UserModuleTopic = () => {
-  const [feedback, setFeedback] = useState(""); // State to store feedback
+  // const [feedback, setFeedback] = useState(""); // State to store feedback
   const [showFeedbackModal, setShowFeedbackModal] = useState(false); // State to control User Feedback modal visibility
   const [showSummary, setShowSummary] = useState(false);
   const [showFeedbackPopup, setShowFeedbackPopup] = useState(false); // State for feedback popup
@@ -134,19 +134,19 @@ const UserModuleTopic = () => {
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false); // Track if feedback has been submitted
   const [selectedFeedback, setSelectedFeedback] = useState(null); // Track which feedback option was selected
 
-  const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
+  // const [showDownloadButton, setShowDownloadButton] = useState(true); // State to control "Download Cheat Sheet" button visibility
   const moduleId = useParams().id;
   const location = useLocation();
   const [courseData, setCourseData] = useState(courseData1);
   const [topicData, setTopicData] = useState(null);
   const [gptSummaryText, setGptSummaryText] = useState([]);
   const [delayedText, setDelayedText] = useState([]);
-  const [selectedCheetSheetURL, setSelectedCheetSheetURL] = useState("");
+  // const [selectedCheetSheetURL, setSelectedCheetSheetURL] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [moduleName, setModuleName] = useState("");
   const [markAsCompleteBtnStatus, setMarkAsCompleteBtnStatus] = useState(false);
   const navigate = useNavigate();
-  const [curIndex, setCurIndex] = useState(0);
+  // const [curIndex, setCurIndex] = useState(0);
   const { user } = useUser();
   const [loading, setLoading] = useState(true);
   const [popupContent, setPopupContent] = useState(null);
@@ -166,6 +166,7 @@ const UserModuleTopic = () => {
     const fetchModuleData = async () => {
       try {
         const response = await getModuleById(moduleId);
+        console.log("Module data fetched successfully:", response);
         setModuleName(response.data.moduleName);
         setModuleCODE(response.data.module_code);
         setContentReady(true);
@@ -194,6 +195,7 @@ const UserModuleTopic = () => {
     let finalSubTopicIndex = location.state?.subtopicIndex;
     const userData = await getUserByClerkId(user.id);
     const moduleResponse = await getModuleById(moduleId);
+    console.log("fdsghjkljhgfdfghjk", moduleResponse)
     const module_code = moduleResponse.data.module_code;
     const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
     const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
@@ -422,7 +424,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       if (apiCache.has(cacheKey)) {
         const cachedData = apiCache.get(cacheKey);
         setTopicData([cachedData]);
-        setSelectedCheetSheetURL(cachedData.cheatSheetURL);
+        // setSelectedCheetSheetURL(cachedData.cheatSheetURL);
         setGptSummaryText(cachedData.summary);
         setContentReady(true);
         setLoading(false);
@@ -448,7 +450,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
       apiCache.set(cacheKey, subtopicData);
       
       setTopicData([subtopicData]);
-      setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
+      // setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
       setGptSummaryText(subtopicData.summary);
 
       // Start progress tracking in background
@@ -642,17 +644,17 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
           location.state.subtopicIndex
           ];
         if (topic) {
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
           setTopicData([
             {
               title: topic.title,
               description: topic.subtopicContent,
               summary: topic.subtopicSummary,
               gptSummary: topic.gptSummary,
-              cheatSheetURL: topic.cheatSheetURL || "#",
+              // cheatSheetURL: topic.cheatSheetURL || "#",
             },
           ]);
-          setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
+          // setSelectedCheetSheetURL(topic.cheatSheetURL || "#");
           setGptSummaryText(topic.subtopicSummary);
 
           const userData = await getUserByClerkId(user.id);
@@ -729,39 +731,56 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
     apiCaller();
   }, [location.state]); // Add location.state as a dependency to ensure it runs when state changes
 
-  const renderConceptClarifiers = (text, clarifiers) => {
-    if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
+const renderConceptClarifiers = (text, clarifiers) => {
+  if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
 
-    let result = text;
-    clarifiers.forEach(({ conceptClarifier, hoverExplanation, popupExplanation }) => {
-      if (!conceptClarifier) return;
+  // Create a safe copy of the text to modify
+  let result = text;
 
-      const escapedConcept = conceptClarifier.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const escapedHover = hoverExplanation.replace(/"/g, '"').replace(/'/g, '&#39;');
-      const escapedPopup = popupExplanation
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '<')
-        .replace(/>/g, '>')
-        .replace(/"/g, '\\"')
-        .replace(/'/g, "\\'");
+  // Process each clarifier in order
+  clarifiers.forEach((clarifier) => {
+    if (!clarifier?.conceptClarifier) return;
 
-      result = result.replace(
-        new RegExp(`\\b${escapedConcept}\\b`, "g"),
-        `<span class="concept-tooltip" 
-          title="${escapedHover}" 
-          onClick="window.showPopupHandler('${escapedPopup}')">
-          ${conceptClarifier}
-        </span>`
+    try {
+      // Escape special regex characters in the concept
+      const escapedConcept = clarifier.conceptClarifier.replace(
+        /[.*+?^${}()|[\]\\]/g, 
+        '\\$&'
       );
-    });
-    return result;
-  };
+
+      // Escape HTML and quotes for hover text
+      const escapedHover = (clarifier.hoverExplanation || '')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+
+      // Escape HTML and quotes for popup text
+      const escapedPopup = DOMPurify.sanitize(clarifier.popupExplanation || '');
+
+      // Create the replacement HTML
+      const replacement = `<span class="concept-tooltip" 
+        title="${escapedHover}" 
+        onClick="window.showPopupHandler('${escapedPopup.replace(/'/g, "\\'")}')"
+        style="color: #2390ac; cursor: pointer; text-decoration: underline;"
+      >
+        ${clarifier.conceptClarifier}
+      </span>`;
+
+      // Replace all occurrences (global flag)
+      const regex = new RegExp(`\\b${escapedConcept}\\b`, "gi");
+      result = result.replace(regex, replacement);
+    } catch (error) {
+      console.error('Error processing clarifier:', clarifier, error);
+    }
+  });
+
+  return result;
+};
 
 
   const handleSummarizeClick = async () => {
     setLoadingSummary(true);         // Start spinner
     setShowSummary(true);            // Show the summary section
-    setShowDownloadButton(false);    // Hide the cheat sheet button
+    // setShowDownloadButton(false);    // Hide the cheat sheet button
 
     // Clear previous text if any
     setDelayedText([]);
@@ -825,7 +844,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
     }
   };
 
-  const handleMarkAsCompleted = async () => {
+const handleMarkAsCompleted = async () => {
   const event = new CustomEvent('subtopicCompleted', {
     detail: {
       moduleId,
@@ -835,7 +854,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
   });
   window.dispatchEvent(event);
 
-  // Rest of your existing mark as completed logic
+   // Rest of your existing mark as completed logic
   const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
   if (allSubtopicsCompleted) {
     setIsModuleCompleted(true);
@@ -1053,7 +1072,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
               }}
             >
               <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: "20px", }}>
-                {showDownloadButton && (
+                {/* {showDownloadButton && (
                   <div
                     style={{
                       display: "flex",
@@ -1075,7 +1094,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
                       Download Cheat Sheet (pdf)
                     </a>
                   </div>
-                )}
+                )} */}
 
                 {!showSummary && (
                   <Button
@@ -1135,7 +1154,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
                     justifyContent: "center",
                   }}
                 >
-                  <a
+                  {/* <a
                     style={{
                       backgroundColor: "transparent",
                       color: "#2390ac",
@@ -1147,7 +1166,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
                     download={"cheatSheet.pdf"}
                   >
                     Download Cheat Sheet (pdf)
-                  </a>
+                  </a> */}
                 </div>
                 <div
                   style={{
@@ -1202,7 +1221,7 @@ console.log("🚀 Feedback statusData (order 1):", statusData);
               }}
               onClick={handleNext}
             >
-              Next Module 
+              Next
             </Button>
           ) : (
             <Button

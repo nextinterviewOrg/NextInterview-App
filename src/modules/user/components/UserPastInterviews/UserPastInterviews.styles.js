@@ -13,7 +13,7 @@ export const UserPastInterviewsWrapper = styled.div`
 }
 
 .interview-title {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
 font-size: 24px;
 font-style: normal;
 font-weight: 600;
@@ -60,7 +60,7 @@ flex: 40%;
     }
 
 .company-name {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 600;
@@ -105,7 +105,7 @@ textarea {
 }
 
 .role {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 600;
@@ -128,7 +128,7 @@ color:${({ theme }) => theme.colors.secondary};
     border: 1px solid ${({ theme }) => theme.colors.secondary};
 }
     .add-interview-button-text{
-     font-family: "DM Sans";
+     /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -169,7 +169,7 @@ font-weight: 500;
 }
 
 .modal-content-title {
-   font-family: "DM Sans";
+   /* font-family: "DM Sans"; */
 font-size: 17px;
 font-style: normal;
 font-weight: 600;
@@ -201,7 +201,7 @@ color:${({ theme }) => theme.colors.black};
 label {
 flex:40%;
     display: block;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;
@@ -218,7 +218,7 @@ input, select, textarea {
     margin-top: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;

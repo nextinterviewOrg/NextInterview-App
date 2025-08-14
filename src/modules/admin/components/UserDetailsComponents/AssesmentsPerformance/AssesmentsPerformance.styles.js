@@ -7,7 +7,7 @@ export const TableWrapper = styled.div`
   overflow-x: auto;
 
   h3 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     font-size: 18px;
     color: ${theme.colors.text};
     margin-bottom: ${theme.spacing(2)};
@@ -34,7 +34,7 @@ export const TableRow = styled.tr`
 
 export const TableHeader = styled.th`
   padding: ${theme.spacing(1)};
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   font-size: 14px;
   color: ${theme.colors.text};
   text-align: left;
@@ -63,7 +63,7 @@ export const TableHeader = styled.th`
 
 export const TableCell = styled.td`
   padding: ${theme.spacing(1)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   color: ${theme.colors.text};
   text-align: left;

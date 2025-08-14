@@ -38,7 +38,7 @@ const QuicklyByModule = () => {
         const completedSubtopicsData = await getcompletedOngoingModuleSubTopicByUser(userData.data.user._id, response.data.module_code);
         setCompletedTopics(compltedTopicsData.completedOngoingTopics);
         setCompletedSubtopics(completedSubtopicsData.completedOngoingSubtopics);
-       
+
         setModuleData(response.data);
         console.log("moduleData", response.data);
         setLoading(false);
@@ -85,6 +85,7 @@ const QuicklyByModule = () => {
     <Container>
       <ModuleCard>
         <ModuleDetails>
+          <div style={{ display: "flex", fontSize: "22px", fontWeight: "bold", textAlign: "center", marginBottom: "20px" }}>Topics You Have Completed</div>
           <ResponsiveContainer>
             {loading ? (
               <ShimmerText line={1} gap={10} />
@@ -105,84 +106,83 @@ const QuicklyByModule = () => {
 
           <div style={{ width: "100%" }}>
             {moduleData.topicData.map((topic, topicIndex) => {
+              const filteredSubtopics = topic.subtopicData.filter((subtopic) => {
+                const hasQuickRevise = subtopic.revisionPoints &&
+                  subtopic.revisionPoints.trim() !== "" &&
+                  subtopic.revisionPoints.trim() !== "{}";
+
+                return completedSubtopics.includes(subtopic.subtopic_code) && hasQuickRevise;
+              });
+
+              // Only render the topic if there are subtopics to show
+              if (!completedTopics.includes(topic.topic_code) || filteredSubtopics.length === 0) {
+                return null;
+              }
+
               return (
+                <div key={topicIndex} style={{ width: "100%" }}>
+                  {loading ? (
+                    <ShimmerText line={10} gap={10} />
+                  ) : (
+                    <h3 style={{ margin: "0" }}>
+                      Topic {topicIndex + 1} - {topic.topicName}
+                    </h3>
+                  )}
 
-                completedTopics.length > 0 && completedTopics.includes(topic.topic_code) ?
-                  (
+                  {filteredSubtopics.map((subtopic, subtopicIndex) => (
+                    <div
+                      key={subtopicIndex}
+                      style={{
+                        position: "relative",
+                        paddingBottom: "40px",
+                        width: "100%",
+                      }}
+                    >
+                      <div>
+                        {loading ? (
+                          <ShimmerText line={1} gap={8} />
+                        ) : (
+                          <h4 style={{ margin: "0", marginTop: "30px" }}>
+                            {subtopic.subtopicName}
+                          </h4>
+                        )}
 
-                    <div key={topicIndex} style={{ width: "100%" }}>
-                      {loading ? (
-                        <ShimmerText line={10} gap={10} />
-                      ) : (
-                        <h3 style={{ margin: "0" }}>
-                          Topic {topicIndex + 1} - {topic.topicName}
-                        </h3>
-                      )}
+                        {loading ? (
+                          <ShimmerText line={3} gap={6} />
+                        ) : (
+                          <p
+                            dangerouslySetInnerHTML={{
+                              __html: parseJSONContent(subtopic.revisionPoints),
+                            }}
+                            style={{ margin: "0" }}
+                          ></p>
+                        )}
+                      </div>
 
-                      {topic.subtopicData.map((subtopic, subtopicIndex) => {
-
-                        return (
-                          completedSubtopics.length > 0 && completedSubtopics.includes(subtopic.subtopic_code) ?
-                            (<div
-                              key={subtopicIndex}
-                              style={{
-                                position: "relative",
-                                paddingBottom: "40px",
-                                width: "100%",
-                              }}
-                            >
-                              <div>
-                                {loading ? (
-                                  <ShimmerText line={1} gap={8} />
-                                ) : (
-                                  <h4 style={{ margin: "0", marginTop: "30px" }}>
-                                    {subtopic.subtopicName}
-                                  </h4>
-                                )}
-
-                                {loading ? (
-                                  <ShimmerText line={3} gap={6} />
-                                ) : (
-                                  <p
-                                    dangerouslySetInnerHTML={{
-                                      __html: parseJSONContent(subtopic.revisionPoints),
-                                    }}
-                                    style={{ margin: "0" }}
-                                  ></p>
-                                )}
-                              </div>
-
-                              {!loading && (
-                                <RevisitLinkContainer>
-                                  <Link
-                                    to={`/user/learning/${moduleId}/topic`}
-                                    state={{ topicIndex: Number(topicIndex), subtopicIndex: Number(subtopicIndex) }}
-                                    style={{
-                                      textDecoration: "none",
-                                      color: theme.colors.bluetext,
-                                    }}
-                                  >
-                                    Revisit Subtopic
-                                  </Link>
-                                </RevisitLinkContainer>
-                              )}
-                            </div>
-                            ) :
-                            (
-                              <></>
-                            )
-
-                        )
-                      }
-
+                      {!loading && (
+                        <RevisitLinkContainer>
+                          <Link
+                            to={`/user/learning/${moduleId}/topic`}
+                            state={{
+                              topicIndex: Number(topicIndex),
+                              subtopicIndex: Number(subtopicIndex),
+                            }}
+                            style={{
+                              textDecoration: "none",
+                              color: theme.colors.bluetext,
+                            }}
+                          >
+                            Revisit Subtopic
+                          </Link>
+                        </RevisitLinkContainer>
                       )}
                     </div>
-
-                  ) : (
-                    <></>
-                  ))
-
+                  ))}
+                </div>
+              );
             })}
+
+
           </div>
         </ModuleDetails>
       </ModuleCard>

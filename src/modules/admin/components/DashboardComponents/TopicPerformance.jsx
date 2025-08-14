@@ -12,7 +12,7 @@ const Wrapper = styled.div`
 `;
 
 const Title = styled.h2`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   font-size: 1.2rem;
   font-weight: 800;
   color: ${({ theme }) => theme.colors.text};
@@ -58,7 +58,7 @@ const Divider = styled.div`
 `;
 
 const Label = styled.div`
-  font-family: ${({ theme }) => theme.fonts.accent};
+  /* font-family: ${({ theme }) => theme.fonts.accent}; */
   font-weight: 600;
   color: ${({ type, theme }) =>
     type === "most" ? theme.colors.primary : theme.colors.textgray};
@@ -76,14 +76,14 @@ const Details = styled.div`
 `;
 
 const InfoTitle = styled.div`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   font-weight: 600;
   font-size: 1rem;
   color: ${({ theme }) => theme.colors.text};
 `;
 
 const Info = styled.div`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   font-size: 0.7rem;
   color: ${({ theme }) => theme.colors.textgray};
 `;

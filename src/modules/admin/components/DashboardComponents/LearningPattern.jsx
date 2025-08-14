@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 `;
 
 const OuterTitle = styled.h2`
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   color: ${(props) => props.theme.colors.text};
   font-size: 1.2rem;
   text-align: left;
@@ -50,7 +50,7 @@ const CardContainer = styled.div`
 `;
 
 const Title = styled.h3`
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   color: ${(props) => props.theme.colors.text};
   font-size: 1rem;
   margin-bottom: ${(props) => props.theme.spacing(4)};
@@ -65,7 +65,7 @@ const Title = styled.h3`
 `;
 
 const Subtitle = styled.p`
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   color: ${(props) => props.theme.colors.textgray};
   font-size: 0.9rem;
   margin: ${(props) => props.theme.spacing(1)} 0;
@@ -93,7 +93,7 @@ const GradientBar = styled.div`
 const Label = styled.div`
   position: absolute;
   font-size: 0.8rem;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   color: ${(props) => props.theme.colors.textgray};
   bottom: -20px;
 `;

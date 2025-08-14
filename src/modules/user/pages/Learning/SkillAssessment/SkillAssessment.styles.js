@@ -14,15 +14,34 @@ export const AssessmentContainer = styled.div`
   position: relative;
 
   .sillheading{
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 24px;
   }
 `;
 
+export const UserRadioOption = styled.div`
+  margin: 8px 0;
+  border-radius: 4px;
+  color: ${props => props.isCorrect ? '#4CAF50' : '#F44336'};
+`;
+
+export const UserTextAnswer = styled.div`
+  margin: 8px 0;
+  width: 100%;
+  padding: 0 10px;
+  
+  textarea {
+    background-color: #f9f9f9;
+    cursor: not-allowed;
+  }
+`;
+
 export const QuestionWrapper = styled.div`
-  padding: 15px;
+  /* padding: 15px; */
   margin: 10px 0;
   border-radius: 8px;
+  border: ${props => props.status === 'unattempted' ? '1px solid #f8f8f8' : 
+    props.isCorrect ? '1px solid #EFFFE7' : '1px solid #FFE8E8'};
 `;
 
 export const QuestionHeader = styled.div`
@@ -31,10 +50,15 @@ export const QuestionHeader = styled.div`
   font-weight: bold;
   margin-bottom: 10px;
   padding: 18px 18px;
-  background-color: #f0f8f1;
   font-size: 18px;
-  border-radius: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
 
+  /* Default background for unattempted questions */
+  background-color: ${props => props.status === 'unattempted' ? '#f8f8f8' : 
+    props.isCorrect ? '#EFFFE7' : '#FFE8E8'};
+  
+  /* Border for attempted questions */
 
   .question-index {
     display: flex;
@@ -43,7 +67,7 @@ export const QuestionHeader = styled.div`
     background-color: #262524;
     color: #ffffff;
     text-align: center;
-   justify-content: center; 
+    justify-content: center; 
     align-items: center; 
     border-radius: 50%;
     margin-right: 10px;
@@ -109,23 +133,50 @@ export const SkipButton = styled.button`
 export const AnswerFeedback = styled.div`
   margin-top: 10px;
   font-weight: bold;
-  color: ${({ isCorrect }) => (isCorrect ? "green" : "red")};
+  /* color: ${({ isCorrect }) => (isCorrect ? "green" : "red")}; */
+  padding: 0 10px;
+`;
+
+export const StyledRadioInput = styled.input`
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid ${props => props.isCorrect ? '#4CAF50' : '#F44336'};
+  border-radius: 50%;
+  margin-right: 8px;
+  position: relative;
+  cursor: default;
+
+  &:checked::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: ${props => props.isCorrect ? '#4CAF50' : '#F44336'};
+  }
 `;
 
 export const CorrectAnswer = styled.div`
   margin-top: 8px;
-  padding: 8px;
-  background-color: #f5f5f5;
-  border-left: 3px solid #2290AC;
+  padding: 0 10px;
+  /* background-color: #f5f5f5; */
+  /* border-left: 3px solid #2290AC; */
   font-size: 16px;
+
 `;
 export const TextArea = styled.textarea`
-  width: 100%;
+  width: 98%;
   height: 100px;
-  margin: 10px 0;
+  margin: 10px;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  box-sizing: border-box;
 `;
 
 export const RadioOption = styled.label`
@@ -137,6 +188,7 @@ export const RadioOption = styled.label`
   position: relative;
   user-select: none;
   margin-bottom: 10px;
+  padding: 0 20px;
 
   input[type='radio'] {
     appearance: none;
@@ -167,6 +219,6 @@ export const RadioOption = styled.label`
     border-radius: 50%;
     position: absolute;
     top: 2px;
-    left: 1.5px;
+    left: 2.5px;
   }
 `;

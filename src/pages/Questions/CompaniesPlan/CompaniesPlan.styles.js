@@ -5,7 +5,7 @@ export const Container = styled.div`
   max-width: 600px;
   margin: 0 auto;
   padding: 20px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   color: rgb(255, 255, 255) !important;
   position: relative;
   max-height: 100vh; /* Full height to center the form */

@@ -119,7 +119,7 @@ grid-template-columns: ${(props) => props.isExpanded ? "1fr 4fr auto" : "1fr"};
     /* position: absolute; */
     top: 65%;
     color: white;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     display: grid;
     align-items: center;
     justify-content: center;

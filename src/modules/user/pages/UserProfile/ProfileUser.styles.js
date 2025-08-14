@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import theme from "../../../../theme/Theme";
 
 export const ProfileUserWrapper = styled.div`
 margin-left: 60px;
@@ -31,7 +32,7 @@ color:${({ theme }) => theme.colors.secondary};
     text-align: center;
     border: 1px solid ${({ theme }) => theme.colors.secondary};
 
-     font-family: "DM Sans";
+     /* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -104,7 +105,7 @@ font-weight: 500;
 
 /* Title and subtext */
 .password-reset-modal-title {
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 23px;
 font-style: normal;
 font-weight: 600;
@@ -113,7 +114,7 @@ color:${({ theme }) => theme.colors.black};
 }
 
 .password-reset-modal-subtext {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 15px;
 font-style: normal;
 font-weight: 500;
@@ -126,7 +127,7 @@ color:${({ theme }) => theme.colors.textgray};
   display: block;
   margin-top: 10px;
   margin-bottom: 5px;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
@@ -136,7 +137,7 @@ color:${({ theme }) => theme.colors.textgray};
 .password-reset-modal-input {
   width: 96%;
   padding: 0.5rem;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 13px;
 font-style: normal;
 font-weight: 400;
@@ -156,19 +157,19 @@ color:${({ theme }) => theme.colors.black};
 
 /* Reset Password button in the modal */
 .password-reset-modal-reset-btn {
-  margin-top: 1rem;
-  width: 100%;
-  background-color: #2290ac;
+width: 100%;
+  background-color: ${theme.colors.info};
+  color: white;
   border: none;
   padding: 0.8rem;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: 1rem;
+  border-radius: 5px;
   cursor: pointer;
-  color: #fff;
+  margin-top: 1rem;
 }
 
 .password-reset-modal-reset-btn:hover {
-  background-color: #2290AC90;
+    background-color: ${theme.colors.bluetext};
 }
   @media (max-width: 768px) {
     .password-reset-modal-content {

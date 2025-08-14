@@ -97,6 +97,11 @@ const QBCodingPage = () => {
     return parsedTime > 0 ? parsedTime : 60;
   });
   const [runClicked, setRunClicked] = useState(false);
+  const [storedOptimizedCode, setStoredOptimizedCode] = useState(() => {
+          return localStorage.getItem(`optimizedCode_${id}`) || null;
+      });
+      const [optimizationUsed, setOptimizationUsed] = useState(false);
+      const [showOutput, setShowOutput] = useState(false);
 
   useEffect(() => {
     if (location.state?.questionID) {
@@ -216,12 +221,13 @@ const optimizeCode = async () => {
     );
 
     const data = await response.json();
-    if (data.optimized_code) {
-      setOptimisedCode(data.optimized_code);
-      localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
-      setHasOptimized(true);
-      setModalOpen(true);
-    }
+   if (data.optimized_code) {
+  setOptimisedCode(data.optimized_code);
+  localStorage.setItem(`optimizedCode_${id}`, data.optimized_code);
+  setHasOptimized(true);
+  setOptimizationUsed(true); // ✅ Hide the button after optimization
+  setModalOpen(true);
+}
   } catch (error) {
     console.error("Error optimizing code:", error);
     notification.error({ message: "Failed to optimize code" });
@@ -322,16 +328,16 @@ const optimizeCode = async () => {
     }
   };
 
-  const handleOptimizeClick = () => {
-    // Check if we already have optimized code
-    const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
-    if (savedOptimizedCode) {
-      setOptimisedCode(savedOptimizedCode);
-      setModalOpen(true);
-    } else {
-      optimizeCode();
-    }
-  };
+const handleOptimizeClick = () => {
+  const savedOptimizedCode = localStorage.getItem(`optimizedCode_${id}`);
+  if (savedOptimizedCode) {
+    setOptimisedCode(savedOptimizedCode);
+    setOptimizationUsed(true); // ✅ Hide the button here too
+    setModalOpen(true);
+  } else {
+    optimizeCode();
+  }
+};
 
   return (
     <>
@@ -357,7 +363,7 @@ const optimizeCode = async () => {
                 <QuestionBox>
                   <div dangerouslySetInnerHTML={{ __html: question?.description }} />
                   <p>
-                    <strong>Input:</strong> {question?.input}
+                     {question?.input}
                   </p>
                   <p>
                     <strong>
@@ -445,11 +451,16 @@ const optimizeCode = async () => {
                     </HintWrapper>
 
                     <LanguageSelect>
-                      <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} onClick={() => {
-                        setCode(question.base_code);
-                        setSelectedLang(question.programming_language === "MySQL" ? "mysql" : "python");
-                        setOutput(null)
-                      }}>
+                      <button style={{ border: 'none', display: 'flex', background: 'none', color: '#007c91' }} 
+         onClick={() => {
+  setCode(optimisedCode);
+  // Keep the previous output instead of clearing it
+  setShowOutput(true);
+  setModalOpen(false);
+  setOptimizationUsed(true); // Mark optimization as used
+}}
+
+                      >
                         <VscDebugRestart />
                       </button>
                       <label htmlFor="lang">Select Language</label>
@@ -473,12 +484,16 @@ const optimizeCode = async () => {
                     setCode={setCode}
                     output={output}
                     setOutput={setOutput}
+                    setShowOutput={setShowOutput}
                     input={input}
                     setInput={setInput}
                     dbSetupCommands={question?.dbSetupCommands}
-                    showOptimiseBtn={true} // Always show the button
+                    showOptimiseBtn={!optimizationUsed}// Always show the button
     handleOptimizeCode={handleOptimizeClick}
     hasOptimized={hasOptimized}
+
+
+    
     optimizationDisabled={optimizationDisabled}
                     handleSubmit={handleSubmit}
                     isSubmitting={isSubmitting}
@@ -563,8 +578,10 @@ const optimizeCode = async () => {
         <ModalButton
           onClick={() => {
             setCode(optimisedCode);
-            setOutput("");
+            // setOutput("");
             setModalOpen(false);
+            setOptimizationUsed(true);
+            setShowOptimiseBtn(false);
           }}
         >
           Apply to your Code

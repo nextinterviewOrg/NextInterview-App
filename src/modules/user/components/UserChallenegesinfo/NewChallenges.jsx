@@ -167,6 +167,14 @@ if (loading)
 
       case "approach":
         return (
+          <>
+                      <p>
+              <strong>Description:</strong>
+            </p>
+            <div
+              style={{ marginBottom: "12px" }}
+              dangerouslySetInnerHTML={{ __html: challenge?.description }}
+            />
           <TextArea
             placeholder="Type your response..."
             rows={4}
@@ -174,6 +182,7 @@ if (loading)
             onChange={(e) => setTextAnswer(e.target.value)}
             disabled={showSolution}
           />
+          </>
         );
       case "case-study":
         return (

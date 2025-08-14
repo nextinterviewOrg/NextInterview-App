@@ -8,7 +8,7 @@ export const HeaderContainer = styled.header`
   background-color: ${theme.colors.light};
   color: ${theme.colors.primary};
   padding: ${theme.spacing(2)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   margin-left: 20px;
  
 
@@ -34,7 +34,7 @@ export const Title = styled.h1`
   font-size: 24px;
   margin: 20px;
   color: ${theme.colors.text};
-  font-family: ${theme.fonts.display};
+  /* font-family: ${theme.fonts.display}; */
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 20px;

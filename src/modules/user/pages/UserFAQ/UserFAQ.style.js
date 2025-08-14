@@ -19,7 +19,7 @@ export const FAQTitle = styled.h2`
   font-weight: 600;
   line-height: 44px;
   color: ${theme.colors.text};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: 800px) {
     font-size: 24px;
@@ -31,7 +31,7 @@ export const FAQSubtitle = styled.p`
   font-size: 20px;
   font-style: normal;
   font-weight: 400;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.textgray};
 
   @media (max-width: 800px) {
@@ -53,14 +53,14 @@ export const FAQQuestion = styled.div`
   padding: 10px;
   justify-content: space-between;
   align-items: center;
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
   font-size: 18px;
   font-style: normal;
   font-weight: 500;
   line-height: 28px;
   background-color:  ${({ theme }) => theme.colors.sidebarBgColor};;
   color: ${theme.colors.text};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: 800px) {
     font-size: 16px;

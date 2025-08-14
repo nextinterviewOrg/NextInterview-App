@@ -5,7 +5,7 @@ export const Container = styled.div`
   width: 95%;
   margin-left: 50px;
   padding: 10px 0px;
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
  
   @media (max-width: 768px) {
     margin-left: 0px;

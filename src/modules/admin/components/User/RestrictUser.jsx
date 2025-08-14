@@ -89,7 +89,7 @@ const Label = styled.label`
   color: ${theme.colors.text};
   width: 150px; /* Fixed width for labels to align inputs consistently */
   margin-right: 10px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 12px;
@@ -102,7 +102,7 @@ const Select = styled.select`
   border: 1px solid ${theme.colors.textgray};
   border-radius: 4px;
   font-size: 14px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 `;
 
 const TextArea = styled.textarea`
@@ -118,7 +118,7 @@ const InputGroup = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   
 `;

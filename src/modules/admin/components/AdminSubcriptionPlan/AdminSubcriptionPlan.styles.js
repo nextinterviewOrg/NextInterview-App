@@ -75,7 +75,7 @@ export const CreatePaymentButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s ease;
@@ -104,7 +104,7 @@ export const DeletePaymentButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s ease;
@@ -132,7 +132,7 @@ export const EditPaymentButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   cursor: pointer;
   font-size: 1rem;
   transition: background-color 0.2s ease;
@@ -158,7 +158,7 @@ export const EditPaymentButton = styled.button`
 export const CancelButton = styled.button`
   background-color: #fff;
   color: #000;
-  font-family: ${(props) => props.theme.fonts.body};
+  /* font-family: ${(props) => props.theme.fonts.body}; */
   font-size: 1rem;
   border: 1px solid #000;
   border-radius: ${(props) => props.theme.spacing(0.5)};
@@ -231,7 +231,7 @@ export const TableCell = styled.td`
 export const TableHeader = styled.th`
   text-align: center;
   padding: 16px;
-  font-family: ${(props) => props.theme.fonts.heading};
+  /* font-family: ${(props) => props.theme.fonts.heading}; */
   font-size: 16px;
   font-weight:normal;
   color: ${(props) => props.theme.colors.test};

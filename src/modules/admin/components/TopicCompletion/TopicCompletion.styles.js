@@ -12,7 +12,7 @@ border: 1px solid #F5F5F5;
   padding: 1rem;
   max-width: 100%;
   margin: 1rem auto;
-  font-family: sans-serif;
+  /* font-family: sans-serif; */
 }
 
 .tabsRow {

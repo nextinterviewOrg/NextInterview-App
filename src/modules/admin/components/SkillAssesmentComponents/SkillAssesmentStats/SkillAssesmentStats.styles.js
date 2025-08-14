@@ -6,21 +6,21 @@ export const HeaderWrapper = styled.div`
   margin-bottom: ${theme.spacing(4)};
 
   h1 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     font-size: 24px;
     color: ${theme.colors.text};
     margin-bottom: ${theme.spacing(1)};
   }
 
   p {
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     font-size: 16px;
     color: ${theme.colors.sidebarTextColor};
     margin-bottom: ${theme.spacing(1)};
   }
 
   span {
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     font-size: 14px;
     color: ${theme.colors.textgray};
   }
@@ -46,14 +46,14 @@ export const StatCard = styled.div`
   text-align: center;
 
   p {
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     font-size: 14px;
     color: ${theme.colors.sidebarTextColor};
     margin-bottom: ${theme.spacing(0.5)};
   }
 
   h3 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     font-size: 20px;
     color: ${theme.colors.text};
   }

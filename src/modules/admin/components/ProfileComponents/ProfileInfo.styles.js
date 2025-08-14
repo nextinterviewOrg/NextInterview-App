@@ -17,7 +17,7 @@ export const LogoutButton = styled.button`
   border: 1px solid ${theme.colors.bluetext};
   border-radius: 5px;
   cursor: pointer;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 16px;
   padding: 10px 30px;
   margin-right: 30px;
@@ -38,7 +38,7 @@ export const ProfileContainer = styled.div`
   width: 85%;
   margin-left: 10%;
   margin: 40px auto;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: 768px) {
   margin: 0;
@@ -47,7 +47,7 @@ export const ProfileContainer = styled.div`
 `;
 
 export const SectionTitle = styled.h2`
-  font-family: ${theme.fonts.heading};
+  /* font-family: ${theme.fonts.heading}; */
   color: ${theme.colors.text};
   font-size: 20px;
   text-align: left;
@@ -88,7 +88,7 @@ export const UploadButton = styled.div`
   label {
     cursor: pointer;
     color: ${theme.colors.primary};
-    font-family: ${theme.fonts.body};
+    /* font-family: ${theme.fonts.body}; */
     font-size: 14px;
 
     input {
@@ -113,7 +113,7 @@ export const FormGroup = styled.div`
 `;
 
 export const Label = styled.label`
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.text};
   margin-bottom: ${theme.spacing(0.5)};
   font-size: 14px;
@@ -123,7 +123,7 @@ export const InputField = styled.input`
   padding: ${theme.spacing(1)};
   border: 1px solid ${theme.colors.sidebarHoverBgColor};
   border-radius: 5px;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 14px;
   width: 50%;
   box-sizing: border-box;
@@ -146,7 +146,7 @@ export const SaveButton = styled.button`
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 16px;
   margin-top: ${theme.spacing(3)};
   width: 10%;
@@ -167,7 +167,7 @@ export const ResetButtonWrapper = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   gap: 10px;
 `;
 
@@ -178,7 +178,7 @@ export const ResetButton = styled.button`
   border: 1px solid ${theme.colors.bluetext};
   border-radius: 5px;
   cursor: pointer;
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   font-size: 16px;
   width: 20%;
 

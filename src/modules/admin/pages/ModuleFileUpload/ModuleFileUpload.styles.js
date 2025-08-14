@@ -75,7 +75,7 @@ export const ModuleUploadWrapper = styled.div`
     .upload-button-text{
     font-size: 14px;
     font-weight: 500;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     line-height: 20px;
     margin-left: 10px;
     color: ${({ theme }) => theme.colors.black};
@@ -100,14 +100,14 @@ export const ModuleUploadWrapper = styled.div`
     color: white;
     font-size: 14px;
     font-weight: 500;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     line-height: 20px;
     }
 
     .upload-file-name{
     font-size: 14px;
     font-weight: 500;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     line-height: 20px;
     margin-left: 10px;
     color: ${({ theme }) => theme.colors.info};
@@ -115,7 +115,7 @@ export const ModuleUploadWrapper = styled.div`
     .clear-button{
      font-size: 14px;
     font-weight: 500;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     line-height: 20px;
     margin-left: 10px;
     color: red;

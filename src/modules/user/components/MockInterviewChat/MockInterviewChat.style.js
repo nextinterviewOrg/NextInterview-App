@@ -99,7 +99,7 @@ export const Conversation = styled.div`
  font-size: 16px;
  font-weight: 600;
  margin-left: 20px;
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 `;
 
 export const ConversationBox = styled.div`
@@ -239,7 +239,7 @@ export const Text = styled.pre`
   font-size: 14px;
   font-weight: ${(props) => (props.sender === "AI" ? "700" : "400")};
   color: #1a1c1e;
-  font-family: DM SANS;
+  /* font-family: DM SANS; */
   margin-bottom: 15px;
 `;
 

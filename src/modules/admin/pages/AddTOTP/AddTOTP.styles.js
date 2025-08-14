@@ -27,7 +27,7 @@ export const SecretContainer = styled.div`
   border-radius: 4px;
   margin: 16px 0;
   text-align: center;
-  font-family: monospace;
+  /* font-family: monospace; */
 
   button {
     margin-left: 8px;

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import theme from "../../../../theme/Theme";
 export const FAQContainer = styled.div`
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
   color: ${({ theme }) => theme.colors.text};
   background-color: ${({ theme }) => theme.colors.light};
   padding: ${({ theme }) => theme.spacing(3)};
@@ -45,7 +45,7 @@ export const Answer = styled.div`
 export const AddQuestionButton = styled.button`
   background-color: ${({ theme }) => theme.colors.light};
   color: ${({ theme }) => theme.colors.secondary};
-  font-family: ${({ theme }) => theme.fonts.body};
+  /* font-family: ${({ theme }) => theme.fonts.body}; */
 //   font-weight: bold;
   font-size: 1rem;
   padding: ${({ theme }) => theme.spacing(1)};

@@ -5,13 +5,13 @@ export const SubscriptionCardWrapper = styled.div`
   .subscription-card {
     border: 1px solid ${theme.colors.textgray};
     border-radius: 8px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     max-width: 350px;
 
     background-color: ${theme.colors.white};
     margin: 20px;
     padding: 40px 35px 28px 35px;
-    font-family: Arial, sans-serif;
+    /* font-family: Arial, sans-serif; */
     text-align: center;
     position: relative;
     display: flex;
@@ -33,7 +33,7 @@ export const SubscriptionCardWrapper = styled.div`
     transform: translateX(-50%);
     color: white;
     padding: 5px 10px;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -55,7 +55,7 @@ export const SubscriptionCardWrapper = styled.div`
 
   .subscription-card-body-price {
     text-align: center;
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 48px;
     font-style: normal;
     font-weight: 700;
@@ -78,7 +78,7 @@ export const SubscriptionCardWrapper = styled.div`
   }
 
   .features-list li {
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
@@ -108,7 +108,7 @@ export const SubscriptionCardWrapper = styled.div`
     color: ${theme.colors.white};
     text-align: center;
     /* Body Text/Small/Body Small (Medium) */
-    font-family: "DM Sans";
+    /* font-family: "DM Sans"; */
     font-size: 14px;
     font-style: normal;
     font-weight: 500;

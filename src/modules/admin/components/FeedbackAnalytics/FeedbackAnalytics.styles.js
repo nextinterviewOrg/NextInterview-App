@@ -15,7 +15,7 @@ export const FeedbackAnalyticsWrap = styled.div`
     max-width: 100%;
     margin: 1rem auto;
     // height:250px;
-    font-family: "Helvetica", sans-serif;
+    /* font-family: "Helvetica", sans-serif; */
     width: 80%;
 
     @media (max-width: 768px) {
@@ -72,7 +72,7 @@ export const FeedbackAnalyticsWrap = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.text};
   font-size: 1.2rem;
   font-weight: 800;

@@ -13,7 +13,7 @@ export const Header = styled.div`
   padding: ${theme.spacing(2)};
   border-radius: 8px;
   h2 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     color: ${theme.colors.sidebarTextColor};
   }
 
@@ -64,7 +64,7 @@ export const StatCard = styled.div`
   border-radius: 8px;
 
   h1 {
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
   }
 
   p {
@@ -89,7 +89,7 @@ export const StatCard1 = styled.div`
 
   h3 {
     color: ${theme.colors.primary};
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
   }
 
   p {
@@ -112,7 +112,7 @@ export const StatCard2 = styled.div`
 
   .datascience {
     color: ${theme.colors.black};
-    font-family: ${theme.fonts.heading};
+    /* font-family: ${theme.fonts.heading}; */
     text-align: left;
   }
 

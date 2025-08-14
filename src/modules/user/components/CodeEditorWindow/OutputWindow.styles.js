@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const OutputWindowWrapper = styled.div`
 
 .output-title{
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 600;
@@ -25,7 +25,7 @@ border: none;
 color:${({ theme }) => theme.colors.secondary};
 text-align: center;
 /* Body Text/Small/Body Small (Medium) */
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -46,7 +46,7 @@ align-items: center;
 gap: 4px;
 text-align: center;
 /* Body Text/Small/Body Small (Medium) */
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;
@@ -69,7 +69,7 @@ align-items: center;
 gap: 4px;
 text-align: center;
 /* Body Text/Small/Body Small (Medium) */
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 14px;
 font-style: normal;
 font-weight: 500;

@@ -8,13 +8,13 @@ export const ProfileCardWrapper = styled.div`
   max-width: 100%;
 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  font-family: Arial, sans-serif;
+  /* font-family: Arial, sans-serif; */
   display: flex;
   flex-direction: column;
 }
 
 .profile-title {
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 24px;
 font-style: normal;
 font-weight: 600;
@@ -22,7 +22,7 @@ color:${({ theme }) => theme.colors.black};
   margin-bottom: 20px;
 }
   .profile-photo-title{
-  font-family: "DM Sans";
+  /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;
@@ -81,7 +81,7 @@ height: 148px;
 }
 
 .form-group label {
- font-family: "DM Sans";
+ /* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;
@@ -92,7 +92,7 @@ text-transform: capitalize;
 }
 
 .form-group input {
-font-family: "DM Sans";
+/* font-family: "DM Sans"; */
 font-size: 16px;
 font-style: normal;
 font-weight: 400;

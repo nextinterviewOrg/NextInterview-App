@@ -12,7 +12,7 @@ export const Container = styled.div`
     ${theme.colors.primary}
   );
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: ${theme.breakpoints.tablet}) {
     flex-wrap: wrap;
@@ -76,7 +76,7 @@ export const StatLabel = styled.p`
   font-size: 16px;
   font-weight: bold;
   color: ${theme.colors.sidebarTextColor};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   margin: 0;
 
   @media (max-width: ${theme.breakpoints.mobile}) {
@@ -92,7 +92,7 @@ export const StatValue = styled.p`
   font-weight: bold;
   color: #000;
   margin: ${theme.spacing(1)};
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     font-size: 24px;

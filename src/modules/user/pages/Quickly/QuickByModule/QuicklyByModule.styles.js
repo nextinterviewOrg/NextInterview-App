@@ -29,7 +29,7 @@ export const ModuleDetails = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-family: ${theme.fonts.body};
+  /* font-family: ${theme.fonts.body}; */
   color: ${theme.colors.text};
   font-size: 1.4rem;
 `;
@@ -37,7 +37,7 @@ export const Title = styled.h2`
 export const Button = styled.button`
   background-color: ${theme.colors.light};
   color: ${theme.colors.secondary};
-  font-family: ${theme.fonts.accent};
+  /* font-family: ${theme.fonts.accent}; */
   padding: ${theme.spacing(1)} ${theme.spacing(2)};
   border: 1px solid ${theme.colors.secondary};
   border-radius: 5px;
@@ -70,5 +70,7 @@ export const ResponsiveContainer = styled.div`
 
   @media (max-width: ${theme.breakpoints.mobile}) {
     flex-direction: column;
+    gap: 0px;
+    margin-bottom: 20px;
   }
 `;

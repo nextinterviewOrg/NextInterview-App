@@ -1,313 +1,4 @@
-// import React, { useState, useEffect } from "react";
-// import { ThemeProvider } from "styled-components";
-// import theme from "../../../../theme/Theme";
-// import { Link } from "react-router-dom";
-// import {
-//   Container,
-//   QuestionCard,
-//   QuestionText,
-//   MetaInfo,
-//   Topic,
-//   Difficulty,
-//   Type,
-//   Status,
-//   MoreFilters,
-//   DropdownContainer,
-//   FilterSection,
-//   ApplyButton,
-//   ClearButton,
-//   CheckboxLabel,
-//   FilterHeader,
-//   CloseFilterButton,
-//   SubText,
-//   SearchInput,
-// } from "../QuestionBank/QuestionBank.styles";
-// import { IoClose } from "react-icons/io5"; // Close icon
-// import { RiArrowDropDownLine } from "react-icons/ri";
-// import { getMainQuestion, getAllQBQuestions, getMainQuestionByModule } from "../../../../api/userMainQuestionBankApi"; // Updated API imports
-// import { getModuleCode } from "../../../../api/addNewModuleApi";
-// import { ShimmerCategoryItem } from "react-shimmer-effects";
-
-// const QuestionBank = () => {
-//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-//   const [filterSearchQuery, setFilterSearchQuery] = useState("");
-//   const [selectedFilters, setSelectedFilters] = useState({
-//     solved: false,
-//     unsolved: false,
-//     easy: false,
-//     medium: false,
-//     hard: false,
-//     topic: null,
-//   });
-
-//   const [filteredQuestions, setFilteredQuestions] = useState([]);
-//   const [moduleCodes, setModuleCodes] = useState([]);
-//   const [difficultyLevels, setDifficultyLevels] = useState([]);
-//   const [loading, setLoading] = useState(true);
-
-//   useEffect(() => {
-//     const fetchQuestions = async () => {
-//       try {
-//         setLoading(true);
-//         const response = await getAllQBQuestions();
-//         setFilteredQuestions(response.data);
-//         setLoading(false);
-//       } catch (error) {
-//         console.error("Error fetching questions:", error);
-//       }
-//     };
-
-//     const fetchModuleCodes = async () => {
-//       try {
-//         const response = await getModuleCode();
-//         setModuleCodes(response.data);
-//       } catch (error) {
-//         console.error("Error fetching modules:", error);
-//       }
-//     };
-
-//     const fetchDifficultyLevels = async () => {
-//       try {
-//         const response = await getAllQBQuestions();
-//         const levels = response.data.map((question) => question.level);
-//         const uniqueLevels = [...new Set(levels)];
-//         setDifficultyLevels(uniqueLevels);
-//       } catch (error) {
-//         console.error("Error fetching difficulty levels:", error);
-//       }
-//     };
-
-//     fetchQuestions();
-//     fetchModuleCodes();
-//     fetchDifficultyLevels();
-//   }, []);
-
-//   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-//   const closeDropdown = () => setIsDropdownOpen(false);
-
-//   const handleDifficultyChange = (level) => {
-//     setSelectedFilters((prevFilters) => ({
-//       ...prevFilters,
-//       easy: false,
-//       medium: false,
-//       hard: false,
-//       [level]: true,
-//     }));
-//   };
-
-//   const handleTopicChange = (topicName) => {
-//     setSelectedFilters((prevFilters) => ({
-//       ...prevFilters,
-//       topic: prevFilters.topic === topicName ? null : topicName,
-//     }));
-//   };
-
-//   const applyFilters = async () => {
-//     const filters = {
-//       module_code: "",
-//       level: [],
-//       topic_code: "",
-//       question_type: "",
-//       subtopic_code: "",
-//     };
-
-//     if (selectedFilters.easy) filters.level.push("easy");
-//     if (selectedFilters.medium) filters.level.push("medium");
-//     if (selectedFilters.hard) filters.level.push("hard");
-
-//     try {
-//       let response;
-
-//       if (selectedFilters.topic) {
-//         const selectedModule = moduleCodes.find(
-//           (module) => module.module_name === selectedFilters.topic
-//         );
-
-//         if (selectedModule) {
-//           // Use getMainQuestionByModule when a specific module is selected
-//           response = await getMainQuestionByModule(
-//             selectedModule.module_code,
-//             "questionBank"
-//           );
-//         }
-//       } else if (filters.level.length > 0) {
-//         // Use getMainQuestion when filtering by level only
-//         response = await getMainQuestion(
-//           "",
-//           "",
-//           "",
-//           "",
-//           filters.level.join(","),
-//           "questionBank"
-//         );
-//       } else {
-//         // Default case - get all QB questions
-//         response = await getAllQBQuestions();
-//       }
-
-//       setFilteredQuestions(response.data || []);
-//       setIsDropdownOpen(false);
-//     } catch (error) {
-//       console.error("Error applying filters:", error);
-//       setFilteredQuestions([]);
-//     }
-//   };
-
-//   const noQuestionsMessage = selectedFilters.topic
-//     ? `No questions available for module "${selectedFilters.topic}".`
-//     : "No questions found.";
-
-//   const clearFilters = async () => {
-//     setSelectedFilters({
-//       solved: false,
-//       unsolved: false,
-//       easy: false,
-//       medium: false,
-//       hard: false,
-//       topic: null,
-//     });
-
-//     try {
-//       const response = await getAllQBQuestions();
-//       setFilteredQuestions(response.data);
-//     } catch (error) {
-//       console.error("Error fetching questions:", error);
-//     }
-//   };
-
-//   const getModuleName = (moduleCode) => {
-//     const module = moduleCodes.find(
-//       (module) => module.module_code === moduleCode
-//     );
-//     return module ? module.module_name : "Unknown Module";
-//   };
-
-//   const shimmerItems = new Array(10).fill(null);
-
-//   return (
-//     <ThemeProvider theme={theme}>
-//       <Container>
-//         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-//           <MoreFilters onClick={toggleDropdown}>
-//             More filters <RiArrowDropDownLine style={{ fontSize: "25px" }} />
-//           </MoreFilters>
-//         </div>
-
-//         {isDropdownOpen && (
-//           <DropdownContainer>
-//             <FilterHeader>
-//               <SearchInput
-//                 type="text"
-//                 placeholder="Search filters..."
-//                 value={filterSearchQuery}
-//                 onChange={(e) =>
-//                   setFilterSearchQuery(e.target.value.toLowerCase())
-//                 }
-//               />
-//               <CloseFilterButton onClick={closeDropdown}>
-//                 <IoClose size={22} />
-//               </CloseFilterButton>
-//             </FilterHeader>
-
-//             <FilterSection>
-//               <SubText>Difficulty Level</SubText>
-//               {difficultyLevels.map((level) => (
-//                 <CheckboxLabel key={level}>
-//                   <input
-//                     type="checkbox"
-//                     checked={selectedFilters[level.toLowerCase()]}
-//                     onChange={() =>
-//                       handleDifficultyChange(level.toLowerCase())
-//                     }
-//                   />{" "}
-//                   {level}
-//                 </CheckboxLabel>
-//               ))}
-//             </FilterSection>
-
-//             <FilterSection>
-//               <SubText>Topics</SubText>
-//               {moduleCodes
-//                 .filter((module) =>
-//                   module.module_name
-//                     .toLowerCase()
-//                     .includes(filterSearchQuery)
-//                 )
-//                 .map((module) => (
-//                   <CheckboxLabel key={module.module_code}>
-//                     <input
-//                       type="checkbox"
-//                       checked={
-//                         selectedFilters.topic === module.module_name
-//                       }
-//                       onChange={() => handleTopicChange(module.module_name)}
-//                     />{" "}
-//                     {module.module_name}
-//                   </CheckboxLabel>
-//                 ))}
-//             </FilterSection>
-
-//             <div
-//               style={{
-//                 display: "flex",
-//                 justifyContent: "space-between",
-//                 padding: "10px",
-//               }}
-//             >
-//               <ClearButton onClick={clearFilters}>Clear all</ClearButton>
-//               <ApplyButton onClick={applyFilters}>Apply filter</ApplyButton>
-//             </div>
-//           </DropdownContainer>
-//         )}
-
-//         {loading ? (
-//           shimmerItems.map((_, index) => (
-//             <ShimmerCategoryItem key={index} line={5} gap={10} />
-//           ))
-//         ) : (
-//           <>
-//             {filteredQuestions.length > 0 ? (
-//               filteredQuestions.map((item, index) => (
-//                 <Link
-//                   to={`/user/mainQuestionBank/questionBank/${item._id}`}
-//                   key={index}
-//                   style={{ textDecoration: "none" }}
-//                   state={{ filteredQuestions }}
-//                 >
-//                   <QuestionCard
-//                     style={{
-//                       display: "flex",
-//                       justifyContent: "space-between",
-//                     }}
-//                   >
-//                     <div>
-//                       <QuestionText>
-//                         {index + 1}. {item.question}
-//                       </QuestionText>
-//                       <MetaInfo>
-//                         <Topic>
-//                           Module Name - {getModuleName(item.module_code)}
-//                         </Topic>
-//                         <Difficulty>Level - {item.level}</Difficulty>
-//                         <Type>Type - {item.question_type}</Type>
-//                       </MetaInfo>
-//                     </div>
-//                     <Status>{item.status}</Status>
-//                   </QuestionCard>
-//                 </Link>
-//               ))
-//             ) : (
-//               <p>{noQuestionsMessage}</p>
-//             )}
-//           </>
-//         )}
-//       </Container>
-//     </ThemeProvider>
-//   );
-// };
-
-// export default QuestionBank;import React, { useState, useEffect } from 'react';
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   Container,
   FilterBar,
@@ -326,7 +17,10 @@ import {
   SubText,
   CheckboxLabel,
   FilterIcon,
-  ApplyFilter
+  ApplyFilter,
+  PaginationContainer,
+  PageButton,
+  PageInfo
 } from './QuestionBank.styles';
 import { Link } from 'react-router-dom';
 import { HiOutlineCode } from 'react-icons/hi';
@@ -336,13 +30,13 @@ import { TfiFilter } from 'react-icons/tfi';
 import { LuPencil } from 'react-icons/lu';
 import { getModuleCode } from '../../../../api/addNewModuleApi';
 import { getAllCategory } from '../../../../api/categoryApi';
-import { getAllQuestionsUsingUserId, getQuestionByCategoryIdandUserId } from '../../../../api/questionBankApi';
+import { getAllQuestionsUsingUserId } from '../../../../api/questionBankApi';
 import { useUser } from '@clerk/clerk-react';
 import { getUserByClerkId } from '../../../../api/userApi';
-
+ 
 const difficultyLevels = ['Easy', 'Medium', 'Hard'];
-
-
+const QUESTIONS_PER_PAGE = 10;
+ 
 const QuestionBank = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -353,7 +47,11 @@ const QuestionBank = () => {
   const [allQuestions, setAllQuestions] = useState([]);
   const { user } = useUser();
   const [userId, setUserId] = useState(null);
-
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const dropdownRef = useRef(null);
+ 
   const emptyFilterState = {
     easy: false,
     medium: false,
@@ -361,10 +59,10 @@ const QuestionBank = () => {
     modules: [],
     status: { solved: false, unsolved: false }
   };
-
+ 
   const [selectedFilters, setSelectedFilters] = useState(emptyFilterState);
   const [tempFilters, setTempFilters] = useState(emptyFilterState);
-
+ 
   // Load user ID on mount
   useEffect(() => {
     const fetchUserId = async () => {
@@ -377,25 +75,25 @@ const QuestionBank = () => {
     };
     if (user?.id) fetchUserId();
   }, [user]);
-
+ 
   // Load initial data (categories, modules and questions)
   useEffect(() => {
     const loadInitialData = async () => {
       if (!userId) return;
-
+ 
       try {
         // Fetch categories first
         const categoriesRes = await getAllCategory();
         if (categoriesRes?.success) {
           setCategories(categoriesRes.data || []);
         }
-
+ 
         // Then fetch modules
         const modulesRes = await getModuleCode();
         if (modulesRes?.success) {
           setModules(modulesRes.data || []);
         }
-
+ 
         // Then fetch all questions
         const questionsRes = await getAllQuestionsUsingUserId(userId);
         if (questionsRes?.success && Array.isArray(questionsRes.data)) {
@@ -412,43 +110,74 @@ const QuestionBank = () => {
             topics: q.topics?.map(t => t.topic_name) || [],
             solution: q.output || ''
           }));
-          
+         
           setAllQuestions(mappedQuestions);
           setQuestions(mappedQuestions);
+          // Calculate total pages when questions are loaded
+          setTotalPages(Math.ceil(mappedQuestions.length / QUESTIONS_PER_PAGE));
         }
       } catch (err) {
         console.error("Error loading initial data", err);
       }
     };
-
+ 
     loadInitialData();
   }, [userId]);
-
+ 
   // Filter questions when activeTab changes
   useEffect(() => {
     if (activeTab === 'all') {
       setQuestions(allQuestions);
+      setTotalPages(Math.ceil(allQuestions.length / QUESTIONS_PER_PAGE));
+      setCurrentPage(1); // Reset to first page when changing tabs
     } else {
       // Check if activeTab is a category ID
       const isCategory = categories.some(cat => cat._id === activeTab);
       if (isCategory) {
         const filtered = allQuestions.filter(q => q.category === activeTab);
         setQuestions(filtered);
+        setTotalPages(Math.ceil(filtered.length / QUESTIONS_PER_PAGE));
+        setCurrentPage(1);
       } else {
         // Otherwise treat it as a module code
         const filtered = allQuestions.filter(q => q.module_code === activeTab);
         setQuestions(filtered);
+        setTotalPages(Math.ceil(filtered.length / QUESTIONS_PER_PAGE));
+        setCurrentPage(1);
       }
     }
   }, [activeTab, allQuestions, categories]);
-
+ 
+  // Update total pages when filters change
+  useEffect(() => {
+    const filtered = questions.filter(q => {
+      const matchesDifficulty =
+        (!selectedFilters.easy && !selectedFilters.medium && !selectedFilters.hard) ||
+        selectedFilters[q.difficulty.toLowerCase()];
+     
+      const matchesModule =
+        selectedFilters.modules.length === 0 ||
+        selectedFilters.modules.includes(q.module_code);
+     
+      const matchesStatus =
+        (!selectedFilters.status.solved && !selectedFilters.status.unsolved) ||
+        (selectedFilters.status.solved && q.completed) ||
+        (selectedFilters.status.unsolved && !q.completed);
+     
+      return matchesDifficulty && matchesModule && matchesStatus;
+    });
+   
+    setTotalPages(Math.ceil(filtered.length / QUESTIONS_PER_PAGE));
+    setCurrentPage(1); // Reset to first page when filters change
+  }, [selectedFilters, questions]);
+ 
   const toggleDropdown = () => {
     setTempFilters(selectedFilters);
     setIsDropdownOpen(!isDropdownOpen);
   };
-
+ 
   const closeDropdown = () => setIsDropdownOpen(false);
-
+ 
   const toggleModule = (moduleCode) => {
     setTempFilters(prev => ({
       ...prev,
@@ -457,7 +186,7 @@ const QuestionBank = () => {
         : [...prev.modules, moduleCode]
     }));
   };
-
+ 
   const toggleStatus = (statusType) => {
     setTempFilters(prev => ({
       ...prev,
@@ -467,8 +196,29 @@ const QuestionBank = () => {
       }
     }));
   };
-
-  const filteredQuestions = questions.filter(q => {
+ 
+    // Add click outside handler
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isDropdownOpen && dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        closeDropdown();
+      }
+    };
+ 
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isDropdownOpen]);
+ 
+ const getFilteredQuestions = () => {
+  return questions.filter(q => {
+    const matchesSearch = 
+      searchQuery === '' ||
+      q.text.toLowerCase().includes(searchQuery) ||
+      (q.description && q.description.toLowerCase().includes(searchQuery)) ||
+      (q.topics && q.topics.some(topic => topic.toLowerCase().includes(searchQuery)));
+    
     const matchesDifficulty =
       (!selectedFilters.easy && !selectedFilters.medium && !selectedFilters.hard) ||
       selectedFilters[q.difficulty.toLowerCase()];
@@ -482,26 +232,39 @@ const QuestionBank = () => {
       (selectedFilters.status.solved && q.completed) ||
       (selectedFilters.status.unsolved && !q.completed);
     
-    return matchesDifficulty && matchesModule && matchesStatus;
+    return matchesSearch && matchesDifficulty && matchesModule && matchesStatus;
   });
-
+}; 
+  const getPaginatedQuestions = () => {
+    const filtered = getFilteredQuestions();
+    const startIndex = (currentPage - 1) * QUESTIONS_PER_PAGE;
+    const endIndex = startIndex + QUESTIONS_PER_PAGE;
+    return filtered.slice(startIndex, endIndex);
+  };
+ 
   const getModuleName = (moduleCode) => {
     const module = modules.find(m => m.module_code === moduleCode);
     return module ? module.module_name : moduleCode;
   };
-
+ 
   const getCategoryName = (categoryId) => {
     const category = categories.find(c => c._id === categoryId);
     return category ? category.category_name : "Other";
   };
-
+ 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+ 
   return (
     <Container>
       <FilterBar>
         <FilterButton active={activeTab === 'all'} onClick={() => setActiveTab('all')}>
           All
         </FilterButton>
-
+ 
         {/* Show categories in the filter bar */}
         {categories.map(category => (
           <FilterButton
@@ -512,15 +275,15 @@ const QuestionBank = () => {
             {category.category_name}
           </FilterButton>
         ))}
-
+ 
         <div style={{ marginLeft: 'auto' }}>
           <FilterIcon onClick={toggleDropdown}>
             <TfiFilter />
           </FilterIcon>
         </div>
-
+ 
         {isDropdownOpen && (
-          <DropdownContainer>
+          <DropdownContainer ref={dropdownRef}>
             <div style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 10px' }}>
               <ApplyFilter
                 variant="clear"
@@ -541,7 +304,7 @@ const QuestionBank = () => {
                 Apply filter
               </ApplyFilter>
             </div>
-
+ 
             <FilterHeader>
               <SearchInput
                 type="text"
@@ -553,7 +316,7 @@ const QuestionBank = () => {
                 <IoClose size={22} />
               </CloseFilterButton>
             </FilterHeader>
-
+ 
             <FilterSection>
               <SubText>Difficulty Level</SubText>
               {difficultyLevels.map(level => (
@@ -572,7 +335,7 @@ const QuestionBank = () => {
                 </CheckboxLabel>
               ))}
             </FilterSection>
-
+ 
             <FilterSection>
               <SubText>Modules</SubText>
               {modules
@@ -591,7 +354,7 @@ const QuestionBank = () => {
                   </CheckboxLabel>
                 ))}
             </FilterSection>
-
+ 
             <FilterSection>
               <SubText>Status</SubText>
               <CheckboxLabel>
@@ -614,8 +377,8 @@ const QuestionBank = () => {
           </DropdownContainer>
         )}
       </FilterBar>
-
-      {filteredQuestions.map((q, index) => (
+ 
+      {getPaginatedQuestions().map((q, index) => (
         <Link
           key={index}
           to={`/user/mainQuestionBank/questionbank/${q.id}`}
@@ -623,7 +386,7 @@ const QuestionBank = () => {
         >
           <QuestionCard>
             <Icon>
-              {q.completed ? <FaCheck color="green" /> : q.type === 'coding' ? 
+              {q.completed ? <FaCheck color="green" /> : q.type === 'coding' ?
                 <HiOutlineCode color="purple" /> : <LuPencil color="darkblue" />}
             </Icon>
             <Content>
@@ -636,8 +399,28 @@ const QuestionBank = () => {
           </QuestionCard>
         </Link>
       ))}
+ 
+      <PaginationContainer>
+        <PageButton
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </PageButton>
+       
+        <PageInfo>
+          Page {currentPage} of {totalPages}
+        </PageInfo>
+       
+        <PageButton
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </PageButton>
+      </PaginationContainer>
     </Container>
   );
 };
-
+ 
 export default QuestionBank;
