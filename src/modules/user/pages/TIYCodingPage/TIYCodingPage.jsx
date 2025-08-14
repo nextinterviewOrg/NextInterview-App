@@ -146,7 +146,7 @@ const TIYCodingPage = () => {
             );
             console.log("addProgress", addProgress);
             if (addProgress.success === true) {
-                notification.success({ message: "Question submitted successfully" });
+                notification.success({ message: "Answer submitted successfully" });
                 navigate("/user/titcodinglist", { state: location.state });
             }
             setIsSubmitting(false);

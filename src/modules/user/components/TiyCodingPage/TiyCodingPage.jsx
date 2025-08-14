@@ -97,6 +97,12 @@ const TiyCodingPage = () => {
         }
     }, [location.state]);
 
+    useEffect(() => {
+  if (code !== optimisedCode && code !== storedOptimizedCode) {
+    setOptimizationUsed(false);
+  }
+}, [code, optimisedCode, storedOptimizedCode]);
+
     // Fetch user ID by Clerk ID
     useEffect(() => {
         const fetchUserId = async () => {
@@ -156,14 +162,13 @@ const TiyCodingPage = () => {
     };
 
 
-    const shouldShowOptimizeBtn = () => {
-        if (optimizationUsed) return false;
-        return output &&
-            !output.includes("Error") &&
-            !output.includes("error") &&
-            !output.includes("Exception") &&
-            output.trim() === question?.output?.trim();
-    };
+const shouldShowOptimizeBtn = () => {
+  if (optimizationUsed) return false;
+  return output &&
+    !output.includes("Error") &&
+    !output.includes("error") &&
+    !output.includes("Exception");
+};
 
 
     // Fetch question details
@@ -317,7 +322,7 @@ const TiyCodingPage = () => {
             const res = await addQuestionToQuestionProgress(submissionData);
 
             if (res.success) {
-                notification.success({ message: "Question submitted successfully" });
+                notification.success({ message: "Answer submitted successfully" });
                 navigate(`/user/qusnsTryitYourself/${question.module_code}/${question.topic_code}`, { state: location.state });
             } else {
                 notification.error({ message: "Submission failed" });
@@ -502,8 +507,8 @@ const TiyCodingPage = () => {
                                         input={input}
                                         setInput={setInput}
                                         dbSetupCommands={question?.dbSetupCommands}
-                                        showOptimiseBtn={shouldShowOptimizeBtn()}
-                                        handleOptimizeCode={handleOptimizeCode}
+                                         showOptimiseBtn={shouldShowOptimizeBtn()}
+  handleOptimizeCode={handleOptimizeCode}
                                         // handleOptimizeCode={() => setModalOpen(true)}
                                         handleSubmit={handleSubmit}
                                         isSubmitting={isSubmitting}
@@ -565,16 +570,12 @@ const TiyCodingPage = () => {
                             />
                             <ButtonGroup>
                                 <ModalButton
-                                    onClick={() => {
-                                        setCode(optimisedCode);
-                                        // Only clear output if it’s the very first run
-if (!output) {
-  setOutput("");
-}
-                                        setOptimizationUsed(true);
-                                        setShowOptimiseBtn(false);
-                                        setModalOpen(false);
-                                    }}
+                                   onClick={() => {
+  setCode(optimisedCode);
+  setOptimizationUsed(true);
+  setModalOpen(false);
+}}
+
                                 >
                                     Apply to your Code
                                 </ModalButton>

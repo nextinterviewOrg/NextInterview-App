@@ -159,8 +159,35 @@ const UserModuleTopic = () => {
   const [contentReady, setContentReady] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
 
-    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+  const { topicCode, subtopicCode } = useMemo(() => location.state || {}, [location.state]);
 
+  console.log("topicCode", topicCode);
+  console.log("subtopicCode", subtopicCode);
+
+  // Find the topic and subtopic by their codes
+  const currentTopic = useMemo(() => {
+    return courseData.topicsList?.find(t => t.topic_code === topicCode);
+  }, [courseData, topicCode]);
+
+  console.log("currentTopic", currentTopic);
+
+  const currentSubtopic = useMemo(() => {
+    return currentTopic?.subtopics?.find(s => s.subtopic_code === subtopicCode);
+  }, [currentTopic, subtopicCode]);
+
+  console.log("currentSubtopic", currentSubtopic);
+
+  useEffect(() => {
+    // Handle direct subtopic navigation
+    if (location.state?.scrollToSubtopic && subtopicCode) {
+      const subtopicElement = document.getElementById(`subtopic-${subtopicCode}`);
+      if (subtopicElement) {
+        setTimeout(() => {
+          subtopicElement.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    }
+  }, [location.state, subtopicCode]);
   // Pre-fetch module data when component mounts
   useEffect(() => {
     const fetchModuleData = async () => {
@@ -189,181 +216,50 @@ const UserModuleTopic = () => {
     }
   };
 
-  const handleCloseModal = async () => {
-    setShowModal(false);
-    let finalTopicIndex = location.state?.topicIndex;
-    let finalSubTopicIndex = location.state?.subtopicIndex;
-    const userData = await getUserByClerkId(user.id);
-    const moduleResponse = await getModuleById(moduleId);
-    console.log("fdsghjkljhgfdfghjk", moduleResponse)
-    const module_code = moduleResponse.data.module_code;
-    const topic_code = moduleResponse.data.topicData[location.state?.topicIndex].topic_code;
-    const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex].subtopicData[location.state?.subtopicIndex].subtopic_code;
-    const markingSubTopicCompleted = await completeSubTopic(userData.data.user._id, module_code, topic_code, subtopic_code);
-    finalSubTopicIndex = finalSubTopicIndex + 1;
+const handleCloseModal = async () => {
+  setShowModal(false);
+  const userData = await getUserByClerkId(user.id);
+  const moduleResponse = await getModuleById(moduleId);
+  const module_code = moduleResponse.data.module_code;
 
-    const subTopicCompletionData = await getSubtopicCompletionStatus(userData.data.user._id, module_code, topic_code, subtopic_code);
+  // Mark current subtopic as completed
+  await completeSubTopic(userData.data.user._id, module_code, topicCode, subtopicCode);
 
-    if (subTopicCompletionData.allSubtopicCompleted == true) {
-      const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
-      finalTopicIndex = finalTopicIndex + 1;
-      finalSubTopicIndex = 0;
-      const topicCompletionData = await getAllTopicsCompletionStatus(userData.data.user._id, module_code,);
-      const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-      await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-        if (item.moduleCode === moduleResponse.data.module_code) {
+  // Find next subtopic
+  const currentTopic = moduleResponse.data.topicData.find(t => t.topic_code === topicCode);
+  const currentSubtopicIndex = currentTopic.subtopicData.findIndex(s => s.subtopic_code === subtopicCode);
+  
+  let nextTopicCode = topicCode;
+  let nextSubtopicCode = subtopicCode;
 
-          if (Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0) > 50) {
-            const statusData = await checkUserFeedBackExists({
-              userId: userData.data.user._id,
-              feedback_order: 1,
-              moduleId: moduleResponse.data._id,
-            })
-            console.log("🚀 Feedback statusData (order 2):", statusData);
-            if (statusData.found === false) {
-
-              /// logic for feedback
-              setShowFeedbackModal(true);
-              setFeedbackOrder(1);
-
-            }
-
-          };
-        }
-      }));
-      if (topicCompletionData.allTopicsCompleted == true) {
-        const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-        //logic for feedback
-        const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-        await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-          if (item.moduleCode === moduleResponse.data.module_code) {
-            // setTotalCompletedTopics(item.topicStats.completed);
-            console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-           const feedback1 = await checkUserFeedBackExists({
-  userId: userData.data.user._id,
-  feedback_order: 1,
-  moduleId: moduleResponse.data._id,
-});
-
-const feedback2 = await checkUserFeedBackExists({
-  userId: userData.data.user._id,
-  feedback_order: 2,
-  moduleId: moduleResponse.data._id,
-});
-
-console.log("Feedback order 1:", feedback1);
-console.log("Feedback order 2:", feedback2);
-
-// ✅ Only show feedback if BOTH are missing
-if (!feedback1.found && !feedback2.found) {
-  setShowFeedbackModal(true);
-  setFeedbackOrder(2);
-  setReturnUrl(`/user/learning/`);
-}
-
-            }
-          }
-        ));
-        // navigate(`/user/learning`);
-        return
+  // Check if there's a next subtopic in current topic
+  if (currentSubtopicIndex < currentTopic.subtopicData.length - 1) {
+    nextSubtopicCode = currentTopic.subtopicData[currentSubtopicIndex + 1].subtopic_code;
+  } else {
+    // Move to next topic
+    const currentTopicIndex = moduleResponse.data.topicData.findIndex(t => t.topic_code === topicCode);
+    if (currentTopicIndex < moduleResponse.data.topicData.length - 1) {
+      nextTopicCode = moduleResponse.data.topicData[currentTopicIndex + 1].topic_code;
+      nextSubtopicCode = moduleResponse.data.topicData[currentTopicIndex + 1].subtopicData[0].subtopic_code;
+    } else {
+      // Last topic completed - check if module is complete
+      const topicCompletionData = await getAllTopicsCompletionStatus(userData.data.user._id, module_code);
+      if (topicCompletionData.allTopicsCompleted) {
+        await completeModule(userData.data.user._id, module_code);
+        navigate(`/user/learning`);
+        return;
       }
     }
+  }
 
-    //checking is this last topic
-    const lastTopic = await getLastTopicByModuleCode({ moduleCode: module_code });
-    const lastSubTopic = await getLastSubTopicByTopicCode({ moduleCode: module_code, topicCode: topic_code });
-
-    // if (lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   console.log("lastSubTopic.data.subtopic_code === subtopic_code", lastSubTopic.data.subtopic_code, subtopic_code);
-    //   const markingTopicCompleted = await completeTopic(userData.data.user._id, module_code, topic_code);
-    //   finalTopicIndex = finalTopicIndex + 1;
-    //   finalSubTopicIndex = 0;
-    //   // const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //   // await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //   //   if (item.moduleCode === moduleResponse.data.module_code) {
-    //   //     // setTotalCompletedTopics(item.topicStats.completed);
-    //   //     if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //   //       const statusData = await checkUserFeedBackExists({
-    //   //         userId: userData.data.user._id,
-    //   //         feedback_order: 1,
-    //   //         moduleId: moduleResponse.data._id,
-    //   //       })
-    //   //       console.log("statusData", statusData);
-    //   //       if (statusData?.found === false) {
-
-    //   //         /// logic for feedback
-    //   //         setShowFeedbackModal(true);
-    //   //         setFeedbackOrder(1);
-
-    //   //       }
-
-    //   //     }
-    //   //   }
-    //   // }));
-    //   if (lastTopic.data.topic_code === topic_code) {
-    //     const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-    //     const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //     //logic for feedback
-    //     await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //       if (item.moduleCode === moduleResponse.data.module_code) {
-    //         // setTotalCompletedTopics(item.topicStats.completed);
-    //         console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-    //         if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //           const statusData = await checkUserFeedBackExists({
-    //             userId: userData.data.user._id,
-    //             feedback_order: 2,
-    //             moduleId: moduleResponse.data._id,
-    //           })
-    //           console.log("statusData", statusData);
-    //           if (statusData.found === false) {
-
-    //             /// logic for feedback
-    //             setShowFeedbackModal(true);
-    //             setFeedbackOrder(2);
-    //             setReturnUrl(`/user/learning/`);
-    //           }
-
-    //         }
-    //       }
-    //     }));
-    //     // navigate(`/user/learning`);
-    //     return
-    //   }
-    //   navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-    //   return
-    // }
-    // if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-    //   const markingModuleCompleted = await completeModule(userData.data.user._id, module_code);
-    //   const userModuleProgressStats = await getUserProgressStats(userData.data.user._id);
-    //   //logic for feedback
-    //   await Promise.all(userModuleProgressStats.ModuleProgress.map(async (item) => {
-    //     if (item.moduleCode === moduleResponse.data.module_code) {
-    //       // setTotalCompletedTopics(item.topicStats.completed);
-    //       console.log("item.topicStats.completed / (moduleResponse.data.topicData.length) * 100", item.topicStats.completed / (moduleResponse.data.topicData.length) * 100);
-    //       if ((Number.parseFloat(item.topicStats.completed / (moduleResponse.data.topicData.length) * 100).toFixed(0)) > 50) {
-    //         const statusData = await checkUserFeedBackExists({
-    //           userId: userData.data.user._id,
-    //           feedback_order: 2,
-    //           moduleId: moduleResponse.data._id,
-    //         })
-    //         console.log("statusData", statusData);
-    //         if (statusData.found === false) {
-
-    //           /// logic for feedback
-    //           setShowFeedbackModal(true);
-    //           setFeedbackOrder(2);
-    //           setReturnUrl(`/user/learning/`);
-    //         }
-
-    //       }
-    //     }
-    //   }));
-
-    //   // navigate(`/user/learning`);
-    //   return
-    // }
-    navigate(`/user/learning/${moduleId}/topic`, { state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex } });
-  };
+  // Navigate to next subtopic
+  navigate(`/user/learning/${moduleId}/topic`, {
+    state: {
+      topicCode: nextTopicCode,
+      subtopicCode: nextSubtopicCode
+    }
+  });
+};
 
 
 const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
@@ -411,81 +307,74 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
 
   // Ultra-fast subtopic loading
   const loadSubtopic = useCallback(async () => {
-    if (!user || !moduleId || topicIndex === undefined || subtopicIndex === undefined) return;
+  if (!user || !moduleId || !topicCode || !subtopicCode) return;
 
-    setLoading(true);
-    setContentReady(false);
+  setLoading(true);
+  setContentReady(false);
 
-    try {
-      const startTime = performance.now();
-      
-      // First check cache for instant response
-      const cacheKey = `content-${moduleId}-${topicIndex}-${subtopicIndex}`;
-      if (apiCache.has(cacheKey)) {
-        const cachedData = apiCache.get(cacheKey);
-        setTopicData([cachedData]);
-        // setSelectedCheetSheetURL(cachedData.cheatSheetURL);
-        setGptSummaryText(cachedData.summary);
-        setContentReady(true);
-        setLoading(false);
-        console.log(`Loaded from cache in ${performance.now() - startTime}ms`);
-        return;
-      }
-
-      // Fallback to API if not in cache (should rarely happen)
-      const [userData, moduleResponse] = await Promise.all([
-        cachedApiCall(`user-${user.id}`, getUserByClerkId, user.id),
-        cachedApiCall(`module-${moduleId}`, getModuleById, moduleId)
-      ]);
-
-      const currentSubtopic = moduleResponse.data.topicData[topicIndex].subtopicData[subtopicIndex];
-      const subtopicData = {
-        title: currentSubtopic.subtopicName,
-        description: currentSubtopic.subtopicContent,
-        summary: currentSubtopic.subtopicSummary,
-        cheatSheetURL: currentSubtopic.cheatSheetURL || "#"
-      };
-
-      // Update cache for future visits
-      apiCache.set(cacheKey, subtopicData);
-      
-      setTopicData([subtopicData]);
-      // setSelectedCheetSheetURL(subtopicData.cheatSheetURL);
-      setGptSummaryText(subtopicData.summary);
-
-      // Start progress tracking in background
-      const module_code = moduleResponse.data.module_code;
-      const topic_code = moduleResponse.data.topicData[topicIndex].topic_code;
-      const subtopic_code = currentSubtopic.subtopic_code;
-      
-      Promise.all([
-        startTopic(
-          userData.data.user._id,
-          topic_code,
-          moduleResponse.data.topicData[topicIndex]._id,
-          module_code,
-          moduleId
-        ),
-        startSubTopic(
-          userData.data.user._id,
-          module_code,
-          topic_code,
-          moduleResponse.data.topicData[topicIndex]._id,
-          moduleId,
-          subtopic_code,
-          currentSubtopic._id,
-        )
-      ]).catch(e => console.error("Background progress tracking error:", e));
-
-      console.log(`Subtopic loaded in ${performance.now() - startTime}ms`);
+  try {
+    const cacheKey = `content-${moduleId}-${topicCode}-${subtopicCode}`;
+    if (apiCache.has(cacheKey)) {
+      const cachedData = apiCache.get(cacheKey);
+      setTopicData([cachedData]);
+      setGptSummaryText(cachedData.summary);
       setContentReady(true);
       setLoading(false);
-    } catch (error) {
-      console.error("Error loading subtopic:", error);
-      setLoading(false);
-      setContentReady(true);
+      return;
     }
-  }, [user, moduleId, topicIndex, subtopicIndex, cachedApiCall]);
+
+    const [userData, moduleResponse] = await Promise.all([
+      getUserByClerkId(user.id),
+      getModuleById(moduleId)
+    ]);
+
+    // Find the topic and subtopic by their codes
+    const topic = moduleResponse.data.topicData.find(t => t.topic_code === topicCode);
+    const subtopic = topic?.subtopicData.find(s => s.subtopic_code === subtopicCode);
+
+    if (!topic || !subtopic) {
+      throw new Error('Topic or subtopic not found');
+    }
+
+    const subtopicData = {
+      title: subtopic.subtopicName,
+      description: subtopic.subtopicContent,
+      summary: subtopic.subtopicSummary,
+      cheatSheetURL: subtopic.cheatSheetURL || "#"
+    };
+
+    apiCache.set(cacheKey, subtopicData);
+    setTopicData([subtopicData]);
+    setGptSummaryText(subtopic.subtopicSummary);
+
+    // Start progress tracking
+    await Promise.all([
+      startTopic(
+        userData.data.user._id,
+        topicCode,
+        topic._id,
+        moduleResponse.data.module_code,
+        moduleId
+      ),
+      startSubTopic(
+        userData.data.user._id,
+        moduleResponse.data.module_code,
+        topicCode,
+        topic._id,
+        moduleId,
+        subtopicCode,
+        subtopic._id
+      )
+    ]);
+
+    setContentReady(true);
+    setLoading(false);
+  } catch (error) {
+    console.error("Error loading subtopic:", error);
+    setLoading(false);
+    setContentReady(true);
+  }
+}, [user, moduleId, topicCode, subtopicCode]);
 
   // Immediate subtopic loading with debounce
   useEffect(() => {
@@ -845,169 +734,97 @@ const renderConceptClarifiers = (text, clarifiers) => {
   };
 
 const handleMarkAsCompleted = async () => {
-  const event = new CustomEvent('subtopicCompleted', {
-    detail: {
-      moduleId,
-      topicIndex: location.state?.topicIndex,
-      subtopicIndex: location.state?.subtopicIndex
+  try {
+    const moduleResponse = await getModuleById(moduleId);
+    const userData = await getUserByClerkId(user.id);
+
+    // Mark current subtopic as completed
+    await completeSubTopic(
+      userData.data.user._id,
+      moduleResponse.data.module_code,
+      topicCode,
+      subtopicCode
+    );
+
+    // Check if all subtopics in topic are completed
+    const subTopicCompletionData = await getSubtopicCompletionStatus(
+      userData.data.user._id,
+      moduleResponse.data.module_code,
+      topicCode,
+      subtopicCode
+    );
+
+    if (subTopicCompletionData.allSubtopicCompleted) {
+      await completeTopic(
+        userData.data.user._id,
+        moduleResponse.data.module_code,
+        topicCode
+      );
+      
+      // Check if all topics are completed
+      const topicCompletionData = await getAllTopicsCompletionStatus(
+        userData.data.user._id,
+        moduleResponse.data.module_code
+      );
+
+      if (topicCompletionData.allTopicsCompleted) {
+        await completeModule(
+          userData.data.user._id,
+          moduleResponse.data.module_code
+        );
+        navigate(`/user/learning`);
+        return;
+      }
     }
-  });
-  window.dispatchEvent(event);
 
-   // Rest of your existing mark as completed logic
-  const allSubtopicsCompleted = courseData.topicsList[location.state.topicIndex].subtopics.every(subtopic => subtopic.completed);
-  if (allSubtopicsCompleted) {
-    setIsModuleCompleted(true);
-  }
-
-    try {
-      console.log("Fetching module_code...");
-
-      const moduleResponse = await getModuleById(moduleId);
-      console.log("🛠 moduleResponse Full Data:", moduleResponse);
-
-      if (
-        !moduleResponse ||
-        !moduleResponse.data ||
-        !moduleResponse.data.module_code
-      ) {
-        console.error(" Module data missing!", moduleResponse);
-        return;
-      }
-      const module_code = moduleResponse.data.module_code;
-      console.log("module_code fetched:", module_code);
-
-      if (
-        !moduleResponse.data.topicData ||
-        moduleResponse.data.topicData.length === 0
-      ) {
-        console.error("No topics found for module_code:", module_code);
-        return;
-      }
-      console.log(" Available Topics:", moduleResponse.data.topicData);
-
-      const topicIndex = location.state?.topicIndex ?? 0;
-      const topicData = moduleResponse.data.topicData[topicIndex];
-
-      if (!topicData || !topicData.topic_code) {
-        console.error(
-          " topic_code not found. Available Topics:",
-          moduleResponse.data.topicData
-        );
-        return;
-      }
-      const topic_code = topicData.topic_code;
-      console.log("topic_code fetched:", topic_code);
-
-      // 3️⃣ Ensure subtopicData exists
-      if (!topicData.subtopicData || topicData.subtopicData.length === 0) {
-        console.error(" No subtopics found for topic_code:", topic_code);
-        return;
-      }
-
-      console.log(" Available Subtopics:", topicData.subtopicData);
-
-      const subtopicIndex = location.state?.subtopicIndex ?? 0;
-      const subtopicData = topicData.subtopicData[subtopicIndex];
-
-      if (!subtopicData || !subtopicData.subtopic_code) {
-        console.error(
-          " subtopic_code not found. Available Subtopics:",
-          topicData.subtopicData
-        );
-        return;
-      }
-      const subtopic_code = subtopicData.subtopic_code;
-      console.log("subtopic_code fetched:", subtopic_code);
-
-      const params = {
-        module_code,
-        topic_code,
-        subtopic_code,
-        question_type: subtopicData.question_type,
-        level: subtopicData.level,
-      };
-
-      console.log("Final Skill Assessment Params:", params);
-      setAssessmentParams(params);
-      setShowModal(true);
-    } catch (error) {
-         const rollbackEvent = new CustomEvent('subtopicCompleted', {
-      detail: {
-        moduleId,
-        topicIndex: location.state?.topicIndex,
-        subtopicIndex: location.state?.subtopicIndex,
-        completed: false
-      }
-    });
-    window.dispatchEvent(rollbackEvent);
+    // Navigate to next subtopic
+    handleNext();
+  } catch (error) {
     console.error("Error marking as completed:", error);
   }
-  };
+};
 
   const handleTryButton = () => {
     navigate(`/user/QusnsTryitYourself/${moduleCODE}/${topicCODE}`);
     // navigate(`/user/learning/${moduleName}/topic/tryityourself`);
   };
 
-  const handleNext = async () => {
-    try {
-      const moduleResponse = await getModuleById(moduleId);
-      console.log("Module data in handleNext:", moduleResponse.data);
+const handleNext = async () => {
+  try {
+    const moduleResponse = await getModuleById(moduleId);
+    const currentTopic = moduleResponse.data.topicData.find(t => t.topic_code === topicCode);
+    const currentSubtopicIndex = currentTopic.subtopicData.findIndex(s => s.subtopic_code === subtopicCode);
 
-      if (!moduleResponse.data || !moduleResponse.data.topicData || moduleResponse.data.topicData.length === 0) {
-        console.error("No topic data found in module response");
-        return;
-      }
+    let nextTopicCode = topicCode;
+    let nextSubtopicCode = subtopicCode;
 
-      const module_code = moduleResponse.data.module_code;
-      const topic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.topic_code;
-      const subtopic_code = moduleResponse.data.topicData[location.state?.topicIndex]?.subtopicData[location.state?.subtopicIndex]?.subtopic_code;
-
-      console.log("Navigation data:", {
-        module_code,
-        topic_code,
-        subtopic_code,
-        topicIndex: location.state?.topicIndex,
-        subtopicIndex: location.state?.subtopicIndex
-      });
-
-      const lastTopic = await getLastTopicByModuleCode({
-        moduleCode: module_code,
-      });
-      const lastSubTopic = await getLastSubTopicByTopicCode({
-        moduleCode: module_code,
-        topicCode: topic_code,
-      });
-
-      let finalTopicIndex = location.state?.topicIndex;
-      let finalSubTopicIndex = location.state?.subtopicIndex;
-
-      // Check if we're at the last subtopic of the current topic
-      if (lastSubTopic.data.subtopic_code === subtopic_code) {
-        // Move to the next topic
-        finalTopicIndex = finalTopicIndex + 1;
-        finalSubTopicIndex = 0;
+    // Check if there's a next subtopic in the current topic
+    if (currentSubtopicIndex < currentTopic.subtopicData.length - 1) {
+      nextSubtopicCode = currentTopic.subtopicData[currentSubtopicIndex + 1].subtopic_code;
+    } 
+    // Otherwise move to next topic
+    else {
+      const currentTopicIndex = moduleResponse.data.topicData.findIndex(t => t.topic_code === topicCode);
+      if (currentTopicIndex < moduleResponse.data.topicData.length - 1) {
+        nextTopicCode = moduleResponse.data.topicData[currentTopicIndex + 1].topic_code;
+        nextSubtopicCode = moduleResponse.data.topicData[currentTopicIndex + 1].subtopicData[0].subtopic_code;
       } else {
-        // Move to the next subtopic in the current topic
-        finalSubTopicIndex = finalSubTopicIndex + 1;
-      }
-
-      // Check if we're at the last topic and subtopic
-      if (lastTopic.data.topic_code === topic_code && lastSubTopic.data.subtopic_code === subtopic_code) {
-        console.log("Navigating to /user/learning as last topic is reached");
+        // Last topic and subtopic - navigate to learning home
         navigate(`/user/learning`);
         return;
       }
-
-      // Navigate to the next topic/subtopic
-      navigate(`/user/learning/${moduleId}/topic`, {
-        state: { topicIndex: finalTopicIndex, subtopicIndex: finalSubTopicIndex },
-      });
-    } catch (error) {
-      console.error("Error in handleNext:", error);
     }
-  };
+
+    navigate(`/user/learning/${moduleId}/topic`, {
+      state: {
+        topicCode: nextTopicCode,
+        subtopicCode: nextSubtopicCode
+      }
+    });
+  } catch (error) {
+    console.error("Error in handleNext:", error);
+  }
+};
 
   return (
     <Container>
@@ -1245,13 +1062,13 @@ const handleMarkAsCompleted = async () => {
       {showModal && (
         <ModalOverlay>
           <ModalContent>
-            <SkillAssessment
-              {...assessmentParams}
-              onCloseModal={handleCloseModal}
-              currentTopicIndex={location.state.topicIndex}
-              currentSubTopicIndex={location.state.subtopicIndex}
-              moduleId={moduleId}
-            />
+<SkillAssessment
+  {...assessmentParams}
+  onCloseModal={handleCloseModal}
+  topicCode={topicCode}
+  subtopicCode={subtopicCode}
+  moduleId={moduleId}
+/>
           </ModalContent>
         </ModalOverlay>
       )}

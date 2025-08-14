@@ -35,7 +35,7 @@ export default function UserHome() {
   useEffect(() => {
     const interval = setInterval(() => {
       handleNext();
-    }, 5000);
+    }, 9000);
     return () => clearInterval(interval);
   }, [cardsToShow, interviewFavoriteCardData]);
 
@@ -43,19 +43,22 @@ export default function UserHome() {
     const fetchData = async () => {
       try {
         const response = await getInterviewFavourites();
-       const preparedData = response.flatMap((module) =>
-  (module.topicData || []).flatMap((topic, topicIndex) =>
-    (topic.subtopicData || []).map((sub, subtopicIndex) => ({
+        console.log("response", response);
+const preparedData = response.flatMap((module) =>
+  (module.topicData || []).flatMap((topic) =>
+    (topic.subtopicData || []).map((sub) => ({
       topicName: topic.topicName,
       moduleName: module.moduleName,
       moduleId: module.moduleId,
       imgSrc: module.imageURL,
-      allSubtopics: (topic.subtopicData || []).map((s) => s.subtopicName),
-      topicIndex,
-      subtopicIndex
+      subtopicCode: sub.subtopic_code,
+      topicCode: topic.topic_code,
+      // allSubtopics: topic.subtopicData.map(s => s.subtopicName), // All subtopics as array
+      currentSubtopic: sub.subtopicName, // Current subtopic name
     }))
   )
 );
+console.log("preparedData", preparedData);
         setInterviewFavoriteCardData(preparedData);
       } catch (e) {
         console.error("Error fetching interview favorites:", e);
@@ -113,16 +116,16 @@ export default function UserHome() {
               <p>No interview favourites found.</p>
             ) : (
               visibleCards.map((card, index) => (
-                <InterviewFavoriteCard
-                  key={`${startIndex}-${index}`}
-                  title={card.moduleName}
-                  topicName={card.topicName}
-                  moduleId={card.moduleId}
-                  imgSrc={card.imgSrc}
-                  allSubtopics={card.allSubtopics}
-                  topicIndex={card.topicIndex}
-                  subtopicIndex={card.subtopicIndex}
-                />
+<InterviewFavoriteCard
+  key={`${startIndex}-${index}`}
+  title={card.moduleName}
+  topicName={card.topicName}
+  moduleId={card.moduleId}
+  imgSrc={card.imgSrc}
+  currentSubtopic={card.currentSubtopic}
+  topicCode={card.topicCode}  // Pass topicCode instead of topicIndex
+  subtopicCode={card.subtopicCode}  // Pass subtopicCode instead of subtopicIndex
+/>
               ))
             )}
           </InterviewFavoriteCardContainer>

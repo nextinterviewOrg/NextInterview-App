@@ -44,17 +44,30 @@ export default function ModuleSidebar({
   const [lastUpdate, setLastUpdate] = useState(Date.now());
   const [immediatelyCompleted, setImmediatelyCompleted] = useState({});
 
-    const { topicIndex, subtopicIndex } = useMemo(() => location.state || {}, [location.state]);
+    const { topicCode, subtopicCode } = useMemo(() => location.state || {}, [location.state]);
+
+  // Find indices based on codes (only if needed for other logic)
+  const topicIndex = useMemo(() => {
+    return courseData.topicsList?.findIndex(t => t.topic_code === topicCode);
+  }, [courseData, topicCode]);
+
+  console.log("topicIndex", topicIndex);
+
+  const subtopicIndex = useMemo(() => {
+    return courseData.topicsList?.[topicIndex]?.subtopics?.findIndex(s => s.subtopic_code === subtopicCode);
+  }, [courseData, topicIndex, subtopicCode]);
+
+  console.log("subtopicIndex", subtopicIndex);
 
   useEffect(() => {
-    if (topicIndex !== undefined) {
+    if (topicCode) {
       setSelectedCurrentTopic(topicIndex);
       setExpandedTopic(topicIndex);
     }
-    if (subtopicIndex !== undefined) {
+    if (subtopicCode) {
       setSelectedCurrentSubTopic(subtopicIndex);
     }
-  }, [topicIndex, subtopicIndex]);
+  }, [topicCode, subtopicCode, topicIndex, subtopicIndex]);
 
 
   const fetchModuleData = useCallback(async () => {
@@ -291,21 +304,21 @@ useEffect(() => {
                 {topic.subtopics.length === 0 ? (
                   <p>No subtopics available</p>
                 ) : (
-                  topic.subtopics?.map((subtopic, subIndex) => (
-                    <Link
-                      key={`${index}-${subIndex}`}
-                      className="subtopic-link"
-                      to={`/user/learning/${moduleId}/topic`}
-                      state={{
-                        topicIndex: index,
-                        subtopicIndex: subIndex,
-                      }}
-                      onClick={() => {
-                        setSelectedCurrentSubTopic(subIndex);
-                        setSelectedCurrentTopic(index);
-                        if (isMobile) setSidebarOpen(false);
-                      }}
-                    >
+  topic.subtopics?.map((subtopic, subIndex) => (
+    <Link
+      key={`${index}-${subIndex}`}
+      className="subtopic-link"
+      to={`/user/learning/${moduleId}/topic`}
+      state={{
+        topicCode: topic.topic_code,
+        subtopicCode: subtopic.subtopic_code,
+      }}
+      onClick={() => {
+        setSelectedCurrentSubTopic(subIndex);
+        setSelectedCurrentTopic(index);
+        if (isMobile) setSidebarOpen(false);
+      }}
+    >
                       <div key={subIndex} className="subtopic">
                         <div className="subtopic-info" 
                           style={{ 
