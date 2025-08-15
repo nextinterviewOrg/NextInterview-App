@@ -266,20 +266,31 @@ const renderSubtopic = (topic, subtopic, index, subIndex) => {
   }
 
   return (
-    <Link
-      key={`${index}-${subIndex}`}
-      className="subtopic-link"
-      to={`/user/learning/${moduleId}/topic`}
-      state={{
-        topicIndex: index,
-        subtopicIndex: subIndex,
-      }}
-      onClick={() => {
-        setSelectedCurrentSubTopic(subIndex);
-        setSelectedCurrentTopic(index);
-        if (isMobile) setSidebarOpen(false);
-      }}
-    >
+<Link
+  key={`${index}-${subIndex}`}
+  className="subtopic-link"
+  to={`/user/learning/${moduleId}/topic`}
+  state={{
+    topicCode: topic.topic_code,
+    subtopicCode: subtopic.subtopic_code,
+    topicIndex: index,
+    subtopicIndex: subIndex
+  }}
+  onClick={() => {
+    setSelectedCurrentSubTopic(subIndex);
+    setSelectedCurrentTopic(index);
+    if (isMobile) setSidebarOpen(false);
+    
+    // Dispatch event to update the last update timestamp
+    const event = new CustomEvent('subtopicNavigation', {
+      detail: {
+        topicCode: topic.topic_code,
+        subtopicCode: subtopic.subtopic_code
+      }
+    });
+    window.dispatchEvent(event);
+  }}
+>
         <div className="subtopic">
           <div className="subtopic-info" 
             style={{ 

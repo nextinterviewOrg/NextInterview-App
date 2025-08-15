@@ -130,6 +130,21 @@ const UserModuleTopic = () => {
   const [contentReady, setContentReady] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
 const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+// const [isSubtopicCompleted, setIsSubtopicCompleted] = useState(false);
+
+// const [subtopicCODE, setSubtopicCODE] = useState(subtopicCode);
+
+// useEffect(() => {
+//   if (subtopicCode) {
+//     setSubtopicCODE(subtopicCode);
+//   }
+// }, [subtopicCode]);
+
+// useEffect(() => {
+//   if (topicCode) {
+//     setTopicCODE(topicCode);
+//   }
+// }, [topicCode]);
 
 
   const { topicCode, subtopicCode } = useMemo(() => location.state || {}, [location.state]);
@@ -151,6 +166,7 @@ const currentSubtopic = useMemo(() => {
   console.log("currentSubtopic", currentSubtopic);
 
   useEffect(() => {
+     setShowSummary(false); // Close summary popup on navigation
     // Handle direct subtopic navigation
     if (location.state?.scrollToSubtopic && subtopicCode) {
       const subtopicElement = document.getElementById(`subtopic-${subtopicCode}`);
@@ -191,6 +207,8 @@ const currentSubtopic = useMemo(() => {
 
 const handleCloseModal = async () => {
   setShowModal(false);
+  setShowSummary(false); // Add this line to close summary popup
+
   const userData = await getUserByClerkId(user.id);
   const moduleResponse = await getModuleById(moduleId);
   const module_code = moduleResponse.data.module_code;
@@ -245,13 +263,22 @@ const handleCloseModal = async () => {
 //   }, []);
 
   // Pre-fetch all module data when component mounts
-useEffect(() => {
-  const fetchInitialData = async () => {
-    try {
-      const response = await getModuleById(moduleId);
-      setModuleName(response.data.moduleName);
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      try {
+        const response = await getModuleById(moduleId);
+        // setLoading(true);
+        // const [moduleResponse, userData] = await Promise.all([
+        //   cachedApiCall(`module-${moduleId}`, getModuleById, moduleId),
+        //   user ? cachedApiCall(`user-${user.id}`, getUserByClerkId, user.id) : Promise.resolve(null)
+        // ]);
+
+        // if (!moduleResponse) throw new Error('Module not found');
+        
+        setModuleName(response.data.moduleName);
       setModuleCODE(response.data.module_code);
-      setCourseData({
+
+             setCourseData({
         title: response.data.moduleName,
         topicsList: response.data.topicData.map(topic => ({
           title: topic.topicName,
@@ -284,17 +311,26 @@ useEffect(() => {
       }
       
       setInitialDataLoaded(true);
-    } catch (error) {
-      console.error("Error fetching module data:", error);
-      setInitialDataLoaded(true);
-    }
-  };
+      } catch (error) {
+        console.error("Error in fetchInitialData:", error);
+        setFeedbackMessage("Error loading module data");
+        setShowFeedbackPopup(true);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  fetchInitialData();
-}, [moduleId, navigate]); // Add navigate to dependencies
+    fetchInitialData();
+  }, [moduleId,navigate]);
+
+//   useEffect(() => {
+//   if (initialDataLoaded && topicCODE && subtopicCODE) {
+//     loadSubtopic();
+//   }
+// }, [initialDataLoaded, topicCODE, subtopicCODE, loadSubtopic]);
 
 
-  const loadSubtopic = useCallback(async () => {
+    const loadSubtopic = useCallback(async () => {
   if (!user || !moduleId || !topicCode || !subtopicCode) return;
 
   setLoading(true);
@@ -364,15 +400,23 @@ useEffect(() => {
     setContentReady(true);
   }
 }, [user, moduleId, topicCode, subtopicCode]);
-
-  // Immediate subtopic loading with debounce
-  useEffect(() => {
+ useEffect(() => {
     const timer = setTimeout(() => {
       loadSubtopic();
     }, 0);
 
     return () => clearTimeout(timer);
   }, [loadSubtopic]);
+
+
+  // // Load subtopic when params change
+  // useEffect(() => {
+  //   if (initialDataLoaded) {
+  //     loadSubtopic();
+  //   }
+  // }, [initialDataLoaded, loadSubtopic]);
+
+  
 
 
   useEffect(() => {
@@ -432,6 +476,11 @@ useEffect(() => {
 
     apiCaller();
   }, [moduleId]);
+
+//   useEffect(() => {
+//   setIsSubtopicCompleted(false);
+//   setMarkAsCompleteBtnStatus(false);
+// }, [topicCode, subtopicCode]);
 
   const renderConceptClarifiers = (text, clarifiers) => {
     if (!text || !clarifiers || !Array.isArray(clarifiers)) return text;
@@ -517,6 +566,7 @@ useEffect(() => {
 const handleMarkAsCompleted = async () => {
   try {
     setLoading(true);
+    setShowSummary(false); // Add this line to close summary popup
     const moduleResponse = await getModuleById(moduleId);
     const userData = await getUserByClerkId(user.id);
     const userId = userData.data.user._id;
@@ -547,6 +597,9 @@ const handleMarkAsCompleted = async () => {
       moduleCode,
       topicCode
     );
+
+    // setIsSubtopicCompleted(true);
+    setMarkAsCompleteBtnStatus(true); // This will switch the button to "Next"
 
     if (subTopicCompletionData.allSubtopicCompleted) {
       // Mark topic as completed
@@ -656,6 +709,7 @@ const handleTryButton = () => {
 const handleNext = async () => {
   try {
     setLoading(true);
+    setShowSummary(false); // Add this line to close summary popup
     const moduleResponse = await getModuleById(moduleId);
     const currentTopic = moduleResponse.data.topicData.find(t => t.topic_code === topicCode);
     const currentSubtopicIndex = currentTopic.subtopicData.findIndex(s => s.subtopic_code === subtopicCode);
@@ -843,7 +897,7 @@ const handleNext = async () => {
 
 {contentReady && (
   <>
-    {markAsCompleteBtnStatus ? (
+    { markAsCompleteBtnStatus ? (
       <Button
         style={{
           backgroundColor: "#2390ac",
