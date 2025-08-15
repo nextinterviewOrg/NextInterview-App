@@ -129,7 +129,8 @@ const UserModuleTopic = () => {
   const [topicCODE, setTopicCODE] = useState(null);
   const [contentReady, setContentReady] = useState(false);
   const [loadingSummary, setLoadingSummary] = useState(false);
-  const [assessmentParams, setAssessmentParams] = useState({});
+const [initialDataLoaded, setInitialDataLoaded] = useState(false);
+
 
   const { topicCode, subtopicCode } = useMemo(() => location.state || {}, [location.state]);
 
@@ -234,47 +235,64 @@ const handleCloseModal = async () => {
 };
 
 
-const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
-    if (apiCache.has(key)) {
-      return apiCache.get(key);
-    }
-    const result = await apiFunction(...args);
-    apiCache.set(key, result);
-    return result;
-  }, []);
+// const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
+//     if (apiCache.has(key)) {
+//       return apiCache.get(key);
+//     }
+//     const result = await apiFunction(...args);
+//     apiCache.set(key, result);
+//     return result;
+//   }, []);
 
   // Pre-fetch all module data when component mounts
-  useEffect(() => {
-    const fetchInitialData = async () => {
-      try {
-        const [moduleResponse, userData] = await Promise.all([
-          cachedApiCall(`module-${moduleId}`, getModuleById, moduleId),
-          cachedApiCall(`user-${user?.id}`, getUserByClerkId, user?.id)
-        ]);
-        
-        setModuleName(moduleResponse.data.moduleName);
-        setModuleCODE(moduleResponse.data.module_code);
-        
-        moduleResponse.data.topicData.forEach((topic, tIdx) => {
-          topic.subtopicData.forEach((subtopic, sIdx) => {
-            const cacheKey = `content-${moduleId}-${tIdx}-${sIdx}`;
-            if (!apiCache.has(cacheKey)) {
-              apiCache.set(cacheKey, {
-                title: subtopic.subtopicName,
-                description: subtopic.subtopicContent,
-                summary: subtopic.subtopicSummary,
-                cheatSheetURL: subtopic.cheatSheetURL || "#"
-              });
-            }
-          });
-        });
-      } catch (error) {
-        console.error("Initial data loading error:", error);
+useEffect(() => {
+  const fetchInitialData = async () => {
+    try {
+      const response = await getModuleById(moduleId);
+      setModuleName(response.data.moduleName);
+      setModuleCODE(response.data.module_code);
+      setCourseData({
+        title: response.data.moduleName,
+        topicsList: response.data.topicData.map(topic => ({
+          title: topic.topicName,
+          topic_code: topic.topic_code,
+          subtopics: topic.subtopicData.map(subtopic => ({
+            title: subtopic.subtopicName,
+            subtopic_code: subtopic.subtopic_code,
+            subtopicContent: subtopic.subtopicContent,
+            subtopicSummary: subtopic.subtopicSummary,
+            conceptClarifiers: subtopic.conceptClarifier || []
+          }))
+        }))
+      });
+      
+      // If no topicCode in location.state, use first topic and subtopic
+      if (!location.state?.topicCode) {
+        const firstTopic = response.data.topicData[0];
+        if (firstTopic) {
+          const firstSubtopic = firstTopic.subtopicData[0];
+          if (firstSubtopic) {
+            navigate(`/user/learning/${moduleId}/topic`, {
+              state: {
+                topicCode: firstTopic.topic_code,
+                subtopicCode: firstSubtopic.subtopic_code,
+                replace: true // This replaces the current entry in history
+              }
+            });
+          }
+        }
       }
-    };
+      
+      setInitialDataLoaded(true);
+    } catch (error) {
+      console.error("Error fetching module data:", error);
+      setInitialDataLoaded(true);
+    }
+  };
 
-    fetchInitialData();
-  }, [moduleId, user?.id, cachedApiCall]);
+  fetchInitialData();
+}, [moduleId, navigate]); // Add navigate to dependencies
+
 
   const loadSubtopic = useCallback(async () => {
   if (!user || !moduleId || !topicCode || !subtopicCode) return;
@@ -283,6 +301,7 @@ const cachedApiCall = useCallback(async (key, apiFunction, ...args) => {
   setContentReady(false);
 
   try {
+        setTopicCODE(topicCode);
     const cacheKey = `content-${moduleId}-${topicCode}-${subtopicCode}`;
     if (apiCache.has(cacheKey)) {
       const cachedData = apiCache.get(cacheKey);
@@ -624,9 +643,15 @@ const getNextSubtopic = async (moduleData, currentTopicCode, currentSubtopicCode
   // No more subtopics found
   return null;
 };
-  const handleTryButton = () => {
-    navigate(`/user/QusnsTryitYourself/${moduleCODE}/${topicCODE}`);
-  };
+const handleTryButton = () => {
+  if (!moduleCODE || !topicCODE) {
+    console.error("Module code or topic code is missing");
+    setFeedbackMessage("Unable to navigate - missing module or topic information");
+    setShowFeedbackPopup(true);
+    return;
+  }
+  navigate(`/user/QusnsTryitYourself/${moduleCODE}/${topicCODE}`);
+};
 
 const handleNext = async () => {
   try {
@@ -859,11 +884,11 @@ const handleNext = async () => {
         <ModalOverlay>
           <ModalContent>
 <SkillAssessment
-  {...assessmentParams}
-  onCloseModal={handleCloseModal}
-  topicCode={topicCode}
-  subtopicCode={subtopicCode}
   moduleId={moduleId}
+  moduleCode={moduleCODE}
+  topicCode={topicCODE}
+  subtopicCode={subtopicCode}
+  onCloseModal={handleCloseModal}
 />
           </ModalContent>
         </ModalOverlay>
