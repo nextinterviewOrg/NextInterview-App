@@ -8,12 +8,17 @@ const InterviewFavoriteCard = ({
   topicName = "",
   imgSrc = "",
   moduleId = "",
-  allSubtopics = [],
-  topicIndex = "",
-  subtopicIndex=""
+  // allSubtopics = [],
+  currentSubtopic = "", // Add this prop
+  topicCode = "",  // Add this prop
+  subtopicCode = "", // Add this prop
 }) => {
-
   const navigate = useNavigate();
+
+  console.log("currentSubtopic", currentSubtopic);
+  console.log("topicCode", topicCode);
+  console.log("subtopicCode", subtopicCode);
+  
   return (
     <InterviewFavoriteCardWrapper>
       <div className="card">
@@ -27,35 +32,40 @@ const InterviewFavoriteCard = ({
         </div>
 
         <div className="card-content">
+          
+          <p className="topic"><strong>Topic:</strong> {topicName}</p>
           <h3 className="card-title">{title}</h3>
-          <p><strong>Topic:</strong> {topicName}</p>
+                {currentSubtopic && (
+        <p className="subtopic"><strong>Subtopic:</strong> {currentSubtopic}</p>
+      )}
 
-          {allSubtopics?.length > 0 && (
+
+          {/* {allSubtopics?.length > 0 && (
             <div>
-              <strong>Subtopics:</strong>
+              <strong>Subtopic:</strong>
               <ul className="subtopics-list">
                 {allSubtopics.map((sub, idx) => (
                   <li key={idx}>{sub}</li>
                 ))}
               </ul>
             </div>
-          )}
+          )} */}
 
           <div className="card-footer">
-           <button
-        className="learn-btn"
-                      onClick={() => window.location.href = `/user/learning/${moduleId}`}
-        // onClick={() =>
-        //   navigate(`/user/learning/${moduleId}/topic`, {
-        //     state: {
-        //       topicIndex: Number(topicIndex),
-        //       subtopicIndex: Number(subtopicIndex)
-        //     }
-        //   })
-        // }
-      >
-        Learn
-      </button>
+          <button
+            className="learn-btn"
+            onClick={() => {
+              navigate(`/user/learning/${moduleId}/topic`, {
+                state: {
+                  topicCode: topicCode,
+                  subtopicCode: subtopicCode,
+                  scrollToSubtopic: true
+                }
+              });
+            }}
+          >
+            Learn
+          </button>
           </div>
         </div>
       </div>
@@ -68,9 +78,9 @@ InterviewFavoriteCard.propTypes = {
   topicName: PropTypes.string,
   imgSrc: PropTypes.string,
   moduleId: PropTypes.string,
-  allSubtopics: PropTypes.arrayOf(PropTypes.string),
-    topicIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  subtopicIndex: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  currentSubtopic: PropTypes.string, // Add this prop type
+  topicCode: PropTypes.string,  // Add this prop type
+  subtopicCode: PropTypes.string, // Add this prop type
 };
 
 export default InterviewFavoriteCard;

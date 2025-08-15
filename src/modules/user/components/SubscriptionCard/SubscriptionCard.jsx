@@ -7,11 +7,12 @@ import UpgradeSubscription from '../../../../pages/UpgradeSubscription/UpgradeSu
 
 const SubscriptionCard = ({ title, currency
     , duration, price, interval, features, isSuggested, onSubscribe, planId, showSubscription, handleUnsubscribe, currentPlanId }) => {
+         const isActiveSubscription = currentPlanId === planId;
 
     return (
         <SubscriptionCardWrapper>
             <div className={`subscription-card`}>
-                {(isSuggested && currentPlanId === planId) && <div className="suggested-badge">Active Plan</div>}
+                {isActiveSubscription && <div className="suggested-badge">Active Subscription</div>}
                 <div className="subscription-card-header">
                     <h1 className='subscription-card-header-title' style={{ color: "black", fontWeight: "bold", textDecoration: "Capitalize" }}>{title}</h1>
                     <h2 className='subscription-card-header-title'>{interval}</h2>
