@@ -68,6 +68,7 @@ const QuestionBank = () => {
     const fetchUserId = async () => {
       try {
         const userData = await getUserByClerkId(user.id);
+        console.log(userData);
         setUserId(userData.data.user._id);
       } catch (err) {
         console.error("Failed to fetch user ID", err);
@@ -77,28 +78,41 @@ const QuestionBank = () => {
   }, [user]);
  
   // Load initial data (categories, modules and questions)
-  useEffect(() => {
-    const loadInitialData = async () => {
-      if (!userId) return;
- 
-      try {
-        // Fetch categories first
-        const categoriesRes = await getAllCategory();
-        if (categoriesRes?.success) {
-          setCategories(categoriesRes.data || []);
-        }
- 
-        // Then fetch modules
-        const modulesRes = await getModuleCode();
-        if (modulesRes?.success) {
-          setModules(modulesRes.data || []);
-        }
- 
-        // Then fetch all questions
-        const questionsRes = await getAllQuestionsUsingUserId(userId);
-        if (questionsRes?.success && Array.isArray(questionsRes.data)) {
-          const mappedQuestions = questionsRes.data.map(q => ({
-            id: q._id,
+useEffect(() => {
+  const loadInitialData = async () => {
+    if (!userId) {
+      console.log('User ID not available yet');
+      return;
+    }
+
+    try {
+      console.log('Fetching categories...');
+      const categoriesRes = await getAllCategory();
+      console.log('Categories response:', categoriesRes);
+      
+      if (categoriesRes?.success) {
+        setCategories(categoriesRes.data || []);
+      } else {
+        console.error('Categories API failed:', categoriesRes);
+      }
+
+      console.log('Fetching modules...');
+      const modulesRes = await getModuleCode();
+      console.log('Modules response:', modulesRes);
+      
+      if (modulesRes?.success) {
+        setModules(modulesRes.data || []);
+      } else {
+        console.error('Modules API failed:', modulesRes);
+      }
+
+      console.log(`Fetching questions for user ${userId}...`);
+      const questionsRes = await getAllQuestionsUsingUserId(userId);
+      console.log('Questions response:', questionsRes);
+      
+      if (questionsRes?.success && Array.isArray(questionsRes.data)) {
+        const mappedQuestions = questionsRes.data.map(q => ({
+                      id: q._id,
             module_code: q.module_code || "Other",
             module_name: modulesRes?.data?.find(m => m.module_code === q.module_code)?.module_name || q.module_code || "Other",
             category: q.questionbankCategoryRef?.[0] || null,
@@ -109,20 +123,26 @@ const QuestionBank = () => {
             description: q.description || '',
             topics: q.topics?.map(t => t.topic_name) || [],
             solution: q.output || ''
-          }));
-         
-          setAllQuestions(mappedQuestions);
-          setQuestions(mappedQuestions);
-          // Calculate total pages when questions are loaded
-          setTotalPages(Math.ceil(mappedQuestions.length / QUESTIONS_PER_PAGE));
-        }
-      } catch (err) {
-        console.error("Error loading initial data", err);
+        }));
+        
+        setAllQuestions(mappedQuestions);
+        setQuestions(mappedQuestions);
+        setTotalPages(Math.ceil(mappedQuestions.length / QUESTIONS_PER_PAGE));
+      } else {
+        console.error('Questions API failed:', questionsRes);
       }
-    };
- 
-    loadInitialData();
-  }, [userId]);
+    } catch (err) {
+      console.error("Full error loading initial data:", {
+        message: err.message,
+        stack: err.stack,
+        userId,
+        timestamp: new Date().toISOString()
+      });
+    }
+  };
+
+  loadInitialData();
+}, [userId]);
  
   // Filter questions when activeTab changes
   useEffect(() => {
