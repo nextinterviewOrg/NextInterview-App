@@ -431,7 +431,7 @@ const handleOptimizeCode = () => {
     input={input}
     setInput={setInput}
     setRunClicked={setRunClicked}
-    showOptimiseBtn={!optimizationUsedThisSession && showOptimiseBtn} // Only show if not used this session
+    showOptimiseBtn={!optimizationUsedThisSession} // Only show if not used this session
     handleOptimizeCode={handleOptimizeCode}
     optimizeClicked={optimizeClicked}
     handleSubmit={handleSubmit}
