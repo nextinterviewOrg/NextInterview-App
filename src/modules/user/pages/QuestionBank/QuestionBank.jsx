@@ -69,7 +69,7 @@ const QuestionBank = () => {
       try {
         const userData = await getUserByClerkId(user.id);
         console.log(userData);
-        setUserId(userData.data.user._id);
+        setUserId(userData?.data?.user?._id);
       } catch (err) {
         console.error("Failed to fetch user ID", err);
       }
