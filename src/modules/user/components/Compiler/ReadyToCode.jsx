@@ -76,7 +76,7 @@ const runCode = async () => {
   };
 
   try {
-    const res = await fetch("https://nextinterview.ai/fastapi/code-execution/execute-code", {
+    const res = await fetch("https://onecompiler-apis.p.rapidapi.com/api/v1/run", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
