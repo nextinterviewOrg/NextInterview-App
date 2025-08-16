@@ -280,7 +280,7 @@ const optimizeCode = async () => {
       };
       const res = await addQuestionToQuestionProgress(submissionData);
       if (res.success) {
-        notification.success({ message: "Question submitted successfully" });
+        notification.success({ message: "Answer submitted successfully" });
         navigate("/user/mainQuestionBank/questionbank", { state: location.state });
       } else {
         notification.error({ message: "Submission failed" });
@@ -567,7 +567,7 @@ const handleOptimizeClick = () => {
       <CloseButton onClick={() => setModalOpen(false)}>
         <IoClose />
       </CloseButton>
-      <h3>{hasOptimized ? "Optimised Solution" : "Optimised Code"}</h3>
+      <h3>Optimized Code</h3>
       <Editor
         height="300px"
         language={selectedLang || "plaintext"}
